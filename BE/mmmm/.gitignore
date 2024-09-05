@@ -38,4 +38,4 @@ out/
 
 Dockerfile
 .env
-build/generated/querydsl/
+/src/main/generated/
