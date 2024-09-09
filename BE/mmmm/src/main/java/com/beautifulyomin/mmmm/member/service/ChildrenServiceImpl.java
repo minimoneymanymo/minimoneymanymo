@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
+
 @Service
 public class ChildrenServiceImpl implements ChildrenService{
 
@@ -27,6 +29,9 @@ public class ChildrenServiceImpl implements ChildrenService{
 
     @Override
     public String registerChildren(JoinRequestDto joinDto) {
+        if(isExistByUserId(joinDto.getUserId())) {
+            throw new IllegalArgumentException("이미 사용중인 아이디 입니다");
+        }
         String encodedPass = bCryptPasswordEncoder.encode(joinDto.getPassword());
         Children children = new Children(
                 joinDto.getUserId(), joinDto.getName(), encodedPass,
@@ -39,4 +44,14 @@ public class ChildrenServiceImpl implements ChildrenService{
     public String uploadProfileImage(MultipartFile file) throws IOException {
         return "";
     }
+
+    @Override
+    public boolean isExistByUserId(String userId) {
+        Optional<Children> children = childrenRepository.findByUserId(userId);
+        if(children.isPresent())return true;
+        else return false;
+
+    }
+
+
 }

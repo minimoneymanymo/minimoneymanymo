@@ -7,8 +7,11 @@ import javax.annotation.Nullable;
 
 @Data
 public class JoinRequestDto {
+    @NotNull
     private String userId ;
+    @NotNull
     private String password ;
+    @NotNull
     private String phoneNumber ;
     private String name ;
     private String role ;

@@ -8,4 +8,5 @@ import java.io.IOException;
 public interface ChildrenService {
     String registerChildren(JoinRequestDto joinDto);
     String uploadProfileImage(MultipartFile file) throws IOException;
+    boolean isExistByUserId(String userId);
 }

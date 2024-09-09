@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -26,19 +28,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println(username + " " + role);
         if (role.equals("0")) {
             // 부모 계정으로 조회
-            Parent parent = parentsRepository.findByUserId(username);
+            Parent parent = parentsRepository.findByUserId(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Parent not found with username: " + username));
             System.out.println(parent);
-            if (parent == null) {
-                throw new UsernameNotFoundException("Parent not found with username: " + username);
-            }
             return new CustomUserDetails(parent); // CustomUserDetails은 필터에서 필요한 정보를 각 클래스별로 정보를 알맞게 저장해 가져온다
         } else if (role.equals("1")) {
             // 자녀 계정으로 조회
-            Children children = childrenRepository.findByUserId(username);
+            Children children = childrenRepository.findByUserId(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Children not found with username: " + username));
             System.out.println(children);
-            if (children == null) {
-                throw new UsernameNotFoundException("Children not found with username: " + username);
-            }
             return new CustomUserDetails(children);
         } else {
             throw new IllegalArgumentException("Invalid role provided: " + role);
