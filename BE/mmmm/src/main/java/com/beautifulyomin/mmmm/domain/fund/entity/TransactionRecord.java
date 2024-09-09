@@ -30,7 +30,7 @@ public class TransactionRecord {
     @Column(nullable = false, length = 14)
     private String approvedAt;
 
-    @Column(nullable = false, length = 14)
+    @Column(nullable = false)
     private Integer amount;
 
     @Column(nullable = false, length = 1)
