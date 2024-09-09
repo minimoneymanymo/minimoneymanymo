@@ -1,9 +1,9 @@
 package com.beautifulyomin.mmmm.common.jwt;
 
-import com.beautifulyomin.mmmm.member.entity.Children;
-import com.beautifulyomin.mmmm.member.entity.Parent;
-import com.beautifulyomin.mmmm.member.repository.ChildrenRepository;
-import com.beautifulyomin.mmmm.member.repository.ParentRepository;
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.member.entity.Parent;
+import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
+import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

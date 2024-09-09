@@ -1,11 +1,13 @@
 package com.beautifulyomin.mmmm.controller;
 
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
-import com.beautifulyomin.mmmm.member.dto.JoinRequestDto;
-import com.beautifulyomin.mmmm.member.dto.ParentRegistrationDto;
-import com.beautifulyomin.mmmm.member.service.ChildrenService;
-import com.beautifulyomin.mmmm.member.service.ParentService;
+
 import jakarta.validation.constraints.NotNull;
+
+import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
+import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
+import com.beautifulyomin.mmmm.domain.member.service.ParentService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

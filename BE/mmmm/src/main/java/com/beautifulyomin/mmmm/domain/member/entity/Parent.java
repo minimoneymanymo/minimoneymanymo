@@ -1,19 +1,22 @@
-package com.beautifulyomin.mmmm.member.entity;
+package com.beautifulyomin.mmmm.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "children")
-@Data
+@Table(name = "parents")
+@Getter
+@Setter
 @NoArgsConstructor
-public class Children {
+public class Parent {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer childrenId;
+    private Integer parentId;
 
     @Column(nullable = false, length = 100)
     private String userId;
@@ -21,7 +24,7 @@ public class Children {
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String phoneNumber;
 
     @Column(length = 30)
@@ -34,7 +37,7 @@ public class Children {
     private String name;
 
     @Column(nullable = false)
-    private Integer money = 0;
+    private Integer balance = 0;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -42,30 +45,22 @@ public class Children {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
+    @Column(nullable = false, length = 512)
+    private String signedData;
+
+    @Column(nullable = false, length = 88)
+    private String ci;
+
     @Column(length = 255)
     private String profileImgUrl;
 
-    @Column(length = 14)
-    private String birthDay;
-
-    @Column(nullable = false)
-    private Integer withdrawableMoney = 0;
-    @Column(nullable = false)
-    private Integer settingWithdrawableMoney = 0;
-    @Column(nullable = false)
-    private Integer settingMoney = 0;
-    @Column(nullable = false)
-    private Integer settingQuizBonusMoney = 0;
-
-
-
-    public Children(String userId, String name, String password, String phoneNumber, String birthDay) {
+    public Parent(String userId, String name, String password, String phoneNumber, String signedData, String ci) {
         this.userId = userId;
         this.phoneNumber = phoneNumber;
         this.name = name;
         this.password = password;
-        this.birthDay = birthDay;
-
+        this.signedData = signedData;
+        this.ci = ci;
     }
 
     @PrePersist

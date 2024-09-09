@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmm.member.entity;
+package com.beautifulyomin.mmmm.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

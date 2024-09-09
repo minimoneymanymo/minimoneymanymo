@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmm.member.entity;
+package com.beautifulyomin.mmmm.domain.member.entity;
 
 import java.io.Serializable;
 import java.util.Objects;

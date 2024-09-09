@@ -1,14 +1,13 @@
 package com.beautifulyomin.mmmm.common.jwt;
 
-import com.beautifulyomin.mmmm.member.entity.Children;
-import com.beautifulyomin.mmmm.member.entity.Parent;
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
