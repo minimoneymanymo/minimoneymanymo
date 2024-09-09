@@ -1,9 +1,13 @@
 package com.beautifulyomin.mmmm.controller;
 
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
+
+import jakarta.validation.constraints.NotNull;
+
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +30,9 @@ public class MembersController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<CommonResponseDto> registerUser(@RequestBody JoinRequestDto joinDto) {
+    public ResponseEntity<CommonResponseDto> registerUser(@RequestBody @NotNull JoinRequestDto joinDto) {
         //Exception 직접 설정 가능 예시코드
-        Optional.ofNullable(joinDto).orElseThrow(() -> new IllegalArgumentException("joinDto cannot be null"));
+//        Optional.ofNullable(joinDto).orElseThrow(() -> new IllegalArgumentException("joinDto cannot be null"));
 
 
         String savedUsername = null;

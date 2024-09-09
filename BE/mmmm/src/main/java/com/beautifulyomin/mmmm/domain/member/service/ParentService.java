@@ -8,4 +8,6 @@ import java.io.IOException;
 public interface ParentService {
     String registerParent(JoinRequestDto joinDto);
     String uploadProfileImage(MultipartFile file) throws IOException;
+    boolean isExistByUserId(String userId);
+    boolean isExistByPhoneNumber(String phoneNumber);
 }

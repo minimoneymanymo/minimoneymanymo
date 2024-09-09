@@ -24,7 +24,7 @@ public class Parent {
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String phoneNumber;
 
     @Column(length = 30)
