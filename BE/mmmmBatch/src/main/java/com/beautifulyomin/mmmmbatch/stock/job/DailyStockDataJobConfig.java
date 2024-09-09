@@ -39,6 +39,7 @@ public class DailyStockDataJobConfig {
     //jobRepository 를 통해 job의 실행 상태와 메타데이터가 관리된다.
     @Bean
     public Job importDailyStockDataJob() {
+        log.info("🔥🔥🔥잡 실행");
         return new JobBuilder("importDailyStockDataJob", jobRepository)
                 .start(importDailyStockDataStep())
                 .build();

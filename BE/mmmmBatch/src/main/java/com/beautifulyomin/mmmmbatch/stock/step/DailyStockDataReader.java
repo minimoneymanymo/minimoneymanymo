@@ -1,11 +1,13 @@
 package com.beautifulyomin.mmmmbatch.stock.step;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Slf4j
 @Component
 public class DailyStockDataReader implements ItemReader<String> {
     private final JdbcTemplate jdbcTemplate;
@@ -19,6 +21,7 @@ public class DailyStockDataReader implements ItemReader<String> {
 
     @Override
     public String read() {
+        log.info("⭐⭐⭐⭐⭐⭐⭐read 진입");
         if (stockCodes == null) {
             stockCodes = jdbcTemplate.queryForList("select stock_code from stocks order by stock_code", String.class);
         }

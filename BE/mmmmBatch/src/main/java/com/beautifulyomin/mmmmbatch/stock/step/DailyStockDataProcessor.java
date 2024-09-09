@@ -1,6 +1,8 @@
 package com.beautifulyomin.mmmmbatch.stock.step;
 
 import com.beautifulyomin.mmmmbatch.stock.entity.DailyStockData;
+import com.beautifulyomin.mmmmbatch.stock.entity.key.DailyStockDataId;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
@@ -9,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 
+@Slf4j
 @Component
 public class DailyStockDataProcessor implements ItemProcessor<String, DailyStockData> {
 
@@ -34,10 +38,12 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
 
     @Override
     public DailyStockData process(String stockCode) throws Exception {
+        log.info("⭐⭐⭐⭐⭐⭐⭐process 진입");
         // API URL 구성
         URI uri = UriComponentsBuilder.fromUriString(CURRENT_PRICE_API_URL)
                 .queryParam("fid_cond_mrkt_div_code", "J")
-                .queryParam("fid_input_iscd", stockCode)
+                .queryParam("fid_input_iscd", stockCode.trim())
+                .encode()
                 .build()
                 .toUri();
 
@@ -62,7 +68,16 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
         // API 응답을 DailyStockData 엔티티로 변환
         DailyStockData stockData = new DailyStockData();
 
+        //초당 호출 제한 방지
+        Thread.sleep(1000);
+
+        DailyStockDataId id = DailyStockDataId.builder()
+                .stockCode(stockCode)
+                .date(LocalDate.now())
+                .build();
+
         return DailyStockData.builder()
+                .id(id)
                 .marketCapitalization(output.getBigInteger("hts_avls"))
                 .priceChangeSign(output.getString("prdy_vrss_sign"))
                 .priceChange(output.getBigDecimal("prdy_vrss"))
@@ -73,6 +88,10 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
                 .bookValuePerShare(output.getBigDecimal("bps"))
                 .foreignNetBuyVolume(output.getString("pgtr_ntby_qty"))
                 .htsForeignExhaustionRate(output.getBigDecimal("hts_frgn_ehrt"))
-                .programNetBuyVolume(output.getString("pgtr_ntby_qty")).build();
+                .programNetBuyVolume(output.getString("pgtr_ntby_qty"))
+                .tradingValue(output.getBigInteger("acml_tr_pbmn"))
+                .volumeTurnoverRatio(output.getBigDecimal("vol_tnrt"))
+                .outstandingShares(output.getBigInteger("lstn_stcn"))
+                .build();
     }
 }

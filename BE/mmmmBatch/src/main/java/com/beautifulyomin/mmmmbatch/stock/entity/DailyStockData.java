@@ -9,10 +9,9 @@ import java.math.BigInteger;
 
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class DailyStockData {
 
