@@ -2,17 +2,18 @@ package com.beautifulyomin.mmmmbatch.stock.entity;
 
 import com.beautifulyomin.mmmmbatch.stock.entity.key.DailyStockDataId;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DailyStockData {
 
     @EmbeddedId
@@ -22,7 +23,7 @@ public class DailyStockData {
     private BigInteger marketCapitalization;
 
     @Column(nullable = false, length = 1)
-    private char priceChangeSign;
+    private String priceChangeSign;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal priceChange;
