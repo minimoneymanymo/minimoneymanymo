@@ -10,6 +10,7 @@ import ParentPageLayout from "@/layouts/ParentPageLayout"
 import ParentChildrenPageLayout from "@/layouts/ParentChildrenPageLayout"
 import ChildPageLayout from "@/layouts/ChildPageLayout"
 import MainPageLayout from "@/layouts/MainLayout"
+import StockDetailLayout from "./layouts/StockDetailLayout"
 function App() {
   return (
     <Routes>
@@ -17,7 +18,11 @@ function App() {
         <Route index element={<MainPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
+        <Route path="/stocks" element={<StockDetailLayout />}>
 
+
+
+        </Route>
         <Route path="/news" element={<NewsPage />} />
         <Route path="/parent" element={<ParentPageLayout />}>
           <Route path="my-wallet" element={<Temp />} />
