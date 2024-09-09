@@ -1,10 +1,10 @@
 ## 🔘Part
 
-- [] FE
+- [ ] FE
 
-- [] BE
+- [ ] BE
 
-- [] Other
+- [ ] Other
 
   <br/>
 
