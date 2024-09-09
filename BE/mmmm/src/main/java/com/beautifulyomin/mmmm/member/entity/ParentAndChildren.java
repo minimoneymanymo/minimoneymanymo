@@ -23,9 +23,9 @@ public class ParentAndChildren {
     private Children child;
 
     @Column(nullable = false)
-    private Boolean isApproved = false;
+    private boolean isApproved = false;
 
-    public ParentAndChildren(Parent parent, Children child, Boolean isApproved) {
+    public ParentAndChildren(Parent parent, Children child, boolean isApproved) {
         this.parent = parent;
         this.child = child;
         this.isApproved = isApproved;
