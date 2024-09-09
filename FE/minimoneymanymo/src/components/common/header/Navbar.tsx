@@ -13,6 +13,11 @@ const NavItemList = (): JSX.Element => {
       category: "news",
       to: "/news",
     },
+    {
+      id: itemId++,
+      category: "stocks",
+      to: "/stocks",
+    },
   ]
   return (
     <nav className="flex h-16 items-center sm:h-10 md:h-12">
