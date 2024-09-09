@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmm.member.dto;
+package com.beautifulyomin.mmmm.domain.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

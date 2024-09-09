@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmm.member.dto;
+package com.beautifulyomin.mmmm.domain.member.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

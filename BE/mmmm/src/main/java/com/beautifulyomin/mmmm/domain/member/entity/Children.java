@@ -1,22 +1,19 @@
-package com.beautifulyomin.mmmm.member.entity;
+package com.beautifulyomin.mmmm.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "parents")
-@Getter
-@Setter
+@Table(name = "children")
+@Data
 @NoArgsConstructor
-public class Parent {
-
+public class Children {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer parentId;
+    private Integer childrenId;
 
     @Column(nullable = false, length = 100)
     private String userId;
@@ -37,7 +34,7 @@ public class Parent {
     private String name;
 
     @Column(nullable = false)
-    private Integer balance = 0;
+    private Integer money = 0;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -45,22 +42,30 @@ public class Parent {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    @Column(nullable = false, length = 512)
-    private String signedData;
-
-    @Column(nullable = false, length = 88)
-    private String ci;
-
     @Column(length = 255)
     private String profileImgUrl;
 
-    public Parent(String userId, String name, String password, String phoneNumber, String signedData, String ci) {
+    @Column(length = 14)
+    private String birthDay;
+
+    @Column(nullable = false)
+    private Integer withdrawableMoney = 0;
+    @Column(nullable = false)
+    private Integer settingWithdrawableMoney = 0;
+    @Column(nullable = false)
+    private Integer settingMoney = 0;
+    @Column(nullable = false)
+    private Integer settingQuizBonusMoney = 0;
+
+
+
+    public Children(String userId, String name, String password, String phoneNumber, String birthDay) {
         this.userId = userId;
         this.phoneNumber = phoneNumber;
         this.name = name;
         this.password = password;
-        this.signedData = signedData;
-        this.ci = ci;
+        this.birthDay = birthDay;
+
     }
 
     @PrePersist

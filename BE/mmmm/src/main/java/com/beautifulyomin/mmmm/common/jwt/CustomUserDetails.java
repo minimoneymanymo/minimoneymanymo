@@ -1,7 +1,7 @@
 package com.beautifulyomin.mmmm.common.jwt;
 
-import com.beautifulyomin.mmmm.member.entity.Children;
-import com.beautifulyomin.mmmm.member.entity.Parent;
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

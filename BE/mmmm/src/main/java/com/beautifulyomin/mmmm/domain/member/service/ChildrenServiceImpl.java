@@ -1,11 +1,9 @@
-package com.beautifulyomin.mmmm.member.service;
+package com.beautifulyomin.mmmm.domain.member.service;
 
 import com.beautifulyomin.mmmm.common.service.FileService;
-import com.beautifulyomin.mmmm.member.dto.JoinRequestDto;
-import com.beautifulyomin.mmmm.member.entity.Children;
-import com.beautifulyomin.mmmm.member.entity.Parent;
-import com.beautifulyomin.mmmm.member.repository.ChildrenRepository;
-import com.beautifulyomin.mmmm.member.repository.ParentRepository;
+import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
