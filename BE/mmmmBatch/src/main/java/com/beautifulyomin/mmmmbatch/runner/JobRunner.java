@@ -5,11 +5,11 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JobRunner implements CommandLineRunner {
+public class JobRunner {
 
     private final JobLauncher jobLauncher;
     private final Job importDailyStockDataJob;
@@ -20,8 +20,8 @@ public class JobRunner implements CommandLineRunner {
         this.importDailyStockDataJob = importDailyStockDataJob;
     }
 
-    @Override
-    public void run(String... args) throws Exception {
+    @Scheduled(cron = "0 55 21 * * ?")
+    public void run() throws Exception {
         // Job 파라미터 설정 (중복 실행을 위해 매번 다른 값 추가)
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())

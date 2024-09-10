@@ -38,7 +38,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
 
     @Override
     public DailyStockData process(String stockCode) throws Exception {
-        log.info("⭐⭐⭐⭐⭐⭐⭐process 진입");
+//        log.info("⭐⭐⭐⭐⭐⭐⭐process 진입");
         // API URL 구성
         URI uri = UriComponentsBuilder.fromUriString(CURRENT_PRICE_API_URL)
                 .queryParam("fid_cond_mrkt_div_code", "J")

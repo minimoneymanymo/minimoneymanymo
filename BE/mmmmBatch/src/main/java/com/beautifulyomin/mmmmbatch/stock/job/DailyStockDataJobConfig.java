@@ -1,5 +1,6 @@
 package com.beautifulyomin.mmmmbatch.stock.job;
 
+import com.beautifulyomin.mmmmbatch.listner.JobDurationListener;
 import com.beautifulyomin.mmmmbatch.stock.step.DailyStockDataProcessor;
 import com.beautifulyomin.mmmmbatch.stock.step.DailyStockDataReader;
 import com.beautifulyomin.mmmmbatch.stock.step.DailyStockDataWriter;
@@ -23,17 +24,19 @@ public class DailyStockDataJobConfig {
     private final DailyStockDataReader dailyStockDataReader;
     private final DailyStockDataProcessor dailyStockDataProcessor;
     private final DailyStockDataWriter dailyStockDataWriter;
+    private final JobDurationListener jobDurationListener;
 
     public DailyStockDataJobConfig(JobRepository jobRepository,
                                    PlatformTransactionManager transactionManager,
                                    DailyStockDataReader dailyStockDataReader,
                                    DailyStockDataProcessor dailyStockDataProcessor,
-                                   DailyStockDataWriter dailyStockDataWriter) {
+                                   DailyStockDataWriter dailyStockDataWriter, JobDurationListener jobDurationListener) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.dailyStockDataReader = dailyStockDataReader;
         this.dailyStockDataProcessor = dailyStockDataProcessor;
         this.dailyStockDataWriter = dailyStockDataWriter;
+        this.jobDurationListener = jobDurationListener;
     }
 
     //jobRepository 를 통해 job의 실행 상태와 메타데이터가 관리된다.
@@ -41,13 +44,13 @@ public class DailyStockDataJobConfig {
     public Job importDailyStockDataJob() {
         log.info("🔥🔥🔥잡 실행");
         return new JobBuilder("importDailyStockDataJob", jobRepository)
+                .listener(jobDurationListener)
                 .start(importDailyStockDataStep())
                 .build();
     }
 
     @Bean
     public Step importDailyStockDataStep() {
-        log.debug("DailyStockDataJobConfig.importDailyStockDataStep");
         return new StepBuilder("importDailyStockDataStep", jobRepository)
                 .<String, DailyStockData>chunk(10, transactionManager) //청크 단위로 트랜젝션
                 .reader(dailyStockDataReader)

@@ -19,7 +19,7 @@ public class DailyStockDataWriter implements ItemWriter<DailyStockData> {
 
     @Override
     public void write(Chunk<? extends DailyStockData> chunk) throws Exception {
-        log.info("⭐⭐⭐⭐⭐⭐⭐write 진입");
+//        log.info("⭐⭐⭐⭐⭐⭐⭐write 진입");
         System.out.println(chunk.getItems());
         stockDataRepository.saveAll(chunk.getItems());
     }
