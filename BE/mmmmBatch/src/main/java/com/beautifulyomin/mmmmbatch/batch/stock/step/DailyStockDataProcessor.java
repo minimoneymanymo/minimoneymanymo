@@ -1,7 +1,7 @@
-package com.beautifulyomin.mmmmbatch.stock.step;
+package com.beautifulyomin.mmmmbatch.batch.stock.step;
 
-import com.beautifulyomin.mmmmbatch.stock.entity.DailyStockData;
-import com.beautifulyomin.mmmmbatch.stock.entity.key.DailyStockDataId;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.DailyStockData;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.key.DailyStockDataId;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.batch.item.ItemProcessor;

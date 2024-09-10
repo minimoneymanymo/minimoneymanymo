@@ -1,6 +1,6 @@
-package com.beautifulyomin.mmmmbatch.stock.entity;
+package com.beautifulyomin.mmmmbatch.batch.stock.entity;
 
-import com.beautifulyomin.mmmmbatch.stock.entity.key.DailyStockDataId;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.key.DailyStockDataId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -59,5 +59,24 @@ public class DailyStockData {
 
     @Column(nullable = false)
     private BigInteger outstandingShares;
+
+    // 값이 없으면 기본값으로 설정하기
+    @PrePersist
+    public void prePersist() {
+        if (marketCapitalization == null) marketCapitalization = BigInteger.ZERO;
+        if (priceChangeSign == null) priceChangeSign = "0";
+        if (priceChange == null) priceChange = BigDecimal.ZERO;
+        if (priceChangeRate == null) priceChangeRate = BigDecimal.ZERO;
+        if (peRatio == null) peRatio = BigDecimal.ZERO;
+        if (pbRatio == null) pbRatio = BigDecimal.ZERO;
+        if (earningsPerShare == null) earningsPerShare = BigDecimal.ZERO;
+        if (bookValuePerShare == null) bookValuePerShare = BigDecimal.ZERO;
+        if (foreignNetBuyVolume == null) foreignNetBuyVolume = "0";
+        if (htsForeignExhaustionRate == null) htsForeignExhaustionRate = BigDecimal.ZERO;
+        if (programNetBuyVolume == null) programNetBuyVolume = "0";
+        if (volumeTurnoverRatio == null) volumeTurnoverRatio = BigDecimal.ZERO;
+        if (tradingValue == null) tradingValue = BigInteger.ZERO;
+        if (outstandingShares == null) outstandingShares = BigInteger.ZERO;
+    }
 
 }

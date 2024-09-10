@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.stock.entity.key;
+package com.beautifulyomin.mmmmbatch.batch.stock.entity.key;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

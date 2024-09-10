@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.stock.step;
+package com.beautifulyomin.mmmmbatch.batch.stock.step;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;

@@ -20,9 +20,8 @@ public class JobRunner {
         this.importDailyStockDataJob = importDailyStockDataJob;
     }
 
-    @Scheduled(cron = "0 55 21 * * ?")
+    @Scheduled(cron = "0 30 16 * * ?")
     public void run() throws Exception {
-        // Job 파라미터 설정 (중복 실행을 위해 매번 다른 값 추가)
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();

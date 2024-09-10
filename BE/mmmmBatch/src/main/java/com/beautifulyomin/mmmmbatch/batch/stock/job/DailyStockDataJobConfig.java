@@ -1,10 +1,10 @@
-package com.beautifulyomin.mmmmbatch.stock.job;
+package com.beautifulyomin.mmmmbatch.batch.stock.job;
 
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.DailyStockData;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.DailyStockDataProcessor;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.DailyStockDataReader;
 import com.beautifulyomin.mmmmbatch.listner.JobDurationListener;
-import com.beautifulyomin.mmmmbatch.stock.step.DailyStockDataProcessor;
-import com.beautifulyomin.mmmmbatch.stock.step.DailyStockDataReader;
-import com.beautifulyomin.mmmmbatch.stock.step.DailyStockDataWriter;
-import com.beautifulyomin.mmmmbatch.stock.entity.DailyStockData;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.DailyStockDataWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
