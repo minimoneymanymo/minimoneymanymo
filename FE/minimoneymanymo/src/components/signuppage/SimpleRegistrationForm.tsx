@@ -1,34 +1,35 @@
 import {useState} from "react"
 import {
   Card,
-  Checkbox,
   Button,
   Typography,
-  Radio,
   List,
   ListItem,
   ListItemPrefix,
+  Radio,
 } from "@material-tailwind/react"
 import {Visibility, VisibilityOff} from "@mui/icons-material"
-import {
-  IconButton,
-  InputAdornment,
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-} from "@mui/material"
-
+import {IconButton, InputAdornment, TextField} from "@mui/material"
 import passLogo from "../../assets/signin/image.png"
 
 export function SimpleRegistrationForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [showPhonePassword, setShowPhonePassword] = useState(false)
   const [hoverPassword, setHoverPassword] = useState(false)
   const [hoverConfirmPassword, setHoverConfirmPassword] = useState(false)
-  const [hoverPhonePassword, setHoverPhonePassword] = useState(false)
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [passwordError, setPasswordError] = useState("")
+  const [id, setId] = useState("") // 상태 추가
+  const [isIdValid, setIsIdValid] = useState<boolean | null>(null) // null means no validation yet
+
+  const endpoint = import.meta.env.VITE_API_ENDPOINT
+  const contextPath = import.meta.env.VITE_API_CONTEXT_PATH
+  const version = import.meta.env.VITE_API_VERSION
+
+  const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setId(event.target.value)
+  }
 
   const [role, setRole] = useState<number | null>(null) // Initialize with null or default value
 
@@ -36,21 +37,53 @@ export function SimpleRegistrationForm() {
     setRole(Number(event.target.value)) // Update role based on selected radio button
   }
 
-  const [placeholderText, setPlaceholderText] =
-    useState("pass인증을 진행해 주세요!") // 상태로 placeholder 관리
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value)
+    validatePassword(event.target.value, confirmPassword)
+  }
 
-  // 조건에 따라 placeholder를 변경하는 함수 (예시)
-  const updatePlaceholder = (newPlaceholder: string) => {
-    setPlaceholderText(newPlaceholder)
+  const handleConfirmPasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setConfirmPassword(event.target.value)
+    validatePassword(password, event.target.value)
+  }
+
+  const validatePassword = (password: string, confirmPassword: string) => {
+    if (password !== confirmPassword) {
+      setPasswordError("비밀번호가 일치하지 않습니다.")
+    } else {
+      setPasswordError("")
+    }
   }
 
   const handleClickShowPassword = () => setShowPassword(!showPassword)
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword)
-  const handleClickShowPhonePassword = () =>
-    setShowPhonePassword(!showPhonePassword)
   const handleMouseDownPassword = (event: React.MouseEvent) => {
     event.preventDefault()
+  }
+  const checkId = async () => {
+    try {
+      const effectiveRole = role === null || role === undefined ? "0" : role
+      const url = `${endpoint}/${contextPath}/api/${version}/members/checkid?id=${id || ""}&role=${effectiveRole}`
+      const response = await fetch(url, {method: "GET"})
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.stateCode === 200) {
+          setIsIdValid(true) // ID is available
+        } else if (data.stateCode === 409) {
+          setIsIdValid(false) // ID is not available
+        }
+      } else {
+        setIsIdValid(null) // Error in response
+        alert("서버 응답 오류")
+      }
+    } catch (error) {
+      setIsIdValid(null) // Error in request
+      console.error("아이디 확인 중 오류 발생:", error)
+    }
   }
 
   return (
@@ -73,22 +106,42 @@ export function SimpleRegistrationForm() {
           <Typography variant="h7" color="blue-gray" className="-mb-3">
             아이디
           </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            size="small"
-            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-          />
-          <Typography variant="h7" color="blue-gray" className="-mb-3">
-            이메일
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            size="small"
-            placeholder="name@mail.com"
-            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-          />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="small"
+              value={id}
+              onChange={handleIdChange}
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" style={{ marginRight: "-8px" }}>
+                    <Button
+                      onClick={checkId}
+                      className="bg-primary-m1 text-white rounded-lg"
+                      style={{ minWidth: "auto", padding: "0 8px", height: "32px" }}
+                    >
+                      중복확인
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '4px' }}>
+              {isIdValid === true && (
+                <Typography style={{ color: 'green' }}>
+                  사용 가능한 아이디입니다.
+                </Typography>
+              )}
+              {isIdValid === false && (
+                <Typography style={{ color: 'red' }}>
+                  사용 불가능한 아이디입니다.
+                </Typography>
+              )}
+            </div>
+          </div>
+
           <Typography variant="h7" color="blue-gray" className="-mb-3">
             비밀번호
           </Typography>
@@ -98,6 +151,8 @@ export function SimpleRegistrationForm() {
             variant="outlined"
             size="small"
             placeholder="********"
+            value={password}
+            onChange={handlePasswordChange}
             className="!border-t-blue-gray-200 focus:!border-t-gray-900"
             InputProps={{
               endAdornment: (
@@ -120,6 +175,7 @@ export function SimpleRegistrationForm() {
               ),
             }}
           />
+
           <Typography variant="h7" color="blue-gray" className="-mb-3">
             비밀번호 확인
           </Typography>
@@ -135,6 +191,8 @@ export function SimpleRegistrationForm() {
             variant="outlined"
             size="small"
             placeholder="********"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
             className="!border-t-blue-gray-200 focus:!border-t-gray-900"
             InputProps={{
               endAdornment: (
@@ -157,6 +215,32 @@ export function SimpleRegistrationForm() {
               ),
             }}
           />
+          {passwordError && (
+            <Typography color="red" className="mt-1">
+              {passwordError}
+            </Typography>
+          )}
+            <>
+              <Typography variant="h7" color="blue-gray" className="-mb-3">
+                전화번호(PASS인증)
+                <Button
+                  className="ml-2 p-0" // 이미지와 버튼 간의 간격 조절
+                  style={{minWidth: "auto", padding: 0}} // 버튼의 최소 너비와 패딩 설정
+                >
+                  <img src={passLogo} alt="Logo" className="w-9 h-9 " />{" "}
+                  {/* 버튼 안에 이미지 추가 및 크기 설정 */}
+                </Button>
+              </Typography>
+              <TextField
+                fullWidth
+                variant="outlined"
+                size="small"
+                placeholder="pass인증을 진행해 주세요!"
+                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                InputProps={{readOnly: true}} // 사용자 입력을 방지
+              />
+            </>
+
           <Card className="w-full max-w-[24rem] shadow-none">
             <List className="flex-row">
               <ListItem className="p-0">
@@ -173,9 +257,7 @@ export function SimpleRegistrationForm() {
                       onChange={handleRoleChange}
                       ripple={false}
                       className="hover:before:opacity-0"
-                      containerProps={{
-                        className: "p-0",
-                      }}
+                      containerProps={{className: "p-0"}}
                     />
                   </ListItemPrefix>
                   <Typography
@@ -200,9 +282,7 @@ export function SimpleRegistrationForm() {
                       onChange={handleRoleChange}
                       ripple={false}
                       className="hover:before:opacity-0"
-                      containerProps={{
-                        className: "p-0",
-                      }}
+                      containerProps={{className: "p-0"}}
                     />
                   </ListItemPrefix>
                   <Typography
@@ -216,32 +296,8 @@ export function SimpleRegistrationForm() {
             </List>
           </Card>
 
-          {role === 0 && ( //부모부분은 여기에 입력
-            <>
-              <Typography variant="h7" color="blue-gray" className="-mb-3">
-                전화번호(PASS인증 부모부분)
-                <Button
-                  className="ml-2 p-0" // 이미지와 버튼 간의 간격 조절
-                  style={{minWidth: "auto", padding: 0}} // 버튼의 최소 너비와 패딩 설정
-                >
-                  <img src={passLogo} alt="Logo" className="w-9 h-9 " />{" "}
-                  {/* 버튼 안에 이미지 추가 및 크기 설정 */}
-                </Button>
-              </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                placeholder={placeholderText} // 동적으로 placeholder 설정
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                InputProps={{
-                  readOnly: true, // 사용자 입력을 방지
-                }}
-              />
-            </>
-          )}
 
-          {role === 1 && ( // 자녀부분은 여기에 입력
+          {role === 1 && (
             <>
               <Typography variant="h7" color="blue-gray" className="-mb-3">
                 부모님 번호를 입력해 주세요
