@@ -18,7 +18,7 @@ public class ParentAndChildren {
     private Parent parent; // referencedColumnName은 조회하는 클래스entity pk이름으로
 
     @Id
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "child_id", referencedColumnName = "childrenId", nullable = false)
     private Children child;
 

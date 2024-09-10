@@ -28,6 +28,32 @@ public class MembersController {
         this.parentService = parentService;
         this.childrenService = childrenService;
     }
+    @GetMapping("/checkid")
+    public ResponseEntity<CommonResponseDto> checkId(@RequestParam("id") String id, @RequestParam("role") String role) {
+        CommonResponseDto commonResponseDto = null;
+
+        boolean result = false;
+        if(role.equals("1")) result = !childrenService.isExistByUserId(id) ;
+        else result = !parentService.isExistByUserId(id);
+
+        if(result) {
+            commonResponseDto = CommonResponseDto.builder()
+                    .stateCode(200)
+                    .message("사용 가능한 아이디입니다.")
+                    .build();
+            System.out.println("!!!!!!!!!!!!!!");
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(commonResponseDto);
+        } else {
+            commonResponseDto = CommonResponseDto.builder()
+                    .stateCode(409)
+                    .message("이미 존재하는 아이디입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(commonResponseDto);
+        }
+    }
+
 
     @PostMapping("/join")
     public ResponseEntity<CommonResponseDto> registerUser(@RequestBody @NotNull JoinRequestDto joinDto) {
