@@ -10,6 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@material-tailwind/react": "^2.1.10",
+    "@mui/icons-material": "^6.0.2",
+    "@mui/material": "^6.0.2",
     "axios": "^1.7.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -19,7 +24,7 @@
     "@eslint/js": "^9.9.0",
     "@types/axios": "^0.14.0",
     "@types/node": "^22.5.4",
-    "@types/react": "^18.3.3",
+    "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
