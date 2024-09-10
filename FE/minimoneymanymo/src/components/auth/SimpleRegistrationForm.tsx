@@ -1,4 +1,4 @@
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import {
   Card,
   Button,
@@ -11,7 +11,7 @@ import {
 import {Visibility, VisibilityOff} from "@mui/icons-material"
 import {IconButton, InputAdornment, TextField} from "@mui/material"
 import passLogo from "../../assets/signin/image.png"
-
+import {getIsDuplicatedId, userLogin} from "@/api/user-api"
 
 export function SimpleRegistrationForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -23,19 +23,18 @@ export function SimpleRegistrationForm() {
   const [passwordError, setPasswordError] = useState("")
   const [id, setId] = useState("") // 상태 추가
   const [isIdValid, setIsIdValid] = useState<boolean | null>(null) // null means no validation yet
+  const [role, setRole] = useState<string>("") // Initialize with null or default value
 
-  const endpoint = import.meta.env.VITE_API_ENDPOINT
-  const contextPath = import.meta.env.VITE_API_CONTEXT_PATH
-  const version = import.meta.env.VITE_API_VERSION
-
+  useEffect(() => {
+    setIsIdValid(false)
+    checkId()
+  }, [role])
   const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setId(event.target.value)
   }
 
-  const [role, setRole] = useState<number | null>(null) // Initialize with null or default value
-
   const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRole(Number(event.target.value)) // Update role based on selected radio button
+    setRole(event.target.value) // Update role based on selected radio button
   }
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,13 +64,11 @@ export function SimpleRegistrationForm() {
     event.preventDefault()
   }
   const checkId = async () => {
+    console.log(id + " " + role)
     try {
-      const effectiveRole = role === null || role === undefined ? "0" : role
-      const url = `${endpoint}/${contextPath}/api/${version}/members/checkid?id=${id || ""}&role=${effectiveRole}`
-      const response = await fetch(url, {method: "GET"})
-
-      if (response.ok) {
-        const data = await response.json()
+      const response = await getIsDuplicatedId(id, role)
+      if (response) {
+        const data = await response
         if (data.stateCode === 200) {
           setIsIdValid(true) // ID is available
         } else if (data.stateCode === 409) {
@@ -104,10 +101,10 @@ export function SimpleRegistrationForm() {
       </Typography>
       <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
         <div className="mb-1 flex flex-col gap-6">
-          <Typography variant="h7" color="blue-gray" className="-mb-3">
+          <Typography variant="h6" color="blue-gray" className="-mb-3">
             아이디
           </Typography>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{display: "flex", flexDirection: "column"}}>
             <TextField
               fullWidth
               variant="outlined"
@@ -117,11 +114,15 @@ export function SimpleRegistrationForm() {
               className="!border-t-blue-gray-200 focus:!border-t-gray-900"
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end" style={{ marginRight: "-8px" }}>
+                  <InputAdornment position="end" style={{marginRight: "-8px"}}>
                     <Button
                       onClick={checkId}
                       className="bg-primary-m1 text-white rounded-lg"
-                      style={{ minWidth: "auto", padding: "0 8px", height: "32px" }}
+                      style={{
+                        minWidth: "auto",
+                        padding: "0 8px",
+                        height: "32px",
+                      }}
                     >
                       중복확인
                     </Button>
@@ -129,21 +130,27 @@ export function SimpleRegistrationForm() {
                 ),
               }}
             />
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '4px' }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "4px",
+              }}
+            >
               {isIdValid === true && (
-                <Typography style={{ color: 'green' }}>
+                <Typography style={{color: "green"}}>
                   사용 가능한 아이디입니다.
                 </Typography>
               )}
               {isIdValid === false && (
-                <Typography style={{ color: 'red' }}>
+                <Typography style={{color: "red"}}>
                   사용 불가능한 아이디입니다.
                 </Typography>
               )}
             </div>
           </div>
 
-          <Typography variant="h7" color="blue-gray" className="-mb-3">
+          <Typography variant="h6" color="blue-gray" className="-mb-3">
             비밀번호
           </Typography>
           <TextField
@@ -177,7 +184,7 @@ export function SimpleRegistrationForm() {
             }}
           />
 
-          <Typography variant="h7" color="blue-gray" className="-mb-3">
+          <Typography variant="h6" color="blue-gray" className="-mb-3">
             비밀번호 확인
           </Typography>
           <TextField
@@ -221,26 +228,26 @@ export function SimpleRegistrationForm() {
               {passwordError}
             </Typography>
           )}
-            <>
-              <Typography variant="h7" color="blue-gray" className="-mb-3">
-                전화번호(PASS인증)
-                <Button
-                  className="ml-2 p-0" // 이미지와 버튼 간의 간격 조절
-                  style={{minWidth: "auto", padding: 0}} // 버튼의 최소 너비와 패딩 설정
-                >
-                  <img src={passLogo} alt="Logo" className="w-9 h-9 " />{" "}
-                  {/* 버튼 안에 이미지 추가 및 크기 설정 */}
-                </Button>
-              </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                placeholder="pass인증을 진행해 주세요!"
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                InputProps={{readOnly: true}} // 사용자 입력을 방지
-              />
-            </>
+          <>
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              전화번호(PASS인증)
+              <Button
+                className="ml-2 p-0" // 이미지와 버튼 간의 간격 조절
+                style={{minWidth: "auto", padding: 0}} // 버튼의 최소 너비와 패딩 설정
+              >
+                <img src={passLogo} alt="Logo" className="w-9 h-9 " />{" "}
+                {/* 버튼 안에 이미지 추가 및 크기 설정 */}
+              </Button>
+            </Typography>
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="small"
+              placeholder="pass인증을 진행해 주세요!"
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+              InputProps={{readOnly: true}} // 사용자 입력을 방지
+            />
+          </>
 
           <Card className="w-full max-w-[24rem] shadow-none">
             <List className="flex-row">
@@ -254,7 +261,7 @@ export function SimpleRegistrationForm() {
                       name="horizontal-list"
                       id="horizontal-list-react"
                       value="0" // Set value for role 0
-                      checked={role === 0}
+                      checked={role === "0"}
                       onChange={handleRoleChange}
                       ripple={false}
                       className="hover:before:opacity-0"
@@ -279,7 +286,7 @@ export function SimpleRegistrationForm() {
                       name="horizontal-list"
                       id="horizontal-list-vue"
                       value="1" // Set value for role 1
-                      checked={role === 1}
+                      checked={role === "1"}
                       onChange={handleRoleChange}
                       ripple={false}
                       className="hover:before:opacity-0"
@@ -297,10 +304,9 @@ export function SimpleRegistrationForm() {
             </List>
           </Card>
 
-
-          {role === 1 && (
+          {role === "1" && (
             <>
-              <Typography variant="h7" color="blue-gray" className="-mb-3">
+              <Typography variant="h6" color="blue-gray" className="-mb-3">
                 부모님 번호를 입력해 주세요
               </Typography>
               <TextField
@@ -310,7 +316,7 @@ export function SimpleRegistrationForm() {
                 placeholder="010-0000-0000"
                 className="!border-t-blue-gray-200 focus:!border-t-gray-900"
               />
-              <Typography variant="h7" color="blue-gray" className="-mb-3">
+              <Typography variant="h6" color="blue-gray" className="-mb-3">
                 생일을 입력해 주세요
               </Typography>
               <TextField
@@ -329,9 +335,6 @@ export function SimpleRegistrationForm() {
         </Button>
         <Typography color="gray" className="mt-4 text-center font-normal">
           Already have an account?{" "}
-          <a href="#" className="font-medium text-gray-900">
-            Sign In
-          </a>
         </Typography>
       </form>
     </Card>
