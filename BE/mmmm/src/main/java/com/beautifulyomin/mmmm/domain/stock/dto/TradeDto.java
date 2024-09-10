@@ -5,7 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class TradeDto {
+public class TradeDto { // trade put 들어오면 사용하는 dto
 //    @NotNull
     private Integer tradeRecordId;        // (꼭 필요하지 않을 수도 있음) 거래 내역 id
 

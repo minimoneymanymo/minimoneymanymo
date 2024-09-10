@@ -1,4 +1,4 @@
 package com.beautifulyomin.mmmm.domain.stock.repository;
 
-public class TradeRepository {
+public interface TradeRepository {
 }
