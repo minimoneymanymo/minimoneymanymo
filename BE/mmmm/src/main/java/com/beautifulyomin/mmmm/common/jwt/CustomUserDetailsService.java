@@ -46,8 +46,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // role이 없는 경우 기본적으로 부모로 조회
-        System.out.println("씨발");
         throw new UnsupportedOperationException("Role is required to load user.");
     }
 
