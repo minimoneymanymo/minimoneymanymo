@@ -26,10 +26,10 @@ public class Stock {
     @Column(length = 100)
     private String industry;
 
-    @Column
-    private String mainProduct;
+    @Column(columnDefinition = "TEXT")
+    private String mainProducts;
 
-    @Column
+    @Column(columnDefinition = "DATE")
     private Date listingDate;
 
     @Column
