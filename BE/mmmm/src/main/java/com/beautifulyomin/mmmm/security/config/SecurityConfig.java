@@ -49,6 +49,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         //csrf, From, http basic 인증 로그인 방식 disable
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf((auth) -> auth.disable())
                 .formLogin((auth) -> auth.disable())
                 .httpBasic((auth) -> auth.disable());
@@ -56,7 +57,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/members/join", "/members/login").permitAll()
+                        .requestMatchers("/members/join", "/members/login" , "/members/checkid").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN") // admin role이 있을경우 모든요청허용한다
                         .anyRequest().authenticated());
 
@@ -71,6 +72,7 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
 
 
