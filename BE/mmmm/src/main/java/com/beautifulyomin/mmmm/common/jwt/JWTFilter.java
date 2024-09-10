@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,10 +15,12 @@ import java.io.IOException;
 
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
+    private CustomUserDetailsService customUserDetailsService;
 
-    public JWTFilter(JWTUtil jwtUtil) {
-
+    public JWTFilter(JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
         this.jwtUtil = jwtUtil;
+        this.customUserDetailsService = customUserDetailsService;
+
     }
 
 
@@ -43,19 +46,10 @@ public class JWTFilter extends OncePerRequestFilter {
         //토큰에서 username과 role 획득
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
-        CustomUserDetails customUserDetails = null;
 
-        if (role.equals("0")) {
-            Parent parent = new Parent();
-            parent.setName(username);
-            parent.setPassword("tmppassword");
-            customUserDetails = new CustomUserDetails(parent);
-        } else {
-            Children child = new Children();
-            child.setName(username);
-            child.setPassword("tmppassword");
-            customUserDetails = new CustomUserDetails(child);
-        }
+        CustomUserDetails customUserDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsernameAndRole(username, role);
+
+
 
         //스프링 시큐리티 인증 토큰 생성 (권한을 전달)
         Authentication authToken = new CustomAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities(), role);
