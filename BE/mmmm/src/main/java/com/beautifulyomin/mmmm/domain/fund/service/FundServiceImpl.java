@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.domain.fund.service;
 
 
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
+import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
 import com.beautifulyomin.mmmm.domain.fund.repository.FundRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +19,10 @@ public class FundServiceImpl implements FundService {
     @Override
     public List<MoneyChangeDto> findAllMoneyRecordsById(String childrenId) {
         return fundRepository.findAllMoneyRecordsById(childrenId);
+    }
+
+    @Override
+    public MoneyDto findMoneyById(String childrenId) {
+        return fundRepository.findMoneyById(childrenId);
     }
 }
