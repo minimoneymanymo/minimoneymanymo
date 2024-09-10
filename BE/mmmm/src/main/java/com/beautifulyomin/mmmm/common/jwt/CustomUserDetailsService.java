@@ -17,6 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final ParentRepository parentsRepository;
     private final ChildrenRepository childrenRepository;
 
+
     public CustomUserDetailsService(ParentRepository parentsRepository, ChildrenRepository childrenRepository) {
         this.parentsRepository = parentsRepository;
         this.childrenRepository = childrenRepository;
@@ -46,7 +47,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // role이 없는 경우 기본적으로 부모로 조회
-        return loadUserByUsernameAndRole(username, "0");
+        System.out.println("씨발");
+        throw new UnsupportedOperationException("Role is required to load user.");
     }
 
 }
