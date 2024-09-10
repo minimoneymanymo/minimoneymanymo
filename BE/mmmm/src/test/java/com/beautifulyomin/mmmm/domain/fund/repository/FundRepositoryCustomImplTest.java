@@ -8,6 +8,7 @@ import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataJpaTest
+@DataJpaTest //<< 자동 롤백이라 db에 반영은 안됨
 @Import(QueryDslConfig.class)
 class FundRepositoryCustomImplTest {
 
@@ -34,19 +35,20 @@ class FundRepositoryCustomImplTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    static Children children;
+    static Stock stock;
+
     @BeforeAll
-    static void setUp() {
+    static void setUp() {  //모든 메서드 실행 전 딱 한 번
         Dotenv dotenv = Dotenv.configure().load();
         dotenv.entries().forEach(entry ->
                 System.setProperty(entry.getKey(), entry.getValue())
         );
     }
 
-    @Test
-    @DisplayName("아이디로 머니 기록 조회 테스트")
-    void findAllMoneyRecordsById() {
-        //given
-        Children children = new Children(
+    @BeforeEach
+    void init() { //메서드 각각마다 한 번씩 실행됨 (공통으로 사용해야 하는 것들은 여기서 선언하면 좋음)
+        children = new Children(
                 "semin",
                 "김세민",
                 "semin_pwd",
@@ -54,9 +56,9 @@ class FundRepositoryCustomImplTest {
                 "200010050000"
         );
 
-        entityManager.persist(children);
+        entityManager.persist(children); //영속성 컨텍스트에 등록
 
-        Stock stock = new Stock(
+        stock = new Stock(
                 "1111111",                    // stockCode
                 "테스트종목",                  // companyName
                 "테스트 산업",                // industry
@@ -71,7 +73,12 @@ class FundRepositoryCustomImplTest {
                 "KRW"                         // currencyName
         );
         entityManager.persist(stock);
+    }
 
+    @Test
+    @DisplayName("아이디로 머니 기록 조회 성공 테스트")
+    void findAllMoneyRecordsByIdSuccessTest() {
+        //given
         TransactionRecord transaction = new TransactionRecord(
                 children,
                 LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")),
@@ -82,7 +89,7 @@ class FundRepositoryCustomImplTest {
         );
         entityManager.persist(transaction);
 
-        TradeRecord trade = new TradeRecord(
+        TradeRecord trade1 = new TradeRecord( //여러개 할 거면 객체 여러개 만들고 entityManager에 persist 각각 해주면 됨.
                 children,
                 stock,
                 3000,
@@ -93,7 +100,19 @@ class FundRepositoryCustomImplTest {
                 200,
                 BigDecimal.valueOf(10)
         );
-        entityManager.persist(trade);
+        TradeRecord trade2 = new TradeRecord(
+                children,
+                stock,
+                5000,
+                BigDecimal.ZERO,
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")),
+                "5",
+                "매도가 하고 싶었습니다.",
+                200,
+                BigDecimal.valueOf(10)
+        );
+        entityManager.persist(trade1);
+        entityManager.persist(trade2);
 
         entityManager.flush();
 
@@ -101,13 +120,28 @@ class FundRepositoryCustomImplTest {
         List<MoneyChangeDto> results = fundRepository.findAllMoneyRecordsById("semin");
 
         // then
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
         assertTrue(results.stream().anyMatch(dto -> dto.getTradeType().equals("1")));
         assertTrue(results.stream().anyMatch(dto -> dto.getTradeType().equals("4")));
+        assertTrue(results.stream().anyMatch(dto -> dto.getTradeType().equals("5")));
     }
 
     @Test
-    void findMoneyById() {
-        // Implement your test logic here if needed
+    @DisplayName("아이디로 머니 기록 조회 실패 테스트")
+        //가능하면 실패 테스트도 하면 좋긴 한데 시간 없으면 패스~~
+    void findAllMoneyRecordsByIdFailureTest() {
+
+    }
+
+    @Test
+    @DisplayName("보유 자금 조회 성공 테스트")
+    void findMoneyByIdSuccessTest() {
+
+    }
+
+    @Test
+    @DisplayName("보유 자금 조회 실패 테스트")
+    void findMoneyByIdFailureTest() {
+
     }
 }

@@ -23,4 +23,25 @@ public class MoneyChangeDto {
 
     // 입출금 내역
     private Integer remainAmount;
+
+    // 거래 내역에 사용되는 생성자
+    public MoneyChangeDto(Integer amount, String tradeType, String createdAt, String companyName, BigDecimal tradeSharesCount) {
+        this.amount = amount;
+        this.tradeType = tradeType;
+        this.createdAt = createdAt;
+        this.companyName = companyName;
+        this.tradeSharesCount = tradeSharesCount;
+        this.remainAmount = null;
+    }
+
+    // 입출금 내역에 사용되는 생성자
+    public MoneyChangeDto(Integer amount, String tradeType, String createdAt, Integer remainAmount) {
+        this.amount = amount;
+        this.tradeType = tradeType;
+        this.createdAt = createdAt;
+        this.remainAmount = remainAmount;
+        this.companyName = null;
+        this.tradeSharesCount = null;
+    }
+
 }

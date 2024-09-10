@@ -35,8 +35,8 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                         transaction.amount,
                         transaction.tradeType,
                         transaction.createdAt,
-                        null,
-                        null,
+//                        null,
+//                        null,
                         transaction.remainAmount
                 ))
                 .from(transaction)
@@ -49,8 +49,8 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                         trade.tradeType,
                         trade.createdAt,
                         stock.companyName,
-                        trade.tradeSharesCount,
-                        null
+                        trade.tradeSharesCount
+//                        ,null
                 ))
                 .from(trade)
                 .join(trade.stock, stock)
