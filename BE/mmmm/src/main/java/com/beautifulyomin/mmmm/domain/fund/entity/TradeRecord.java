@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TradeRecord {
+public class TradeRecord { // 매수매도 거래내역
 
     @ManyToOne(fetch = FetchType.LAZY) // 자식1 : 내역n
     @JoinColumn(name = "children_id", nullable = false)

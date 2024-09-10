@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmm.domain.fund.dto;
+package com.beautifulyomin.mmmm.domain.stock.dto;
 
 import lombok.Data;
 
@@ -19,5 +19,5 @@ public class TradeDto {
     private BigDecimal tradeSharesCount;   // 거래 주식 수
     private BigDecimal stockTradingGain;   // 손익 머니
 
-    private Integer reasonBonusMoney;      // 이유머니
+    private Integer reasonBonusMoney;      // 이유머니 - 매수/매도 모두 필요
 }

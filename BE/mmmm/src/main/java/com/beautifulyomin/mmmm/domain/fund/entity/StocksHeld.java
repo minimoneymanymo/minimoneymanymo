@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StocksHeld {
+public class StocksHeld { // 주식보유내역
 
     @ManyToOne(fetch = FetchType.LAZY) // 자식1 : 내역n
     @JoinColumn(name = "children_id", nullable = false)

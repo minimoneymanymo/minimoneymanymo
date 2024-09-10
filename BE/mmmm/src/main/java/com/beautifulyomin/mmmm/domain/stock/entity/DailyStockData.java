@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @Entity
+@Table(name = "daily_stock_data")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
