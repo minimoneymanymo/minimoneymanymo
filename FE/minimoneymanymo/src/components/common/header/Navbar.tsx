@@ -1,4 +1,5 @@
 import {Link, NavLink} from "react-router-dom"
+import {logOutUser} from "../../../utils/user-utils"
 
 const NavItemList = (): JSX.Element => {
   let itemId = 0
@@ -38,6 +39,7 @@ const NavItemList = (): JSX.Element => {
 const NavAction = (): JSX.Element => {
   const handleLogOut = () => {
     alert("로그아웃")
+    logOutUser()
   }
 
   return (
