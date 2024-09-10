@@ -11,22 +11,33 @@ import {
 import {Visibility, VisibilityOff} from "@mui/icons-material"
 import {IconButton, InputAdornment, TextField} from "@mui/material"
 import passLogo from "../../assets/signin/image.png"
+import {userLogin} from "@/api/user-api"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [hoverPassword, setHoverPassword] = useState(false)
   const [password, setPassword] = useState("")
   const [id, setId] = useState("") // 상태 추가
+  const [role, setRole] = useState<number>(0) // Initialize with null or default value
 
-  const endpoint = import.meta.env.VITE_API_ENDPOINT
-  const contextPath = import.meta.env.VITE_API_CONTEXT_PATH
-  const version = import.meta.env.VITE_API_VERSION
+  const goLogin = async (): Promise<void> => {
+    console.log("로그인 버튼 클릭")
+      const formData = new FormData()
+    formData.append("userid", id)
+    formData.append("password", password)
+    formData.append("role", role.toString()) // `role`을 문자열로 변환
 
-  const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setId(event.target.value)
+    try {
+      const response = await userLogin(formData)
+    } catch (error) {
+      console.error("Login failed:", error)
+    }
   }
 
-  const [role, setRole] = useState<number | null>(0) // Initialize with null or default value
+  const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("아이디", event.target.value)
+    setId(event.target.value)
+  }
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRole(Number(event.target.value)) // Update role based on selected radio button
@@ -44,65 +55,67 @@ export function LoginForm() {
 
   return (
     <Card
-        color="transparent"
-        shadow={false}
-        className="p-6 rounded-lg border border-gray-300"
+      color="transparent"
+      shadow={false}
+      className="p-6 rounded-lg border border-gray-300"
     >
-    <Card color="transparent" shadow={false}>
-      <Typography variant="h5" color="blue-gray">
-        환영해요 !
-      </Typography>
-      <Typography className="mt-1 font-bold text-3xl text-tertiary-600-m4">
-        minimoneymanymo
-      </Typography>
+      <Card color="transparent" shadow={false}>
+        <Typography variant="h5" color="blue-gray">
+          환영해요 !
+        </Typography>
+        <Typography className="mt-1 font-bold text-3xl text-tertiary-600-m4">
+          minimoneymanymo
+        </Typography>
 
-      <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
-        <div className="mb-1 flex flex-col gap-6">
-          <Typography variant="h6" color="blue-gray" className="-mb-3">
-            아이디
-          </Typography>
-          <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-              />
+        <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
+          <div className="mb-1 flex flex-col gap-6">
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              아이디
+            </Typography>
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="small"
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+              value={id}
+              onChange={handleIdChange}
+            />
 
-          <Typography variant="h6" color="blue-gray" className="-mb-3">
-            비밀번호
-          </Typography>
-          <TextField
-            type={hoverPassword ? "text" : showPassword ? "text" : "password"}
-            fullWidth
-            variant="outlined"
-            size="small"
-            value={password}
-            onChange={handlePasswordChange}
-            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseEnter={() => setHoverPassword(true)}
-                    onMouseLeave={() => setHoverPassword(false)}
-                    onMouseDown={handleMouseDownPassword}
-                    sx={{padding: 0}} // Remove extra padding
-                  >
-                    {showPassword || hoverPassword ? (
-                      <VisibilityOff />
-                    ) : (
-                      <Visibility />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </div>
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              비밀번호
+            </Typography>
+            <TextField
+              type={hoverPassword ? "text" : showPassword ? "text" : "password"}
+              fullWidth
+              variant="outlined"
+              size="small"
+              value={password}
+              onChange={handlePasswordChange}
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseEnter={() => setHoverPassword(true)}
+                      onMouseLeave={() => setHoverPassword(false)}
+                      onMouseDown={handleMouseDownPassword}
+                      sx={{padding: 0}} // Remove extra padding
+                    >
+                      {showPassword || hoverPassword ? (
+                        <VisibilityOff />
+                      ) : (
+                        <Visibility />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </div>
 
-        <Card className="w-full max-w-[24rem] shadow-none">
+          <Card className="w-full max-w-[24rem] shadow-none">
             <List className="flex-row">
               <ListItem className="p-0">
                 <label
@@ -156,17 +169,21 @@ export function LoginForm() {
               </ListItem>
             </List>
           </Card>
-        <Button className="mt-6 bg-tertiary-600-m4" fullWidth>
-          로그인
-        </Button>
-        <Typography color="gray" className="mt-4 text-center font-normal ">
-          계정이 없으신가요?{" "}
-          <a href="#" className="font-medium text-gray-900">
-            회원가입
-          </a>
-        </Typography>
-      </form>
-    </Card>
+          <Button
+            className="mt-6 bg-tertiary-600-m4"
+            fullWidth
+            onClick={goLogin}
+          >
+            로그인
+          </Button>
+          <Typography color="gray" className="mt-4 text-center font-normal ">
+            계정이 없으신가요?{" "}
+            <a href="#" className="font-medium text-gray-900">
+              회원가입
+            </a>
+          </Typography>
+        </form>
+      </Card>
     </Card>
   )
 }
