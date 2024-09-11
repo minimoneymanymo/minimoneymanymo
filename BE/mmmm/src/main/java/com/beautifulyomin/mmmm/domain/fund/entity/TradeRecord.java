@@ -51,10 +51,12 @@ public class TradeRecord {
     @Column(nullable = false, precision = 10, scale = 6)
     private BigDecimal tradeSharesCount;
 
-    public TradeRecord(Children children, Stock stock, Integer amount, BigDecimal stockTradingGain, String createdAt, String tradeType, String reason, Integer reasonBonusMoney, BigDecimal tradeSharesCount) {
+    @Column(nullable = false)
+    private Integer remainAmount;
+
+    public TradeRecord(Children children, Stock stock, Integer amount, BigDecimal stockTradingGain, String createdAt, String tradeType, String reason, Integer reasonBonusMoney, BigDecimal tradeSharesCount, Integer remainAmount) {
         this.children = children;
         this.stock = stock;
-//        this.tradeRecordId = tradeRecordId;
         this.amount = amount;
         this.stockTradingGain = stockTradingGain;
         this.createdAt = createdAt;
@@ -62,6 +64,7 @@ public class TradeRecord {
         this.reason = reason;
         this.reasonBonusMoney = reasonBonusMoney;
         this.tradeSharesCount = tradeSharesCount;
+        this.remainAmount = remainAmount;
     }
 
     @PrePersist

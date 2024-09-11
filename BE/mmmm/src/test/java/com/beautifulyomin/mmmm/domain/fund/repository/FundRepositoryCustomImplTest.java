@@ -98,7 +98,8 @@ class FundRepositoryCustomImplTest {
                 "4",
                 "매수가 하고 싶었습니다.",
                 200,
-                BigDecimal.valueOf(10)
+                BigDecimal.valueOf(10),
+                7000
         );
         TradeRecord trade2 = new TradeRecord(
                 children,
@@ -109,7 +110,8 @@ class FundRepositoryCustomImplTest {
                 "5",
                 "매도가 하고 싶었습니다.",
                 200,
-                BigDecimal.valueOf(10)
+                BigDecimal.valueOf(10),
+                12000
         );
         entityManager.persist(trade1);
         entityManager.persist(trade2);
