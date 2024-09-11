@@ -1,13 +1,15 @@
 package com.beautifulyomin.mmmm.domain.stock.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
 public class TradeDto { // trade put 들어오면 사용하는 dto
 //    @NotNull
-    private Integer childrenId;           // 자녀 id -> 토큰에서 뽑음
+//    private Integer childrenId;           // 자녀 id -> 토큰에서 뽑음 -> 컨트롤러에서 처리
 
     private BigDecimal stockCode;         // 종목코드
     private Integer amount;                // 거래 금액 -> 칸에 입력하는 금액

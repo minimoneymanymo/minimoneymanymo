@@ -4,5 +4,5 @@ import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
 
 public interface TradeService {
-    TradeRecord buyAndSell(TradeDto tradeDto);
+    void createTrade(TradeDto tradeDto);
 }
