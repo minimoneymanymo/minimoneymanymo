@@ -51,10 +51,10 @@ public class TradeRecord { // 매수매도 거래내역
     @Column(nullable = false, precision = 10, scale = 6)
     private BigDecimal tradeSharesCount;
 
-    public TradeRecord(Children children, Stock stock, Integer tradeRecordId, Integer amount, BigDecimal stockTradingGain, String createdAt, String tradeType, String reason, Integer reasonBonusMoney, BigDecimal tradeSharesCount) {
+    public TradeRecord(Children children, Stock stock, Integer amount, BigDecimal stockTradingGain, String createdAt, String tradeType, String reason, Integer reasonBonusMoney, BigDecimal tradeSharesCount) {
         this.children = children;
         this.stock = stock;
-        this.tradeRecordId = tradeRecordId;
+//        this.tradeRecordId = tradeRecordId;
         this.amount = amount;
         this.stockTradingGain = stockTradingGain;
         this.createdAt = createdAt;

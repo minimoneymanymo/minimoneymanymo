@@ -1,11 +1,10 @@
 package com.beautifulyomin.mmmm.security.config;
 
-import com.beautifulyomin.mmmm.common.jwt.JWTFilter;
-import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
-import com.beautifulyomin.mmmm.common.jwt.LoginFilter;
+import com.beautifulyomin.mmmm.common.jwt.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -21,23 +20,19 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
-    //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
-    private final AuthenticationConfiguration authenticationConfiguration;
+
     private final JWTUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
-
-        this.authenticationConfiguration = authenticationConfiguration;
+    public SecurityConfig(JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
         this.jwtUtil = jwtUtil;
-    }
-
-    //AuthenticationManager Bean 등록
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
@@ -46,35 +41,29 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CustomAuthenticationManager customAuthenticationManager(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        return new CustomAuthenticationManager(customUserDetailsService, bCryptPasswordEncoder);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        //csrf, From, http basic 인증 로그인 방식 disable
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf((auth) -> auth.disable())
-                .formLogin((auth) -> auth.disable())
-                .httpBasic((auth) -> auth.disable());
+                .csrf(csrf -> csrf.disable())
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable());
 
-        //경로별 인가 작업
         http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/members/join", "/members/login" , "/members/checkid").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN") // admin role이 있을경우 모든요청허용한다
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/members/join", "/members/login", "/members/checkid").permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
-        //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        //JWTFilter로 토큰이 유효한지 검사
-        http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-
-        //세션 설정
-        http
-                .sessionManagement((session) -> session
+                .addFilterAt(new LoginFilter(customAuthenticationManager(bCryptPasswordEncoder()), jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService), LoginFilter.class)
+                .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-
-
 
         return http.build();
     }

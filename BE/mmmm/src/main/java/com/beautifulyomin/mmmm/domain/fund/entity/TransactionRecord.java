@@ -27,7 +27,7 @@ public class TransactionRecord { // 입출금내역
     @Column(nullable = false, length = 14)
     private String createdAt;
 
-    @Column(nullable = false, length = 14)
+    @Column(length = 14)
     private String approvedAt;
 
     @Column(nullable = false)

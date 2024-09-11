@@ -20,7 +20,9 @@ public class JWTUtil {
     }
 
     public String getUsername(String token) {
-
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
