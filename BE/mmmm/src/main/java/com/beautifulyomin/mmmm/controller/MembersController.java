@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.controller;
 
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
+import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import jakarta.validation.constraints.NotNull;
 
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
@@ -22,11 +23,13 @@ import java.util.Optional;
 public class MembersController {
     private final ParentService parentService;
     private final ChildrenService childrenService;
+    private final JWTUtil jwtUtil;
 
     @Autowired
-    public MembersController(ParentService parentService, ChildrenService childrenService) {
+    public MembersController(ParentService parentService, ChildrenService childrenService, JWTUtil jwtUtil) {
         this.parentService = parentService;
         this.childrenService = childrenService;
+        this.jwtUtil = jwtUtil;
     }
     @GetMapping("/checkid")
     public ResponseEntity<CommonResponseDto> checkId(@RequestParam("id") String id, @RequestParam("role") String role) {
@@ -54,6 +57,18 @@ public class MembersController {
         }
     }
 
+    @DeleteMapping()
+    public ResponseEntity<CommonResponseDto> delete(@RequestHeader("Authorization") String token) {
+
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("삭제 성공")
+                        .data("")
+                        .build());
+    }
+
 
     @PostMapping("/join")
     public ResponseEntity<CommonResponseDto> registerUser(@RequestBody @NotNull JoinRequestDto joinDto) {
@@ -77,7 +92,6 @@ public class MembersController {
 
     @GetMapping("/authorization")
     public ResponseEntity<CommonResponseDto> getAuthorization() {
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
