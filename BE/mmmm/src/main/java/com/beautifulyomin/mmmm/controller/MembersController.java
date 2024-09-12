@@ -25,7 +25,6 @@ public class MembersController {
     private final ChildrenService childrenService;
     private final JWTUtil jwtUtil;
 
-    @Autowired
     public MembersController(ParentService parentService, ChildrenService childrenService, JWTUtil jwtUtil) {
         this.parentService = parentService;
         this.childrenService = childrenService;
