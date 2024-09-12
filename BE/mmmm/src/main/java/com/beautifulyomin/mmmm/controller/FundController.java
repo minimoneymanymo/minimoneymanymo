@@ -29,6 +29,9 @@ public class FundController {
 
     @GetMapping("/money_list")
     public ResponseEntity<CommonResponseDto> findAllMoneyRecordsById(@RequestHeader("Authorization") String token) {
+
+        System.out.println(token);
+
         String userId = jwtUtil.getUsername(token);
         List<MoneyChangeDto> moneyList = fundService.findAllMoneyRecordsById(userId);
         return ResponseEntity.status(HttpStatus.OK)
