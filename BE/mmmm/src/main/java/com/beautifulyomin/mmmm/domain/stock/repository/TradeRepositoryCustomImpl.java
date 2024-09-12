@@ -24,7 +24,8 @@ public class TradeRepositoryCustomImpl implements TradeRepositoryCustom{
                         tradeRecord.amount,
                         tradeRecord.tradeSharesCount,
                         tradeRecord.reason,
-                        tradeRecord.tradeType
+                        tradeRecord.tradeType,
+                        tradeRecord.remainAmount
                         ))
                 .from(tradeRecord)
                 .join(tradeRecord.stock, stock)
