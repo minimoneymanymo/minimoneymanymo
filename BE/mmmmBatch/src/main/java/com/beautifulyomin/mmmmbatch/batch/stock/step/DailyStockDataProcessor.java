@@ -31,6 +31,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
     @Value("${kis_api_token}")
     private String PROD_TOKEN;
 
+    private static final LocalDate TODEY = LocalDate.now();
 
     public DailyStockDataProcessor(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -77,7 +78,8 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
                 .build();
 
         return DailyStockData.builder()
-                .id(id)
+                .stockCode(stockCode)
+                .date(TODEY)
                 .marketCapitalization(output.getBigInteger("hts_avls"))
                 .priceChangeSign(output.getString("prdy_vrss_sign"))
                 .priceChange(output.getBigDecimal("prdy_vrss"))
