@@ -33,7 +33,7 @@ public class FundServiceImpl implements FundService {
     }
 
     @Override
-    public TransactionRecord requestWithdraw(String childrenId, Integer amount) {
+    public void requestWithdraw(String childrenId, Integer amount) {
         Children child = childrenRepository.findByUserId(childrenId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
         TransactionRecord request = new TransactionRecord();
@@ -41,7 +41,5 @@ public class FundServiceImpl implements FundService {
         request.setAmount(amount);
         request.setTradeType("1");
         request.setRemainAmount(child.getMoney());
-        System.out.println(request);
-        return transactionRepository.save(request);
     }
 }

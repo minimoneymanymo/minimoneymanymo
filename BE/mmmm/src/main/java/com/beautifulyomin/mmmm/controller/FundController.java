@@ -5,7 +5,6 @@ import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawDto;
-import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.fund.service.FundService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ public class FundController {
         this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping("/money_list")
+    @GetMapping("/money-list")
     public ResponseEntity<CommonResponseDto> findAllMoneyRecordsById(@RequestHeader("Authorization") String token) {
         String userId = jwtUtil.getUsername(token);
         List<MoneyChangeDto> moneyList = fundService.findAllMoneyRecordsById(userId);
@@ -50,7 +49,7 @@ public class FundController {
                         .build());
     }
 
-    @PostMapping("/request_withdraw")
+    @PostMapping("/request-withdraw")
     public ResponseEntity<CommonResponseDto> requestWithdraw(@RequestHeader("Authorization") String token, @RequestBody WithdrawDto amount) {
         String userId = jwtUtil.getUsername(token);
         fundService.requestWithdraw(userId, amount.getWithdrawableMoney());
