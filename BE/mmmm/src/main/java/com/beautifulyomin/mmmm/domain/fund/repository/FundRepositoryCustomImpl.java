@@ -11,10 +11,12 @@ import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Repository
 public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
