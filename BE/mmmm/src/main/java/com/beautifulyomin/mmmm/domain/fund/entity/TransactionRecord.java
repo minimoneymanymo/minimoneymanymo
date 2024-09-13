@@ -28,7 +28,7 @@ public class TransactionRecord {
     private String createdAt;
 
     @Column(length = 14)
-    private String approvedAt;
+    private String approvedAt = null;
 
     @Column(nullable = false)
     private Integer amount;
@@ -39,10 +39,9 @@ public class TransactionRecord {
     @Column(nullable = false)
     private Integer remainAmount;
 
-    public TransactionRecord(Children children, String createdAt, String approvedAt, Integer amount, String tradeType, Integer remainAmount) {
+    public TransactionRecord(Children children, String createdAt, Integer amount, String tradeType, Integer remainAmount) {
         this.children = children;
         this.createdAt = createdAt;
-        this.approvedAt = approvedAt;
         this.amount = amount;
         this.tradeType = tradeType;
         this.remainAmount = remainAmount;

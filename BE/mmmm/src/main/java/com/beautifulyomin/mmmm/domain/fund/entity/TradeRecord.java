@@ -34,7 +34,7 @@ public class TradeRecord {
     private Integer amount;
 
     @Column(precision = 10, scale = 6)
-    private BigDecimal stockTradingGain;
+    private BigDecimal stockTradingGain = null;
 
     @Column(nullable = false, length = 14)
     private String createdAt;
@@ -46,7 +46,7 @@ public class TradeRecord {
     private String reason;
 
     @Column
-    private Integer reasonBonusMoney;
+    private Integer reasonBonusMoney = null;
 
     @Column(nullable = false, precision = 10, scale = 6)
     private BigDecimal tradeSharesCount;

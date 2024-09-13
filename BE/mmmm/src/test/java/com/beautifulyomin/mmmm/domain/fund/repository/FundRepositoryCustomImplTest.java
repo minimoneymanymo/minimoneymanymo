@@ -82,7 +82,6 @@ class FundRepositoryCustomImplTest {
         TransactionRecord transaction = new TransactionRecord(
                 children,
                 LocalDateTime.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")),
-                null,
                 5000,
                 "1",
                 15000
