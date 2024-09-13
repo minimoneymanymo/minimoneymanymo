@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Service
-public class ChildrenServiceImpl implements ChildrenService{
+public class ChildrenServiceImpl implements ChildrenService {
 
     private final ChildrenRepository childrenRepository;
     private final ParentRepository parentRepository;
