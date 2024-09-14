@@ -1,7 +1,7 @@
-package com.beautifulyomin.mmmmbatch.batch.stock.step;
+package com.beautifulyomin.mmmmbatch.batch.step.dailyStock;
 
-import com.beautifulyomin.mmmmbatch.batch.stock.entity.DailyStockData;
-import com.beautifulyomin.mmmmbatch.batch.stock.entity.key.DailyStockDataId;
+import com.beautifulyomin.mmmmbatch.batch.entity.DailyStockData;
+import com.beautifulyomin.mmmmbatch.batch.step.TokenStore;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.batch.item.ItemProcessor;
@@ -18,6 +18,7 @@ import java.time.LocalDate;
 public class DailyStockDataProcessor implements ItemProcessor<String, DailyStockData> {
 
     private final RestTemplate restTemplate;
+    private final TokenStore tokenStore;
 
     @Value("${kis_current_price_api}")
     private String CURRENT_PRICE_API_URL;
@@ -28,13 +29,11 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
     @Value("${kis_api_secret}")
     private String PROD_APPSECRET;
 
-    @Value("${kis_api_token}")
-    private String PROD_TOKEN;
-
     private static final LocalDate TODEY = LocalDate.now();
 
-    public DailyStockDataProcessor(RestTemplate restTemplate) {
+    public DailyStockDataProcessor(RestTemplate restTemplate, TokenStore tokenStore) {
         this.restTemplate = restTemplate;
+        this.tokenStore = tokenStore;
     }
 
     @Override
@@ -51,7 +50,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
         // API 호출을 위한 헤더 설정
         var headers = new org.springframework.http.HttpHeaders();
         headers.set("content-type", "application/json");
-        headers.set("authorization", "Bearer " + PROD_TOKEN);
+        headers.set("authorization", "Bearer " + tokenStore.getToken());
         headers.set("appkey", PROD_APPKEY);
         headers.set("appsecret", PROD_APPSECRET);
         headers.set("tr_id", "FHKST01010100");
@@ -66,16 +65,8 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
         JSONObject jsonResponse = new JSONObject(response.getBody());
         JSONObject output = jsonResponse.getJSONObject("output");
 
-        // API 응답을 DailyStockData 엔티티로 변환
-        DailyStockData stockData = new DailyStockData();
-
         //초당 호출 제한 방지
         Thread.sleep(1000);
-
-        DailyStockDataId id = DailyStockDataId.builder()
-                .stockCode(stockCode)
-                .date(LocalDate.now())
-                .build();
 
         return DailyStockData.builder()
                 .stockCode(stockCode)

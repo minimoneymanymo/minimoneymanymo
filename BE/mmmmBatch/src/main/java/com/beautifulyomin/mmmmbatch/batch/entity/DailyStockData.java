@@ -1,6 +1,6 @@
-package com.beautifulyomin.mmmmbatch.batch.stock.entity;
+package com.beautifulyomin.mmmmbatch.batch.entity;
 
-import com.beautifulyomin.mmmmbatch.batch.stock.entity.key.DailyStockDataId;
+import com.beautifulyomin.mmmmbatch.batch.entity.key.DailyStockDataId;
 import jakarta.persistence.*;
 import lombok.*;
 
