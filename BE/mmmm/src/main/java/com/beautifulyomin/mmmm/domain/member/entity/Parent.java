@@ -45,22 +45,14 @@ public class Parent {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
-    @Column(nullable = false, length = 512)
-    private String signedData;
-
-    @Column(nullable = false, length = 88)
-    private String ci;
-
     @Column(length = 255)
     private String profileImgUrl;
 
-    public Parent(String userId, String name, String password, String phoneNumber, String signedData, String ci) {
+    public Parent(String userId, String name, String password, String phoneNumber) {
         this.userId = userId;
         this.phoneNumber = phoneNumber;
         this.name = name;
         this.password = password;
-        this.signedData = signedData;
-        this.ci = ci;
     }
 
     @PrePersist

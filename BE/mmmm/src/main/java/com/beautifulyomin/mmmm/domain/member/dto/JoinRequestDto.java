@@ -15,9 +15,6 @@ public class JoinRequestDto {
     private String phoneNumber ;
     private String name ;
     private String role ;
-    //이거는 부모만있음
-    private String signedData ;
-    private String ci;
     // 이거 아래는 자식만 있음
     // "birthDay" : "birthDay",
     // "parentsNumber" : "parents_number"
