@@ -4,6 +4,7 @@ import com.beautifulyomin.mmmm.common.dto.ImageDto;
 import com.beautifulyomin.mmmm.common.service.FileService;
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
@@ -75,6 +76,11 @@ public class ParentServiceImpl implements ParentService {
             childList.add(parentRepositoryCustom.findAllMyChildrenByChildId(myChildrenId));
         }
         return childList;
+    }
+
+    @Override
+    public List<MyChildrenWaitingDto> getMyChildWaiting(String userId) {
+        return parentRepositoryCustom.findNotApprovedMyChildrenByParentUserId(userId);
     }
 
 }

@@ -4,6 +4,7 @@ import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import jakarta.validation.constraints.NotNull;
 
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
@@ -124,6 +125,28 @@ public class MembersController {
                         .build());
     }
 
+    /**
+     * 부모- 참여대기 인원확인
+     */
+    @GetMapping("/mychildren/waiting")
+    public ResponseEntity<CommonResponseDto> getMyChildWaiting(@RequestHeader("Authorization") String token){
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(401)
+                            .message("부모가 아닙니다.")
+                            .build());
+        }
+        List<MyChildrenWaitingDto> myChildrenWaitingList = parentService.getMyChildWaiting(userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("나의 승인대기 자식 목록 조회")
+                        .data(myChildrenWaitingList)
+                        .build());
+    }
 
 
     @PostMapping("/image")

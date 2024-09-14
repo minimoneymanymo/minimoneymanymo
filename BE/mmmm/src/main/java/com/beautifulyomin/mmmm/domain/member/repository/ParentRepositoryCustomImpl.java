@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.domain.member.repository;
 
 import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
 import com.beautifulyomin.mmmm.domain.member.entity.QParentAndChildren;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
@@ -62,4 +63,21 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .where(children.childrenId.eq(childrenId))
                 .fetchOne();
     }
+
+    @Override
+    public List<MyChildrenWaitingDto> findNotApprovedMyChildrenByParentUserId(String parentUserId) {
+        QParentAndChildren parentAndChildren = QParentAndChildren.parentAndChildren;
+
+        return jpaQueryFactory
+                .select(Projections.constructor(MyChildrenWaitingDto.class,
+                        parentAndChildren.child.childrenId,
+                        parentAndChildren.child.userId,
+                        parentAndChildren.child.name,
+                        parentAndChildren.child.createdAt))
+                .from(parentAndChildren)
+                .where(parentAndChildren.parent.userId.eq(parentUserId),
+                        parentAndChildren.isApproved.isFalse())
+                .fetch();
+    }
+
 }
