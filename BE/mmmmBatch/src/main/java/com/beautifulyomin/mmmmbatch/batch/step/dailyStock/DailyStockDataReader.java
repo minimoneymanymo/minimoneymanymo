@@ -23,7 +23,9 @@ public class DailyStockDataReader implements ItemReader<String> {
     public String read() {
 //        log.info("⭐⭐⭐⭐⭐⭐⭐read 진입");
         if (stockCodes == null) {
-            stockCodes = jdbcTemplate.queryForList("select stock_code from stocks order by stock_code", String.class);
+            stockCodes = jdbcTemplate.queryForList("select stock_code " +
+                    "from stocks " +
+                    "order by stock_code", String.class);
         }
         if (nextIndex < stockCodes.size()) {
             return stockCodes.get(nextIndex++);

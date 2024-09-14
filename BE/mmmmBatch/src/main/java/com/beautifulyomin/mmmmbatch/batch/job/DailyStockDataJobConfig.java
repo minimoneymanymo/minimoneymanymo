@@ -58,6 +58,9 @@ public class DailyStockDataJobConfig {
                 .reader(dailyStockDataReader)
                 .processor(dailyStockDataProcessor)
                 .writer(dailyStockDataWriter)
+                .faultTolerant() // Fault-tolerant 설정 활성화 (예외 허용)
+                .skip(Exception.class) // Exception 발생 시 스킵 처리
+                .skipLimit(10) // 최대 10번의 예외까지 스킵 허용
                 .build();
     }
 }

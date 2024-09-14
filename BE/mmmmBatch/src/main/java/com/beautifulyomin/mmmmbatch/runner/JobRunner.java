@@ -20,7 +20,7 @@ public class JobRunner {
         this.mainJob = mainJob;
     }
 
-    @Scheduled(cron = "0 45 16 * * ?")
+    @Scheduled(cron = "0 40 21 * * ?")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
