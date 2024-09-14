@@ -3,24 +3,30 @@ package com.beautifulyomin.mmmm.domain.member.service;
 import com.beautifulyomin.mmmm.common.dto.ImageDto;
 import com.beautifulyomin.mmmm.common.service.FileService;
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
+import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
+import org.springframework.core.SpringVersion;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ParentServiceImpl implements ParentService {
 
     private final ParentRepository parentRepository;
+    private final ParentRepositoryCustom parentRepositoryCustom;
     private final FileService fileService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    public ParentServiceImpl(ParentRepository parentRepository, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public ParentServiceImpl(ParentRepository parentRepository, ParentRepositoryCustom parentRepositoryCustom, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.parentRepository = parentRepository;
+        this.parentRepositoryCustom = parentRepositoryCustom;
         this.fileService = fileService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -61,6 +67,14 @@ public class ParentServiceImpl implements ParentService {
         else return false;
     }
 
-
+    @Override
+    public List<MyChildrenDto> getMyChildren(String userId) {
+        List<Integer> childrenIdList = parentRepositoryCustom.findAllMyChildrenIdByParentUserId(userId);
+        List<MyChildrenDto> childList = new ArrayList<>();
+        for(Integer myChildrenId : childrenIdList){
+            childList.add(parentRepositoryCustom.findAllMyChildrenByChildUserId(myChildrenId));
+        }
+        return childList;
+    }
 
 }

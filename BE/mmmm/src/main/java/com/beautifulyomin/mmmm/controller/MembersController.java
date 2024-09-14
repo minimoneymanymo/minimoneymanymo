@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmm.controller;
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import jakarta.validation.constraints.NotNull;
 
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -93,6 +95,32 @@ public class MembersController {
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
                         .message("토큰검증완료!")
+                        .build());
+    }
+
+    /**
+     * 부모 - 자식목록
+     * 나의 자식 목록 조회
+     */
+    @GetMapping("/mychildren")
+    public ResponseEntity<CommonResponseDto> getMyChildren(@RequestHeader("Authorization") String token) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(401)
+                            .message("부모가 아닙니다.")
+                            .build());
+        }
+
+        List<MyChildrenDto> myChildrenDtoList= parentService.getMyChildren(userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("나의 자식 목록 조회")
+                        .data(myChildrenDtoList)
                         .build());
     }
 
