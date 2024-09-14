@@ -12,19 +12,19 @@ import org.springframework.stereotype.Component;
 public class JobRunner {
 
     private final JobLauncher jobLauncher;
-    private final Job importDailyStockDataJob;
+    private final Job mainJob;
 
     @Autowired
-    public JobRunner(JobLauncher jobLauncher, Job importDailyStockDataJob) {
+    public JobRunner(JobLauncher jobLauncher, Job mainJob) {
         this.jobLauncher = jobLauncher;
-        this.importDailyStockDataJob = importDailyStockDataJob;
+        this.mainJob = mainJob;
     }
 
-    @Scheduled(cron = "0 30 16 * * ?")
+    @Scheduled(cron = "0 12 15 * * ?")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();
-        jobLauncher.run(importDailyStockDataJob, params);
+        jobLauncher.run(mainJob, params);
     }
 }
