@@ -1,6 +1,7 @@
 package com.beautifulyomin.mmmmbatch.batch.step.dailyStock;
 
 import com.beautifulyomin.mmmmbatch.batch.entity.DailyStockData;
+import com.beautifulyomin.mmmmbatch.batch.entity.Stock52weekData;
 import com.beautifulyomin.mmmmbatch.batch.step.TokenStore;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -12,10 +13,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @Slf4j
 @Component
-public class DailyStockDataProcessor implements ItemProcessor<String, DailyStockData> {
+public class DailyStockDataProcessor implements ItemProcessor<String, Map<String, Object>> {
 
     private final RestTemplate restTemplate;
     private final TokenStore tokenStore;
@@ -37,7 +40,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
     }
 
     @Override
-    public DailyStockData process(String stockCode) throws Exception {
+    public Map<String, Object> process(String stockCode) throws Exception {
 //        log.info("⭐⭐⭐⭐⭐⭐⭐process 진입");
         // API URL 구성
         URI uri = UriComponentsBuilder.fromUriString(CURRENT_PRICE_API_URL)
@@ -68,7 +71,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
         //초당 호출 제한 방지
         Thread.sleep(1000);
 
-        return DailyStockData.builder()
+        DailyStockData dailyStockData = DailyStockData.builder()
                 .stockCode(stockCode)
                 .date(TODEY)
                 .marketCapitalization(output.getBigInteger("hts_avls"))
@@ -86,5 +89,18 @@ public class DailyStockDataProcessor implements ItemProcessor<String, DailyStock
                 .volumeTurnoverRatio(output.getBigDecimal("vol_tnrt"))
                 .outstandingShares(output.getBigInteger("lstn_stcn"))
                 .build();
+
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        Stock52weekData stock52weekData = Stock52weekData.builder()
+                .stockCode(stockCode)
+                .date(TODEY)
+                .high52Week(output.getLong("w52_hgpr"))
+                .high52WeekDate(LocalDate.parse(output.getString("w52_hgpr_date"),formatter))
+                .low52Week(output.getLong("w52_lwpr"))
+                .low52WeekDate(LocalDate.parse(output.getString("w52_lwpr_date"), formatter))
+                .build();
+
+        return Map.of("dailyStockData", dailyStockData, "stock52weekData", stock52weekData);
     }
 }

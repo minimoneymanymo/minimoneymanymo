@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.Map;
+
 @Slf4j
 @Configuration
 public class DailyStockDataJobConfig {
@@ -52,7 +54,7 @@ public class DailyStockDataJobConfig {
     @Bean
     public Step dailyStockDataStep() {
         return new StepBuilder("dailyStockDataStep", jobRepository)
-                .<String, DailyStockData>chunk(10, transactionManager) //청크 단위로 트랜젝션
+                .<String, Map<String, Object>>chunk(10, transactionManager) //청크 단위로 트랜젝션
                 .reader(dailyStockDataReader)
                 .processor(dailyStockDataProcessor)
                 .writer(dailyStockDataWriter)
