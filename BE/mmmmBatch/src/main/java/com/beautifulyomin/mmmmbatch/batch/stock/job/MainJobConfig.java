@@ -14,14 +14,14 @@ import org.springframework.context.annotation.Configuration;
 public class MainJobConfig { //각각의 job을 연결하는 jog flow
     private final JobRepository jobRepository;
     private final Job tokenRenewalJob;
-    private final Job dailyStockDataJob;
+    private final Job dailyStockJob;
     private final JobLauncher jobLauncher;
 
     public MainJobConfig(JobRepository jobRepository,
-                         Job tokenRenewalJob, Job dailyStockDataJob, JobLauncher jobLauncher) {
+                         Job tokenRenewalJob, Job dailyStockJob, JobLauncher jobLauncher) {
         this.jobRepository = jobRepository;
         this.tokenRenewalJob = tokenRenewalJob;
-        this.dailyStockDataJob = dailyStockDataJob;
+        this.dailyStockJob = dailyStockJob;
         this.jobLauncher = jobLauncher;
     }
 
@@ -44,8 +44,8 @@ public class MainJobConfig { //각각의 job을 연결하는 jog flow
 
     @Bean
     public Step dailyStockDataJobStep() {
-        return new JobStepBuilder(new StepBuilder("dailyStockDataJobStep", jobRepository))
-                .job(dailyStockDataJob)
+        return new JobStepBuilder(new StepBuilder("dailyStockJobStep", jobRepository))
+                .job(dailyStockJob)
                 .launcher(jobLauncher)
                 .build();
     }

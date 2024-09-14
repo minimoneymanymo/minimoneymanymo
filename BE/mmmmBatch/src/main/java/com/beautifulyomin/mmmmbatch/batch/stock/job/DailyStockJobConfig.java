@@ -42,17 +42,17 @@ public class DailyStockJobConfig {
 
     //jobRepository 를 통해 job의 실행 상태와 메타데이터가 관리된다.
     @Bean
-    public Job dailyStockDataJob() {
-        log.info("🔥🔥🔥🔥🔥dailyStockDataJob");
-        return new JobBuilder("dailyStockDataJob", jobRepository)
+    public Job dailyStockJob() {
+        log.info("🔥🔥🔥🔥🔥dailyStockJob");
+        return new JobBuilder("dailyStockJob", jobRepository)
                 .listener(jobDurationListener)
-                .start(dailyStockDataStep())
+                .start(dailyStockStep())
                 .build();
     }
 
     @Bean
-    public Step dailyStockDataStep() {
-        return new StepBuilder("dailyStockDataStep", jobRepository)
+    public Step dailyStockStep() {
+        return new StepBuilder("dailyStockStep", jobRepository)
                 .<String, Map<String, Object>>chunk(10, transactionManager) //청크 단위로 트랜젝션
                 .reader(dailyStockReader)
                 .processor(dailyStockProcessor)
