@@ -1,9 +1,9 @@
-package com.beautifulyomin.mmmmbatch.batch.step.dailyStock;
+package com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock;
 
-import com.beautifulyomin.mmmmbatch.batch.entity.DailyStockChart;
-import com.beautifulyomin.mmmmbatch.batch.entity.DailyStockData;
-import com.beautifulyomin.mmmmbatch.batch.entity.Stock52weekData;
-import com.beautifulyomin.mmmmbatch.batch.step.TokenStore;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.DailyStockChart;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.DailyStockData;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.Stock52weekData;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.TokenStore;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class DailyStockDataProcessor implements ItemProcessor<String, Map<String, Object>> {
+public class DailyStockProcessor implements ItemProcessor<String, Map<String, Object>> {
 
     private final RestTemplate restTemplate;
     private final TokenStore tokenStore;
@@ -35,10 +35,10 @@ public class DailyStockDataProcessor implements ItemProcessor<String, Map<String
     @Value("${kis_api_secret}")
     private String PROD_APPSECRET;
 
-    private static final LocalDate YESTERDAY = LocalDate.now().minusDays(1);
-//    private static final LocalDate TODEY = LocalDate.now();
+//    private static final LocalDate YESTERDAY = LocalDate.now().minusDays(1);
+    private static final LocalDate TODEY = LocalDate.now();
 
-    public DailyStockDataProcessor(RestTemplate restTemplate, TokenStore tokenStore) {
+    public DailyStockProcessor(RestTemplate restTemplate, TokenStore tokenStore) {
         this.restTemplate = restTemplate;
         this.tokenStore = tokenStore;
     }
@@ -53,7 +53,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, Map<String
         JSONObject jsonResponse = new JSONObject(response.getBody());
         JSONObject output = jsonResponse.getJSONObject("output");
 
-        Thread.sleep(1000);
+        Thread.sleep(500);
 
         DailyStockData dailyStockData = getDailyStockData(stockCode, output);
         Stock52weekData stock52weekData = getStock52weekData(stockCode, output);
@@ -86,7 +86,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, Map<String
     private static DailyStockChart getDailyStockChart(String stockCode, JSONObject output) {
         return DailyStockChart.builder()
                 .stockCode(stockCode)
-                .date(YESTERDAY)
+                .date(TODEY)
                 .closingPrice(output.getBigDecimal("stck_prpr")) //현재가==종가
                 .lowestPrice(output.getBigDecimal("stck_lwpr"))
                 .highestPrice(output.getBigDecimal("stck_hgpr"))
@@ -99,7 +99,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, Map<String
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         return Stock52weekData.builder()
                 .stockCode(stockCode)
-                .date(YESTERDAY)
+                .date(TODEY)
                 .high52Week(output.getLong("w52_hgpr"))
                 .high52WeekDate(LocalDate.parse(output.getString("w52_hgpr_date"),formatter))
                 .low52Week(output.getLong("w52_lwpr"))
@@ -111,7 +111,7 @@ public class DailyStockDataProcessor implements ItemProcessor<String, Map<String
         String priceChangeSign = output.has("prdy_vrss_sign") ? output.getString("prdy_vrss_sign") : "0";
         return DailyStockData.builder()
                 .stockCode(stockCode)
-                .date(YESTERDAY)
+                .date(TODEY)
                 .marketCapitalization(output.getBigInteger("hts_avls"))
                 .priceChangeSign(priceChangeSign)
                 .priceChange(output.getBigDecimal("prdy_vrss"))

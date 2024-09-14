@@ -1,7 +1,7 @@
-package com.beautifulyomin.mmmmbatch.batch.repository;
+package com.beautifulyomin.mmmmbatch.batch.stock.repository;
 
-import com.beautifulyomin.mmmmbatch.batch.entity.Stock52weekData;
-import com.beautifulyomin.mmmmbatch.batch.entity.key.DailyStockDataId;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.Stock52weekData;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.key.DailyStockDataId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

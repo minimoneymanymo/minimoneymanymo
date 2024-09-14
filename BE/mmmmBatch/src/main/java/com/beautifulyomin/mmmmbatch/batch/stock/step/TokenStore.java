@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.step;
+package com.beautifulyomin.mmmmbatch.batch.stock.step;
 
 import org.springframework.stereotype.Component;
 

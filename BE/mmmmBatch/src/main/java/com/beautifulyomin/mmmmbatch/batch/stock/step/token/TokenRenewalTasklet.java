@@ -1,6 +1,6 @@
-package com.beautifulyomin.mmmmbatch.batch.step.token;
+package com.beautifulyomin.mmmmbatch.batch.stock.step.token;
 
-import com.beautifulyomin.mmmmbatch.batch.step.TokenStore;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.TokenStore;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.batch.core.StepContribution;

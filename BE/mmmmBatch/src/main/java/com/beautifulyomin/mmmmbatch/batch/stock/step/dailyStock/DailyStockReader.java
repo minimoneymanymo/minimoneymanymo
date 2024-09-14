@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.step.dailyStock;
+package com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;
@@ -9,12 +9,12 @@ import java.util.*;
 
 @Slf4j
 @Component
-public class DailyStockDataReader implements ItemReader<String> {
+public class DailyStockReader implements ItemReader<String> {
     private final JdbcTemplate jdbcTemplate;
     private List<String> stockCodes;
     private int nextIndex;
 
-    public DailyStockDataReader(JdbcTemplate jdbcTemplate) {
+    public DailyStockReader(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.nextIndex = 0;
     }

@@ -1,9 +1,8 @@
-package com.beautifulyomin.mmmmbatch.batch.job;
+package com.beautifulyomin.mmmmbatch.batch.stock.job;
 
-import com.beautifulyomin.mmmmbatch.batch.entity.DailyStockData;
-import com.beautifulyomin.mmmmbatch.batch.step.dailyStock.DailyStockDataWriter;
-import com.beautifulyomin.mmmmbatch.batch.step.dailyStock.DailyStockDataProcessor;
-import com.beautifulyomin.mmmmbatch.batch.step.dailyStock.DailyStockDataReader;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock.DailyStockWriter;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock.DailyStockProcessor;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock.DailyStockReader;
 import com.beautifulyomin.mmmmbatch.listner.JobDurationListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -19,24 +18,24 @@ import java.util.Map;
 
 @Slf4j
 @Configuration
-public class DailyStockDataJobConfig {
+public class DailyStockJobConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager; //트랜젝션 관리
-    private final DailyStockDataReader dailyStockDataReader;
-    private final DailyStockDataProcessor dailyStockDataProcessor;
-    private final DailyStockDataWriter dailyStockDataWriter;
+    private final DailyStockReader dailyStockReader;
+    private final DailyStockProcessor dailyStockProcessor;
+    private final DailyStockWriter dailyStockDataWriter;
     private final JobDurationListener jobDurationListener;
 
-    public DailyStockDataJobConfig(JobRepository jobRepository,
-                                   PlatformTransactionManager transactionManager,
-                                   DailyStockDataReader dailyStockDataReader,
-                                   DailyStockDataProcessor dailyStockDataProcessor,
-                                   DailyStockDataWriter dailyStockDataWriter, JobDurationListener jobDurationListener) {
+    public DailyStockJobConfig(JobRepository jobRepository,
+                               PlatformTransactionManager transactionManager,
+                               DailyStockReader dailyStockReader,
+                               DailyStockProcessor dailyStockProcessor,
+                               DailyStockWriter dailyStockDataWriter, JobDurationListener jobDurationListener) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
-        this.dailyStockDataReader = dailyStockDataReader;
-        this.dailyStockDataProcessor = dailyStockDataProcessor;
+        this.dailyStockReader = dailyStockReader;
+        this.dailyStockProcessor = dailyStockProcessor;
         this.dailyStockDataWriter = dailyStockDataWriter;
         this.jobDurationListener = jobDurationListener;
     }
@@ -55,8 +54,8 @@ public class DailyStockDataJobConfig {
     public Step dailyStockDataStep() {
         return new StepBuilder("dailyStockDataStep", jobRepository)
                 .<String, Map<String, Object>>chunk(10, transactionManager) //청크 단위로 트랜젝션
-                .reader(dailyStockDataReader)
-                .processor(dailyStockDataProcessor)
+                .reader(dailyStockReader)
+                .processor(dailyStockProcessor)
                 .writer(dailyStockDataWriter)
                 .faultTolerant() // Fault-tolerant 설정 활성화 (예외 허용)
                 .skip(Exception.class) // Exception 발생 시 스킵 처리

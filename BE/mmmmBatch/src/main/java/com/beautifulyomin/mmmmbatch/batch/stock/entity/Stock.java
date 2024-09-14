@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.entity;
+package com.beautifulyomin.mmmmbatch.batch.stock.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

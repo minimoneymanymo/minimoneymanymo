@@ -1,6 +1,6 @@
-package com.beautifulyomin.mmmmbatch.batch.job;
+package com.beautifulyomin.mmmmbatch.batch.stock.job;
 
-import com.beautifulyomin.mmmmbatch.batch.step.token.TokenRenewalTasklet;
+import com.beautifulyomin.mmmmbatch.batch.stock.step.token.TokenRenewalTasklet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

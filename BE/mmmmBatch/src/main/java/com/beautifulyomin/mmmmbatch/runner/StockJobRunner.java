@@ -9,18 +9,18 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JobRunner {
+public class StockJobRunner {
 
     private final JobLauncher jobLauncher;
     private final Job mainJob;
 
     @Autowired
-    public JobRunner(JobLauncher jobLauncher, Job mainJob) {
+    public StockJobRunner(JobLauncher jobLauncher, Job mainJob) {
         this.jobLauncher = jobLauncher;
         this.mainJob = mainJob;
     }
 
-    @Scheduled(cron = "0 40 21 * * ?")
+    @Scheduled(cron = "0 30 3 ? * MON-FRI")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())

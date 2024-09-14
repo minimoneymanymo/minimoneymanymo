@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.job;
+package com.beautifulyomin.mmmmbatch.batch.stock.job;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
