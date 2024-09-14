@@ -33,7 +33,7 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
     }
 
     @Override
-    public MyChildrenDto findAllMyChildrenByChildUserId(Integer childrenId) {
+    public MyChildrenDto findAllMyChildrenByChildId(Integer childrenId) {
         QChildren children = QChildren.children;
         QStocksHeld stocksHeld = QStocksHeld.stocksHeld;
         QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;

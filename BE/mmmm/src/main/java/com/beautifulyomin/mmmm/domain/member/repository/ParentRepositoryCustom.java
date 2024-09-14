@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ParentRepositoryCustom {
     List<Integer> findAllMyChildrenIdByParentUserId(String parentUserId);
-    MyChildrenDto findAllMyChildrenByChildUserId(Integer childrenId);
+    MyChildrenDto findAllMyChildrenByChildId(Integer childrenId);
 }

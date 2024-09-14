@@ -72,7 +72,7 @@ public class ParentServiceImpl implements ParentService {
         List<Integer> childrenIdList = parentRepositoryCustom.findAllMyChildrenIdByParentUserId(userId);
         List<MyChildrenDto> childList = new ArrayList<>();
         for(Integer myChildrenId : childrenIdList){
-            childList.add(parentRepositoryCustom.findAllMyChildrenByChildUserId(myChildrenId));
+            childList.add(parentRepositoryCustom.findAllMyChildrenByChildId(myChildrenId));
         }
         return childList;
     }
