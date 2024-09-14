@@ -9,8 +9,10 @@ import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+import java.beans.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -78,6 +80,21 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .where(parentAndChildren.parent.userId.eq(parentUserId),
                         parentAndChildren.isApproved.isFalse())
                 .fetch();
+    }
+
+
+
+    @Override
+    @Transactional
+    public long updateIsApprovedById(Integer parentId, Integer childrenId) {
+        QParentAndChildren parentAndChildren = QParentAndChildren.parentAndChildren;
+
+        return jpaQueryFactory
+                .update(parentAndChildren)
+                .set(parentAndChildren.isApproved,true)
+                .where(parentAndChildren.parent.parentId.eq(parentId)
+                        .and(parentAndChildren.child.childrenId.eq(childrenId)))
+                .execute();
     }
 
 }

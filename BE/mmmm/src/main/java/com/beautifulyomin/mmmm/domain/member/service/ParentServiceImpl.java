@@ -6,6 +6,8 @@ import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
+import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
+import com.beautifulyomin.mmmm.domain.member.repository.ParentAndChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
 import org.springframework.core.SpringVersion;
@@ -23,11 +25,13 @@ public class ParentServiceImpl implements ParentService {
 
     private final ParentRepository parentRepository;
     private final ParentRepositoryCustom parentRepositoryCustom;
+    private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final FileService fileService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    public ParentServiceImpl(ParentRepository parentRepository, ParentRepositoryCustom parentRepositoryCustom, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public ParentServiceImpl(ParentRepository parentRepository, ParentRepositoryCustom parentRepositoryCustom, ParentAndChildrenRepository parentAndChildrenRepository, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.parentRepository = parentRepository;
         this.parentRepositoryCustom = parentRepositoryCustom;
+        this.parentAndChildrenRepository = parentAndChildrenRepository;
         this.fileService = fileService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -81,6 +85,33 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public List<MyChildrenWaitingDto> getMyChildWaiting(String userId) {
         return parentRepositoryCustom.findNotApprovedMyChildrenByParentUserId(userId);
+    }
+
+    @Override
+    public int addMyChildren(String parentUserId, Integer childrenId) {
+        Parent parent = parentRepository.findByUserId(parentUserId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
+        Integer parentId = parent.getParentId();
+
+        Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
+        Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
+
+        // 이미 수락된 경우 -1 반환
+        if(parentAndChildrenTrue.isPresent() ){
+            return -1;
+        }
+        // 승인 대기 중인 경우에 실행
+        if(parentAndChildrenFalse.isPresent()){
+            long result = parentRepositoryCustom.updateIsApprovedById(parentId,childrenId);
+            // 바뀐행이 1 이상인경우 요청 승인 성공 (여러 요청이 있을경우 다 수락하여 준다.)
+            // 성공인 경우 1 반환
+            if(result >= 1){
+                return 1;
+            }
+        }
+
+        // 이외의 경우 (목록에 parentId,childrenId 인 행이없는경우, 바뀐행이 2개 이상인경우) 0 :에러 반환
+        return 0;
     }
 
 }

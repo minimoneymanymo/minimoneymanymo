@@ -15,4 +15,5 @@ public interface ParentService {
     boolean isExistByPhoneNumber(String phoneNumber);
     List<MyChildrenDto> getMyChildren(String userId);
     List<MyChildrenWaitingDto> getMyChildWaiting(String userId);
+    int addMyChildren(String parentUserId, Integer childrenId);
 }

@@ -9,4 +9,7 @@ public interface ParentRepositoryCustom {
     List<Integer> findAllMyChildrenIdByParentUserId(String parentUserId);
     MyChildrenDto findAllMyChildrenByChildId(Integer childrenId);
     List<MyChildrenWaitingDto> findNotApprovedMyChildrenByParentUserId(String parentUserId);
+
+    long updateIsApprovedById(Integer parentId, Integer childrenId);
+
 }
