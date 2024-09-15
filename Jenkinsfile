@@ -12,10 +12,10 @@ pipeline {
                     // Dockerfile이 존재하는 디렉토리
                     dir('BE/mmmm') {
                         // Ensure the Gradle build creates the JAR file
-                        sh './gradlew clean'
+
                         sh 'chmod +x gradlew'
                         sh './gradlew build'
-                        
+                        sh './gradlew clean'                        
                         // Verify if the JAR file exists
                         sh 'ls -l build/libs/'
 
