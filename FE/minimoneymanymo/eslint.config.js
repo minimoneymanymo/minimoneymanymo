@@ -10,8 +10,8 @@ export default tseslint.config(
     extends: [
       js.configs.recommended,
       ...tseslint.configs.recommended,
-      "plugin:prettier/recommended", // Prettier 설정 추가
-      "prettier", // Prettier 설정 충돌 방지
+      "plugin:prettier/recommended",
+      "prettier",
     ],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
@@ -19,9 +19,10 @@ export default tseslint.config(
       globals: globals.browser,
     },
     plugins: {
+      react, // React ESLint 플러그인
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
-      prettier: prettier, // Prettier 플러그인 추가
+      prettier: prettierPlugin, // Prettier 플러그인 추가
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
