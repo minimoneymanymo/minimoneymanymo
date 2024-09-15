@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.3'
     id 'io.spring.dependency-management' version '1.1.6'
-    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+    //id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
 group = 'com.beautifulyomin'
@@ -66,45 +66,21 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0' // 최신 버전을 사용하세요
 }
 
-test {
-    useJUnitPlatform()
-    systemProperty "spring.profiles.active", System.getenv("SPRING_PROFILES_ACTIVE") ?: "dev"
-}
-
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-// Querydsl 프로젝트 build Directory 설정
-def generated = layout.buildDirectory.dir("generated/querydsl").get().asFile
+// QueryDsl 빌드 옵션 (선택)
+def querydslDir = "$buildDir/generated/querydsl"
 
-querydsl {
-    jpa = true
-    querydslSourcesDir = generated
-}
 sourceSets {
-    main.java.srcDir generated
+    main.java.srcDirs += [ querydslDir ]
 }
 
-// compileQuerydsl Task 실행시 clean + compileQuerydsl 할 수 있도록 동작 변경
-tasks.register('cleanGenerated', Delete) {
-    delete generated
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 }
 
-clean.dependsOn(cleanGenerated)
-
-tasks.named("compileQuerydsl").configure {
-    dependsOn(clean)
-}
-
-
-compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
-}
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-    querydsl.extendsFrom compileClasspath
+clean.doLast {
+    file(querydslDir).deleteDir()
 }
