@@ -66,33 +66,45 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0' // 최신 버전을 사용하세요
 }
 
+test {
+    useJUnitPlatform()
+    systemProperty "spring.profiles.active", System.getenv("SPRING_PROFILES_ACTIVE") ?: "dev"
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-def querydslDir = "$buildDir/generated/querydsl"
+// Querydsl 프로젝트 build Directory 설정
+def generated = layout.buildDirectory.dir("generated/querydsl").get().asFile
 
 querydsl {
     jpa = true
-    querydslSourcesDir = querydslDir
+    querydslSourcesDir = generated
 }
-
 sourceSets {
-    main.java.srcDir querydslDir
+    main.java.srcDir generated
 }
 
-configurations {
-    querydsl.extendsFrom compileClasspath
+// compileQuerydsl Task 실행시 clean + compileQuerydsl 할 수 있도록 동작 변경
+tasks.register('cleanGenerated', Delete) {
+    delete generated
 }
+
+clean.dependsOn(cleanGenerated)
+
+tasks.named("compileQuerydsl").configure {
+    dependsOn(clean)
+}
+
 
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 
-tasks.withType(JavaCompile) {
-    options.generatedSourceOutputDirectory = file(querydslDir)
-}
-
-clean {
-    delete file(querydslDir)
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
 }
