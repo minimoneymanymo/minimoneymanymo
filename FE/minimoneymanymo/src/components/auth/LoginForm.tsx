@@ -22,7 +22,7 @@ export function LoginForm() {
 
   const goLogin = async (): Promise<void> => {
     console.log("로그인 버튼 클릭")
-      const formData = new FormData()
+    const formData = new FormData()
     formData.append("userid", id)
     formData.append("password", password)
     formData.append("role", role.toString()) // `role`을 문자열로 변환
@@ -57,17 +57,17 @@ export function LoginForm() {
     <Card
       color="transparent"
       shadow={false}
-      className="p-6 rounded-lg border border-gray-300"
+      className="rounded-lg border border-gray-300 p-6"
     >
       <Card color="transparent" shadow={false}>
         <Typography variant="h5" color="blue-gray">
           환영해요 !
         </Typography>
-        <Typography className="mt-1 font-bold text-3xl text-tertiary-600-m4">
+        <Typography className="mt-1 text-3xl font-bold text-tertiary-600-m4">
           minimoneymanymo
         </Typography>
 
-        <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
+        <form className="mb-2 mt-8 w-80 max-w-screen-lg sm:w-96">
           <div className="mb-1 flex flex-col gap-6">
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               아이디
@@ -136,7 +136,7 @@ export function LoginForm() {
                   </ListItemPrefix>
                   <Typography
                     color="blue-gray"
-                    className="font-medium text-blue-gray-400"
+                    className="text-blue-gray-400 font-medium"
                   >
                     부모
                   </Typography>
@@ -161,7 +161,7 @@ export function LoginForm() {
                   </ListItemPrefix>
                   <Typography
                     color="blue-gray"
-                    className="font-medium text-blue-gray-400"
+                    className="text-blue-gray-400 font-medium"
                   >
                     자녀
                   </Typography>
@@ -176,7 +176,7 @@ export function LoginForm() {
           >
             로그인
           </Button>
-          <Typography color="gray" className="mt-4 text-center font-normal ">
+          <Typography color="gray" className="mt-4 text-center font-normal">
             계정이 없으신가요?{" "}
             <a href="#" className="font-medium text-gray-900">
               회원가입
