@@ -34,7 +34,8 @@ pipeline {
                     // Docker Hub 레지스트리에 Docker 이미지 푸시
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
                         // 'latest' 태그로 Docker 이미지 푸시
-                        docker.image('mmmm-api-image').push('latest')
+                        sh 'docker tag mmmm-api-image thispear/mmmm:latest'
+                        sh 'docker push thispear/mmmm:latest'
                     }
                 }
             }
