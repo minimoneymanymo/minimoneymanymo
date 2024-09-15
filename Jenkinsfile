@@ -14,8 +14,8 @@ pipeline {
                         // Ensure the Gradle build creates the JAR file
 
                         sh 'chmod +x gradlew'
-                        sh './gradlew build'
-                        sh './gradlew clean'                        
+                        sh './gradlew clean'
+                        sh './gradlew build --info'
                         // Verify if the JAR file exists
                         sh 'ls -l build/libs/'
 
