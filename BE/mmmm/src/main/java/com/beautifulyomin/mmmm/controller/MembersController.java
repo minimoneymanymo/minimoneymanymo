@@ -3,6 +3,8 @@ package com.beautifulyomin.mmmm.controller;
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import jakarta.validation.constraints.NotNull;
 
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -96,6 +99,94 @@ public class MembersController {
                         .build());
     }
 
+    /**
+     * 부모 - 자식목록
+     * 나의 자식 목록 조회
+     */
+    @GetMapping("/mychildren")
+    public ResponseEntity<CommonResponseDto> getMyChildren(@RequestHeader("Authorization") String token) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(401)
+                            .message("부모가 아닙니다.")
+                            .build());
+        }
+
+        List<MyChildrenDto> myChildrenDtoList= parentService.getMyChildren(userId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("나의 자식 목록 조회")
+                        .data(myChildrenDtoList)
+                        .build());
+    }
+
+    /**
+     * 부모- 참여대기 인원확인
+     */
+    @GetMapping("/mychildren/waiting")
+    public ResponseEntity<CommonResponseDto> getMyChildWaiting(@RequestHeader("Authorization") String token){
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(401)
+                            .message("부모가 아닙니다.")
+                            .build());
+        }
+        List<MyChildrenWaitingDto> myChildrenWaitingList = parentService.getMyChildWaiting(userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("나의 승인대기 자식 목록 조회")
+                        .data(myChildrenWaitingList)
+                        .build());
+    }
+
+    /**
+     * 부모 - 참여대기 인원승인
+     */
+    @PutMapping("/mychildren/waiting")
+    public  ResponseEntity<CommonResponseDto> addMyChildWaiting(@RequestHeader("Authorization") String token, @RequestBody MyChildrenWaitingDto myChildrenWaitingDto) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(401)
+                            .message("부모가 아닙니다.")
+                            .build());
+        }
+        int result = parentService.addMyChildren(userId,myChildrenWaitingDto.getChildrenId());
+        // result : 0 인 경우 예외상황임
+        if(result == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(404)
+                            .message("없는관계인 경우")
+                            .build());
+        }
+        // result : -1 인 경우 이미 수락된 경우임
+        else if(result == -1) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(400)
+                            .message("이미 승인된 자식임")
+                            .build());
+        }
+        // result : 0 인 경우 요청 승인 성공
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("요청 승인")
+                        .build());
+
+    }
 
 
     @PostMapping("/image")

@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 
 
 @Entity
@@ -13,10 +14,16 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@IdClass(DailyStockDataId.class)
 public class DailyStockData {
 
-    @EmbeddedId
-    private DailyStockDataId id;
+    @Id
+    @Column(nullable = false)
+    private String stockCode;
+
+    @Id
+    @Column(nullable = false)
+    private LocalDate date;
 
     @Column(nullable = false)
     private BigInteger marketCapitalization;
@@ -59,6 +66,10 @@ public class DailyStockData {
 
     @Column(nullable = false)
     private BigInteger outstandingShares;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stockCode", insertable = false, updatable = false)
+    private Stock stock;
 
     // 값이 없으면 기본값으로 설정하기
     @PrePersist

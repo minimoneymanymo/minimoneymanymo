@@ -9,22 +9,22 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JobRunner {
+public class StockJobRunner {
 
     private final JobLauncher jobLauncher;
-    private final Job importDailyStockDataJob;
+    private final Job mainJob;
 
     @Autowired
-    public JobRunner(JobLauncher jobLauncher, Job importDailyStockDataJob) {
+    public StockJobRunner(JobLauncher jobLauncher, Job mainJob) {
         this.jobLauncher = jobLauncher;
-        this.importDailyStockDataJob = importDailyStockDataJob;
+        this.mainJob = mainJob;
     }
 
-    @Scheduled(cron = "0 30 16 * * ?")
+    @Scheduled(cron = "0 30 3 ? * MON-FRI")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();
-        jobLauncher.run(importDailyStockDataJob, params);
+        jobLauncher.run(mainJob, params);
     }
 }
