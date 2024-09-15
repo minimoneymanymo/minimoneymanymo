@@ -14,7 +14,7 @@ pipeline {
                         // Gradle 빌드 수행
                         sh 'chmod +x gradlew'  // gradlew에 실행 권한 부여
                         sh './gradlew clean '  // 기존 빌드 아티팩트 삭제
-                        sh './gradlew build --info --no-cache '  // 프로젝트 빌드
+                        sh './gradlew build --info --refresh-dependencies '  // 프로젝트 빌드
 
                         // 빌드 후 JAR 파일 확인
                         sh 'ls -l build/libs/'
