@@ -11,15 +11,12 @@ export const getIsDuplicatedId = async (id: string, role: string) => {
     })
     return res.data
 
-    // 회원가입 후 바로 로그인을 위해 loginUser thunk를 dispatch로 호출
-    // return postLoginUser(loginData)
   } catch (e) {
     return e
   }
 }
 
 export const userLogin = async (formData: FormData) => {
-  // FormData의 내용 로그 출력
   for (const [key, value] of formData.entries()) {
     console.log(`${key}: ${value}`)
   }

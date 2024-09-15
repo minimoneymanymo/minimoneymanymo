@@ -1,6 +1,10 @@
 import axios from "axios"
 import {jwtDecode} from "jwt-decode"
-const BASE_API_URL = import.meta.env.VITE_REACT_APP_API_URL
+ const endpoint = import.meta.env.VITE_API_ENDPOINT
+ const contextPath = import.meta.env.VITE_API_CONTEXT_PATH
+ const version = import.meta.env.VITE_API_VERSION
+ const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
+
 
 import {getAccessTokenFromSession, logOutUser, setAccessTokenAtSession} from "@/utils/user-utils"
 export const axiosAuthInstance = axios.create({
