@@ -123,33 +123,33 @@ axiosPublicInstance.interceptors.response.use(
     // // console.log("axios-instances.js > 응답 인터셉터 res: ", res)
 
     // // 응답의 headers를 언패킹
-    // const {headers} = res
-    // // headers에서 액세스 토큰 따로
-    // const accessToken = headers["authorization"]
+    const {headers} = res
+    // headers에서 액세스 토큰 따로
+    const accessToken = headers["authorization"]
 
-    // // 액세스 토큰이 존재하는 경우 dispatch를 사용해서 액세스 토큰을 sessionStorage에 저장
-    // if (accessToken) {
-    //   accessToken.replace("Bearer ", "")
-    //   setAccessTokenAtSession(accessToken)
-    // }
+    // 액세스 토큰이 존재하는 경우 dispatch를 사용해서 액세스 토큰을 sessionStorage에 저장
+    if (accessToken) {
+      accessToken.replace("Bearer ", "")
+      setAccessTokenAtSession(accessToken)
+    }
     return res
   },
   // 모든 에러에 대한 응답
   async (error) => {
-    // // 기존 응답 저장
-    // const originalRequest = error.config
+    // 기존 응답 저장
+    const originalRequest = error.config
 
-    // // 기존에 액세스 토큰을 안담아서 보냈다면 에러 반환
-    // if (!originalRequest.headers["Authorization"]) {
-    //   return Promise.reject(error)
-    // }
-    // if (error.response?.status === 401 && !originalRequest._retry) {
-    //   //로그아웃 처리
-    //   logOutUser()
-    //   alert("엑세스토큰 만료  로그아웃")
-    // }
+    // 기존에 액세스 토큰을 안담아서 보냈다면 에러 반환
+    if (!originalRequest.headers["Authorization"]) {
+      return Promise.reject(error)
+    }
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      //로그아웃 처리
+      logOutUser()
+      alert("엑세스토큰 만료  로그아웃")
+    }
 
-    // console.log("인터셉터 에러", error)
+    console.log("인터셉터 에러", error)
     // reject를 반환해서, 요청한 api에서 올바르게 오류 처리를 할 수 있도록 함
     return Promise.reject(error)
   }
