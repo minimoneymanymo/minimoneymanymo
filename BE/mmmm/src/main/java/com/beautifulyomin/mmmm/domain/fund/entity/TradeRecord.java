@@ -67,6 +67,19 @@ public class TradeRecord { // 매수매도 거래내역
         this.remainAmount = remainAmount;
     }
 
+    // tradeRepositoryCustomImplTest 용
+    public TradeRecord(Children children, Stock stock, Integer amount, BigDecimal tradeSharesCount, String createdAt, String reason, String tradeType, Integer remainAmount) {
+        this.children = children;
+        this.stock = stock;
+        this.amount = amount;
+        this.tradeSharesCount = tradeSharesCount;
+        this.createdAt = createdAt;
+        this.reason = reason;
+        this.reasonBonusMoney = null;
+        this.tradeType = tradeType;
+        this.remainAmount = remainAmount;
+    }
+
     @PrePersist
     protected void onCreate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");

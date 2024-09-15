@@ -24,9 +24,9 @@ public class TradeController {
     public ResponseEntity<CommonResponseDto> createTrade(@RequestHeader("Authorization") String token, @RequestBody TradeDto tradeDto) {
         String userId = jwtUtil.getUsername(token); // token 에서 userId를 받아온다. ( 아이디, 즉 이메일 )
         // 아이디로 child 테이블에 접근해서 childrenId를 받아온다. -> service에서 처리
-
+        System.out.println(userId);
         // 그 다음 tradeDto에 적용한다.
-        tradeService.createTrade(tradeDto);
+        tradeService.createTrade(tradeDto, userId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponseDto.builder()
                         .stateCode(201)

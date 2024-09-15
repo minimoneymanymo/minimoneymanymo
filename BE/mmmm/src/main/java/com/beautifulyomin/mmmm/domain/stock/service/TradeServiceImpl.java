@@ -10,8 +10,6 @@ import com.beautifulyomin.mmmm.domain.stock.repository.TradeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class TradeServiceImpl implements TradeService {
@@ -20,11 +18,11 @@ public class TradeServiceImpl implements TradeService {
     private final ChildrenRepository childrenRepository;
 
     @Override
-    public void createTrade(TradeDto tradeDto) {
+    public void createTrade(TradeDto tradeDto, String userId) {
         // stock 정보 조회
         Stock stock = stockRepository.findByStockCode(tradeDto.getStockCode());
         // 아이 정보 조회
-        Children children = childrenRepository.findByUserId(String.valueOf(tradeDto.getChildrenId()))
+        Children children = childrenRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + tradeDto.getChildrenId()));
 
         tradeDto.setChildrenId(children.getChildrenId());
