@@ -11,7 +11,14 @@ pipeline {
                 script {
                     // Dockerfile이 존재하는 디렉토리
                     dir('BE/mmmm') {
-                        // 이미지 이름을 'mmmm-api-image'로 지정하고, docker.image 객체를 반환합니다.
+                        // Ensure the Gradle build creates the JAR file
+                        sh 'chmod +x gradlew'
+                        sh './gradlew build'
+                        
+                        // Verify if the JAR file exists
+                        sh 'ls -l build/libs/'
+
+                        // Build Docker image
                         apiImage = docker.build('mmmm-api-image')
                     }
                 }
