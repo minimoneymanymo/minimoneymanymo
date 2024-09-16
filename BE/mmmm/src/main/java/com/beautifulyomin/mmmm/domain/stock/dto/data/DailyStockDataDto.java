@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Builder
 public class DailyStockDataDto {
     private String stockCode;
+    private LocalDate date;
 
     private BigInteger marketCapitalization;
 
@@ -51,4 +52,27 @@ public class DailyStockDataDto {
     private Long low52Week;
 
     private LocalDate low52WeekDate;
+
+    public DailyStockDataDto(String stockCode,LocalDate date, BigInteger marketCapitalization, String priceChangeSign
+            , BigDecimal priceChange, BigDecimal priceChangeRate, BigDecimal peRatio, BigDecimal pbRatio
+            , BigDecimal earningsPerShare, BigDecimal bookValuePerShare, String foreignNetBuyVolume
+            , BigDecimal htsForeignExhaustionRate, String programNetBuyVolume, BigDecimal volumeTurnoverRatio
+            , BigInteger tradingValue, BigInteger outstandingShares) {
+        this.stockCode = stockCode;
+        this.date=date;
+        this.marketCapitalization = marketCapitalization;
+        this.priceChangeSign = priceChangeSign;
+        this.priceChange = priceChange;
+        this.priceChangeRate = priceChangeRate;
+        this.peRatio = peRatio;
+        this.pbRatio = pbRatio;
+        this.earningsPerShare = earningsPerShare;
+        this.bookValuePerShare = bookValuePerShare;
+        this.foreignNetBuyVolume = foreignNetBuyVolume;
+        this.htsForeignExhaustionRate = htsForeignExhaustionRate;
+        this.programNetBuyVolume = programNetBuyVolume;
+        this.volumeTurnoverRatio = volumeTurnoverRatio;
+        this.tradingValue = tradingValue;
+        this.outstandingShares = outstandingShares;
+    }
 }
