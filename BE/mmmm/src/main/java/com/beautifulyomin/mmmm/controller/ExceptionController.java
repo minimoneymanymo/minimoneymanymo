@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.controller;
 
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.exception.StockNotFountException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,7 +26,7 @@ public class ExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({StockNotFountException.class})
+    @ExceptionHandler({StockNotFountException.class, ConstraintViolationException.class})
     public ResponseEntity<CommonResponseDto> handleNotFountException(RuntimeException ex) {
         CommonResponseDto errorResponse = new CommonResponseDto(404, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
