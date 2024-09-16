@@ -2,8 +2,6 @@ import {getMyChildren} from "@/api/user-api"
 import {useEffect, useState} from "react"
 import {Child} from "./types"
 import MyChildItem from "./MyChildItem"
-import {useNavigate} from "react-router-dom"
-import Heading from "../common/Heading"
 
 interface MyChildrenListProps {
   refreshChildrenList: boolean // 부모로부터 받은 prop
@@ -13,7 +11,6 @@ function MyChildrenList({
   refreshChildrenList,
 }: MyChildrenListProps): JSX.Element {
   const [childrenList, setChildrenList] = useState<Child[]>([])
-  const navigate = useNavigate()
   useEffect(() => {
     const fetchchildrenList = async () => {
       const res = await getMyChildren()
@@ -26,19 +23,13 @@ function MyChildrenList({
   }, [refreshChildrenList])
   return (
     <>
-      <div className="flex h-1/2 w-full flex-col">
-        <Heading title="등록된 자녀" />
+      <div className="flex w-full flex-col h-1/2 ">
+        <div className="flex h-12 w-full items-center border-b border-gray-300 font-bold">
+          <span className="m-4">등록된 자녀</span>
+        </div>
         <ul className="overflow-auto">
           {childrenList?.map((child) => (
-            <li
-              key={child.childrenId}
-              className=" "
-              onClick={() => {
-                navigate(`/parent/my-child/${child.childrenId}/finance`, {
-                  state: {child},
-                })
-              }}
-            >
+            <li key={child.childrenId} className="m-5 border">
               <MyChildItem child={child} />
             </li>
           ))}
