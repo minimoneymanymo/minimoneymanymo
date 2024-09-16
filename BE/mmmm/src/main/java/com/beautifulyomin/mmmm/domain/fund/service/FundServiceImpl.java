@@ -5,7 +5,7 @@ import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
 import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.fund.repository.FundRepositoryCustom;
-import com.beautifulyomin.mmmm.domain.fund.repository.FundRepository;
+import com.beautifulyomin.mmmm.domain.fund.repository.TransactionRepository;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.List;
 public class FundServiceImpl implements FundService {
     
     private final ChildrenRepository childrenRepository;
-    private final FundRepository fundRepository;
+    private final TransactionRepository transactionRepository;
     private final FundRepositoryCustom fundRepositoryCustom;
 
     @Override
@@ -41,6 +41,6 @@ public class FundServiceImpl implements FundService {
         request.setTradeType("1");
         request.setRemainAmount(child.getMoney());
         System.out.println(request);
-        return fundRepository.save(request);
+        return transactionRepository.save(request);
     }
 }

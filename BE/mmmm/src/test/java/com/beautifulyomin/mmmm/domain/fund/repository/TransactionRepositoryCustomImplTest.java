@@ -25,15 +25,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataJpaTest //<< 자동 롤백이라 db에 반영은 안됨
-@Import(QueryDslConfig.class)
-class FundRepositoryCustomImplTest {
+@DataJpaTest
+@Import({FundRepositoryCustomImpl.class, QueryDslConfig.class}) // 필요한 빈 수동 등록
+class TransactionRepositoryCustomImplTest {
 
     private FundRepositoryCustomImpl fundRepository;
     private TestEntityManager entityManager;
 
     @Autowired
-    public FundRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager) {
+    public TransactionRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager) {
         this.fundRepository = fundRepository;
         this.entityManager = entityManager;
     }

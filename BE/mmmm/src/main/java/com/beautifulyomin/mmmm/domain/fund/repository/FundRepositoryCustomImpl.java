@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 
+@Repository
 public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
