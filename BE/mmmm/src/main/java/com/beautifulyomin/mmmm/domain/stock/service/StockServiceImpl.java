@@ -33,8 +33,8 @@ public class StockServiceImpl implements StockService {
         StockDto stockDto = getStock(stockCode);
         DailyStockDataDto dailyStockDataDto = getDailyStockData(stockCode);
         List<DailyStockChartDto> dailyStockChartDto = getDailyStockCharts(stockCode);
-        List<WeeklyStockChartDto> weeklyStockChartDto = getWeeklyStockCharts(stockCode);
-        List<MonthlyStockChartDto> monthlyStockChartDto = getMonthlyStockCharts(stockCode);
+        List<DailyStockChartDto> weeklyStockChartDto = getWeeklyStockCharts(stockCode);
+        List<DailyStockChartDto> monthlyStockChartDto = getMonthlyStockCharts(stockCode);
 
         return StockDetailResponseDto.builder()
                 .stock(stockDto)
@@ -94,15 +94,15 @@ public class StockServiceImpl implements StockService {
     }
 
     private List<DailyStockChartDto> getDailyStockCharts(String stockCode) {
-        return null;
+        return stockRepositoryCustom.getLatestDailyStockCharts(stockCode);
     }
 
-    private List<WeeklyStockChartDto> getWeeklyStockCharts(String stockCode) {
-        return null;
+    private List<DailyStockChartDto> getWeeklyStockCharts(String stockCode) {
+        return stockRepositoryCustom.getLatestWeeklyStockChart(stockCode);
     }
 
-    private List<MonthlyStockChartDto> getMonthlyStockCharts(String stockCode) {
-        return null;
+    private List<DailyStockChartDto> getMonthlyStockCharts(String stockCode) {
+        return stockRepositoryCustom.getLatestMonthlyStockChart(stockCode);
     }
 
 }

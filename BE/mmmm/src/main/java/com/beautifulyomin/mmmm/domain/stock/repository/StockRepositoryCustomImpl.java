@@ -1,11 +1,15 @@
 package com.beautifulyomin.mmmm.domain.stock.repository;
 
+import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockChartDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockDataDto;
+import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockData;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Slf4j
 @Repository
@@ -42,5 +46,31 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                 .orderBy(dailyStockData.date.desc())
                 .limit(1)
                 .fetchOne();
+    }
+
+    @Override
+    public List<DailyStockChartDto> getLatestDailyStockCharts(String stockCode) {
+        QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
+        return queryFactory.select(Projections.constructor(DailyStockChartDto.class,
+                        dailyStockChart.date,
+                        dailyStockChart.operatingPrice,
+                        dailyStockChart.highestPrice,
+                        dailyStockChart.lowestPrice,
+                        dailyStockChart.closingPrice,
+                        dailyStockChart.tradingVolume))
+                .from(dailyStockChart)
+                .where(dailyStockChart.stockCode.eq(stockCode))
+                .orderBy(dailyStockChart.date.desc())
+                .stream().limit(30).toList();
+    }
+
+    @Override
+    public List<DailyStockChartDto> getLatestWeeklyStockChart(String stockCode) {
+        return List.of();
+    }
+
+    @Override
+    public List<DailyStockChartDto> getLatestMonthlyStockChart(String stockCode) {
+        return List.of();
     }
 }

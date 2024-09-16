@@ -14,6 +14,6 @@ public class StockDetailResponseDto {
     private StockDto stock;
     private DailyStockDataDto dailyStockData;
     private List<DailyStockChartDto> dailyStockChart;
-    private List<WeeklyStockChartDto> weeklyStockChart;
-    private List<MonthlyStockChartDto> monthlyStockChart;
+    private List<DailyStockChartDto> weeklyStockChart;
+    private List<DailyStockChartDto> monthlyStockChart;
 }
