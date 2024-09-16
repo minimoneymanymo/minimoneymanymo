@@ -2,6 +2,7 @@ import {addMyChildWaiting, getMyChildWaiting} from "@/api/user-api"
 import {useEffect, useState} from "react"
 import {Child} from "./types"
 import {computeTime} from "@/utils/datefuntion"
+import Heading from "../common/Heading"
 
 interface MyChildrenWaitingListProps {
   onChildApproved: () => void // 부모로부터 받은 함수
@@ -39,9 +40,7 @@ function MyChildrenWaitingList({
   return (
     <>
       <div className="flex w-full flex-col">
-        <div className="flex h-12 w-full items-center border-b border-gray-300 font-bold">
-          <span className="m-4">등록 대기중인 자녀</span>
-        </div>
+        <Heading title="등록 대기중인 자녀" />
         <ul>
           {childrenWaitingList?.map((child, index) => (
             <li key={child.childrenId} className="m-5 space-x-6 border">
