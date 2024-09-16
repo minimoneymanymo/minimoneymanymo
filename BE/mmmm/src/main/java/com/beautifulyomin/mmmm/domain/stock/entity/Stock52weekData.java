@@ -2,10 +2,11 @@ package com.beautifulyomin.mmmm.domain.stock.entity;
 
 import com.beautifulyomin.mmmm.domain.stock.entity.key.DailyStockDataId;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Entity
@@ -13,8 +14,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "stock_52week_data")
 @IdClass(DailyStockDataId.class)
-public class DailyStockChart {
+public class Stock52weekData {
+
     @Id
     @Column(nullable = false)
     private String stockCode;
@@ -23,20 +26,17 @@ public class DailyStockChart {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal operatingPrice;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal highestPrice;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal lowestPrice;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal closingPrice;
+    @Column(nullable = false)
+    private Long high52Week;
 
     @Column(nullable = false)
-    private BigInteger tradingVolume;
+    private LocalDate high52WeekDate;
+
+    @Column(nullable = false)
+    private Long low52Week;
+
+    @Column(nullable = false)
+    private LocalDate low52WeekDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stockCode", insertable = false, updatable = false)

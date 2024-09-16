@@ -2,7 +2,9 @@ package com.beautifulyomin.mmmm.domain.fund.repository;
 
 import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface TransactionRepository extends JpaRepository<TransactionRecord, Integer> {
 
     // 머니 사용 기록
