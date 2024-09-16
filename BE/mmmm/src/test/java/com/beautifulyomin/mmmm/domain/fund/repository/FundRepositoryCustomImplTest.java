@@ -29,11 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Import(QueryDslConfig.class)
 class FundRepositoryCustomImplTest {
 
-    @Autowired
     private FundRepositoryCustomImpl fundRepository;
+    private TestEntityManager entityManager;
 
     @Autowired
-    private TestEntityManager entityManager;
+    public FundRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager) {
+        this.fundRepository = fundRepository;
+        this.entityManager = entityManager;
+    }
 
     static Children children;
     static Stock stock;
