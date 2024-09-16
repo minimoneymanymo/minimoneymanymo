@@ -1,12 +1,14 @@
 import axios from "axios"
-import {jwtDecode} from "jwt-decode"
- const endpoint = import.meta.env.VITE_API_ENDPOINT
- const contextPath = import.meta.env.VITE_API_CONTEXT_PATH
- const version = import.meta.env.VITE_API_VERSION
- const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
+const endpoint = import.meta.env.VITE_API_ENDPOINT
+const contextPath = import.meta.env.VITE_API_CONTEXT_PATH
+const version = import.meta.env.VITE_API_VERSION
+const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
 
-
-import {getAccessTokenFromSession, logOutUser, setAccessTokenAtSession} from "@/utils/user-utils"
+import {
+  getAccessTokenFromSession,
+  logOutUser,
+  setAccessTokenAtSession,
+} from "@/utils/user-utils"
 export const axiosAuthInstance = axios.create({
   baseURL: BASE_API_URL,
   timeout: 10000, // 10초
@@ -20,19 +22,20 @@ export const axiosPublicInstance = axios.create({
 })
 
 // 액세스 토큰 만료 확인
-const checkAccessTokenExpiration = (accessToken: string) => {
-  // 액세스 토큰 디코드
-  const decodedAccessToken = jwtDecode<{ exp: number }>(accessToken);
-
-  // 현재 시간
-  const currentTime = Math.floor(Date.now() / 1000)
-  // 액세스 토큰 만료 시간
-  const tokenExpirationTime = decodedAccessToken.exp
-
-  let isAccessTokenValid = false
-  // 현재 시간과 액세스 토큰의 만료 시간을 비교해서 액세스 토큰의 유효성을 검사
-  if (currentTime <= tokenExpirationTime) {
-    isAccessTokenValid = true
+const checkAccessTokenExpiration = async (
+  accessToken: String
+): Promise<boolean> => {
+  let isAccessTokenValid = true
+  console.log("accessToken", accessToken)
+  try {
+    const res = await axios.get(`BASE_API_URL/members/authorization`)
+    if (res.data) {
+      isAccessTokenValid = true
+    }
+    return true
+  } catch (error) {
+    console.log(error)
+    isAccessTokenValid = false
   }
 
   return isAccessTokenValid
@@ -41,7 +44,7 @@ const checkAccessTokenExpiration = (accessToken: string) => {
 // 요청 인터셉터 추가
 // 모든 요청에 accessToken 유무를 확인해서, 토큰이 있으면 헤더에 넣어서 요청을 보냄
 axiosAuthInstance.interceptors.request.use(
-  (config) => {
+  async (config) => {
     // 요청 인터셉터 동작 확인
     // console.groupCollapsed("request interceptors")
     // console.log("요청 인터셉터 동작")
@@ -52,12 +55,12 @@ axiosAuthInstance.interceptors.request.use(
 
     // 액세스 토큰이 있으면, 유효성 확인
     if (accessToken) {
-      isAccessTokenValid = checkAccessTokenExpiration(accessToken)
+      isAccessTokenValid = await checkAccessTokenExpiration(accessToken)
     }
 
     // 액세스 토큰이 유효한 경우 - 헤더에 액세스 토큰 추가
     if (isAccessTokenValid) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`
+      config.headers["Authorization"] = `${accessToken}`
     } else {
       config.headers["Authorization"] = ""
     }
@@ -91,8 +94,6 @@ axiosAuthInstance.interceptors.response.use(
 
     // 액세스 토큰이 존재하는 경우 dispatch를 사용해서 액세스 토큰을 sessionStorage에 저장
     if (accessToken) {
-      accessToken.replace("Bearer ", "")
-
       setAccessTokenAtSession(accessToken)
     }
     return res
@@ -119,19 +120,12 @@ axiosAuthInstance.interceptors.response.use(
 )
 axiosPublicInstance.interceptors.response.use(
   (res) => {
-    // console.log("axios-instances.js > 응답 인터셉터 res: ", res)
+    // // console.log("axios-instances.js > 응답 인터셉터 res: ", res)
 
-    // 응답의 headers를 언패킹
+    // // 응답의 headers를 언패킹
     const {headers} = res
     // headers에서 액세스 토큰 따로
     const accessToken = headers["authorization"]
-
-    // console.groupCollapsed("JWT fetched")
-    // console.log(
-    //   "axios-instance.js > 응답 인터셉터에서 받은 액세스 토큰 :",
-    //   accessToken
-    // )
-    // console.groupEnd()
 
     // 액세스 토큰이 존재하는 경우 dispatch를 사용해서 액세스 토큰을 sessionStorage에 저장
     if (accessToken) {
