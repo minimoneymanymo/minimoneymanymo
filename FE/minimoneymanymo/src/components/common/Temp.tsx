@@ -1,7 +1,7 @@
 function Temp(): JSX.Element {
   return (
     <>
-      <div className="bg-red-700 h-32">
+      <div className="h-32 bg-red-700">
         <br />
         Page Component 만들어야함.
       </div>

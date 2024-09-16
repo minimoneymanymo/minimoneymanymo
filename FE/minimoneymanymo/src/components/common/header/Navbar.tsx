@@ -23,10 +23,10 @@ const NavItemList = (): JSX.Element => {
             key={item.id}
             to={item.to}
             className={({isActive}) =>
-              `rounded-xl truncate ${isActive ? "bg-yellow font-bold" : ""}`
+              `truncate rounded-xl ${isActive ? "bg-yellow font-bold" : ""}`
             }
           >
-            <span className="flex h-12 cursor-pointer items-center  px-1 text-center text-lg ">
+            <span className="flex h-12 cursor-pointer items-center px-1 text-center text-lg">
               {item.category}
             </span>
           </NavLink>
@@ -43,7 +43,7 @@ const NavAction = (): JSX.Element => {
   }
 
   return (
-    <ul className="flex h-16 items-center text-center text-lg ">
+    <ul className="flex h-16 items-center text-center text-lg">
       <>
         {/* <li className="mx-2.5 flex h-full cursor-pointer">
             <NavChat onClick={onClickChatHandler} />
@@ -71,8 +71,8 @@ const NavAction = (): JSX.Element => {
 
 function Navbar(): JSX.Element {
   return (
-    <nav className="flex h-20 flex-col items-center justify-center border-b px-10 ">
-      <div className="container mx-auto flex justify-between items-center">
+    <nav className="flex h-20 flex-col items-center justify-center border-b px-10">
+      <div className="container mx-auto flex items-center justify-between">
         <NavItemList />
         <NavAction />
       </div>

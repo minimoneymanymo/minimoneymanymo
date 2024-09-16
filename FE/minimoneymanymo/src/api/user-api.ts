@@ -1,4 +1,4 @@
-import {axiosPublicInstance} from "@/api/httpcommons"
+import {axiosAuthInstance, axiosPublicInstance} from "@/api/httpcommons"
 
 // 아이디 체크
 export const getIsDuplicatedId = async (id: string, role: string) => {
@@ -11,15 +11,12 @@ export const getIsDuplicatedId = async (id: string, role: string) => {
     })
     return res.data
 
-    // 회원가입 후 바로 로그인을 위해 loginUser thunk를 dispatch로 호출
-    // return postLoginUser(loginData)
   } catch (e) {
     return e
   }
 }
 
 export const userLogin = async (formData: FormData) => {
-  // FormData의 내용 로그 출력
   for (const [key, value] of formData.entries()) {
     console.log(`${key}: ${value}`)
   }
@@ -30,3 +27,39 @@ export const userLogin = async (formData: FormData) => {
     return e
   }
 }
+
+// 나의 자식 목록 조회
+export const getMyChildren = async ()=>{
+    try {
+      const res = await axiosAuthInstance.get("/members/mychildren")
+      console.log(res.data)
+      return res.data
+    } catch (e) {
+      return e
+    }
+}
+
+// 참여대기 인원확인
+export const getMyChildWaiting = async () => {
+  try {
+    const res = await axiosAuthInstance.get("/members/mychildren/waiting")
+    console.log(res.data)
+    return res.data
+  } catch (e) {
+    return e
+  }
+}
+
+// 참여대기 인원승인
+export const addMyChildWaiting = async (childrenId: number) => {
+  try {
+    const res = await axiosAuthInstance.put("/members/mychildren/waiting", {
+      childrenId,
+    })
+    console.log(res.data)
+    return res.data
+  } catch (e) {
+    return e
+  }
+}
+

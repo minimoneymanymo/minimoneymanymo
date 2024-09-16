@@ -88,18 +88,18 @@ export function SimpleRegistrationForm() {
     <Card
       color="transparent"
       shadow={false}
-      className="p-6 rounded-lg border border-gray-300"
+      className="rounded-lg border border-gray-300 p-6"
     >
       <Typography variant="h5" color="blue-gray">
         환영해요 !
       </Typography>
-      <Typography className="mt-1 font-bold text-3xl text-primary-m1">
+      <Typography className="mt-1 text-3xl font-bold text-primary-m1">
         minimoneymanymo
       </Typography>
       <Typography variant="h6" color="blue-gray">
         에 회원가입을 해보아요
       </Typography>
-      <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
+      <form className="mb-2 mt-8 w-80 max-w-screen-lg sm:w-96">
         <div className="mb-1 flex flex-col gap-6">
           <Typography variant="h6" color="blue-gray" className="-mb-3">
             아이디
@@ -117,7 +117,7 @@ export function SimpleRegistrationForm() {
                   <InputAdornment position="end" style={{marginRight: "-8px"}}>
                     <Button
                       onClick={checkId}
-                      className="bg-primary-m1 text-white rounded-lg"
+                      className="rounded-lg bg-primary-m1 text-white"
                       style={{
                         minWidth: "auto",
                         padding: "0 8px",
@@ -235,7 +235,7 @@ export function SimpleRegistrationForm() {
                 className="ml-2 p-0" // 이미지와 버튼 간의 간격 조절
                 style={{minWidth: "auto", padding: 0}} // 버튼의 최소 너비와 패딩 설정
               >
-                <img src={passLogo} alt="Logo" className="w-9 h-9 " />{" "}
+                <img src={passLogo} alt="Logo" className="h-9 w-9" />{" "}
                 {/* 버튼 안에 이미지 추가 및 크기 설정 */}
               </Button>
             </Typography>
@@ -270,7 +270,7 @@ export function SimpleRegistrationForm() {
                   </ListItemPrefix>
                   <Typography
                     color="blue-gray"
-                    className="font-medium text-blue-gray-400"
+                    className="text-blue-gray-400 font-medium"
                   >
                     부모
                   </Typography>
@@ -295,7 +295,7 @@ export function SimpleRegistrationForm() {
                   </ListItemPrefix>
                   <Typography
                     color="blue-gray"
-                    className="font-medium text-blue-gray-400"
+                    className="text-blue-gray-400 font-medium"
                   >
                     자녀
                   </Typography>
