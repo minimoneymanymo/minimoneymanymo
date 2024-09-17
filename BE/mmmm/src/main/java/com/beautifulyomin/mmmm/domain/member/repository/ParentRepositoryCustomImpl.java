@@ -45,7 +45,7 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
                 .from(stocksHeld)
                 .join(dailyStockChart)
-                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.id.stockCode))
+                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
                 .where(stocksHeld.children.childrenId.eq(childrenId))
                 .fetchOne();
 

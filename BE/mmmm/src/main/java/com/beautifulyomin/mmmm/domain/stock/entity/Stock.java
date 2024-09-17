@@ -19,7 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class Stock {
     @Id
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String stockCode;
 
     @Column(nullable = false, length = 100)
