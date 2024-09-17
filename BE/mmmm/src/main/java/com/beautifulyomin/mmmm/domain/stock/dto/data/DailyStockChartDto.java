@@ -11,9 +11,9 @@ import java.time.LocalDate;
 @Getter
 public class DailyStockChartDto {
     private LocalDate date;
-    private BigDecimal operatingPrice;
     private BigDecimal highestPrice;
     private BigDecimal lowestPrice;
-    private BigDecimal closingPrice;
     private BigInteger tradingVolume;
+    private BigDecimal operatingPrice;
+    private BigDecimal closingPrice;
 }
