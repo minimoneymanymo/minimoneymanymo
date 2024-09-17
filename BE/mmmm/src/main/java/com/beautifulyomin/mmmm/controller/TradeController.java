@@ -4,6 +4,7 @@ import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.service.TradeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class TradeController {
     }
 
     @PostMapping
-    public ResponseEntity<CommonResponseDto> createTrade(@RequestHeader("Authorization") String token, @RequestBody TradeDto tradeDto) {
+    public ResponseEntity<CommonResponseDto> createTrade(@RequestHeader("Authorization") String token, @Valid @RequestBody TradeDto tradeDto) {
         String userId = jwtUtil.getUsername(token); // token 에서 userId를 받아온다. ( 아이디, 즉 이메일 )
         // 아이디로 child 테이블에 접근해서 childrenId를 받아온다. -> service에서 처리
         System.out.println(userId);

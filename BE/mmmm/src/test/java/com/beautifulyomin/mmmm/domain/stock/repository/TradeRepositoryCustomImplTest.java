@@ -5,16 +5,12 @@ import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import io.github.cdimascio.dotenv.Dotenv;
-import jakarta.validation.ConstraintViolationException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.hibernate.exception.ConstraintViolationException;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.transaction.TransactionSystemException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -120,22 +116,28 @@ class TradeRepositoryCustomImplTest {
                 30000
         );
 
-
         //when & then
         // 데이터베이스에 저장할 때 예외가 발생해야 함
-        ConstraintViolationException thrownException = assertThrows(ConstraintViolationException.class, () -> {
-                    try {
-                        entityManager.persist(tradeRecord);
-                        entityManager.flush();
-                    } catch (TransactionSystemException e) {
-                        // TransactionSystemException의 원인으로 ConstraintViolationException을 던집니다.
-                        if (e.getCause() instanceof ConstraintViolationException) {
-                            throw (ConstraintViolationException) e.getCause();
-                        } else {
-                            throw e;
-                        }
-                    }
-                });
+        Throwable thrownException = Assertions.assertThrows(Exception.class, () -> {
+            entityManager.persist(tradeRecord);
+            entityManager.flush();
+        });
+
+        // 예외가 발생했는지 확인
+        Assertions.assertNotNull(thrownException);
+
+        // 예외의 원인을 확인
+        Throwable rootCause = thrownException.getCause();
+        while (rootCause.getCause() != null) {
+            rootCause = rootCause.getCause();
+        }
+
+        // 예외의 최종 원인이 ConstraintViolationException인지 확인
+        Assertions.assertTrue(rootCause instanceof ConstraintViolationException, "Expected root cause to be ConstraintViolationException but was " + rootCause.getClass().getName());
     }
+
+
+
+
 
 }

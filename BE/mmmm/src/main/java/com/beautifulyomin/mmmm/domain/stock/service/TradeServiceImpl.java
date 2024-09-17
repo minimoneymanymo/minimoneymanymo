@@ -27,17 +27,16 @@ public class TradeServiceImpl implements TradeService {
 
         tradeDto.setChildrenId(children.getChildrenId());
 
-        // TradeRecord 엔티티 생성 및 설정
-        TradeRecord tradeRecord = new TradeRecord();
-
-        tradeRecord.setChildren(children);
-        tradeRecord.setStock(stock);
-
-        tradeRecord.setAmount(tradeDto.getAmount());
-        tradeRecord.setTradeSharesCount(tradeDto.getTradeSharesCount());
-        tradeRecord.setReason(tradeDto.getReason());
-        tradeRecord.setTradeType(tradeDto.getTradeType());
-        tradeRecord.setRemainAmount(tradeDto.getRemainAmount());
+        // TradeRecord 엔티티 빌더 패턴 사용하여 생성
+        TradeRecord tradeRecord = TradeRecord.builder()
+                .children(children)
+                .stock(stock)
+                .amount(tradeDto.getAmount())
+                .tradeSharesCount(tradeDto.getTradeSharesCount())
+                .reason(tradeDto.getReason())
+                .tradeType(tradeDto.getTradeType())
+                .remainAmount(tradeDto.getRemainAmount())
+                .build();
 
         // TradeRecord 저장
         tradeRepository.save(tradeRecord);
