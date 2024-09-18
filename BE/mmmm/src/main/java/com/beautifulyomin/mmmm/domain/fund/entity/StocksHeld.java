@@ -3,17 +3,17 @@ package com.beautifulyomin.mmmm.domain.fund.entity;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "stocks_held")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class StocksHeld { // 주식보유내역
 
     @ManyToOne(fetch = FetchType.LAZY) // 자식1 : 내역n
