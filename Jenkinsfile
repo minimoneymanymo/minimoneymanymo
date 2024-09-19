@@ -28,7 +28,7 @@ pipeline {
                     dir('BE/mmmm') {
                         sh 'chmod +x gradlew'
                         sh './gradlew clean'
-                        sh './gradlew build --refresh-dependencies'
+                        sh './gradlew build --debug --refresh-dependencies'
 
                         // JAR 파일 확인
                         sh 'ls -l build/libs/'
