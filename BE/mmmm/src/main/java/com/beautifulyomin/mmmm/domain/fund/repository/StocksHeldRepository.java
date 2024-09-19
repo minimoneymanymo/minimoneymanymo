@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface StocksHeldRepository extends JpaRepository<StocksHeld, Integer> {
-    Optional<StocksHeld> findByChildrenIdAndStockCode(Integer childrenId, String stockCode);
+    Optional<StocksHeld> findByChildren_ChildrenIdAndStock_StockCode(Integer childrenId, String stockCode);
 }
