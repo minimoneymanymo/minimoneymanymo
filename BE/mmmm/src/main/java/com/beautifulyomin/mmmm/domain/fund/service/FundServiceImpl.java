@@ -48,6 +48,6 @@ public class FundServiceImpl implements FundService {
     public List<WithdrawRequestDto> findAllWithdrawRequest(String childrenId) {
         Children child = childrenRepository.findByUserId(childrenId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
-        return fundRepository.findAllWithdrawalRequest(child.getChildrenId());
+        return fundRepositoryCustom.findAllWithdrawalRequest(child.getChildrenId());
     }
 }
