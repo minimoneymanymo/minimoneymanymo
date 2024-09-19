@@ -2,7 +2,9 @@ package com.beautifulyomin.mmmm.controller;
 
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.exception.StockNotFountException;
+import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.ConstraintViolationException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,16 +16,22 @@ import java.nio.file.AccessDeniedException;
 @ControllerAdvice(basePackages = "com.beautifulyomin.mmmm")
 public class ExceptionController {
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<CommonResponseDto> handleBadRequestException(BadRequestException ex) {
+        CommonResponseDto errorResponse = new CommonResponseDto(400, ex.getMessage(), null);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidRoleException.class, AuthenticationException.class})
+    public ResponseEntity<CommonResponseDto> handleAuthenticationException(Exception ex) {
+        CommonResponseDto errorResponse = new CommonResponseDto(401, ex.getMessage(), null);
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<CommonResponseDto> handleAccessDeniedException(AccessDeniedException ex) {
         CommonResponseDto errorResponse = new CommonResponseDto(403, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<CommonResponseDto> handleAuthenticationException(AuthenticationException ex) {
-        CommonResponseDto errorResponse = new CommonResponseDto(401, ex.getMessage(), null);
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({StockNotFountException.class, ConstraintViolationException.class})
