@@ -10,7 +10,6 @@ import com.beautifulyomin.mmmm.domain.fund.repository.TransactionRepository;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,8 +48,6 @@ public class FundServiceImpl implements FundService {
     public List<WithdrawRequestDto> findAllWithdrawRequest(String childrenId) {
         Children child = childrenRepository.findByUserId(childrenId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
-        return transactionRepository.findTop5ByTradeTypeAndChildren_ChildrenId(
-                "1", child.getChildrenId(), PageRequest.of(0, 5)
-        );
+        return fundRepository.findAllWithdrawalRequest(child.getChildrenId());
     }
 }
