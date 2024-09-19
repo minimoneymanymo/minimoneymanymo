@@ -24,7 +24,7 @@ import static com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart.daily
 @Slf4j
 @Repository
 public class StockRepositoryCustomImpl implements StockRepositoryCustom {
-    private final int PERIOD_LIMIT_CNT=30;
+    private final int PERIOD_LIMIT_CNT = 30;
     private final JPAQueryFactory queryFactory;
 
     public StockRepositoryCustomImpl(JPAQueryFactory queryFactory) {
@@ -107,13 +107,6 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                 .where(dailyStockChart.stockCode.eq(stockCode))
                 .orderBy(weekNumberExpression.asc(), dailyStockChart.date.asc())
                 .fetch();
-
-        // 각 튜플의 주차 번호를 인덱스로 접근하여 확인 및 출력
-        groupedWeeks.forEach(tuple -> {
-            LocalDate date = tuple.get(dailyStockChart.date);
-            Integer weekNumber = tuple.get(7, Integer.class); // 7번 인덱스는 weekNumberExpression의 위치
-            log.info("Date: {}, Week Number: {}", date, weekNumber);
-        });
 
         // Step 3: 주차별 데이터를 Map에 그룹화
         Map<Integer, List<Tuple>> weekGroups = groupedWeeks.stream()
