@@ -9,21 +9,22 @@ pipeline {
         stage('Start PostgreSQL Container') {
             steps {
                 script {
-                    // PostgreSQL 컨테이너 시작
-                    sh 'docker-compose -f BE/mmmm/testdb-compose.yml up -d'
+                    sh '''
+                    docker-compose -f /home/ubuntu/testdb-compose.yml up -d
+                    '''
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 script {
                     dir('BE/mmmm') {
-                        // Gradle 빌드 수행
                         sh 'chmod +x gradlew'
                         sh './gradlew clean'
                         sh './gradlew build --refresh-dependencies'
 
-                        // 빌드 후 JAR 파일 확인
+                        // JAR 파일 확인
                         sh 'ls -l build/libs/'
 
                         // Docker 이미지 빌드
@@ -32,6 +33,7 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -42,11 +44,14 @@ pipeline {
                 }
             }
         }
-        stage('Stop PostgreSQL Container') {
-            steps {
-                script {
-                    // PostgreSQL 컨테이너 중지
-                    sh 'docker-compose -f BE/mmmm/testdb-compose.yml down'
+    }
+
+    post {
+        always {
+            // PostgreSQL 컨테이너 종료
+            script {
+                dir('BE/mmmm') {
+                    sh 'docker-compose -f testdb-compose.yml down'
                 }
             }
         }
