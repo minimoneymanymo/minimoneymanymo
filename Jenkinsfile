@@ -10,6 +10,11 @@ pipeline {
             steps {
                 script {
                     sh 'ls -l /home/ubuntu'
+
+                    sh 'docker --version'
+
+                    sh 'docker-compose --version'
+
                     sh '''
                     docker-compose -f /home/ubuntu/testdb-compose.yml up -d
                     '''
