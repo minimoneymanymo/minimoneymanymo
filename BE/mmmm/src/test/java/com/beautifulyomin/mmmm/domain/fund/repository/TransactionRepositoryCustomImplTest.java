@@ -52,7 +52,6 @@ class TransactionRepositoryCustomImplTest {
         System.out.println("DB URL: " + environment.getProperty("spring.datasource.url"));
         System.out.println("DB User: " + environment.getProperty("spring.datasource.username"));
         System.out.println("DB Password: " + environment.getProperty("spring.datasource.password"));
-
         System.out.println("DB URL: " + environment.getProperty("spring.datasource.url"));
         System.out.println("DB User: " + environment.getProperty("spring.datasource.username"));
         System.out.println("DB Password: " + environment.getProperty("spring.datasource.password"));
