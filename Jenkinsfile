@@ -14,7 +14,7 @@ pipeline {
                     dir('BE/mmmm') {
 
                         sh '''
-                        docker-compose -f /home/ubuntu/testdb-compose.yml up -d
+                        docker-compose -f testdb-compose.yml up -d
                         '''
                     }
 
