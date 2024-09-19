@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+
 @Repository
 public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
@@ -75,7 +76,7 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                 .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
                 .from(stocksHeld)
                 .join(dailyStockChart)
-                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.id.stockCode))
+                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
                 .where(stocksHeld.children.userId.eq(childrenId))
                 .fetchOne();
 

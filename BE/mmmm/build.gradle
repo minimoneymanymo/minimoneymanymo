@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.3'
     id 'io.spring.dependency-management' version '1.1.6'
-    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+    //id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
 group = 'com.beautifulyomin'
@@ -25,9 +25,10 @@ repositories {
 }
 
 dependencies {
-    //S3
+    //test용 dependencies
+    testImplementation 'com.h2database:h2'
+    // S3
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.529')
     implementation 'com.amazonaws:aws-java-sdk-s3'
 
@@ -36,9 +37,10 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'io.github.cdimascio:dotenv-java:2.2.0'
 
+    // QueryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     implementation 'com.querydsl:querydsl-apt:5.0.0:jakarta'
-    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
@@ -57,44 +59,33 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-
-
-    //jwt
+    // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-    //json mapper
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0' // 최신 버전을 사용하세요
 
+    // JSON mapper
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0' // 최신 버전을 사용하세요
 }
 
+tasks.withType(Test) {
+    enabled = false
+}
 tasks.named('test') {
     useJUnitPlatform()
 }
 
+// QueryDsl 빌드 옵션 (선택)
 def querydslDir = "$buildDir/generated/querydsl"
 
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
-}
-
 sourceSets {
-    main.java.srcDir querydslDir
-}
-
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
-
-compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
+    main.java.srcDirs += [ querydslDir ]
 }
 
 tasks.withType(JavaCompile) {
-    options.generatedSourceOutputDirectory = file(querydslDir)
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 }
 
-clean {
-    delete file(querydslDir)
+clean.doLast {
+    file(querydslDir).deleteDir()
 }

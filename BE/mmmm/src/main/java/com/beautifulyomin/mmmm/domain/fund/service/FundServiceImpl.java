@@ -20,16 +20,16 @@ public class FundServiceImpl implements FundService {
     
     private final ChildrenRepository childrenRepository;
     private final TransactionRepository transactionRepository;
-    private final FundRepositoryCustom fundRepository;
+    private final FundRepositoryCustom fundRepositoryCustom;
 
     @Override
     public List<MoneyChangeDto> findAllMoneyRecordsById(String childrenId) {
-        return fundRepository.findAllMoneyRecordsById(childrenId);
+        return fundRepositoryCustom.findAllMoneyRecordsById(childrenId);
     }
 
     @Override
     public MoneyDto findMoneyById(String childrenId) {
-        return fundRepository.findMoneyById(childrenId);
+        return fundRepositoryCustom.findMoneyById(childrenId);
     }
 
     @Override

@@ -9,18 +9,21 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Dockerfile이 존재하는 디렉토리
+                    // Dockerfile이 존재하는 디렉토리로 이동
                     dir('BE/mmmm') {
-                        // Ensure the Gradle build creates the JAR file
+                        // Gradle 빌드 수행
+                        sh 'chmod +x gradlew'  // gradlew에 실행 권한 부여
+                        sh './gradlew clean '  // 기존 빌드 아티팩트 삭제
+                        sh './gradlew build --refresh-dependencies '  // 프로젝트 빌드
 
-                        sh 'chmod +x gradlew'
-                        sh './gradlew build'
-                        sh './gradlew clean'                        
-                        // Verify if the JAR file exists
+                        // 빌드 후 JAR 파일 확인
                         sh 'ls -l build/libs/'
 
-                        // Build Docker image
-                        apiImage = docker.build('mmmm-api-image')
+                        // Docker 이미지 빌드
+                        docker.build('mmmm-api-image', '-f Dockerfile .')
+
+                        // 선택 사항: Docker 이미지에 특정 태그를 추가할 수 있습니다
+                        // apiImage.tag('latest')
                     }
                 }
             }
@@ -28,10 +31,11 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Docker Commons 플러그인을 사용해 Docker Hub 레지스트리에 푸시
+                    // Docker Hub 레지스트리에 Docker 이미지 푸시
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        // build 단계에서 반환된 customImage를 사용하여 푸시합니다.
-                        apiImage.push('latest')
+                        // 'latest' 태그로 Docker 이미지 푸시
+                        sh 'docker tag mmmm-api-image thispear/mmmm:latest'
+                        sh 'docker push thispear/mmmm:latest'
                     }
                 }
             }
