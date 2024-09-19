@@ -5,6 +5,7 @@ import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.fund.dto.*;
 import com.beautifulyomin.mmmm.domain.fund.service.FundService;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
+import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,14 +82,13 @@ public class FundController {
      * 부모-출금 요청 내역 조회
      */
     @GetMapping("/child-withdraw-list")
-    public ResponseEntity<CommonResponseDto> findAllWithdrawRequestFromParent(@RequestHeader("Authorization") String token, @RequestParam("childrenId") String childrenId) {
+    public ResponseEntity<CommonResponseDto> findAllWithdrawRequestFromParent(
+            @RequestHeader("Authorization") String token,
+            @RequestParam("childrenId") String childrenId
+    ) {
         String userId = jwtUtil.getUsername(token);
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
 
         List<WithdrawRequestDto> allWithdrawRequest = fundService.findAllWithdrawRequest(childrenId);
@@ -107,11 +107,7 @@ public class FundController {
     ) {
         String userId = jwtUtil.getUsername(token);
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
 
         long result = fundService.approveWithdrawalRequest(approve.getChildrenId(), approve.getAmount(), approve.getCreatedAt());
