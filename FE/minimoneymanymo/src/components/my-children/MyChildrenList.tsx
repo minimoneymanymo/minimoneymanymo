@@ -1,6 +1,6 @@
 import {getMyChildren} from "@/api/user-api"
 import {useEffect, useState} from "react"
-import {Child} from "./types"
+import {Children} from "./types"
 import MyChildItem from "./MyChildItem"
 import {useNavigate} from "react-router-dom"
 import Heading from "../common/Heading"
@@ -12,7 +12,7 @@ interface MyChildrenListProps {
 function MyChildrenList({
   refreshChildrenList,
 }: MyChildrenListProps): JSX.Element {
-  const [childrenList, setChildrenList] = useState<Child[]>([])
+  const [childrenList, setChildrenList] = useState<Children[]>([])
   const navigate = useNavigate()
   useEffect(() => {
     const fetchchildrenList = async () => {

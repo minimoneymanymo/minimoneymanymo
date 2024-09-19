@@ -1,6 +1,6 @@
 import {addMyChildWaiting, getMyChildWaiting} from "@/api/user-api"
 import {useEffect, useState} from "react"
-import {Child} from "./types"
+import {Children} from "./types"
 import {computeTime} from "@/utils/datefuntion"
 import Heading from "../common/Heading"
 
@@ -11,7 +11,7 @@ interface MyChildrenWaitingListProps {
 function MyChildrenWaitingList({
   onChildApproved,
 }: MyChildrenWaitingListProps): JSX.Element {
-  const [childrenWaitingList, setChildrenWaitingList] = useState<Child[]>([])
+  const [childrenWaitingList, setChildrenWaitingList] = useState<Children[]>([])
 
   const fetchchildrenWaitingList = async () => {
     const res = await getMyChildWaiting()

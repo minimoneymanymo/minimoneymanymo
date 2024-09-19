@@ -1,21 +1,20 @@
+import { useChild } from "../context/ChildContext"
+import { Children } from "./types"
 
-import { Child } from "./types"
-
-interface MyChildItemProps {
-  child: Child
+interface MyChildProps {
+  child: Children | Children
 }
 
-function MyChildItem({child}: MyChildItemProps) {
+function MyChildItem({child}: MyChildProps): JSX.Element {
   return (
-    <>
-      <p>Name: {child.name}</p>
-      <p>Created At: {child.createdAt}</p>
-      <p>Money: {child.money}</p>
-      <p>Total Amount: {child.totalAmount}</p>
-      <p>Withdrawable Money: {child.withdrawableMoney}</p>
-      <p>User ID: {child.userId}</p>
+    <div className="m-5 h-44 rounded-lg border">
       <p>Profile Image URL: {child.profileimgUrl || "No image available"}</p>
-    </>
+      <p>Name: {child.name}</p>
+      {/* <p>User ID: {child.userId}</p> */}
+      <p>보유머니: {child.money}</p>
+      <p>평가금: {child.totalAmount}</p>
+      <p>출금가능금액: {child.withdrawableMoney}</p>
+    </div>
   )
 }
 
