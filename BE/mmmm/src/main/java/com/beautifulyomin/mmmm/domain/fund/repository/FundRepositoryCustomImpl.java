@@ -12,9 +12,13 @@ import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -22,9 +26,11 @@ import java.util.List;
 public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
+    private final EntityManager entityManager;
 
-    public FundRepositoryCustomImpl(JPAQueryFactory jpaQueryFactory) {
+    public FundRepositoryCustomImpl(JPAQueryFactory jpaQueryFactory, EntityManager entityManager) {
         this.jpaQueryFactory = jpaQueryFactory;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -94,7 +100,6 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
     @Override
     public List<WithdrawRequestDto> findAllWithdrawalRequest(Integer childrenId) {
-        // select * from transaction_record where trade_type = tradeType and children_id = childrenId
         QTransactionRecord transaction =QTransactionRecord.transactionRecord;
 
         return jpaQueryFactory
@@ -108,6 +113,36 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                 .orderBy(transaction.createdAt.desc())
                 .limit(5)
                 .fetch();
+    }
+
+    @Override
+    @Transactional
+    public long approveWithdrawalRequest(Integer childrenId, Integer amount, String createdAt) {
+        QTransactionRecord transaction =QTransactionRecord.transactionRecord;
+        QChildren children = QChildren.children;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        long rows = jpaQueryFactory
+                .update(transaction)
+                .set(transaction.approvedAt, LocalDateTime.now().format(formatter))
+                .where(transaction.children.childrenId.eq(childrenId), transaction.createdAt.eq(createdAt))
+                .execute();
+
+        if(rows > 0){ // 업데이트가 발생하면
+            jpaQueryFactory
+                .update(children)
+                .set(children.money, children.money.subtract(amount))
+                .set(children.withdrawableMoney, children.withdrawableMoney.subtract(amount))
+                .where(children.childrenId.eq(childrenId))
+                .execute();
+        }
+
+        // 즉시 반영을 위함 -> 영속성 컨텍스트에 값이 남아있지 않도록!
+        entityManager.flush();
+        entityManager.clear();
+
+        return rows;
     }
 
 }
