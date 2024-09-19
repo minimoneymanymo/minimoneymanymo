@@ -9,9 +9,11 @@ pipeline {
         stage('Start PostgreSQL Container') {
             steps {
                 script {
+                    sh 'ls -l /home/ubuntu'
                     sh '''
                     docker-compose -f /home/ubuntu/testdb-compose.yml up -d
                     '''
+
                 }
             }
         }
