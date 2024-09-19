@@ -9,7 +9,7 @@ pipeline {
         stage('Start PostgreSQL Container') {
             steps {
                 script {
-                    sh 'ls -l /home/ubuntu'
+
 
                     sh 'docker --version'
 
