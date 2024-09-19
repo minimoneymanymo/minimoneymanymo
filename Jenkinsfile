@@ -8,16 +8,15 @@ pipeline {
     stages {
         stage('Start PostgreSQL Container') {
             steps {
+                
                 script {
 
+                    dir('BE/mmmm') {
 
-                    sh 'docker --version'
-
-                    sh 'docker-compose --version'
-
-                    sh '''
-                    docker-compose -f /home/ubuntu/testdb-compose.yml up -d
-                    '''
+                        sh '''
+                        docker-compose -f /home/ubuntu/testdb-compose.yml up -d
+                        '''
+                    }
 
                 }
             }
