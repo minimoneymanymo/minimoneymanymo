@@ -52,14 +52,5 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // PostgreSQL 컨테이너 종료
-            script {
-                dir('BE/mmmm') {
-                    sh 'docker-compose -f testdb-compose.yml down'
-                }
-            }
-        }
-    }
+
 }
