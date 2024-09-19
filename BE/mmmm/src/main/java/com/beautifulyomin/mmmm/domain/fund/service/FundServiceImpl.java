@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmm.domain.fund.service;
 
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
+import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
 import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.fund.repository.FundRepositoryCustom;
 import com.beautifulyomin.mmmm.domain.fund.repository.TransactionRepository;
@@ -32,7 +33,7 @@ public class FundServiceImpl implements FundService {
     }
 
     @Override
-    public TransactionRecord requestWithdraw(String childrenId, Integer amount) {
+    public void requestWithdraw(String childrenId, Integer amount) {
         Children child = childrenRepository.findByUserId(childrenId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
         TransactionRecord request = new TransactionRecord();
@@ -40,7 +41,13 @@ public class FundServiceImpl implements FundService {
         request.setAmount(amount);
         request.setTradeType("1");
         request.setRemainAmount(child.getMoney());
-        System.out.println(request);
-        return transactionRepository.save(request);
+        transactionRepository.save(request);
+    }
+
+    @Override
+    public List<WithdrawRequestDto> findAllWithdrawRequest(String childrenId) {
+        Children child = childrenRepository.findByUserId(childrenId)
+                .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
+        return fundRepositoryCustom.findAllWithdrawalRequest(child.getChildrenId());
     }
 }

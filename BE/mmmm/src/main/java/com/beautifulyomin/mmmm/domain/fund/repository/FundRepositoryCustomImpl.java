@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.domain.fund.repository;
 
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
+import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
 import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTradeRecord;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTransactionRecord;
@@ -90,4 +91,23 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                 .where(children.userId.eq(childrenId))
                 .fetchOne();
     }
+
+    @Override
+    public List<WithdrawRequestDto> findAllWithdrawalRequest(Integer childrenId) {
+        // select * from transaction_record where trade_type = tradeType and children_id = childrenId
+        QTransactionRecord transaction =QTransactionRecord.transactionRecord;
+
+        return jpaQueryFactory
+                .select(Projections.constructor(WithdrawRequestDto.class,
+                        transaction.createdAt,
+                        transaction.approvedAt,
+                        transaction.amount
+                ))
+                .from(transaction)
+                .where(transaction.children.childrenId.eq(childrenId))
+                .orderBy(transaction.createdAt.desc())
+                .limit(5)
+                .fetch();
+    }
+
 }
