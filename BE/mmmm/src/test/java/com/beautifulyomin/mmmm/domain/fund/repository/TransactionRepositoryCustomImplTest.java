@@ -42,14 +42,6 @@ class TransactionRepositoryCustomImplTest {
     static Children children;
     static Stock stock;
 
-    @BeforeAll
-    static void setUp() {  //모든 메서드 실행 전 딱 한 번
-        Dotenv dotenv = Dotenv.configure().load();
-        dotenv.entries().forEach(entry ->
-                System.setProperty(entry.getKey(), entry.getValue())
-        );
-    }
-
     @BeforeEach
     void init() { //메서드 각각마다 한 번씩 실행됨 (공통으로 사용해야 하는 것들은 여기서 선언하면 좋음)
         children = new Children(
