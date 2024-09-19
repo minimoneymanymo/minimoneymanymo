@@ -104,7 +104,7 @@ public class TradeServiceImpl implements TradeService {
         BigDecimal bigAveragePrice = BigDecimal.valueOf(stocksHeld.getTotalAmount()).divide(stocksHeld.getRemainSharesCount(), 2, RoundingMode.HALF_UP);
 
         // 매도 손익 계산 방법 : (현재가 − 평단가 ) × 매도 주식 수량
-        BigDecimal closingPrice = dailyStockChartRepository.findClosingPriceByStockCode(tradeDto.getStockCode());
+        BigDecimal closingPrice = dailyStockChartRepository.findLatestClosingPriceByStockCode(tradeDto.getStockCode());
         BigDecimal profitPerShare = closingPrice.subtract(bigAveragePrice);
         BigDecimal bigTotalProfit = profitPerShare.multiply(tradeDto.getTradeSharesCount());
 

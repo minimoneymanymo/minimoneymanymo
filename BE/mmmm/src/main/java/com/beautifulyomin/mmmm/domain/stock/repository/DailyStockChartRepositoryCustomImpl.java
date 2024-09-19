@@ -21,4 +21,14 @@ public class DailyStockChartRepositoryCustomImpl implements DailyStockChartRepos
                 .fetchOne(); // 단일 결과 반환
     }
 
+    @Override
+    public BigDecimal findLatestClosingPriceByStockCode(String stockCode) {
+        return jpaQueryFactory
+                .select(dailyStockChart.closingPrice)
+                .from(dailyStockChart)
+                .where(dailyStockChart.stockCode.eq(stockCode))
+                .orderBy(dailyStockChart.date.desc())
+                .fetchFirst(); // 가장 첫 번째 값을 가져옴
+    }
+
 }

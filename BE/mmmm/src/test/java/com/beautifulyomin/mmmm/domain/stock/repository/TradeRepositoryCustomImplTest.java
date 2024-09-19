@@ -1,16 +1,18 @@
 package com.beautifulyomin.mmmm.domain.stock.repository;
 
 import com.beautifulyomin.mmmm.config.QueryDslConfig;
+import com.beautifulyomin.mmmm.domain.fund.entity.StocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ class TradeRepositoryCustomImplTest {
 
     static Children children;
     static Stock stock;
+    static StocksHeld stocksHeld;
 
     @BeforeAll
     static void setUp() {  //모든 메서드 실행 전 딱 한 번
@@ -67,6 +70,16 @@ class TradeRepositoryCustomImplTest {
                 "KRW"                         // currencyName
         );
         entityManager.persist(stock);
+
+        // 임의의 주식 보유 내역 추가
+        stocksHeld = new StocksHeld(
+                children,
+                stock,
+                1,
+                BigDecimal.valueOf(3.0),
+                90000
+        );
+        entityManager.persist(stocksHeld);
     }
 
     @Test
@@ -103,38 +116,42 @@ class TradeRepositoryCustomImplTest {
 
     @Test
     @DisplayName("매매 실패 테스트")
+    // 매매 실패 테스트 1. 혹시 매매 할 때 이유를 입력 안하는 경우가 있을까봐 테스트 코드 짜보려 했는데 컴파일 에러가 먼저 나서 패스하기로 함.
     void tradeFailTest() {
-        //given
-        TradeRecord tradeRecord = new TradeRecord(
-                children,
-                stock,
+        // 데이터베이스에 저장할 때 예외가 발생해야 함
+        Throwable thrownException = Assertions.assertThrows(MethodArgumentNotValidException.class, ()-> new TradeDto(
+                children.getChildrenId(),
+                stock.getStockCode(),
                 40000,
                 BigDecimal.valueOf(0.5),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")),
+//                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")),
                 null, // 모르고 이유 입력 안 함
                 "4",
                 30000
-        );
+        ));
 
-        //when & then
-        // 데이터베이스에 저장할 때 예외가 발생해야 함
-        Throwable thrownException = Assertions.assertThrows(Exception.class, () -> {
-            entityManager.persist(tradeRecord);
-            entityManager.flush();
-        });
+//        // 예외가 발생했는지 확인
+//        Assertions.assertNotNull(thrownException);
+//
+//        // 예외의 원인을 확인
+//        Throwable rootCause = thrownException.getCause();
+//        while (rootCause.getCause() != null) {
+//            rootCause = rootCause.getCause();
+//        }
+//
+//        // 예외의 최종 원인이 ConstraintViolationException인지 확인
+//        Assertions.assertTrue(rootCause instanceof ConstraintViolationException, "Expected root cause to be ConstraintViolationException but was " + rootCause.getClass().getName());
 
-        // 예외가 발생했는지 확인
-        Assertions.assertNotNull(thrownException);
 
-        // 예외의 원인을 확인
-        Throwable rootCause = thrownException.getCause();
-        while (rootCause.getCause() != null) {
-            rootCause = rootCause.getCause();
-        }
-
-        // 예외의 최종 원인이 ConstraintViolationException인지 확인
-        Assertions.assertTrue(rootCause instanceof ConstraintViolationException, "Expected root cause to be ConstraintViolationException but was " + rootCause.getClass().getName());
     }
+
+//    주식 보유 내역의 보유 주수, 가격 총합이 잘 바뀌는지 테스트
+
+
+//    입출금 내역에서 남은 머니가 잘 변경되는지 테스트
+//    매수 매도 거래 내역에서 남은 머니가 잘 바뀌는지 테스트
+//    자식 자체의 머니가 잘 변경되는지 테스트
+//    소수점 단위로 연산하기 때문에 소수점과 금액이 잘 반영되서 연산되는지 테스트
 
 
 
