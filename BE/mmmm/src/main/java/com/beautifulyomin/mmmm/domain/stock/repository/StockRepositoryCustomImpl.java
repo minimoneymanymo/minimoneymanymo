@@ -1,5 +1,6 @@
 package com.beautifulyomin.mmmm.domain.stock.repository;
 
+import com.beautifulyomin.mmmm.domain.stock.constant.PeriodType;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockChartDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockDataDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
@@ -19,13 +20,13 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart.dailyStockChart;
-
 @Slf4j
 @Repository
 public class StockRepositoryCustomImpl implements StockRepositoryCustom {
-    private final int PERIOD_LIMIT_CNT = 30;
+    private static final int PERIOD_LIMIT_CNT = 30;
     private final JPAQueryFactory queryFactory;
+    private final QDailyStockData dailyStockData = QDailyStockData.dailyStockData;
+    private final QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
 
     public StockRepositoryCustomImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
@@ -33,7 +34,6 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 
     @Override
     public DailyStockDataDto findLatestDateByStockCode(String stockCode) {
-        QDailyStockData dailyStockData = QDailyStockData.dailyStockData;
         return queryFactory
                 .select(Projections.constructor(DailyStockDataDto.class,
                         dailyStockData.stockCode,
@@ -61,7 +61,6 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 
     @Override
     public List<DailyStockChartDto> getLatestDailyStockCharts(String stockCode) {
-        QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
         return queryFactory.select(Projections.constructor(DailyStockChartDto.class,
                         dailyStockChart.date,
                         dailyStockChart.highestPrice,
@@ -78,21 +77,73 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 
     @Override
     public List<DailyStockChartDto> getLatestWeeklyStockChart(String stockCode) {
-        // Step 1: 최신 날짜를 가져오기
-        LocalDate latestDate = queryFactory
-                .select(dailyStockChart.date.max())
-                .from(dailyStockChart)
-                .where(dailyStockChart.stockCode.eq(stockCode))
-                .fetchFirst();
+        return getLatestPeriodStockChart(PeriodType.WEEK, stockCode);
+    }
 
-        log.info("🌟🌟🌟🌟🌟latestDate = {}", latestDate);
+    @Override
+    public List<DailyStockChartDto> getLatestMonthlyStockChart(String stockCode) {
+        return getLatestPeriodStockChart(PeriodType.MONTH, stockCode);
+    }
 
-        // Step 2: 주차별 데이터 그룹화
-        NumberTemplate<Integer> weekNumberExpression = calculateWeekNumber(latestDate, dailyStockChart.date);
+    private List<DailyStockChartDto> getLatestPeriodStockChart(PeriodType periodType, String stockCode) {
+        LocalDate latestDate = fetchLatestDate(stockCode);
+        if (latestDate == null) {
+            return Collections.emptyList();
+        }
+        NumberTemplate<Integer> periodNumberExpression = calculatePeriodNumber(periodType, latestDate, dailyStockChart.date);
+        Map<Integer, List<Tuple>> periodGroups = groupByPeriod(periodType, stockCode, periodNumberExpression);
+        return summarizePeriodStockCharts(periodGroups);
+    }
 
-        log.info("🔥🔥🔥weekNumberExpression = {}", weekNumberExpression);
+    private List<DailyStockChartDto> summarizePeriodStockCharts(Map<Integer, List<Tuple>> periodGroups) {
+        List<DailyStockChartDto> periodStockCharts = new ArrayList<>();
+        int idx = 0;
+        for (Map.Entry<Integer, List<Tuple>> entry : periodGroups.entrySet()) {
+            List<Tuple> periodData = entry.getValue();
+            if (periodData.isEmpty()) {
+                continue;
+            }
+            LocalDate periodStartDate = periodData.get(0).get(dailyStockChart.date);
+            BigDecimal periodOpeningPrice = periodData.get(0).get(dailyStockChart.operatingPrice);
+            BigDecimal periodClosingPrice = periodData.get(periodData.size() - 1).get(dailyStockChart.closingPrice);
+            BigDecimal periodHighestPrice = getHighestPrice(periodData);
+            BigDecimal periodLowestPrice = getLowestPrice(periodData);
+            BigInteger periodTradingVolume = getTotalTradingVolume(periodData);
 
-        List<Tuple> groupedWeeks = queryFactory
+            periodStockCharts.add(new DailyStockChartDto(
+                    periodStartDate, periodHighestPrice, periodLowestPrice, periodTradingVolume, periodOpeningPrice, periodClosingPrice));
+
+            if (++idx >= PERIOD_LIMIT_CNT) { //30개까지만 조회
+                break;
+            }
+        }
+        return periodStockCharts;
+    }
+
+    private BigInteger getTotalTradingVolume(List<Tuple> periodData) {
+        return periodData.stream()
+                .map(tuple -> tuple.get(dailyStockChart.tradingVolume))
+                .reduce(BigInteger.ZERO, BigInteger::add);
+    }
+
+    private BigDecimal getLowestPrice(List<Tuple> periodData) {
+        return periodData.stream()
+                .map(tuple -> tuple.get(dailyStockChart.lowestPrice))
+                .filter(Objects::nonNull)
+                .min(BigDecimal::compareTo)
+                .orElse(null);
+    }
+
+    private BigDecimal getHighestPrice(List<Tuple> periodData) {
+        return periodData.stream()
+                .map(tuple -> tuple.get(dailyStockChart.highestPrice))
+                .filter(Objects::nonNull)
+                .max(BigDecimal::compareTo)
+                .orElse(null);
+    }
+
+    private Map<Integer, List<Tuple>> groupByPeriod(PeriodType periodType, String stockCode, NumberTemplate<Integer> periodNumberExpression) {
+        List<Tuple> groupedPeriods = queryFactory
                 .select(
                         dailyStockChart.date,
                         dailyStockChart.stockCode,
@@ -101,55 +152,25 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                         dailyStockChart.lowestPrice,
                         dailyStockChart.closingPrice,
                         dailyStockChart.tradingVolume,
-                        weekNumberExpression.as("weekNumber")
+                        periodNumberExpression.as(periodType.getDateTruncUnit() + "Number")
                 )
                 .from(dailyStockChart)
                 .where(dailyStockChart.stockCode.eq(stockCode))
-                .orderBy(weekNumberExpression.asc(), dailyStockChart.date.asc())
+                .orderBy(periodNumberExpression.asc(), dailyStockChart.date.asc())
                 .fetch();
 
-        // Step 3: 주차별 데이터를 Map에 그룹화
-        Map<Integer, List<Tuple>> weekGroups = groupedWeeks.stream()
-                .filter(tuple -> tuple.get(7, Integer.class) != null) // 인덱스 7의 weekNumber가 null이 아닌 경우
+//        logTuples(groupedPeriods);
+        return groupedPeriods.stream()
+                .filter(tuple -> tuple.get(7, Integer.class) != null) //index7= 기간별로 묶고 넘버링 한 값
                 .collect(Collectors.groupingBy(tuple -> tuple.get(7, Integer.class)));
+    }
 
-        log.info("❗❗❗❗❗weekGroups = {}", weekGroups);
-
-
-        // step 4: 주차별로 집계 함수 적용
-        List<DailyStockChartDto> weeklyStockCharts = new ArrayList<>();
-        int idx = 1;
-        for (Map.Entry<Integer, List<Tuple>> entry : weekGroups.entrySet()) {
-            List<Tuple> weekData = entry.getValue();
-            LocalDate weekStartDate = weekData.get(0).get(dailyStockChart.date);
-            BigDecimal openingPrice = weekData.get(0).get(dailyStockChart.operatingPrice);
-            BigDecimal closingPrice = weekData.get(weekData.size() - 1).get(dailyStockChart.closingPrice);
-
-            BigDecimal highestPrice = weekData.stream()
-                    .map(tuple -> tuple.get(dailyStockChart.highestPrice))
-                    .filter(Objects::nonNull)
-                    .max(BigDecimal::compareTo)
-                    .orElse(null);
-
-            BigDecimal lowestPrice = weekData.stream()
-                    .map(tuple -> tuple.get(dailyStockChart.lowestPrice))
-                    .filter(Objects::nonNull)
-                    .min(BigDecimal::compareTo)
-                    .orElse(null);
-
-            BigInteger tradingVolume = weekData.stream()
-                    .map(tuple -> tuple.get(dailyStockChart.tradingVolume))
-                    .reduce(BigInteger.ZERO, BigInteger::add);
-
-            weeklyStockCharts.add(new DailyStockChartDto(
-                    weekStartDate, highestPrice, lowestPrice, tradingVolume, openingPrice, closingPrice));
-
-            if (idx++ >= PERIOD_LIMIT_CNT) { //30개까지만 조회
-                break;
-            }
-        }
-
-        return weeklyStockCharts;
+    private LocalDate fetchLatestDate(String stockCode) {
+        return queryFactory
+                .select(dailyStockChart.date.max())
+                .from(dailyStockChart)
+                .where(dailyStockChart.stockCode.eq(stockCode))
+                .fetchFirst();
     }
 
     /**
@@ -158,16 +179,20 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
      * @param latestDate 가장 최근 날짜 (기준)
      * @param datePath   주차를 알고 싶은 날짜
      */
-    private NumberTemplate<Integer> calculateWeekNumber(LocalDate latestDate, DatePath<LocalDate> datePath) {
+    private NumberTemplate<Integer> calculatePeriodNumber(PeriodType periodType, LocalDate latestDate, DatePath<LocalDate> datePath) {
         return Expressions.numberTemplate(Integer.class,
-                "FLOOR((EXTRACT(EPOCH FROM DATE_TRUNC('week', CAST({0} AS timestamp))) - " +
-                        "EXTRACT(EPOCH FROM DATE_TRUNC('week', CAST({1} AS timestamp)))) / (7 * 24 * 60 * 60))",
+                "FLOOR((EXTRACT(EPOCH FROM DATE_TRUNC('" + periodType.getDateTruncUnit() + "', CAST({0} AS timestamp))) - " +
+                        "EXTRACT(EPOCH FROM DATE_TRUNC('" + periodType.getDateTruncUnit() + "', CAST({1} AS timestamp)))) /" + periodType.getPeriodDivision() + ")",
                 latestDate, datePath);
     }
 
-
-    @Override
-    public List<DailyStockChartDto> getLatestMonthlyStockChart(String stockCode) {
-        return List.of();
+    private void logTuples(List<Tuple> groupedWeeks) {
+        groupedWeeks.forEach(tuple -> {
+            LocalDate date = tuple.get(dailyStockChart.date);
+            Integer weekNumber = tuple.get(7, Integer.class); // 7번 인덱스는 weekNumberExpression의 위치
+            log.info("Date: {}, Week Number: {}", date, weekNumber);
+        });
     }
+
+
 }
