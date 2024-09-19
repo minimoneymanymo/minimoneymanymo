@@ -50,4 +50,11 @@ public class FundServiceImpl implements FundService {
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
         return fundRepositoryCustom.findAllWithdrawalRequest(child.getChildrenId());
     }
+
+    @Override
+    public long approveWithdrawalRequest(String childrenId, Integer amount, String createdAt) {
+        Children child = childrenRepository.findByUserId(childrenId)
+                .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
+        return fundRepositoryCustom.approveWithdrawalRequest(child.getChildrenId(), amount, createdAt);
+    }
 }

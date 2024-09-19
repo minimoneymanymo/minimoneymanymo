@@ -3,13 +3,16 @@ package com.beautifulyomin.mmmm.domain.fund.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class WithdrawRequestDto {
+public class WithdrawalApproveDto {
     @NotNull
-    private String createdAt;
-    private String approvedAt;
+    String childrenId;
     @NotNull
-    private Integer amount;
+    String createdAt;
+    @NotNull
+    Integer amount;
 }
