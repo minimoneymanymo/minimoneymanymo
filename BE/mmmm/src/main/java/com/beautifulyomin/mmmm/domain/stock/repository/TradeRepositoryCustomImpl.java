@@ -7,7 +7,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
-@Repository
 public class TradeRepositoryCustomImpl implements TradeRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;

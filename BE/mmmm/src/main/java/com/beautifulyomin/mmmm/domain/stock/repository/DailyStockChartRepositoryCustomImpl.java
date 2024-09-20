@@ -1,6 +1,7 @@
 package com.beautifulyomin.mmmm.domain.stock.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 

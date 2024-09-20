@@ -30,7 +30,7 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public void createTrade(TradeDto tradeDto, String userId) {
         // stock 정보 조회
-        Stock stock = stockRepository.findByStockCode(tradeDto.getStockCode())
+        Stock stock = stockRepository.findById(tradeDto.getStockCode())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid stock code"));
         // 아이 정보 조회
         Children children = childrenRepository.findByUserId(userId)
