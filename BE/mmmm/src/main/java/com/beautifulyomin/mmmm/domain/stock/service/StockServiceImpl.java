@@ -5,7 +5,7 @@ import com.beautifulyomin.mmmm.domain.stock.dto.response.StockDetailResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock52weekData;
 import com.beautifulyomin.mmmm.domain.stock.entity.key.DailyStockDataId;
-import com.beautifulyomin.mmmm.domain.stock.exception.StockNotFountException;
+import com.beautifulyomin.mmmm.domain.stock.exception.StockNotFoundException;
 import com.beautifulyomin.mmmm.domain.stock.repository.Stock52weekDataRepository;
 import com.beautifulyomin.mmmm.domain.stock.repository.StockRepository;
 import com.beautifulyomin.mmmm.domain.stock.repository.StockRepositoryCustom;
@@ -47,7 +47,7 @@ public class StockServiceImpl implements StockService {
 
     private StockDto getStock(String stockCode) {
         Stock stock = stockRepository.findById(stockCode)
-                .orElseThrow(() -> new StockNotFountException(stockCode));
+                .orElseThrow(() -> new StockNotFoundException(stockCode));
 
         return StockDto.builder()
                 .stockCode(stockCode)
@@ -68,7 +68,7 @@ public class StockServiceImpl implements StockService {
         DailyStockDataDto dailyStockData = stockRepositoryCustom.findLatestDateByStockCode(stockCode);
         Stock52weekData stock52weekData = stock52weekDataRepository
                 .findById(new DailyStockDataId(dailyStockData.getDate(), dailyStockData.getStockCode()))
-                .orElseThrow(() -> new StockNotFountException(stockCode));
+                .orElseThrow(() -> new StockNotFoundException(stockCode));
 
         return DailyStockDataDto.builder()
                 .stockCode(dailyStockData.getStockCode())
