@@ -5,6 +5,7 @@ import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
+import com.beautifulyomin.mmmm.domain.member.entity.QParent;
 import com.beautifulyomin.mmmm.domain.member.entity.QParentAndChildren;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.querydsl.core.types.ConstantImpl;
@@ -161,6 +162,17 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .update(children)
                 .set(children.settingQuizBonusMoney,settingQuizBonusMoney)
                 .where(children.childrenId.eq(childrenId))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateBalance(String parentUserId, Integer amount) {
+        QParent parent = QParent.parent;
+        return jpaQueryFactory
+                .update(parent)
+                .set(parent.balance, parent.balance.add(amount))
+                .where(parent.userId.eq(parentUserId))
                 .execute();
     }
 

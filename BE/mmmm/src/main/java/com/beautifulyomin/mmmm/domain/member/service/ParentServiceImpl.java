@@ -11,7 +11,6 @@ import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentAndChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
-import org.springframework.core.SpringVersion;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -209,6 +208,16 @@ public class ParentServiceImpl implements ParentService {
         }
         //이외의 경우 에러반환
         return 0;
+    }
+
+    @Override
+    public Parent findByUserId(String parentUserId) {
+        return parentRepository.findByUserId(parentUserId).orElseThrow();
+    }
+
+    @Override
+    public long updateBalance(String parentUserId, Integer amount) {
+        return parentRepositoryCustom.updateBalance(parentUserId, amount);
     }
 
 }

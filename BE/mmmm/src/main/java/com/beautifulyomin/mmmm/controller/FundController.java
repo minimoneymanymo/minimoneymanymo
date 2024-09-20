@@ -5,6 +5,7 @@ import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.fund.dto.*;
 import com.beautifulyomin.mmmm.domain.fund.service.FundService;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
+import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -112,11 +113,7 @@ public class FundController {
 
         long result = fundService.approveWithdrawalRequest(approve.getChildrenId(), approve.getAmount(), approve.getCreatedAt());
         if(result == 0){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(400)
-                            .message("요청에 해당하는 내역이 없습니다.")
-                            .build());
+            throw new InvalidRequestException("요청에 해당하는 내역이 없습니다.");
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponseDto.builder()
