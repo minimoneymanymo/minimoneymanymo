@@ -3,8 +3,10 @@ package com.beautifulyomin.mmmm.controller;
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.constraints.NotNull;
 
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
@@ -44,7 +46,6 @@ public class MembersController {
                     .stateCode(200)
                     .message("사용 가능한 아이디입니다.")
                     .build();
-            System.out.println("!!!!!!!!!!!!!!");
             return ResponseEntity.status(HttpStatus.OK)
                     .body(commonResponseDto);
         } else {
@@ -108,11 +109,7 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
 
         List<MyChildrenDto> myChildrenDtoList= parentService.getMyChildren(userId);
@@ -126,6 +123,35 @@ public class MembersController {
     }
 
     /**
+     * 부모- 자식 한명 조회
+     */
+    @GetMapping("/mychild/{childrenId}")
+    public ResponseEntity<CommonResponseDto> getMyChild(@RequestHeader("Authorization") String token,@PathVariable("childrenId") Integer childrenId) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+
+        MyChildDto myChild= parentService.getMyChild(userId, childrenId);
+        if(myChild == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(404)
+                            .message("나의 자식이 아님")
+                            .data(null)
+                            .build());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("나의 자식 조회")
+                        .data(myChild)
+                        .build());
+    }
+
+
+    /**
      * 부모- 참여대기 인원확인
      */
     @GetMapping("/mychildren/waiting")
@@ -133,11 +159,8 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
+
         }
         List<MyChildrenWaitingDto> myChildrenWaitingList = parentService.getMyChildWaiting(userId);
         return ResponseEntity.status(HttpStatus.OK)
@@ -156,11 +179,7 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
         int result = parentService.addMyChildren(userId,myChildrenWaitingDto.getChildrenId());
         // result : 0 인 경우 예외상황임
@@ -179,7 +198,7 @@ public class MembersController {
                             .message("이미 승인된 자식임")
                             .build());
         }
-        // result : 0 인 경우 요청 승인 성공
+        // result : 1이상 인 경우 요청 승인 성공
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
@@ -188,6 +207,118 @@ public class MembersController {
 
     }
 
+    /**
+     * 부모 - 용돈설정
+     */
+    @PutMapping("/mychild/setAllowance")
+    public  ResponseEntity<CommonResponseDto>updateAllowance(@RequestHeader("Authorization") String token,@RequestBody MyChildDto requestDto) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        Integer childrenId = requestDto.getChildrenId();
+        Integer settingMoney = requestDto.getSettingMoney();
+
+        int result = parentService.setMyChildAllowance(userId,childrenId,settingMoney);
+        // result : -1 인 경우
+        if(result == -1) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(404)
+                            .message("부모자식관계가 아닌 경우")
+                            .build());
+        }
+        // result : 0 인 경우 예외상황임
+        else if(result == 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(400)
+                            .message("예외")
+                            .build());
+        }
+        // result : 1 인 경우 머니 설정 성공
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("머니 설정 완료")
+                        .build());
+    }
+
+    /**
+     * 부모 - 퀴즈보상머니설정
+     */
+    @PutMapping("/mychild/setQuiz")
+    public  ResponseEntity<CommonResponseDto>setQuiz(@RequestHeader("Authorization") String token,@RequestBody MyChildDto requestDto) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        Integer childrenId = requestDto.getChildrenId();
+        Integer settingQuizBonusMoney = requestDto.getSettingQuizBonusMoney();
+
+        int result = parentService.setMyChildQuizBonusMoney(userId,childrenId,settingQuizBonusMoney);
+        // result : -1 인 경우
+        if(result == -1) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(404)
+                            .message("부모자식관계가 아닌 경우")
+                            .build());
+        }
+        // result : 0 인 경우 예외상황임
+        else if(result == 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(400)
+                            .message("예외")
+                            .build());
+        }
+        // result : 1 인 경우 머니 설정 성공
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("머니 설정 완료")
+                        .build());
+    }
+    /**
+     * 부모 - 출금가능금액 설정
+     */
+    @PutMapping("/mychild/setWithdraw")
+    public  ResponseEntity<CommonResponseDto>updateWithdraw(@RequestHeader("Authorization") String token,@RequestBody MyChildDto requestDto) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        Integer childrenId = requestDto.getChildrenId();
+        Integer settingWithdrawableMoney = requestDto.getSettingWithdrawableMoney();
+
+        int result = parentService.setMyChildWithdrawableMoney(userId,childrenId,settingWithdrawableMoney);
+        // result : -1 인 경우
+        if(result == -1) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(404)
+                            .message("부모자식관계가 아닌 경우")
+                            .build());
+        }
+        // result : 0 인 경우 예외상황임
+        else if(result == 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(400)
+                            .message("예외")
+                            .build());
+        }
+        // result : 1 인 경우 머니 설정 성공
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("출금가능금액 설정 완료")
+                        .build());
+    }
 
     @PostMapping("/image")
     public ResponseEntity<CommonResponseDto> profileImageUpload(
