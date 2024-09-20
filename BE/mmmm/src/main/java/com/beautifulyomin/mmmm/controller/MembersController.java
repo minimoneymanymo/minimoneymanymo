@@ -110,7 +110,6 @@ public class MembersController {
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
             throw new InvalidRoleException("부모가 아닙니다.");
-
         }
 
         List<MyChildrenDto> myChildrenDtoList= parentService.getMyChildren(userId);
@@ -131,11 +130,7 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
 
         MyChildDto myChild= parentService.getMyChild(userId, childrenId);
@@ -220,11 +215,7 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
         Integer childrenId = requestDto.getChildrenId();
         Integer settingMoney = requestDto.getSettingMoney();
@@ -262,11 +253,7 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
         Integer childrenId = requestDto.getChildrenId();
         Integer settingQuizBonusMoney = requestDto.getSettingQuizBonusMoney();
@@ -303,11 +290,7 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
         Integer childrenId = requestDto.getChildrenId();
         Integer settingWithdrawableMoney = requestDto.getSettingWithdrawableMoney();
