@@ -6,6 +6,7 @@ import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.constraints.NotNull;
 
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
@@ -45,7 +46,6 @@ public class MembersController {
                     .stateCode(200)
                     .message("사용 가능한 아이디입니다.")
                     .build();
-            System.out.println("!!!!!!!!!!!!!!");
             return ResponseEntity.status(HttpStatus.OK)
                     .body(commonResponseDto);
         } else {
@@ -109,11 +109,8 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
+
         }
 
         List<MyChildrenDto> myChildrenDtoList= parentService.getMyChildren(userId);
@@ -167,11 +164,8 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
+
         }
         List<MyChildrenWaitingDto> myChildrenWaitingList = parentService.getMyChildWaiting(userId);
         return ResponseEntity.status(HttpStatus.OK)
@@ -190,11 +184,7 @@ public class MembersController {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(401)
-                            .message("부모가 아닙니다.")
-                            .build());
+            throw new InvalidRoleException("부모가 아닙니다.");
         }
         int result = parentService.addMyChildren(userId,myChildrenWaitingDto.getChildrenId());
         // result : 0 인 경우 예외상황임
