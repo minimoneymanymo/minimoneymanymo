@@ -8,9 +8,11 @@ import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
@@ -173,9 +175,10 @@ class TransactionRepositoryCustomImplTest {
         }
     }
 
+
     @Test
     @DisplayName("부모-자식의 출금요청내역 조회")
-    void approveWithdrawalRequestTest(){
+    void approveWithdrawalRequestTest() {
         children.setMoney(20000);
         children.setWithdrawableMoney(10000);
         entityManager.persist(children); // 변경값 반영
