@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @Builder
-public class StockDetailResponseDto {
+public class StockDetailResponseDto  implements Serializable {
     private StockDto stock;
     private DailyStockDataDto dailyStockData;
     private List<DailyStockChartDto> dailyStockChart;
