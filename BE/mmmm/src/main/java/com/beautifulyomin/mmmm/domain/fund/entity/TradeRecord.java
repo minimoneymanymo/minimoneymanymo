@@ -3,9 +3,7 @@ package com.beautifulyomin.mmmm.domain.fund.entity;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,8 +13,10 @@ import java.time.format.DateTimeFormatter;
 @Table(name = "trade_records")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-public class TradeRecord {
+public class TradeRecord { // 매수매도 거래내역
 
     @ManyToOne(fetch = FetchType.LAZY) // 자식1 : 내역n
     @JoinColumn(name = "children_id", nullable = false)
@@ -64,6 +64,19 @@ public class TradeRecord {
         this.reason = reason;
         this.reasonBonusMoney = reasonBonusMoney;
         this.tradeSharesCount = tradeSharesCount;
+        this.remainAmount = remainAmount;
+    }
+
+    // tradeRepositoryCustomImplTest 용
+    public TradeRecord(Children children, Stock stock, Integer amount, BigDecimal tradeSharesCount, String createdAt, String reason, String tradeType, Integer remainAmount) {
+        this.children = children;
+        this.stock = stock;
+        this.amount = amount;
+        this.tradeSharesCount = tradeSharesCount;
+        this.createdAt = createdAt;
+        this.reason = reason;
+        this.reasonBonusMoney = null;
+        this.tradeType = tradeType;
         this.remainAmount = remainAmount;
     }
 

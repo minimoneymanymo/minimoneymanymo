@@ -1,6 +1,7 @@
 package com.beautifulyomin.mmmm.domain.member.repository;
 
 import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
@@ -94,6 +95,72 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .set(parentAndChildren.isApproved,true)
                 .where(parentAndChildren.parent.parentId.eq(parentId)
                         .and(parentAndChildren.child.childrenId.eq(childrenId)))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateSettingMoneyById(Integer childrenId, Integer settingMoney) {
+        QChildren children = QChildren.children;
+        return jpaQueryFactory
+                .update(children)
+                .set(children.settingMoney,settingMoney)
+                .where(children.childrenId.eq(childrenId))
+                .execute();
+    }
+
+    //자식 한명 조회
+    @Override
+    public MyChildDto findAllMyChildByChildrenId(Integer childrenId) {
+        QChildren children = QChildren.children;
+        QStocksHeld stocksHeld = QStocksHeld.stocksHeld;
+        QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
+
+        BigDecimal totalAmount = jpaQueryFactory
+                .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
+                .from(stocksHeld)
+                .join(dailyStockChart)
+                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
+                .where(stocksHeld.children.childrenId.eq(childrenId))
+                .fetchOne();
+
+        return jpaQueryFactory
+                .select(Projections.constructor(MyChildDto.class,
+                        children.childrenId,
+                        children.userId,
+                        children.name,
+                        children.profileImgUrl,
+                        children.money,
+                        children.withdrawableMoney,
+                        ConstantImpl.create(totalAmount != null ? totalAmount : BigDecimal.ZERO),
+                        children.settingMoney,
+                        children.settingWithdrawableMoney,
+                        children.settingQuizBonusMoney
+                ))
+                .from(children)
+                .where(children.childrenId.eq(childrenId))
+                .fetchOne();
+    }
+
+    @Override
+    @Transactional
+    public long updateSettingWithdrawableMoneyById(Integer childrenId, Integer settingWithdrawableMoney) {
+        QChildren children = QChildren.children;
+        return jpaQueryFactory
+                .update(children)
+                .set(children.settingWithdrawableMoney,settingWithdrawableMoney)
+                .where(children.childrenId.eq(childrenId))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateSettingQuizBonusMoneyById(Integer childrenId, Integer settingQuizBonusMoney) {
+        QChildren children = QChildren.children;
+        return jpaQueryFactory
+                .update(children)
+                .set(children.settingQuizBonusMoney,settingQuizBonusMoney)
+                .where(children.childrenId.eq(childrenId))
                 .execute();
     }
 

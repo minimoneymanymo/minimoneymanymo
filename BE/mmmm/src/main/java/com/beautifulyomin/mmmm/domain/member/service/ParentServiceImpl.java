@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmm.domain.member.service;
 import com.beautifulyomin.mmmm.common.dto.ImageDto;
 import com.beautifulyomin.mmmm.common.service.FileService;
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
@@ -83,6 +84,24 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
+    public MyChildDto getMyChild(String parentUserId, Integer childrenId) {
+        Parent parent = parentRepository.findByUserId(parentUserId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
+        Integer parentId = parent.getParentId();
+        Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
+        Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
+        //있는 관계인 경우 실행
+        if(parentAndChildrenTrue.isPresent() ){
+            return parentRepositoryCustom.findAllMyChildByChildrenId(childrenId);
+        }
+        //없는 관계인 경우 부모 자식 관계가 아님.
+        if(parentAndChildrenFalse.isPresent()){
+            return null;
+        }
+        return  null;
+    }
+
+    @Override
     public List<MyChildrenWaitingDto> getMyChildWaiting(String userId) {
         return parentRepositoryCustom.findNotApprovedMyChildrenByParentUserId(userId);
     }
@@ -111,6 +130,84 @@ public class ParentServiceImpl implements ParentService {
         }
 
         // 이외의 경우 (목록에 parentId,childrenId 인 행이없는경우, 바뀐행이 2개 이상인경우) 0 :에러 반환
+        return 0;
+    }
+
+    @Override
+    public int setMyChildAllowance(String parentUserId, Integer childrenId, Integer settingMoney) {
+        Parent parent = parentRepository.findByUserId(parentUserId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
+        Integer parentId = parent.getParentId();
+
+        Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
+        Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
+
+        // 없는 관계인 경우 -1 반환
+        if(parentAndChildrenFalse.isPresent()){
+            return -1;
+        }
+
+        //있는 관계인경우 실행
+        if(parentAndChildrenTrue.isPresent() ) {
+            long result = parentRepositoryCustom.updateSettingMoneyById(childrenId,settingMoney);
+            //바뀐 요청이 1개인경우 성공.
+            if(result == 1){
+                return 1;
+            }
+        }
+        //이외의 경우 에러반환
+        return 0;
+    }
+
+    @Override
+    public int setMyChildQuizBonusMoney(String parentUserId, Integer childrenId, Integer settingQuizBonusMoney) {
+        Parent parent = parentRepository.findByUserId(parentUserId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
+        Integer parentId = parent.getParentId();
+
+        Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
+        Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
+
+        // 없는 관계인 경우 -1 반환
+        if(parentAndChildrenFalse.isPresent()){
+            return -1;
+        }
+
+        //있는 관계인경우 실행
+        if(parentAndChildrenTrue.isPresent() ) {
+            long result = parentRepositoryCustom.updateSettingQuizBonusMoneyById(childrenId,settingQuizBonusMoney);
+            //바뀐 요청이 1개인경우 성공.
+            if(result == 1){
+                return 1;
+            }
+        }
+        //이외의 경우 에러반환
+        return 0;
+    }
+
+    @Override
+    public int setMyChildWithdrawableMoney(String parentUserId, Integer childrenId, Integer settingWithdrawableMoney) {
+        Parent parent = parentRepository.findByUserId(parentUserId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
+        Integer parentId = parent.getParentId();
+
+        Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
+        Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
+
+        // 없는 관계인 경우 -1 반환
+        if(parentAndChildrenFalse.isPresent()){
+            return -1;
+        }
+
+        //있는 관계인경우 실행
+        if(parentAndChildrenTrue.isPresent() ) {
+            long result = parentRepositoryCustom.updateSettingWithdrawableMoneyById(childrenId,settingWithdrawableMoney);
+            //바뀐 요청이 1개인경우 성공.
+            if(result == 1){
+                return 1;
+            }
+        }
+        //이외의 경우 에러반환
         return 0;
     }
 
