@@ -46,8 +46,8 @@ function MyChildMoneySetting(): JSX.Element {
       return
     }
 
-    if (value < 0) {
-      setError("0 이상의 값을 입력해주세요.")
+    if (value <= 0) {
+      setError("1원 이상의 값을 입력해주세요.")
       return
     }
     setError(null)
