@@ -5,10 +5,6 @@ const {
   VITE_API_CONTEXT_PATH: contextPath,
   VITE_API_VERSION: version
 } = import.meta.env;
-
-// const endpoint = import.meta.env.VITE_API_ENDPOINT
-// const contextPath = import.meta.env.VITE_API_CONTEXT_PATH
-// const version = import.meta.env.VITE_API_VERSION
 const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
 
 import {

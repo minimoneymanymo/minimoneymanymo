@@ -6,7 +6,8 @@ const inquireBankCodes = async (
   success: (response: any) => void,
   fail: (response: any) => void
 ) => {
-  fintechInstance.post('bank/inquireBankCodes', param)
+  // 프록시 적용
+  fintechInstance.post('/api/bank/inquireBankCodes', param)
     .then(success)
     .catch(fail)
 }
