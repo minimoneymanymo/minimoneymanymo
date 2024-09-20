@@ -28,7 +28,7 @@ pipeline {
                     dir('BE/mmmm') {
                         sh 'chmod +x gradlew'
                         sh './gradlew clean'
-                        sh './gradlew build --debug --refresh-dependencies'
+                        sh './gradlew build --info --refresh-dependencies'
 
                         // JAR 파일 확인
                         sh 'ls -l build/libs/'
@@ -52,14 +52,5 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // PostgreSQL 컨테이너 종료
-            script {
-                dir('BE/mmmm') {
-                    sh 'docker-compose -f testdb-compose.yml down'
-                }
-            }
-        }
-    }
+
 }
