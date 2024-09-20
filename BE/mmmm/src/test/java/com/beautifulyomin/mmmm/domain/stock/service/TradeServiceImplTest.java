@@ -59,7 +59,6 @@ class TradeServiceImplTest {
                 .tradeSharesCount(new BigDecimal("10.0"))
                 .reason("시총이 높아서 샀어요.")
                 .tradeType("4") // 매수
-                .remainAmount(30000)
                 .build();
 
 
@@ -99,8 +98,6 @@ class TradeServiceImplTest {
                 .remainSharesCount(BigDecimal.valueOf(5.00))
                 .totalAmount(30000)
                 .build();
-
-
     }
 
     @Test
@@ -110,6 +107,7 @@ class TradeServiceImplTest {
         when(stockRepository.findById("462870")).thenReturn(Optional.of(stock));
         when(childrenRepository.findByUserId("1111")).thenReturn(Optional.of(children));
         when(stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(any(), any())).thenReturn(Optional.of(stocksHeld));
+//        when(tradeRepository.findTradeByStockCode("462870").thenReturn(Optional.of(trade)));
 
         // when
         tradeServiceImpl.createTrade(tradeDto, "1111");
@@ -118,6 +116,7 @@ class TradeServiceImplTest {
         assertEquals(new BigDecimal("15.0"), stocksHeld.getRemainSharesCount());
         assertEquals(290000, children.getMoney()); // childrend 머니 잔액이 10000 감소했는지 확인
         assertEquals(40000, stocksHeld.getTotalAmount()); // stocksHeld 잔액이 10000 증가했는지 확인
+//        assertEquals(290000, tradeRepository.getRemainAmount());
     }
 
     @Test
