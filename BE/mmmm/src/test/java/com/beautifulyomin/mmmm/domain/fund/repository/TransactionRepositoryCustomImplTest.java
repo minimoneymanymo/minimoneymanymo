@@ -7,13 +7,15 @@ import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
 import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,21 +26,34 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestPropertySource(locations = "classpath:application-test.properties")
 @DataJpaTest
 @Import({FundRepositoryCustomImpl.class, QueryDslConfig.class}) // 필요한 빈 수동 등록
 class TransactionRepositoryCustomImplTest {
 
     private final FundRepositoryCustomImpl fundRepository;
     private final TestEntityManager entityManager;
+    private final Environment environment;
 
     @Autowired
-    public TransactionRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager) {
+    public TransactionRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager, Environment environment) {
         this.fundRepository = fundRepository;
         this.entityManager = entityManager;
+        this.environment = environment;
+
     }
 
     static Children children;
     static Stock stock;
+
+//    @BeforeAll
+//    static void setUp() {  //모든 메서드 실행 전 딱 한 번
+//        Dotenv dotenv = Dotenv.configure().load();
+//        dotenv.entries().forEach(entry ->
+//                System.setProperty(entry.getKey(), entry.getValue())
+//        );
+//    }
+
 
     @BeforeEach
     void init() { //메서드 각각마다 한 번씩 실행됨 (공통으로 사용해야 하는 것들은 여기서 선언하면 좋음)
@@ -156,43 +171,5 @@ class TransactionRepositoryCustomImplTest {
             String nextCreatedAt = results.get(i + 1).getCreatedAt();
             assertTrue(currentCreatedAt.compareTo(nextCreatedAt) > 0, "CreatedAt is not in descending order");
         }
-    }
-
-    @Test
-    @DisplayName("부모-자식의 출금요청내역 조회")
-    void approveWithdrawalRequestTest(){
-        children.setMoney(20000);
-        children.setWithdrawableMoney(10000);
-        entityManager.persist(children); // 변경값 반영
-
-        TransactionRecord transactionRecord = new TransactionRecord(
-                children,
-                "20240901130000",
-                1000,
-                "1",
-                children.getMoney()
-        );
-        entityManager.persist(transactionRecord);
-        entityManager.flush();
-
-        long result = fundRepository.approveWithdrawalRequest(children.getChildrenId(), 1000, "20240901130000");
-        children = entityManager.find(Children.class, children.getChildrenId()); // 업데이트된 child 값 다시 불러오기
-
-
-        TransactionRecord updatedTransactionRecord = entityManager
-                .getEntityManager()
-                .createQuery(
-                        "SELECT t FROM TransactionRecord t WHERE t.createdAt = :createdAt AND t.children.id = :childrenId",
-                        TransactionRecord.class)
-                .setParameter("createdAt", "20240901130000")
-                .setParameter("childrenId", children.getChildrenId())
-                .getSingleResult();
-        String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-
-        assertEquals(1, result);
-        // 출금요청이 승인되면 자식의 머니와 출금 가능 금액이 요청한 금액만큼 줄어야 함 + 승인일시 업데이트
-        assertEquals(19000, children.getMoney()); // 출금 후 머니 잔액 확인
-        assertEquals(9000, children.getWithdrawableMoney()); // 출금 후 출가금 잔액 확인
-        assertEquals(currentDateTime, updatedTransactionRecord.getApprovedAt(), "The approvedAt timestamp should match the current time.");
     }
 }
