@@ -16,6 +16,7 @@
     "@material-tailwind/react": "^2.1.10",
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
+    "@reduxjs/toolkit": "^2.2.7",
     "axios": "^1.7.7",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",

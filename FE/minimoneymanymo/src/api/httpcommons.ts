@@ -1,7 +1,10 @@
 import axios from "axios"
-const endpoint = import.meta.env.VITE_API_ENDPOINT
-const contextPath = import.meta.env.VITE_API_CONTEXT_PATH
-const version = import.meta.env.VITE_API_VERSION
+const { 
+  VITE_SSAFY_API_URL, 
+  VITE_API_ENDPOINT: endpoint, 
+  VITE_API_CONTEXT_PATH: contextPath,
+  VITE_API_VERSION: version
+} = import.meta.env;
 const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
 
 import {
@@ -9,6 +12,12 @@ import {
   logOutUser,
   setAccessTokenAtSession,
 } from "@/utils/user-utils"
+
+// 금융 API
+export const fintechInstance = axios.create({
+  baseURL: VITE_SSAFY_API_URL,
+})
+
 export const axiosAuthInstance = axios.create({
   baseURL: BASE_API_URL,
   timeout: 10000, // 10초
