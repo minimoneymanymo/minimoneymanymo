@@ -78,7 +78,7 @@ public class TradeServiceImpl implements TradeService {
                 .tradeType(tradeDto.getTradeType())
                 .reason(tradeDto.getReason())
                 .tradeSharesCount(tradeDto.getTradeSharesCount()) // 매매 주수
-                .remainAmount(tradeDto.getRemainAmount())
+                .remainAmount(children.getMoney())
                 .build();
 
         // TradeRecord 저장

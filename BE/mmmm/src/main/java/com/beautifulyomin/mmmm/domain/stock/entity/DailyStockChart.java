@@ -41,4 +41,6 @@ public class DailyStockChart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stockCode", insertable = false, updatable = false)
     private Stock stock;
+
+
 }
