@@ -54,4 +54,5 @@ public class Stock {
 
     @Column(nullable = false, length = 20)
     private String currencyName;
+
 }

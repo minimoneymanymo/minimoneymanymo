@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TransactionRecord {
+public class TransactionRecord { // 입출금내역
 
     @ManyToOne(fetch = FetchType.LAZY) // 자식1 : 내역n
     @JoinColumn(name = "children_id", nullable = false)
