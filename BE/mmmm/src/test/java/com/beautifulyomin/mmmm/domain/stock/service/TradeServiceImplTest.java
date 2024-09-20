@@ -99,7 +99,7 @@ class TradeServiceImplTest {
                 .build();
 
         // Mock 설정
-        when(stockRepository.findByStockCode("462870")).thenReturn(Optional.of(stock));
+        when(stockRepository.findById("462870")).thenReturn(Optional.of(stock));
         when(childrenRepository.findByUserId("1111")).thenReturn(Optional.of(children));
         when(stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(any(), any())).thenReturn(Optional.empty());
 
