@@ -49,7 +49,9 @@ public class TransactionRecord { // 입출금내역
 
     @PrePersist
     protected void onCreate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        this.createdAt = LocalDateTime.now().format(formatter);
+        if (this.createdAt == null || this.createdAt.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            this.createdAt = LocalDateTime.now().format(formatter);
+        }
     }
 }
