@@ -8,16 +8,14 @@ import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -28,7 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnableConfigurationProperties
+@TestPropertySource(locations = "classpath:application-test.properties")
 @DataJpaTest
 @Import({FundRepositoryCustomImpl.class, QueryDslConfig.class}) // 필요한 빈 수동 등록
 class TransactionRepositoryCustomImplTest {
@@ -42,6 +40,7 @@ class TransactionRepositoryCustomImplTest {
         this.fundRepository = fundRepository;
         this.entityManager = entityManager;
         this.environment = environment;
+
     }
 
     static Children children;
@@ -49,13 +48,6 @@ class TransactionRepositoryCustomImplTest {
 
     @BeforeEach
     void init() { //메서드 각각마다 한 번씩 실행됨 (공통으로 사용해야 하는 것들은 여기서 선언하면 좋음)
-        System.out.println("DB URL: " + environment.getProperty("spring.datasource.url"));
-        System.out.println("DB User: " + environment.getProperty("spring.datasource.username"));
-        System.out.println("DB Password: " + environment.getProperty("spring.datasource.password"));
-        System.out.println("DB URL: " + environment.getProperty("spring.datasource.url"));
-        System.out.println("DB User: " + environment.getProperty("spring.datasource.username"));
-        System.out.println("DB Password: " + environment.getProperty("spring.datasource.password"));
-
         children = new Children(
                 "semin",
                 "김세민",
