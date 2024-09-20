@@ -6,15 +6,17 @@ import com.beautifulyomin.mmmm.domain.fund.repository.StocksHeldRepository;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
+import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockChartDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.DailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
-import com.beautifulyomin.mmmm.domain.stock.repository.DailyStockChartRepository;
 import com.beautifulyomin.mmmm.domain.stock.repository.StockRepository;
-import com.beautifulyomin.mmmm.domain.stock.repository.TradeRepository;
+import com.beautifulyomin.mmmm.domain.stock.repository.StockRepositoryCustom;
+import com.beautifulyomin.mmmm.domain.stock.repository.TradeRecordsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,12 +29,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TradeServiceImplTest {
     @Mock
-    private TradeRepository tradeRepository; // 거래 관련 repository
+    private TradeRecordsRepository tradeRecordsRepository; // 거래 관련 repository
     @Mock
     private StockRepository stockRepository;
     @Mock
@@ -40,7 +42,7 @@ class TradeServiceImplTest {
     @Mock
     private StocksHeldRepository stocksHeldRepository;
     @Mock
-    private DailyStockChartRepository dailyStockChartRepository;
+    private StockRepositoryCustom stockRepositoryCustom;
 
     @InjectMocks
     private TradeServiceImpl tradeServiceImpl;
@@ -50,18 +52,11 @@ class TradeServiceImplTest {
     static StocksHeld stocksHeld;
     static DailyStockChart dailyStockChart;
     static TradeDto tradeDto;
+    static DailyStockChartDto dailyStockChartDto;
+    static TradeRecord tradeRecord;
 
     @BeforeEach
     void setUp() {
-        tradeDto = TradeDto.builder()
-                .stockCode("462870")
-                .amount(10000)
-                .tradeSharesCount(new BigDecimal("10.0"))
-                .reason("시총이 높아서 샀어요.")
-                .tradeType("4") // 매수
-                .build();
-
-
         stock = new Stock(
                 "462870",                    // stockCode
                 "테스트종목",                  // companyName
@@ -87,44 +82,90 @@ class TradeServiceImplTest {
                 .tradingVolume(BigInteger.valueOf(234643))
                 .build();
 
+        dailyStockChartDto = DailyStockChartDto.builder()
+                .closingPrice(BigDecimal.valueOf(60600.00))
+                .date(LocalDate.of(2024, 9, 11))
+                .build();
+
+
         children = Children.builder()
                 .userId("1111")
                 .money(300000)
+                .childrenId(1)
                 .build();
 
         stocksHeld = StocksHeld.builder()
                 .children(children)
                 .stock(stock)
-                .remainSharesCount(BigDecimal.valueOf(5.00))
+                .remainSharesCount(BigDecimal.valueOf(15.00))
                 .totalAmount(30000)
                 .build();
+
+        tradeRecord = new TradeRecord();
     }
 
     @Test
-    @DisplayName("주식 보유 내역의 보유 주수, children 가격 총합, stockHeld 잔액이 잘 바뀌는지 테스트")
-    void stocksHeldUpdateAfterTrade() {
+    @DisplayName("매수 테스트 : 주식 보유 내역의 보유 주수, children 가격 총합, stockHeld 잔액 변동 테스트")
+    void stocksHeldUpdateAfterBuyTrade() {
+        // given
+        tradeDto = TradeDto.builder()
+                .stockCode("462870")
+                .amount(10000)
+                .tradeSharesCount(new BigDecimal("10.0")) // 주 수
+                .reason("시총이 높아서 샀어요.")
+                .tradeType("4") // 매수
+                .build();
+
         // Mock 설정
         when(stockRepository.findById("462870")).thenReturn(Optional.of(stock));
         when(childrenRepository.findByUserId("1111")).thenReturn(Optional.of(children));
         when(stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(any(), any())).thenReturn(Optional.of(stocksHeld));
-//        when(tradeRepository.findTradeByStockCode("462870").thenReturn(Optional.of(trade)));
 
         // when
         tradeServiceImpl.createTrade(tradeDto, "1111");
 
         // then -> 매수
-        assertEquals(new BigDecimal("15.0"), stocksHeld.getRemainSharesCount());
+        verify(tradeRecordsRepository, times(1)).save(any(TradeRecord.class)); // tradeRepository.save()가 한 번 호출되었는지 확인
+        assertEquals(new BigDecimal("25.0"), stocksHeld.getRemainSharesCount());
         assertEquals(290000, children.getMoney()); // childrend 머니 잔액이 10000 감소했는지 확인
         assertEquals(40000, stocksHeld.getTotalAmount()); // stocksHeld 잔액이 10000 증가했는지 확인
-//        assertEquals(290000, tradeRepository.getRemainAmount());
     }
 
     @Test
-    @DisplayName("매수 매도 거래 내역에서 남은 머니가 잘 바뀌는지 테스트")
-    void moneyChangeAfterTrade(){
+    @DisplayName("매도 테스트 : 주식 보유 내역의 보유 주수, children 가격 총합, stockHeld 잔액 변동 테스트")
+    void stocksHeldUpdateAfterSellTrade() {
+        // given
+        tradeDto = TradeDto.builder()
+                .stockCode("462870")
+                .amount(30000)
+                .tradeSharesCount(new BigDecimal("10.0")) // 주 수
+                .reason("가격이 올라서 팔아요.")
+                .tradeType("5") // 매도
+                .build();
 
+        // Mock 설정
+        when(stockRepository.findById("462870")).thenReturn(Optional.of(stock));
+        when(childrenRepository.findByUserId("1111")).thenReturn(Optional.of(children));
+        when(stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(1, "462870")).thenReturn(Optional.of(stocksHeld));
+        when(stockRepositoryCustom.getDailyStockChart("462870")).thenReturn(dailyStockChartDto);
+
+        // when
+        tradeServiceImpl.createTrade(tradeDto, "1111");
+
+        // ArgumentCaptor를 이용하여 저장된 TradeRecord를 캡처
+        ArgumentCaptor<TradeRecord> tradeRecordCaptor = ArgumentCaptor.forClass(TradeRecord.class);
+        verify(tradeRecordsRepository, times(1)).save(tradeRecordCaptor.capture()); // save() 호출 확인 및 객체 캡처
+        TradeRecord savedTradeRecord = tradeRecordCaptor.getValue();
+
+        // then -> 매도
+        assertEquals(new BigDecimal("5.0"), stocksHeld.getRemainSharesCount());
+        assertEquals(0, stocksHeld.getTotalAmount()); // stocksHeld 잔액이 감소했는지 확인
+        assertEquals(new BigDecimal("5000.0"), savedTradeRecord.getStockTradingGain()); // tradeRecord의 손익머니 확인 -> 이 값 이상함 확인 필요..
+        assertEquals(330000, children.getMoney()); // childrend 머니 잔액이 증가했는지 확인
+        // stocksHeld 주수 감소
     }
-
-    // 입출금 내역에서 남은 머니가 잘 변경되는지 테스트 -> 이건 입출금할 때
-    // 소수점 단위로 연산하기 때문에 소수점과 금액이 잘 반영되서 연산되는지 테스트 -> 이거는 프론트 처리
 }
+
+
+// 입출금 내역에서 남은 머니가 잘 변경되는지 테스트 -> 이건 입출금할 때
+// 소수점 단위로 연산하기 때문에 소수점과 금액이 잘 반영되서 연산되는지 테스트 -> 이거는 프론트 처리

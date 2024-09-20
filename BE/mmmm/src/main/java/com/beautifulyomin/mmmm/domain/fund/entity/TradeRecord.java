@@ -80,10 +80,13 @@ public class TradeRecord { // 매수매도 거래내역
         this.remainAmount = remainAmount;
     }
 
+
     @PrePersist
     protected void onCreate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         this.createdAt = LocalDateTime.now().format(formatter);
     }
+
+
 
 }

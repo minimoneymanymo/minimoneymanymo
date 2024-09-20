@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TradeDto { // trade put 들어오면 사용하는 dto
-    @NotNull
+
     private Integer childrenId;           // 자녀 id -> 토큰에서 뽑음 -> 컨트롤러에서 처리
     @NotNull
     private String stockCode;         // 종목코드
@@ -25,7 +25,6 @@ public class TradeDto { // trade put 들어오면 사용하는 dto
     private String reason;                 // 거래 사유
     @NotNull
     private String tradeType;              // 거래 유형 (매수, 매도 등) - 매수 4 , 매도 5
-    @NotNull
     private Integer remainAmount;          // 거래 후 남은 잔액
 
 //    private String createdAt;              // 체결시간 -> 자동으로 생성

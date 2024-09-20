@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(QueryDslConfig.class)
-class TradeRepositoryCustomImplTest {
+class TradeRecordsRepositoryCustomImplTest {
 
     @Autowired
-    private TradeRepository tradeRepository;
+    private TradeRecordsRepository tradeRecordsRepository;
 
     @Autowired
     private TestEntityManager entityManager;
@@ -100,7 +100,7 @@ class TradeRepositoryCustomImplTest {
         entityManager.flush();
 
         //when
-        TradeRecord savedTradeRecord = tradeRepository.save(tradeRecord);
+        TradeRecord savedTradeRecord = tradeRecordsRepository.save(tradeRecord);
 
         //then
         assertNotNull(savedTradeRecord.getTradeRecordId(), "저장된 매매 기록의 ID는 null이 아니어야 합니다.");

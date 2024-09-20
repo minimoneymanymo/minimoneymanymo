@@ -7,10 +7,9 @@ import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
-import com.beautifulyomin.mmmm.domain.stock.repository.DailyStockChartRepository;
-import com.beautifulyomin.mmmm.domain.stock.repository.StockRepository;
-import com.beautifulyomin.mmmm.domain.stock.repository.TradeRepository;
+import com.beautifulyomin.mmmm.domain.stock.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +19,13 @@ import java.math.RoundingMode;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class TradeServiceImpl implements TradeService {
-    private final TradeRepository tradeRepository;
+    private final TradeRecordsRepository tradeRecordsRepository;
     private final StockRepository stockRepository;
     private final ChildrenRepository childrenRepository;
     private final StocksHeldRepository stocksHeldRepository;
-    private final DailyStockChartRepository dailyStockChartRepository;
+    private final StockRepositoryCustom stockRepositoryCustom;
 
     @Override
     public void createTrade(TradeDto tradeDto, String userId) {
@@ -82,7 +82,7 @@ public class TradeServiceImpl implements TradeService {
                 .build();
 
         // TradeRecord 저장
-        tradeRepository.save(tradeRecord);
+        tradeRecordsRepository.save(tradeRecord);
     }
 
     // 매수 처리
@@ -104,7 +104,8 @@ public class TradeServiceImpl implements TradeService {
         BigDecimal bigAveragePrice = BigDecimal.valueOf(stocksHeld.getTotalAmount()).divide(stocksHeld.getRemainSharesCount(), 2, RoundingMode.HALF_UP);
 
         // 매도 손익 계산 방법 : (현재가 − 평단가 ) × 매도 주식 수량
-        BigDecimal closingPrice = dailyStockChartRepository.findLatestClosingPriceByStockCode(tradeDto.getStockCode());
+        BigDecimal closingPrice = stockRepositoryCustom.getDailyStockChart(tradeDto.getStockCode()).getClosingPrice();
+        log.info("closingPrice: {}", closingPrice);
         BigDecimal profitPerShare = closingPrice.subtract(bigAveragePrice);
         BigDecimal bigTotalProfit = profitPerShare.multiply(tradeDto.getTradeSharesCount());
 
