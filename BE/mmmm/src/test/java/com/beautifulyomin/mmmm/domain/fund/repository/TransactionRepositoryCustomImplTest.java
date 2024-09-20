@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,21 +28,34 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestPropertySource(locations = "classpath:application-test.properties")
 @DataJpaTest
 @Import({FundRepositoryCustomImpl.class, QueryDslConfig.class}) // 필요한 빈 수동 등록
 class TransactionRepositoryCustomImplTest {
 
     private final FundRepositoryCustomImpl fundRepository;
     private final TestEntityManager entityManager;
+    private final Environment environment;
 
     @Autowired
-    public TransactionRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager) {
+    public TransactionRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager, Environment environment) {
         this.fundRepository = fundRepository;
         this.entityManager = entityManager;
+        this.environment = environment;
+
     }
 
     static Children children;
     static Stock stock;
+
+//    @BeforeAll
+//    static void setUp() {  //모든 메서드 실행 전 딱 한 번
+//        Dotenv dotenv = Dotenv.configure().load();
+//        dotenv.entries().forEach(entry ->
+//                System.setProperty(entry.getKey(), entry.getValue())
+//        );
+//    }
+
 
     @BeforeEach
     void init() { //메서드 각각마다 한 번씩 실행됨 (공통으로 사용해야 하는 것들은 여기서 선언하면 좋음)
@@ -160,9 +175,10 @@ class TransactionRepositoryCustomImplTest {
         }
     }
 
+
     @Test
     @DisplayName("부모-자식의 출금요청내역 조회")
-    void approveWithdrawalRequestTest(){
+    void approveWithdrawalRequestTest() {
         children.setMoney(20000);
         children.setWithdrawableMoney(10000);
         entityManager.persist(children); // 변경값 반영
