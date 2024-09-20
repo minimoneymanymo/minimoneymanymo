@@ -3,25 +3,20 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials_thispear'
-        TEST_DB_URL= 'jdbc:postgresql://mmmm-testgres-1:5432/test?currentSchema=public'
+        TEST_DB_URL = 'jdbc:postgresql://mmmm-testgres-1:5432/test?currentSchema=public'
         TEST_DB_USERNAME = 'postgres'
         TEST_DB_PASSWORD = '1234'
-
     }
 
     stages {
         stage('Start PostgreSQL Container') {
             steps {
-                
                 script {
-
                     dir('BE/mmmm') {
-
                         sh '''
                         docker-compose -f testdb-compose.yml up -d
                         '''
                     }
-
                 }
             }
         }
@@ -44,6 +39,15 @@ pipeline {
             }
         }
 
+        stage('Remove Old Docker Images') {
+            steps {
+                script {
+                    // 오래된 이미지를 삭제합니다.
+                    sh 'docker image prune -f'
+                }
+            }
+        }
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -55,6 +59,4 @@ pipeline {
             }
         }
     }
-
-
 }
