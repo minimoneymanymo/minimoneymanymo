@@ -1,7 +1,9 @@
 package com.beautifulyomin.mmmm.domain.stock.service;
 
 import com.beautifulyomin.mmmm.domain.stock.dto.data.*;
+import com.beautifulyomin.mmmm.domain.stock.dto.request.StockFilterRequestDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.response.StockDetailResponseDto;
+import com.beautifulyomin.mmmm.domain.stock.dto.response.StockFilterResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock52weekData;
 import com.beautifulyomin.mmmm.domain.stock.entity.key.DailyStockDataId;
@@ -11,7 +13,9 @@ import com.beautifulyomin.mmmm.domain.stock.repository.StockRepository;
 import com.beautifulyomin.mmmm.domain.stock.repository.StockRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -30,7 +34,7 @@ public class StockServiceImpl implements StockService {
 
 
     @Override
-    @Cacheable(value="stockDetail", key="#stockCode")
+    @Cacheable(value = "stockDetail", key = "#stockCode")
     public StockDetailResponseDto getStockDetailResponse(String stockCode) {
         StockDto stockDto = getStock(stockCode);
         DailyStockDataDto dailyStockDataDto = getDailyStockData(stockCode);
@@ -45,6 +49,11 @@ public class StockServiceImpl implements StockService {
                 .weeklyStockChart(weeklyStockChartDto)
                 .monthlyStockChart(monthlyStockChartDto)
                 .build();
+    }
+
+    @Override
+    public Page<StockFilterResponseDto> getFilteredStocks(StockFilterRequestDto filterRequestDto, Pageable pageable) {
+        return stockRepositoryCustom.findStocksWithFilters(filterRequestDto, pageable);
     }
 
     private StockDto getStock(String stockCode) {

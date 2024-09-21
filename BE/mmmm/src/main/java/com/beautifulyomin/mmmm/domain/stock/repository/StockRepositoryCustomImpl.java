@@ -3,6 +3,8 @@ package com.beautifulyomin.mmmm.domain.stock.repository;
 import com.beautifulyomin.mmmm.domain.stock.constant.PeriodType;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockChartDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockDataDto;
+import com.beautifulyomin.mmmm.domain.stock.dto.request.StockFilterRequestDto;
+import com.beautifulyomin.mmmm.domain.stock.dto.response.StockFilterResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockData;
 import com.querydsl.core.Tuple;
@@ -12,15 +14,15 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart.dailyStockChart;
 
 @Slf4j
 @Repository
@@ -101,6 +103,12 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                 .where(dailyStockChart.stockCode.eq(stockCode))
                 .orderBy(dailyStockChart.date.desc())
                 .fetchFirst();
+    }
+
+    @Override
+    public Page<StockFilterResponseDto> findStocksWithFilters(StockFilterRequestDto filterRequestDto, Pageable pageable) {
+        return null;
+//        return PageableExecutionUtils.getPage();
     }
 
     private List<DailyStockChartDto> getLatestPeriodStockChart(PeriodType periodType, String stockCode) {
