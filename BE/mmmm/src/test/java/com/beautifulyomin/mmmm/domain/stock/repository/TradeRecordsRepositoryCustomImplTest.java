@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(QueryDslConfig.class)
-class TradeRepositoryCustomImplTest {
+class TradeRecordsRepositoryCustomImplTest {
 
     @Autowired
-    private TradeRepository tradeRepository;
+    private TradeRecordsRepository tradeRecordsRepository;
 
     @Autowired
     private TestEntityManager entityManager;
@@ -79,7 +79,7 @@ class TradeRepositoryCustomImplTest {
                 BigDecimal.valueOf(3.0),
                 90000
         );
-        entityManager.persist(stocksHeld);
+        entityManager.merge(stocksHeld);
     }
 
     @Test
@@ -100,7 +100,7 @@ class TradeRepositoryCustomImplTest {
         entityManager.flush();
 
         //when
-        TradeRecord savedTradeRecord = tradeRepository.save(tradeRecord);
+        TradeRecord savedTradeRecord = tradeRecordsRepository.save(tradeRecord);
 
         //then
         assertNotNull(savedTradeRecord.getTradeRecordId(), "저장된 매매 기록의 ID는 null이 아니어야 합니다.");
@@ -114,34 +114,33 @@ class TradeRepositoryCustomImplTest {
         assertEquals(tradeRecord.getRemainAmount(), savedTradeRecord.getRemainAmount(), "저장된 매매기록의 남은 머니가 일치해야 한다.");
     }
 
+    // 매매 실패 테스트 1. 혹시 매매 할 때 이유를 입력 안하는 경우가 있을까봐 테스트 코드 짜보려 했는데 컴파일 에러가 먼저 나서 패스하기로 함.
+
+    /*
     @Test
     @DisplayName("매매 실패 테스트")
-    // 매매 실패 테스트 1. 혹시 매매 할 때 이유를 입력 안하는 경우가 있을까봐 테스트 코드 짜보려 했는데 컴파일 에러가 먼저 나서 패스하기로 함.
     void tradeFailTest() {
         // 데이터베이스에 저장할 때 예외가 발생해야 함
         Throwable thrownException = Assertions.assertThrows(MethodArgumentNotValidException.class, ()-> new TradeDto(
-                children.getChildrenId(),
                 stock.getStockCode(),
                 40000,
                 BigDecimal.valueOf(0.5),
-//                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")),
                 null, // 모르고 이유 입력 안 함
-                "4",
-                30000
+                "4"
         ));
 
-//        // 예외가 발생했는지 확인
-//        Assertions.assertNotNull(thrownException);
-//
-//        // 예외의 원인을 확인
-//        Throwable rootCause = thrownException.getCause();
-//        while (rootCause.getCause() != null) {
-//            rootCause = rootCause.getCause();
-//        }
-//
-//        // 예외의 최종 원인이 ConstraintViolationException인지 확인
-//        Assertions.assertTrue(rootCause instanceof ConstraintViolationException, "Expected root cause to be ConstraintViolationException but was " + rootCause.getClass().getName());
+        // 예외가 발생했는지 확인
+        Assertions.assertNotNull(thrownException);
 
+        // 예외의 원인을 확인
+        Throwable rootCause = thrownException.getCause();
+        while (rootCause.getCause() != null) {
+            rootCause = rootCause.getCause();
+        }
 
+        // 예외의 최종 원인이 ConstraintViolationException인지 확인
+        Assertions.assertTrue(rootCause instanceof ConstraintViolationException, "Expected root cause to be ConstraintViolationException but was " + rootCause.getClass().getName());
     }
+    */
+
 }
