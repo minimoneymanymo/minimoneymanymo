@@ -12,6 +12,8 @@ import ChildPageLayout from "@/layouts/ChildPageLayout"
 import MainPageLayout from "@/layouts/MainLayout"
 import MyChildrenPage from "./pages/parentchildren/MyChildrenPage"
 import MyChildFinancePage from "./pages/parentchildren/MyChildFinancePage"
+import StockPageLayout from "./layouts/StockPageLayout"
+import ChartPage from "./pages/stock/ChartPage"
 function App() {
   return (
     <Routes>
@@ -40,6 +42,10 @@ function App() {
           <Route path="finance" element={<Temp />} />
           <Route path="invest-style" element={<Temp />} />
           <Route path="diary" element={<Temp />} />
+        </Route>
+        <Route path="/stock" element={<StockPageLayout/>}>
+          <Route path="detail" element={<ChartPage />} />
+        
         </Route>
       </Route>
     </Routes>
