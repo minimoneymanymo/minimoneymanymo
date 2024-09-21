@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @AllArgsConstructor
 @Getter
 @Builder
-public class StockDto {
+public class StockDto  implements Serializable {
     private String stockCode;
     private String companyName;
     private String industry;
