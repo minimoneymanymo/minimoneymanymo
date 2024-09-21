@@ -32,7 +32,8 @@ public class TradeServiceImpl implements TradeService {
         // stock 정보 조회
         Stock stock = stockRepository.findById(tradeDto.getStockCode())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid stock code"));
-        // 아이 정보 조회
+
+        // userId로 아이 정보 조회해서 dto에 childrenId 설정하기
         Children children = childrenRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + userId));
 
@@ -56,12 +57,15 @@ public class TradeServiceImpl implements TradeService {
             if (children.getMoney() < tradeDto.getAmount()) {
                 throw new IllegalArgumentException("Insufficient funds for this purchase");
             }
+            totalProfit = BigDecimal.ZERO;
             handleBuyTransaction(stocksHeld, tradeDto);
             children.setMoney(children.getMoney() - tradeDto.getAmount());
         } else if (tradeDto.getTradeType().equals("5")) { // 매도
+            log.info("stocksHeld의 total_amount: {}", stocksHeld.getTotalAmount());
+            log.info("stocksHeld의 remain_shares_count: {}",  stocksHeld.getRemainSharesCount());
             totalProfit = handleSellTransaction(stocksHeld, tradeDto);
-            Integer totalProfitAsInt = totalProfit.intValue();
-            children.setMoney(children.getMoney() + tradeDto.getAmount() + totalProfitAsInt);
+            log.info("totalProfit = {}", totalProfit);
+            children.setMoney(children.getMoney() + tradeDto.getAmount() + totalProfit.intValue());
         } else {
             throw new IllegalArgumentException("Invalid trade type");
         }
@@ -69,6 +73,7 @@ public class TradeServiceImpl implements TradeService {
         // StocksHeld 저장
         stocksHeldRepository.save(stocksHeld);
 
+        log.info("tradeRecord 생성 직전");
         // TradeRecord 엔티티 빌더 패턴 사용하여 생성
         TradeRecord tradeRecord = TradeRecord.builder()
                 .stock(stock)
@@ -81,8 +86,12 @@ public class TradeServiceImpl implements TradeService {
                 .remainAmount(children.getMoney())
                 .build();
 
+        log.info("tradeRecord 생성 완료");
+        log.info("손익머니: {}", tradeRecord.getStockTradingGain());
+        log.info("매매주수: {}", tradeRecord.getTradeSharesCount());
         // TradeRecord 저장
         tradeRecordsRepository.save(tradeRecord);
+        log.info("tradeRecord 저장 했음");
     }
 
     // 매수 처리
@@ -97,17 +106,22 @@ public class TradeServiceImpl implements TradeService {
             throw new IllegalArgumentException("Not enough shares to sell");
         }
 
+        //평단가 계산
         /* 매도를 위해 평단 구하기. 금액 부분은 다 Integer로 변환
             - divide(): 나눗셈을 수행 시 반올림으로 소수점 처리
             - 이 코드에서는 소수점 셋째 자리에서 반올림, 둘째 자리까지만 출력
             - intValue(): BigDecimal 결과를 Integer로 변환. 소수점 이하가 있으면 자동으로 버림 */
         BigDecimal bigAveragePrice = BigDecimal.valueOf(stocksHeld.getTotalAmount()).divide(stocksHeld.getRemainSharesCount(), 2, RoundingMode.HALF_UP);
+        log.info(" 평단가 : {} ", bigAveragePrice);
 
         // 매도 손익 계산 방법 : (현재가 − 평단가 ) × 매도 주식 수량
         BigDecimal closingPrice = stockRepositoryCustom.getDailyStockChart(tradeDto.getStockCode()).getClosingPrice();
-        log.info("closingPrice: {}", closingPrice);
+        log.info(" closingPrice : {} ", closingPrice);
         BigDecimal profitPerShare = closingPrice.subtract(bigAveragePrice);
-        BigDecimal bigTotalProfit = profitPerShare.multiply(tradeDto.getTradeSharesCount());
+        log.info(" 현재가 − 평단가 : {} ", profitPerShare);
+        // 손익 계산 후 소수점 둘째 자리로 반올림
+        BigDecimal bigTotalProfit = profitPerShare.multiply(tradeDto.getTradeSharesCount()).setScale(2, RoundingMode.HALF_UP);
+        log.info(" (현재가 − 평단가 ) × 매도 주식 수량 : {} ", bigTotalProfit);
 
         stocksHeld.setRemainSharesCount(stocksHeld.getRemainSharesCount().subtract(tradeDto.getTradeSharesCount())); // 보유주수
         stocksHeld.setTotalAmount(stocksHeld.getTotalAmount() - tradeDto.getAmount()); // 총합 빼기

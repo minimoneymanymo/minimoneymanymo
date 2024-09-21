@@ -78,12 +78,12 @@ class TradeServiceImplTest {
                 .operatingPrice(BigDecimal.valueOf(56900.00))
                 .highestPrice(BigDecimal.valueOf(61300.00))
                 .lowestPrice(BigDecimal.valueOf(56300.00))
-                .closingPrice(BigDecimal.valueOf(60600.00))
+                .closingPrice(BigDecimal.valueOf(1500.00)) // 평단가가 2000원이어서 closingPrice를 임의로 1500원으로 맞추겠음.
                 .tradingVolume(BigInteger.valueOf(234643))
                 .build();
 
         dailyStockChartDto = DailyStockChartDto.builder()
-                .closingPrice(BigDecimal.valueOf(60600.00))
+                .closingPrice(BigDecimal.valueOf(1500.00)) // 평단가가 2000원이어서 closingPrice를 임의로 1500원으로 맞추겠음.
                 .date(LocalDate.of(2024, 9, 11))
                 .build();
 
@@ -97,8 +97,8 @@ class TradeServiceImplTest {
         stocksHeld = StocksHeld.builder()
                 .children(children)
                 .stock(stock)
-                .remainSharesCount(BigDecimal.valueOf(15.00))
-                .totalAmount(30000)
+                .remainSharesCount(BigDecimal.valueOf(15.000000))
+                .totalAmount(30000) // 평단 2000
                 .build();
 
         tradeRecord = new TradeRecord();
@@ -137,10 +137,10 @@ class TradeServiceImplTest {
         // given
         tradeDto = TradeDto.builder()
                 .stockCode("462870")
-                .amount(30000)
+                .amount(15000)
                 .tradeSharesCount(new BigDecimal("10.0")) // 주 수
-                .reason("가격이 올라서 팔아요.")
-                .tradeType("5") // 매도
+                .reason("주 당 500원, 총 5000원 손해보고 팔기.")
+                .tradeType("5") // 매도 - 평단 1500원으로 매도해보기
                 .build();
 
         // Mock 설정
@@ -149,8 +149,10 @@ class TradeServiceImplTest {
         when(stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(1, "462870")).thenReturn(Optional.of(stocksHeld));
         when(stockRepositoryCustom.getDailyStockChart("462870")).thenReturn(dailyStockChartDto);
 
+        System.out.println("Test 시작 - 매도 시나리오");
         // when
         tradeServiceImpl.createTrade(tradeDto, "1111");
+        System.out.println("평단가 : " );
 
         // ArgumentCaptor를 이용하여 저장된 TradeRecord를 캡처
         ArgumentCaptor<TradeRecord> tradeRecordCaptor = ArgumentCaptor.forClass(TradeRecord.class);
@@ -158,10 +160,11 @@ class TradeServiceImplTest {
         TradeRecord savedTradeRecord = tradeRecordCaptor.getValue();
 
         // then -> 매도
+        verify(tradeRecordsRepository, times(1)).save(any(TradeRecord.class));
         assertEquals(new BigDecimal("5.0"), stocksHeld.getRemainSharesCount());
-        assertEquals(0, stocksHeld.getTotalAmount()); // stocksHeld 잔액이 감소했는지 확인
-        assertEquals(new BigDecimal("5000.0"), savedTradeRecord.getStockTradingGain()); // tradeRecord의 손익머니 확인 -> 이 값 이상함 확인 필요..
-        assertEquals(330000, children.getMoney()); // childrend 머니 잔액이 증가했는지 확인
+        assertEquals(15000, stocksHeld.getTotalAmount()); // stocksHeld 잔액이 감소했는지 확인
+        assertEquals(new BigDecimal("-5000.00"), savedTradeRecord.getStockTradingGain()); // tradeRecord의 손익머니 확인 -> 이 값 이상함. 확인 필요..
+        assertEquals(310000, children.getMoney()); // childrend 머니 잔액(매도금 + 손익)이 증가했는지 확인
         // stocksHeld 주수 감소
     }
 }
