@@ -7,6 +7,7 @@ import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTradeRecord;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTransactionRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
+import com.beautifulyomin.mmmm.domain.member.entity.QParent;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.ConstantImpl;
@@ -117,10 +118,10 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
     @Override
     @Transactional
-    public long approveWithdrawalRequest(Integer childrenId, Integer amount, String createdAt) {
+    public long approveWithdrawalRequest(String parentId, Integer childrenId, Integer amount, String createdAt) {
         QTransactionRecord transaction =QTransactionRecord.transactionRecord;
         QChildren children = QChildren.children;
-
+        QParent parent = QParent.parent;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         long rows = jpaQueryFactory
@@ -130,12 +131,20 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                 .execute();
 
         if(rows > 0){ // 업데이트가 발생하면
+            // 자식의 출가금 잔액, 머니 잔액 변경
             jpaQueryFactory
                 .update(children)
                 .set(children.money, children.money.subtract(amount))
                 .set(children.withdrawableMoney, children.withdrawableMoney.subtract(amount))
                 .where(children.childrenId.eq(childrenId))
                 .execute();
+
+            // 부모의 마니모 계좌 충전금액 변경
+            jpaQueryFactory
+                    .update(parent)
+                    .set(parent.balance, parent.balance.subtract(amount))
+                    .where(parent.userId.eq(parentId))
+                    .execute();
         }
 
         // 즉시 반영을 위함 -> 영속성 컨텍스트에 값이 남아있지 않도록!

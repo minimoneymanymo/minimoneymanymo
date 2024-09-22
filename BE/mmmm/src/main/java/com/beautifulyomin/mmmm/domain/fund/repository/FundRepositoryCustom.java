@@ -17,7 +17,7 @@ public interface FundRepositoryCustom {
     List<WithdrawRequestDto> findAllWithdrawalRequest(Integer childrenId);
 
     // 출금 요청 승인
-    long approveWithdrawalRequest(Integer childrenId, Integer amount, String createdAt);
+    long approveWithdrawalRequest(String parentId, Integer childrenId, Integer amount, String createdAt);
 
     // 구매주식 조회
 
