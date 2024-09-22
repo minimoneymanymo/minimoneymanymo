@@ -6,9 +6,8 @@ import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
 import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
 import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
-import io.github.cdimascio.dotenv.Dotenv;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -178,7 +177,7 @@ class TransactionRepositoryCustomImplTest {
 
     @Test
     @DisplayName("부모-자식의 출금요청내역 조회")
-    void approveWithdrawalRequestTest() {
+    void findAllTradeRecord() {
         children.setMoney(20000);
         children.setWithdrawableMoney(10000);
         entityManager.persist(children); // 변경값 반영
@@ -196,7 +195,6 @@ class TransactionRepositoryCustomImplTest {
         long result = fundRepository.approveWithdrawalRequest(children.getChildrenId(), 1000, "20240901130000");
         children = entityManager.find(Children.class, children.getChildrenId()); // 업데이트된 child 값 다시 불러오기
 
-
         TransactionRecord updatedTransactionRecord = entityManager
                 .getEntityManager()
                 .createQuery(
@@ -212,5 +210,62 @@ class TransactionRepositoryCustomImplTest {
         assertEquals(19000, children.getMoney()); // 출금 후 머니 잔액 확인
         assertEquals(9000, children.getWithdrawableMoney()); // 출금 후 출가금 잔액 확인
         assertEquals(currentDateTime, updatedTransactionRecord.getApprovedAt(), "The approvedAt timestamp should match the current time.");
+    }
+
+    @Test
+    @DisplayName("거래내역 조회")
+    void approveWithdrawalRequestTest() {
+        TradeRecord trade1 = new TradeRecord(
+                children,
+                stock,
+                3000,
+                BigDecimal.ZERO,
+                "20240922161000",
+                "4",
+                "매수가 하고 싶었습니다.",
+                200,
+                BigDecimal.valueOf(10),
+                7000
+        );
+        TradeRecord trade2 = new TradeRecord(
+                children,
+                stock,
+                5000,
+                BigDecimal.ZERO,
+                "20240922161100",
+                "5",
+                "매도가 하고 싶었습니다.",
+                200,
+                BigDecimal.valueOf(10),
+                12000
+        );
+        TradeRecord trade3 = new TradeRecord(
+                children,
+                stock,
+                5000,
+                BigDecimal.ZERO,
+                "20240822161000",
+                "5",
+                "매도가 하고 싶었습니다.",
+                null,
+                BigDecimal.valueOf(10),
+                12000
+        );
+        entityManager.persist(trade1);
+        entityManager.persist(trade2);
+        entityManager.persist(trade3);
+        entityManager.flush();
+
+        List<TradeDto> result1 = fundRepository.findAllTradeRecord(children.getChildrenId(), 2024, 9);
+        List<TradeDto> result2 = fundRepository.findAllTradeRecord(children.getChildrenId(), 2024, 8);
+
+        System.out.println(result1);
+        assertEquals(2, result1.size());
+        for (int i = 0; i < result1.size() - 1; i++) {
+            String currentCreatedAt = result1.get(i).getCreatedAt();
+            String nextCreatedAt = result1.get(i + 1).getCreatedAt();
+            assertTrue(currentCreatedAt.compareTo(nextCreatedAt) > 0, "CreatedAt is not in descending order");
+        }
+        assertEquals(1, result2.size());
     }
 }

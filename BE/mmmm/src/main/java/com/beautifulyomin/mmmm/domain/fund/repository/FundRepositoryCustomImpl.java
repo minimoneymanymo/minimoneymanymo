@@ -7,6 +7,7 @@ import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTradeRecord;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTransactionRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
+import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.ConstantImpl;
@@ -145,4 +146,30 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
         return rows;
     }
 
+    @Override
+    public List<TradeDto> findAllTradeRecord(Integer childrenId, Integer year, Integer month) {
+        QTradeRecord trade = QTradeRecord.tradeRecord;
+
+        String yearString = String.valueOf(year);
+        String monthString = String.format("%02d", month);
+
+        // 거래내역 조회 시 불러올 값
+        // -> createdAt, 종목이름, 머니, 주, 이유, 타입, 이유보상머니(머니 지급 관련)
+        return jpaQueryFactory
+                .select(Projections.constructor(TradeDto.class,
+                        trade.createdAt,
+                        trade.stock.companyName,
+                        trade.amount,
+                        trade.tradeSharesCount,
+                        trade.reason,
+                        trade.reasonBonusMoney,
+                        trade.tradeType,
+                        trade.remainAmount
+                ))
+                .from(trade)
+                .where(trade.children.childrenId.eq(childrenId)
+                        .and(trade.createdAt.startsWith(yearString + monthString)))  // 연도와 월을 기준으로 필터링
+                .orderBy(trade.createdAt.desc())
+                .fetch();
+    }
 }
