@@ -3,15 +3,12 @@ package com.beautifulyomin.mmmm.controller;
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.dto.*;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.constraints.NotNull;
 
-import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
 
@@ -206,7 +203,7 @@ public class MembersController {
      * 부모 - 용돈설정
      */
     @PutMapping("/mychild/setAllowance")
-    public  ResponseEntity<CommonResponseDto>updateAllowance(@RequestHeader("Authorization") String token,@RequestBody MyChildDto requestDto) {
+    public ResponseEntity<CommonResponseDto>updateAllowance(@RequestHeader("Authorization") String token,@RequestBody MyChildDto requestDto) {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
@@ -355,6 +352,19 @@ public class MembersController {
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
                         .message("마니모 계좌 충전 완료")
+                        .build());
+    }
+
+    // mypage 및 매매 시 자식 머니 불러오는 api
+    @GetMapping("/info")
+    public ResponseEntity<CommonResponseDto> childInfo(@RequestHeader("Authorization") String token) {
+        String userId = jwtUtil.getUsername(token);
+        ChildInfoDto childrenInfo = childrenService.childInfoByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("자식정보 조회 성공")
+                        .data(childrenInfo)
                         .build());
     }
 

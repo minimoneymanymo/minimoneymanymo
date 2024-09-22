@@ -2,7 +2,9 @@ package com.beautifulyomin.mmmm.domain.member.service;
 
 import com.beautifulyomin.mmmm.common.service.FileService;
 
+import com.beautifulyomin.mmmm.domain.member.dto.ChildInfoDto;
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
+import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
@@ -68,5 +70,24 @@ public class ChildrenServiceImpl implements ChildrenService {
 
     }
 
+    @Override
+    public ChildInfoDto childInfoByUserId(String userId) {
+        Optional<Children> children = childrenRepository.findByUserId(userId);
+        if(children.isPresent()){
+            Children child = children.get();
+
+            ChildInfoDto childInfo = new ChildInfoDto();
+            childInfo.setUserId(child.getUserId());
+            childInfo.setDate(child.getBirthDay());
+            childInfo.setMoney(child.getMoney());
+            childInfo.setProfileimgUrl(child.getProfileImgUrl());
+
+            return childInfo;
+
+        } else {
+            throw new RuntimeException("Child not found with id: " + userId);
+        }
+
+    }
 
 }
