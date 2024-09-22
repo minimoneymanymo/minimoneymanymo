@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart.dailyStockChart;
+
 @Slf4j
 @Repository
 public class StockRepositoryCustomImpl implements StockRepositoryCustom {
@@ -83,6 +85,22 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     @Override
     public List<DailyStockChartDto> getLatestMonthlyStockChart(String stockCode) {
         return getLatestPeriodStockChart(PeriodType.MONTH, stockCode);
+    }
+
+    @Override
+    public DailyStockChartDto getDailyStockChart(String stockCode) {
+        return queryFactory.select(Projections.constructor(DailyStockChartDto.class,
+                        dailyStockChart.date,
+                        dailyStockChart.highestPrice,
+                        dailyStockChart.lowestPrice,
+                        dailyStockChart.tradingVolume,
+                        dailyStockChart.operatingPrice,
+                        dailyStockChart.closingPrice
+                ))
+                .from(dailyStockChart)
+                .where(dailyStockChart.stockCode.eq(stockCode))
+                .orderBy(dailyStockChart.date.desc())
+                .fetchFirst();
     }
 
     private List<DailyStockChartDto> getLatestPeriodStockChart(PeriodType periodType, String stockCode) {

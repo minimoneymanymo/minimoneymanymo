@@ -13,4 +13,6 @@ public interface StockRepositoryCustom {
     List<DailyStockChartDto> getLatestWeeklyStockChart(String stockCode);
 
     List<DailyStockChartDto> getLatestMonthlyStockChart(String stockCode);
+
+    DailyStockChartDto getDailyStockChart(String stockCode);
 }

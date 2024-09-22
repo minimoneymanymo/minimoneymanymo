@@ -33,7 +33,7 @@ public class TradeRecord { // 매수매도 거래내역
     @Column(nullable = false)
     private Integer amount;
 
-    @Column(precision = 10, scale = 6)
+    @Column(precision = 10, scale = 2)
     private BigDecimal stockTradingGain = null;
 
     @Column(nullable = false, length = 14)

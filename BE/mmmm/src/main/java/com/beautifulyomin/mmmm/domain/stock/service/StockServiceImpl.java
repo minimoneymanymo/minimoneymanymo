@@ -10,6 +10,7 @@ import com.beautifulyomin.mmmm.domain.stock.repository.Stock52weekDataRepository
 import com.beautifulyomin.mmmm.domain.stock.repository.StockRepository;
 import com.beautifulyomin.mmmm.domain.stock.repository.StockRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class StockServiceImpl implements StockService {
 
 
     @Override
+    @Cacheable(value="stockDetail", key="#stockCode")
     public StockDetailResponseDto getStockDetailResponse(String stockCode) {
         StockDto stockDto = getStock(stockCode);
         DailyStockDataDto dailyStockDataDto = getDailyStockData(stockCode);
