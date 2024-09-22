@@ -6,6 +6,8 @@ import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.entity.Parent;
+import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.constraints.NotNull;
 
@@ -60,8 +62,6 @@ public class MembersController {
 
     @DeleteMapping()
     public ResponseEntity<CommonResponseDto> delete(@RequestHeader("Authorization") String token) {
-
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponseDto.builder()
                         .stateCode(200)
@@ -75,7 +75,6 @@ public class MembersController {
     public ResponseEntity<CommonResponseDto> registerUser(@RequestBody @NotNull JoinRequestDto joinDto) {
         //Exception 직접 설정 가능 예시코드
 //        Optional.ofNullable(joinDto).orElseThrow(() -> new IllegalArgumentException("joinDto cannot be null"));
-
 
         String savedUsername = null;
         if(joinDto.getRole().equals("0")) {
@@ -192,11 +191,7 @@ public class MembersController {
         }
         // result : -1 인 경우 이미 수락된 경우임
         else if(result == -1) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(400)
-                            .message("이미 승인된 자식임")
-                            .build());
+            throw new InvalidRequestException("예외");
         }
         // result : 1이상 인 경우 요청 승인 성공
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -231,11 +226,7 @@ public class MembersController {
         }
         // result : 0 인 경우 예외상황임
         else if(result == 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(400)
-                            .message("예외")
-                            .build());
+            throw new InvalidRequestException("예외");
         }
         // result : 1 인 경우 머니 설정 성공
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -269,11 +260,7 @@ public class MembersController {
         }
         // result : 0 인 경우 예외상황임
         else if(result == 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(400)
-                            .message("예외")
-                            .build());
+            throw new InvalidRequestException("예외");
         }
         // result : 1 인 경우 머니 설정 성공
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -306,17 +293,68 @@ public class MembersController {
         }
         // result : 0 인 경우 예외상황임
         else if(result == 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(CommonResponseDto.builder()
-                            .stateCode(400)
-                            .message("예외")
-                            .build());
+            throw new InvalidRequestException("예외");
         }
         // result : 1 인 경우 머니 설정 성공
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
                         .message("출금가능금액 설정 완료")
+                        .build());
+    }
+
+    /**
+     * 부모 - 마니모 계좌 환불
+     */
+    @PutMapping("/withdraw")
+    public  ResponseEntity<CommonResponseDto> withdrawBalance(
+            @RequestHeader("Authorization") String token,
+            @RequestParam("balance") Integer balance
+    ) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        Parent parent = parentService.findByUserId(userId);
+        if(parent.getBalance() < balance){
+            throw new InvalidRequestException("잔액보다 큰 금액을 환불할 수 없습니다.");
+        }
+
+        long result = parentService.updateBalance(userId, balance * -1);
+        if(result == 0){
+            throw new InvalidRequestException("마니모 계좌 환불 실패");
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("마니모 계좌 환불 완료")
+                        .build());
+    }
+
+    /**
+     * 부모 - 마니모 계좌 충전
+     */
+    @PutMapping("/deposit")
+    public  ResponseEntity<CommonResponseDto> depositBalance(
+            @RequestHeader("Authorization") String token,
+            @RequestParam("balance") Integer balance
+    ) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+
+        long result = parentService.updateBalance(userId, balance);
+        if(result == 0){
+            throw new InvalidRequestException("마니모 계좌 환불 실패");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("마니모 계좌 충전 완료")
                         .build());
     }
 
