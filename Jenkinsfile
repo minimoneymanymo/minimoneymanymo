@@ -9,8 +9,6 @@ pipeline {
     }
 
     stages {
-
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -52,7 +50,8 @@ pipeline {
         stage('Up Docker Compose') {
             steps {
                 script {
-                    sh 'docker-compose -f docker-compose.batch.yml up -d'
+                    // /var/jenkins_home/compose로 이동하여 Docker Compose 실행
+                    sh 'cd /var/jenkins_home/compose && docker-compose -f docker-compose.api-blue.yml up -d'
                 }
             }
         }
