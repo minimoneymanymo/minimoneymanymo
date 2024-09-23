@@ -1,5 +1,6 @@
 package com.beautifulyomin.mmmm.domain.stock.constant;
 
+import com.beautifulyomin.mmmm.domain.stock.exception.InvalidFilterTypeException;
 import lombok.Getter;
 
 @Getter
@@ -22,6 +23,6 @@ public enum SortCriteria {
                 return size;
             }
         }
-        throw new IllegalArgumentException("유효하지 않은 정렬 기준입니다.");
+        throw new InvalidFilterTypeException("유효하지 않은 정렬 기준입니다.");
     }
 }

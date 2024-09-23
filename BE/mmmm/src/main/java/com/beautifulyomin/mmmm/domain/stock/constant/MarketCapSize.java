@@ -1,23 +1,24 @@
 package com.beautifulyomin.mmmm.domain.stock.constant;
 
+import com.beautifulyomin.mmmm.domain.stock.exception.InvalidFilterTypeException;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 
 @Getter
 public enum MarketCapSize {
-    SMALL("S", new BigDecimal("0"), new BigDecimal("300_000_000_000")),
-    MEDIUM("M", new BigDecimal("300_000_000_001"), new BigDecimal("1_000_000_000_000")),
-    LARGE("B", new BigDecimal("1_000_000_000_001"), new BigDecimal(Long.MAX_VALUE));
+    SMALL("SMALL", "0", "300000000000"), //3000억원 미만
+    MEDIUM("MIDIUM", "300000000001", "1000000000000"), //1조원 미만
+    LARGE("LARGE", "1000000000001", "9223372036854775807"); //1조원 이상
 
     private final String label;
-    private final BigDecimal minCap;
-    private final BigDecimal maxCap;
+    private final String minCap;
+    private final String maxCap;
 
-    MarketCapSize(String label, BigDecimal minCap, BigDecimal maxCap) {
+    MarketCapSize(String label, String minCap, String maxCap) {
         this.label = label;
-        this.minCap = minCap;
-        this.maxCap = maxCap;
+        this.minCap = String.valueOf(minCap);
+        this.maxCap = String.valueOf(maxCap);
     }
 
     public static MarketCapSize fromLabel(String label) {
@@ -26,6 +27,14 @@ public enum MarketCapSize {
                 return size;
             }
         }
-        throw new IllegalArgumentException("올바르지 않은 시가 총액 필터 기준입니다.");
+        throw new InvalidFilterTypeException("올바르지 않은 시가 총액 필터 기준입니다.");
+    }
+
+    public BigDecimal getMinCapAsBigDecimal() {
+        return new BigDecimal(minCap);
+    }
+
+    public BigDecimal getMaxCapAsBigDecimal() {
+        return new BigDecimal(maxCap);
     }
 }
