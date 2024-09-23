@@ -35,13 +35,13 @@ class TransactionRepositoryCustomImplTest {
 
     private final FundRepositoryCustomImpl fundRepository;
     private final TestEntityManager entityManager;
-    private final Environment environment;
+
 
     @Autowired
-    public TransactionRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager, Environment environment) {
+    public TransactionRepositoryCustomImplTest(FundRepositoryCustomImpl fundRepository, TestEntityManager entityManager) {
         this.fundRepository = fundRepository;
         this.entityManager = entityManager;
-        this.environment = environment;
+
     }
 
     static Children children;
