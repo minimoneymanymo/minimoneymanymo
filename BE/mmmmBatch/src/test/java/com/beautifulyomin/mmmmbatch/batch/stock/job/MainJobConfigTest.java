@@ -42,7 +42,13 @@ class MainJobConfigTest {
     void mainJobTest() throws Exception {
         JobParameters jobParameters  = new JobParameters();
         JobExecution jobExecution = jobLauncher.run(mainJob, jobParameters);
-
+        System.out.println("⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐");
+        System.out.println("Job Execution Status: " + jobExecution.getStatus());
+        jobExecution.getStepExecutions().forEach(step -> {
+            System.out.println("Step Name: " + step.getStepName());
+            System.out.println("Step Status: " + step.getStatus());
+            System.out.println("Step Exit Description: " + step.getExitStatus().getExitDescription());
+        });
         assertThat(jobExecution.getStatus().isUnsuccessful()).isFalse();
         assertThat(jobExecution.getStepExecutions().stream()
                 .anyMatch(step -> step.getStepName().equals("tokenRenewalJobStep")
