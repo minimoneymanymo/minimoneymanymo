@@ -11,4 +11,6 @@ public interface StockService {
     StockDetailResponseDto getStockDetailResponse(String stockCode);
 
     Page<StockFilterResponseDto> getFilteredStocks(StockFilterRequestDto filterRequestDto, Pageable pageable);
+
+    void toggleFavoriteStock(String userId, String stockCode);
 }

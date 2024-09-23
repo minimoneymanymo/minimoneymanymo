@@ -21,4 +21,6 @@ public interface StockRepositoryCustom {
     DailyStockChartDto getDailyStockChart(String stockCode);
 
     Page<StockFilterResponseDto> findStocksWithFilters(StockFilterRequestDto filterRequestDto, Pageable pageable);
+
+    void toggleFavoriteStock(String userId, String stockCode);
 }

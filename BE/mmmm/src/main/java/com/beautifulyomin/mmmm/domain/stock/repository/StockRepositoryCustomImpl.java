@@ -1,13 +1,13 @@
 package com.beautifulyomin.mmmm.domain.stock.repository;
 
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.stock.constant.*;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockChartDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockDataDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.request.StockFilterRequestDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.response.StockFilterResponseDto;
-import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
-import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockData;
-import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
+import com.beautifulyomin.mmmm.domain.stock.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
@@ -18,6 +18,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,10 +41,16 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     private final QStock stock = QStock.stock;
     private final QDailyStockData dailyStockData = QDailyStockData.dailyStockData;
     private final QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
+    private final ChildrenRepository childrenRepository;
+    private final StockRepository stockRepository;
+    private final StockLikeRepository stockLikeRepository;
 
     @Autowired
-    public StockRepositoryCustomImpl(JPAQueryFactory queryFactory) {
+    public StockRepositoryCustomImpl(JPAQueryFactory queryFactory, ChildrenRepository childrenRepository, StockRepository stockRepository, StockLikeRepository stockLikeRepository) {
         this.queryFactory = queryFactory;
+        this.childrenRepository = childrenRepository;
+        this.stockRepository = stockRepository;
+        this.stockLikeRepository = stockLikeRepository;
     }
 
     @Override
@@ -154,6 +161,26 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 
         long total = getTotal(latestDate, condition);
         return new PageImpl<>(results, pageable, total);
+    }
+
+    @Override
+    public void toggleFavoriteStock(String userId, String stockCode) {
+        Children children = childrenRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        Stock stocks = stockRepository.findById(stockCode)
+                .orElseThrow(() -> new EntityNotFoundException("해당 주식을 찾을 수 없습니다."));
+
+        Optional<StockLikes> existingLike = stockLikeRepository.findByChildrenAndStock(children, stocks);
+        if (existingLike.isPresent()) {
+            stockLikeRepository.delete(existingLike.get());
+            return;
+        }
+
+        StockLikes newLike = StockLikes.builder()
+                .children(children)
+                .stock(stocks)
+                .build();
+        stockLikeRepository.save(newLike);
     }
 
     /**

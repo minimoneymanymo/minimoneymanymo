@@ -56,6 +56,11 @@ public class StockServiceImpl implements StockService {
         return stockRepositoryCustom.findStocksWithFilters(filterRequestDto, pageable);
     }
 
+    @Override
+    public void toggleFavoriteStock(String userId, String stockCode) {
+        stockRepositoryCustom.toggleFavoriteStock(userId, stockCode);
+    }
+
     private StockDto getStock(String stockCode) {
         Stock stock = stockRepository.findById(stockCode)
                 .orElseThrow(() -> new StockNotFoundException(stockCode));
