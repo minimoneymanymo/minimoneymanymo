@@ -12,4 +12,5 @@ public class ChildInfoDto {
     private Integer money;
     private String profileimgUrl;
     private String date;
+    private Integer stockMoney;
 }

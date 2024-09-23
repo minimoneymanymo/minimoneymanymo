@@ -357,9 +357,9 @@ public class MembersController {
 
     // mypage 및 매매 시 자식 머니 불러오는 api
     @GetMapping("/info")
-    public ResponseEntity<CommonResponseDto> childInfo(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<CommonResponseDto> childInfo(@RequestHeader("Authorization") String token, @RequestParam("stockCode") String stockCode) {
         String userId = jwtUtil.getUsername(token);
-        ChildInfoDto childrenInfo = childrenService.childInfoByUserId(userId);
+        ChildInfoDto childrenInfo = childrenService.childInfoByUserId(userId, stockCode);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponseDto.builder()
                         .stateCode(200)

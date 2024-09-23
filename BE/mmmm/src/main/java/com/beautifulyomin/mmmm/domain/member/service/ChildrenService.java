@@ -11,5 +11,5 @@ public interface ChildrenService {
     String registerChildren(JoinRequestDto joinDto);
     String uploadProfileImage(MultipartFile file) throws IOException;
     boolean isExistByUserId(String userId);
-    ChildInfoDto childInfoByUserId(String userId);
+    ChildInfoDto childInfoByUserId(String userId, String stockCode );
 }
