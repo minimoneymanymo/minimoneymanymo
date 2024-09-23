@@ -23,7 +23,7 @@ public class StockController {
 
     @GetMapping("/{stockCode}")
     public ResponseEntity<CommonResponseDto> getStockDetail(
-            @PathVariable @NotNull @Pattern(regexp = "\\d{6}") String stockCode) {
+            @PathVariable(name = "stockCode") @NotNull @Pattern(regexp = "\\d{6}") String stockCode) {
         return ResponseEntity.ok(CommonResponseDto.builder()
                 .stateCode(200)
                 .message("주식 상세 조회 성공!")
