@@ -12,10 +12,12 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestPropertySource(locations = "classpath:application-test.properties")
 @SpringBatchTest
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
