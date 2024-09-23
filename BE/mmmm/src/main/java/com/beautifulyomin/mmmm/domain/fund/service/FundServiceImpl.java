@@ -52,9 +52,9 @@ public class FundServiceImpl implements FundService {
     }
 
     @Override
-    public long approveWithdrawalRequest(String childrenId, Integer amount, String createdAt) {
+    public long approveWithdrawalRequest(String parentId, String childrenId, Integer amount, String createdAt) {
         Children child = childrenRepository.findByUserId(childrenId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
-        return fundRepositoryCustom.approveWithdrawalRequest(child.getChildrenId(), amount, createdAt);
+        return fundRepositoryCustom.approveWithdrawalRequest(parentId, child.getChildrenId(), amount, createdAt);
     }
 }

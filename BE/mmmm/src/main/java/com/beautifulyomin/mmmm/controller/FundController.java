@@ -4,6 +4,7 @@ import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.fund.dto.*;
 import com.beautifulyomin.mmmm.domain.fund.service.FundService;
+import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
@@ -110,8 +111,12 @@ public class FundController {
         if(!parentService.isExistByUserId(userId)){
             throw new InvalidRoleException("부모가 아닙니다.");
         }
+        Parent parent = parentService.findByUserId(userId);
+        if(parent.getBalance() < approve.getAmount()){
+            throw new InvalidRequestException("출금 요청 금액이 마니모 계좌 잔액보다 큽니다.");
+        }
 
-        long result = fundService.approveWithdrawalRequest(approve.getChildrenId(), approve.getAmount(), approve.getCreatedAt());
+        long result = fundService.approveWithdrawalRequest(userId, approve.getChildrenId(), approve.getAmount(), approve.getCreatedAt());
         if(result == 0){
             throw new InvalidRequestException("요청에 해당하는 내역이 없습니다.");
         }
