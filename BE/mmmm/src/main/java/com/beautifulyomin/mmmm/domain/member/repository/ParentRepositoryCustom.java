@@ -10,13 +10,12 @@ public interface ParentRepositoryCustom {
     List<Integer> findAllMyChildrenIdByParentUserId(String parentUserId);
     MyChildrenDto findAllMyChildrenByChildId(Integer childrenId);
     List<MyChildrenWaitingDto> findNotApprovedMyChildrenByParentUserId(String parentUserId);
-
     long updateIsApprovedById(Integer parentId, Integer childrenId);
     long updateSettingMoneyById(Integer childrenId, Integer settingMoney);
-
     MyChildDto findAllMyChildByChildrenId(Integer childrenId);
-
     long updateSettingWithdrawableMoneyById(Integer childrenId, Integer settingWithdrawableMoney);
-
     long updateSettingQuizBonusMoneyById(Integer childrenId, Integer settingQuizBonusMoney);
+
+    // 부모 잔액 업데이트(충전, 환불)
+    long updateBalance(String parentUserId, Integer amount);
 }

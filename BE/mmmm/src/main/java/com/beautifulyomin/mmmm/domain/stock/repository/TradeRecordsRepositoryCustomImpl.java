@@ -5,14 +5,12 @@ import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class TradeRepositoryCustomImpl implements TradeRepositoryCustom{
+public class TradeRecordsRepositoryCustomImpl implements TradeRecordsRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public TradeRepositoryCustomImpl(JPAQueryFactory jpaQueryFactory) { this.jpaQueryFactory = jpaQueryFactory; }
+    public TradeRecordsRepositoryCustomImpl(JPAQueryFactory jpaQueryFactory) { this.jpaQueryFactory = jpaQueryFactory; }
 
     @Override
     public TradeDto findTradeByStockCode(String stockCode) {

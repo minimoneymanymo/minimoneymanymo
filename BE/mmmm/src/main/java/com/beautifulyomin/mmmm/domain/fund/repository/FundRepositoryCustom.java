@@ -3,7 +3,6 @@ package com.beautifulyomin.mmmm.domain.fund.repository;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -19,4 +18,7 @@ public interface FundRepositoryCustom {
 
     // 출금 요청 승인
     long approveWithdrawalRequest(Integer childrenId, Integer amount, String createdAt);
+
+    // 구매주식 조회
+
 }
