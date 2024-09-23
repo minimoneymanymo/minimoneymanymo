@@ -4,8 +4,8 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials_thispear'
         TEST_DB_URL = 'jdbc:postgresql://postgres:5432/testbases?currentSchema=public'
-        TEST_DB_USERNAME = 'test_user'
-        TEST_DB_PASSWORD = 'test_pwd'
+        TEST_DB_USERNAME = 'mmmm'
+        TEST_DB_PASSWORD = 'm1m2m3m4'
     }
 
     stages {
