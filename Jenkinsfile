@@ -9,17 +9,7 @@ pipeline {
     }
 
     stages {
-        stage('Start PostgreSQL Container') {
-            steps {
-                script {
-                    dir('BE/mmmm') {
-                        sh '''
-                        docker-compose -f testdb-compose.yml up -d
-                        '''
-                    }
-                }
-            }
-        }
+
 
         stage('Build Docker Image') {
             steps {
@@ -55,6 +45,14 @@ pipeline {
                         sh 'docker tag mmmm-api-image thispear/mmmm:latest'
                         sh 'docker push thispear/mmmm:latest'
                     }
+                }
+            }
+        }
+
+        stage('Up Docker Compose') {
+            steps {
+                script {
+                    sh 'docker-compose -f docker-compose.batch.yml up -d'
                 }
             }
         }
