@@ -2,11 +2,10 @@ const { VITE_SSAFY_API_KEY: apiKey, VITE_SSAFY_USER_KEY: userKey } = import.meta
 
 export const makeParam = (
     apiName: string, 
-    now: { date: string, time: string },
     data: object = {}
   ): object => {
     const random = String(Math.floor(100000 + Math.random() * 900000));
-    const {date, time} = now // 구조분해할당
+    const {date, time} = getNow() // 구조분해할당
     const param = {
       "Header": {
         "apiName": apiName,
@@ -18,7 +17,7 @@ export const makeParam = (
         "institutionTransactionUniqueNo": date + time + random,
         "apiKey": apiKey,
         "userKey": userKey
-      },
+      }
     }
   
     // 스프레드 연산자(...)를 사용하여 기존 객체를 복사한 후, 원하는 값을 추가
