@@ -24,4 +24,5 @@ public interface ParentService {
     int setMyChildWithdrawableMoney(String userId, Integer childrenId, Integer settingWithdrawableMoney);
     Parent findByUserId(String parentUserId);
     long updateBalance(String parentUserId, Integer amount);
+    long updateAccount(String parentUserId, String accountNumber, String bankCode);
 }

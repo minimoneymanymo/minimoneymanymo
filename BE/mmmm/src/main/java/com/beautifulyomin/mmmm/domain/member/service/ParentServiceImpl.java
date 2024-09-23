@@ -220,4 +220,9 @@ public class ParentServiceImpl implements ParentService {
         return parentRepositoryCustom.updateBalance(parentUserId, amount);
     }
 
+    @Override
+    public long updateAccount(String parentUserId, String accountNumber, String bankCode) {
+        return parentRepositoryCustom.updateParentAccount(parentUserId, accountNumber, bankCode);
+    }
+
 }

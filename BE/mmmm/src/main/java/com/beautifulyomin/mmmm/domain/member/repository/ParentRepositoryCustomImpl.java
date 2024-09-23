@@ -176,4 +176,28 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .execute();
     }
 
+    @Override
+    @Transactional
+    public long updateChildAccount(String childUserId, String accountNumber, String bankCode) {
+        QChildren child = QChildren.children;
+        return jpaQueryFactory
+                .update(child)
+                .set(child.accountNumber, accountNumber)
+                .set(child.bankCode, bankCode)
+                .where(child.userId.eq(childUserId))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateParentAccount(String parentUserId, String accountNumber, String bankCode) {
+        QParent parent = QParent.parent;
+        return jpaQueryFactory
+                .update(parent)
+                .set(parent.accountNumber, accountNumber)
+                .set(parent.bankCode, bankCode)
+                .where(parent.userId.eq(parentUserId))
+                .execute();
+    }
+
 }

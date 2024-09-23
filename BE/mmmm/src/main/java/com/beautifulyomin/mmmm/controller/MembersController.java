@@ -3,15 +3,12 @@ package com.beautifulyomin.mmmm.controller;
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.dto.*;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.constraints.NotNull;
 
-import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
 
@@ -355,6 +352,31 @@ public class MembersController {
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
                         .message("마니모 계좌 충전 완료")
+                        .build());
+    }
+
+    @PutMapping("/link-account")
+    public  ResponseEntity<CommonResponseDto> updateAccount(
+            @RequestHeader("Authorization") String token,
+            @RequestBody AccountDto accountDto
+    ) {
+        long result;
+        String userId = jwtUtil.getUsername(token);
+        if(parentService.isExistByUserId(userId)){ // 부모
+            result = parentService.updateAccount(userId, accountDto.getAccountNumber(), accountDto.getBankCode());
+        }else if(childrenService.isExistByUserId(userId)){ // 자녀
+            result = childrenService.updateAccount(userId, accountDto.getAccountNumber(), accountDto.getBankCode());
+        }else{
+            throw new InvalidRequestException("아이디와 일치하는 사용자가 없습니다");
+        }
+
+        if(result == 0){
+            throw new InvalidRequestException("계좌 연결 실패");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("계좌 연결 완료")
                         .build());
     }
 
