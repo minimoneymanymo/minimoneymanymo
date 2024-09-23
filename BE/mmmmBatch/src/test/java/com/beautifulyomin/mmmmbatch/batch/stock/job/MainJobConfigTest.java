@@ -12,10 +12,12 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestPropertySource(locations = "classpath:application-test.properties")
 @SpringBatchTest
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -27,13 +29,13 @@ class MainJobConfigTest {
     @Autowired
     private Job mainJob;
 
-    @BeforeAll
-    static void setUp() {  //모든 메서드 실행 전 딱 한 번
-        Dotenv dotenv = Dotenv.configure().load();
-        dotenv.entries().forEach(entry ->
-                System.setProperty(entry.getKey(), entry.getValue())
-        );
-    }
+//    @BeforeAll
+//    static void setUp() {  //모든 메서드 실행 전 딱 한 번
+//        Dotenv dotenv = Dotenv.configure().load();
+//        dotenv.entries().forEach(entry ->
+//                System.setProperty(entry.getKey(), entry.getValue())
+//        );
+//    }
 
     @Test
     @DisplayName("MainJob이 각 JobStep을 올바르게 실행하는지 통합 테스트")
