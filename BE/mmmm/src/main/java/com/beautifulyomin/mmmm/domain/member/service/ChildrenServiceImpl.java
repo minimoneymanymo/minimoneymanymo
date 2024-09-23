@@ -47,8 +47,13 @@ public class ChildrenServiceImpl implements ChildrenService {
                  .orElseThrow(() -> new IllegalArgumentException("해당 번호로 등록된 부모가 없습니다."));
         String encodedPass = bCryptPasswordEncoder.encode(joinDto.getPassword());
         Children children = new Children(
-                joinDto.getUserId(), joinDto.getName(), encodedPass,
-                joinDto.getPhoneNumber(),joinDto.getBirthDay());
+                joinDto.getUserId(),
+                joinDto.getName(),
+                encodedPass,
+                joinDto.getPhoneNumber(),
+                joinDto.getBirthDay(),
+                joinDto.getUserKey()
+        );
         //자식 저장후
         Children sChildren = childrenRepository.save(children);
         //부모랑 연결

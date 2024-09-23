@@ -46,8 +46,12 @@ public class ParentServiceImpl implements ParentService {
         String encodedPass = bCryptPasswordEncoder.encode(joinDto.getPassword());
 
         Parent nParent = new Parent(
-                joinDto.getUserId(), joinDto.getName(),encodedPass,
-                joinDto.getPhoneNumber());
+                joinDto.getUserId(),
+                joinDto.getName(),
+                encodedPass,
+                joinDto.getPhoneNumber(),
+                joinDto.getUserKey()
+        );
         Parent sParent = parentRepository.save(nParent);
         return sParent.getName();
     }
