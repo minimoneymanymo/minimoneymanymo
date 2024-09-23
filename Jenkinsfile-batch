@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials_thispear'
+        TEST_DB_URL = 'jdbc:postgresql://mmmm-testgres-1:5432/test?currentSchema=public'
+        TEST_DB_USERNAME = 'postgres'
+        TEST_DB_PASSWORD = '1234'
+    }
+
+    stages {
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dir('BE/mmmmBatch') {
+                        sh 'chmod +x gradlew'
+                        sh './gradlew clean'
+                        sh './gradlew build --info --refresh-dependencies'
+
+                        // JAR 파일 확인
+                        sh 'ls -l build/libs/'
+
+                        // Docker 이미지 빌드
+                        docker.build('mmmm-batch-image', '-f Dockerfile .')
+                    }
+                }
+            }
+        }
+
+        stage('Remove Old Docker Images') {
+            steps {
+                script {
+                    // 오래된 이미지를 삭제합니다.
+                    sh 'docker image prune -f'
+                }
+            }
+        }
+
+    }
+}
