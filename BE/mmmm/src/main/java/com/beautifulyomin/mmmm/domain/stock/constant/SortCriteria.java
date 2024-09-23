@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum SortCriteria {
-    MARKET_CAPITALIZATION("MC", "market_capitalization"),
-    TRADING_VOLUME("TV", "trading_volume");
+    MARKET_CAPITALIZATION("MC", "marketCapitalization"),
+    TRADING_VOLUME("TV", "tradingValue");
 
 
     private final String label;

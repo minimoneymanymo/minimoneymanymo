@@ -1,20 +1,28 @@
 package com.beautifulyomin.mmmm.domain.stock.repository;
 
 import com.beautifulyomin.mmmm.domain.stock.constant.PeriodType;
+import com.beautifulyomin.mmmm.domain.stock.constant.SortCriteria;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockChartDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockDataDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.request.StockFilterRequestDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.response.StockFilterResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockData;
+import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.DatePath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 
@@ -29,6 +37,7 @@ import java.util.stream.Collectors;
 public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     private static final int PERIOD_LIMIT_CNT = 30;
     private final JPAQueryFactory queryFactory;
+    private final QStock stock = QStock.stock;
     private final QDailyStockData dailyStockData = QDailyStockData.dailyStockData;
     private final QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
 
@@ -107,8 +116,51 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 
     @Override
     public Page<StockFilterResponseDto> findStocksWithFilters(StockFilterRequestDto filterRequestDto, Pageable pageable) {
-        return null;
-//        return PageableExecutionUtils.getPage();
+
+        //최신 날짜 가져오는 서브쿼리
+        LocalDate latestDate = queryFactory
+                .select(dailyStockChart.date.max())
+                .from(dailyStockChart)
+                .fetchFirst();
+
+        //필터링 조건 생성
+        BooleanBuilder condition = new BooleanBuilder(); //필터링 조건
+
+        List<StockFilterResponseDto> results = queryFactory
+                .select(Projections.constructor(StockFilterResponseDto.class,
+                        stock.companyName,
+                        stock.stockCode,
+                        dailyStockChart.date,
+                        dailyStockChart.closingPrice,
+                        dailyStockData.priceChangeSign,
+                        dailyStockData.priceChange,
+                        dailyStockData.priceChangeRate,
+                        dailyStockData.marketCapitalization,
+                        dailyStockChart.tradingVolume
+                ))
+                .from(stock)
+                .join(dailyStockData)
+                .on(stock.stockCode.eq(dailyStockData.stockCode)
+                        .and(dailyStockData.date.eq(latestDate)))
+                .join(dailyStockChart)
+                .on(stock.stockCode.eq(dailyStockChart.stockCode)
+                        .and(dailyStockChart.date.eq(latestDate)))
+                .where(condition)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(getOrderSpecifiers(pageable.getSort()))
+                .fetch();
+
+        // 총 개수 계산 (다음 페이지네이션에 사용)
+        long total = queryFactory
+                .select(stock.count())
+                .from(stock)
+                .join(dailyStockData).on(stock.stockCode.eq(dailyStockData.stockCode).and(dailyStockData.date.eq(latestDate)))
+                .join(dailyStockChart).on(stock.stockCode.eq(dailyStockChart.stockCode).and(dailyStockChart.date.eq(latestDate)))
+                .where(condition)
+                .fetchOne();
+
+        return new PageImpl<>(results, pageable, total);
     }
 
     private List<DailyStockChartDto> getLatestPeriodStockChart(PeriodType periodType, String stockCode) {
@@ -220,5 +272,17 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         });
     }
 
+    private OrderSpecifier<?>[] getOrderSpecifiers(Sort sort) {
+        return sort.stream()
+                .map(order -> {
+                    SortCriteria sortCriteria = SortCriteria.fromValue(order.getProperty().toUpperCase());
+                    PathBuilder<Object> pathBuilder = new PathBuilder<>(QDailyStockData.class, "dailyStockData");
+                    return new OrderSpecifier(
+                            order.isAscending() ? Order.ASC : Order.DESC,
+                            pathBuilder.get(sortCriteria.getDbField())
+                    );
+                })
+                .toArray(OrderSpecifier[]::new);
+    }
 
 }

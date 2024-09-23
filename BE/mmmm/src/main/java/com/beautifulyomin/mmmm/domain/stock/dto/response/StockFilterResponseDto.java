@@ -1,5 +1,6 @@
 package com.beautifulyomin.mmmm.domain.stock.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -7,6 +8,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
 public class StockFilterResponseDto {
     private String companyName;
     private String stockCode;
