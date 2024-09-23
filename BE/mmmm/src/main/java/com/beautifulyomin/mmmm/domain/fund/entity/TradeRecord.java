@@ -82,8 +82,10 @@ public class TradeRecord { // 매수매도 거래내역
 
     @PrePersist
     protected void onCreate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        this.createdAt = LocalDateTime.now().format(formatter);
+        if (this.createdAt == null || this.createdAt.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            this.createdAt = LocalDateTime.now().format(formatter);
+        }
     }
 
 }

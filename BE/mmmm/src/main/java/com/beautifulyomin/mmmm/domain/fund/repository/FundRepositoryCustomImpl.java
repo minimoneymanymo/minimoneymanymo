@@ -7,6 +7,8 @@ import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTradeRecord;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTransactionRecord;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
+import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
+import com.beautifulyomin.mmmm.domain.member.entity.QParent;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.ConstantImpl;
@@ -117,10 +119,10 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
     @Override
     @Transactional
-    public long approveWithdrawalRequest(Integer childrenId, Integer amount, String createdAt) {
+    public long approveWithdrawalRequest(String parentId, Integer childrenId, Integer amount, String createdAt) {
         QTransactionRecord transaction =QTransactionRecord.transactionRecord;
         QChildren children = QChildren.children;
-
+        QParent parent = QParent.parent;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         long rows = jpaQueryFactory
@@ -130,12 +132,20 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                 .execute();
 
         if(rows > 0){ // 업데이트가 발생하면
+            // 자식의 출가금 잔액, 머니 잔액 변경
             jpaQueryFactory
                 .update(children)
                 .set(children.money, children.money.subtract(amount))
                 .set(children.withdrawableMoney, children.withdrawableMoney.subtract(amount))
                 .where(children.childrenId.eq(childrenId))
                 .execute();
+
+            // 부모의 마니모 계좌 충전금액 변경
+            jpaQueryFactory
+                    .update(parent)
+                    .set(parent.balance, parent.balance.subtract(amount))
+                    .where(parent.userId.eq(parentId))
+                    .execute();
         }
 
         // 즉시 반영을 위함 -> 영속성 컨텍스트에 값이 남아있지 않도록!
@@ -145,4 +155,30 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
         return rows;
     }
 
+    @Override
+    public List<TradeDto> findAllTradeRecord(Integer childrenId, Integer year, Integer month) {
+        QTradeRecord trade = QTradeRecord.tradeRecord;
+
+        String yearString = String.valueOf(year);
+        String monthString = String.format("%02d", month);
+
+        // 거래내역 조회 시 불러올 값
+        // -> createdAt, 종목이름, 머니, 주, 이유, 타입, 이유보상머니(머니 지급 관련)
+        return jpaQueryFactory
+                .select(Projections.constructor(TradeDto.class,
+                        trade.createdAt,
+                        trade.stock.companyName,
+                        trade.amount,
+                        trade.tradeSharesCount,
+                        trade.reason,
+                        trade.reasonBonusMoney,
+                        trade.tradeType,
+                        trade.remainAmount
+                ))
+                .from(trade)
+                .where(trade.children.childrenId.eq(childrenId)
+                        .and(trade.createdAt.startsWith(yearString + monthString)))  // 연도와 월을 기준으로 필터링
+                .orderBy(trade.createdAt.desc())
+                .fetch();
+    }
 }

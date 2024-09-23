@@ -20,6 +20,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@TestPropertySource(locations = "classpath:application-test.properties")
 @ExtendWith(MockitoExtension.class)
 class TradeServiceImplTest {
     @Mock

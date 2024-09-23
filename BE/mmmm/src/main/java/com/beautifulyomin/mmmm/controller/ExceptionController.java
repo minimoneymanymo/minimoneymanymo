@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmm.controller;
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.exception.InvalidFilterTypeException;
 import com.beautifulyomin.mmmm.domain.stock.exception.StockNotFoundException;
+import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.coyote.BadRequestException;
@@ -17,7 +18,7 @@ import java.nio.file.AccessDeniedException;
 @ControllerAdvice(basePackages = "com.beautifulyomin.mmmm")
 public class ExceptionController {
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({BadRequestException.class, InvalidRequestException.class})
     public ResponseEntity<CommonResponseDto> handleBadRequestException(BadRequestException ex) {
         CommonResponseDto errorResponse = new CommonResponseDto(400, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

@@ -4,6 +4,7 @@ import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -15,12 +16,13 @@ public interface ParentService {
     boolean isExistByUserId(String userId);
     boolean isExistByPhoneNumber(String phoneNumber);
     List<MyChildrenDto> getMyChildren(String userId);
-    MyChildDto getMyChild(String parentUserId, Integer ChildrenId);
+    MyChildDto getMyChild(String parentUserId, Integer childrenId);
     List<MyChildrenWaitingDto> getMyChildWaiting(String userId);
     int addMyChildren(String parentUserId, Integer childrenId);
     int setMyChildAllowance(String parentUserId, Integer childrenId, Integer settingMoney);
-
     int setMyChildQuizBonusMoney(String userId, Integer childrenId, Integer settingQuizBonusMoney);
-
     int setMyChildWithdrawableMoney(String userId, Integer childrenId, Integer settingWithdrawableMoney);
+    Parent findByUserId(String parentUserId);
+    long updateBalance(String parentUserId, Integer amount);
+    long updateAccount(String parentUserId, String accountNumber, String bankCode);
 }

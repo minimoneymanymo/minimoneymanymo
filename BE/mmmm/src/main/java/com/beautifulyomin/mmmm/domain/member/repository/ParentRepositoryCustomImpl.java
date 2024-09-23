@@ -5,6 +5,7 @@ import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
+import com.beautifulyomin.mmmm.domain.member.entity.QParent;
 import com.beautifulyomin.mmmm.domain.member.entity.QParentAndChildren;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.querydsl.core.types.ConstantImpl;
@@ -13,7 +14,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
-import java.beans.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -135,7 +135,8 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                         ConstantImpl.create(totalAmount != null ? totalAmount : BigDecimal.ZERO),
                         children.settingMoney,
                         children.settingWithdrawableMoney,
-                        children.settingQuizBonusMoney
+                        children.settingQuizBonusMoney,
+                        children.accountNumber
                 ))
                 .from(children)
                 .where(children.childrenId.eq(childrenId))
@@ -161,6 +162,41 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .update(children)
                 .set(children.settingQuizBonusMoney,settingQuizBonusMoney)
                 .where(children.childrenId.eq(childrenId))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateBalance(String parentUserId, Integer amount) {
+        QParent parent = QParent.parent;
+        return jpaQueryFactory
+                .update(parent)
+                .set(parent.balance, parent.balance.add(amount))
+                .where(parent.userId.eq(parentUserId))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateChildAccount(String childUserId, String accountNumber, String bankCode) {
+        QChildren child = QChildren.children;
+        return jpaQueryFactory
+                .update(child)
+                .set(child.accountNumber, accountNumber)
+                .set(child.bankCode, bankCode)
+                .where(child.userId.eq(childUserId))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateParentAccount(String parentUserId, String accountNumber, String bankCode) {
+        QParent parent = QParent.parent;
+        return jpaQueryFactory
+                .update(parent)
+                .set(parent.accountNumber, accountNumber)
+                .set(parent.bankCode, bankCode)
+                .where(parent.userId.eq(parentUserId))
                 .execute();
     }
 
