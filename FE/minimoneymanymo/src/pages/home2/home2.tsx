@@ -422,18 +422,24 @@ class StockItem {
 const stock = []
 let i = 1
  for (let item of dailyStockChart) {
-   let parts = item.date.split("-")
-   console.log(Number(parts[0]), Number(parts[1]), Number(parts[2]))
+   const parts = item.date.split("-")
+  //  console.log( Number(parts[0]), Number(parts[1])+1, Number(parts[2]))
+  //   console.log(item.date)
+  const year = Number(parts[0])
+  const month = Number(parts[1]) - 1 // 0부터 시작하므로 1 빼기
+  const day = Number(parts[2])
+  
    stock.push({
-  // date: new Date(Number(parts[0]), Number(parts[1]), Number(parts[2])),
-  // date: new Date(item.date),
-  date: new Date(2024,1,i++),
-  open: item.operatingPrice,
-  high: item.highestPrice,
-  low: item.lowestPrice,
-  close: item.closingPrice,
-  volume: item.tradingVolume,
-})
+     // date: new Date(item.date),
+     // date: new Date(Number(parts[0]), Number(parts[1]), Number(parts[2])),
+     time: new Date(year, month, day),
+     // time: new Date(2024,1,i++),
+     open: item.operatingPrice,
+     high: item.highestPrice,
+     low: item.lowestPrice,
+     close: item.closingPrice,
+     volume: item.tradingVolume,
+   })
 
  }
 console.log("stock", stock)
