@@ -10,6 +10,7 @@ import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentAndChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 
+import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,13 +22,15 @@ import java.util.Optional;
 public class ChildrenServiceImpl implements ChildrenService {
 
     private final ChildrenRepository childrenRepository;
+    private final ParentRepositoryCustom parentRepositoryCustom;
     private final ParentRepository parentRepository;
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final FileService fileService;
 
-    public ChildrenServiceImpl(ChildrenRepository childrenRepository, ParentRepository parentRepository, ParentAndChildrenRepository parentAndChildrenRepository, BCryptPasswordEncoder bCryptPasswordEncoder, FileService fileService) {
+    public ChildrenServiceImpl(ChildrenRepository childrenRepository, ParentRepositoryCustom parentRepositoryCustom, ParentRepository parentRepository, ParentAndChildrenRepository parentAndChildrenRepository, BCryptPasswordEncoder bCryptPasswordEncoder, FileService fileService) {
         this.childrenRepository = childrenRepository;
+        this.parentRepositoryCustom = parentRepositoryCustom;
         this.parentRepository = parentRepository;
         this.parentAndChildrenRepository = parentAndChildrenRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -68,5 +71,8 @@ public class ChildrenServiceImpl implements ChildrenService {
 
     }
 
-
+    @Override
+    public long updateAccount(String childUserId, String accountNumber, String bankCode) {
+        return parentRepositoryCustom.updateChildAccount(childUserId, accountNumber, bankCode);
+    }
 }
