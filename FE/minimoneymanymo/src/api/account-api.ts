@@ -1,70 +1,69 @@
 import { fintechInstance } from "@/api/httpcommons"
 
 // 은행코드 조회
-const inquireBankCodes = async (
+const inquireBankCodesApi = async (
   param: any,
   success: (response: any) => void,
   fail: (response: any) => void
 ) => {
-  // 프록시 적용
-  fintechInstance.post('/api/bank/inquireBankCodes', param)
+  console.log(param)
+  fintechInstance.post('/bank/inquireBankCodes', param)
     .then(success)
     .catch(fail)
 }
-
 // 계좌 조회
-const inquireAccount = async (
+const inquireAccountApi = async (
   param: any,
   success: (response: any) => void,
   fail: (response: any) => void
 ) => {
-  fintechInstance.post('demandDeposit/inquireDemandDepositAccount', param)
+  fintechInstance.post('/demandDeposit/inquireDemandDepositAccount', param)
     .then(success)
     .catch(fail)
 }
 
 // 계좌 출금
-const withdraw = async (
+const withdrawApi = async (
   param: any,
   success: (response: any) => void,
   fail: (response: any) => void
 ) => {
-  fintechInstance.post('demandDeposit/updateDemandDepositAccountWithdrawal', param)
+  fintechInstance.post('/demandDeposit/updateDemandDepositAccountWithdrawal', param)
     .then(success)
     .catch(fail)
 }
 
 // 계좌 입금
-const deposit = async (
+const depositApi = async (
   param: any,
   success: (response: any) => void,
   fail: (response: any) => void
 ) => {
-  fintechInstance.post('demandDeposit/updateDemandDepositAccountDeposit', param)
+  fintechInstance.post('/demandDeposit/updateDemandDepositAccountDeposit', param)
     .then(success)
     .catch(fail)
 }
 
 // 1원 송금
-const authAccount = async (
+const authAccountApi = async (
   param: any,
   success: (response: any) => void,
   fail: (response: any) => void
 ) => {
-  fintechInstance.post('accountAuth/openAccountAuth', param)
+  fintechInstance.post('/accountAuth/openAccountAuth', param)
     .then(success)
     .catch(fail)
 }
 
 // 1원 송금 검증
-const checkAuthCode = async (
+const checkAuthCodeApi = async (
   param: any,
   success: (response: any) => void,
   fail: (response: any) => void
 ) => {
-  fintechInstance.post('accountAuth/checkAuthCode', param)
+  fintechInstance.post('/accountAuth/checkAuthCode', param)
     .then(success)
     .catch(fail)
 }
 
-export { inquireBankCodes, inquireAccount, withdraw, deposit, authAccount, checkAuthCode}
+export { inquireBankCodesApi, inquireAccountApi, withdrawApi, depositApi, authAccountApi, checkAuthCodeApi}
