@@ -9,6 +9,7 @@ import com.beautifulyomin.mmmm.domain.fund.repository.FundRepositoryCustom;
 import com.beautifulyomin.mmmm.domain.fund.repository.TransactionRepository;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
+import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -56,5 +57,12 @@ public class FundServiceImpl implements FundService {
         Children child = childrenRepository.findByUserId(childrenId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
         return fundRepositoryCustom.approveWithdrawalRequest(parentId, child.getChildrenId(), amount, createdAt);
+    }
+
+    @Override
+    public List<TradeDto> findAllTradeRecord(String childrenId, Integer year, Integer month) {
+        Children children = childrenRepository.findByUserId(childrenId)
+                .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
+        return fundRepositoryCustom.findAllTradeRecord(children.getChildrenId(), year, month);
     }
 }

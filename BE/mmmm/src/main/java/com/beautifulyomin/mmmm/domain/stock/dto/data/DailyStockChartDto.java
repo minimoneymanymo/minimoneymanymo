@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @Getter
+@Builder
 public class DailyStockChartDto  implements Serializable {
     private LocalDate date;
     private BigDecimal highestPrice;
