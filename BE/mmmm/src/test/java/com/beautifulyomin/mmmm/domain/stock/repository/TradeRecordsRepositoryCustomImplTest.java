@@ -52,7 +52,8 @@ class TradeRecordsRepositoryCustomImplTest {
                 "아름자식",
                 "1234",
                 "010-8625-9046",
-                "199705080000"
+                "199705080000",
+                "userKey"
         );
 
         entityManager.persist(children); //영속성 컨텍스트에 등록
