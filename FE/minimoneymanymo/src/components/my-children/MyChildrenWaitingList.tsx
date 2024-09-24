@@ -46,7 +46,11 @@ function MyChildrenWaitingList({
             <li key={child.childrenId} className="m-5 space-x-6 border">
               <span>{index + 1}</span>
               <span>{child.name}</span>
-              <span>{computeTime(child.createdAt)}</span>
+              <span>
+                {child.createdAt
+                  ? computeTime(child.createdAt)
+                  : "No date available"}
+              </span>
               <button onClick={() => handleApprove(child.childrenId)}>
                 {" "}
                 수락{" "}

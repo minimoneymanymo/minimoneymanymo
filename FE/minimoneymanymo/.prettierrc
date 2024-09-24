@@ -1,7 +1,7 @@
 {
   "arrowParens": "always",
   "bracketSameLine": false,
-  "bracketSpacing": false,
+  "bracketSpacing": true,
   "semi": false,
   "experimentalTernaries": false,
   "singleQuote": false,
@@ -18,5 +18,6 @@
   "tabWidth": 2,
   "useTabs": false,
   "embeddedLanguageFormatting": "auto",
+  "endOfLine": "auto",
   "plugins": ["prettier-plugin-tailwindcss"]
 }

@@ -14,7 +14,8 @@ import MyChildrenPage from "./pages/parentchildren/MyChildrenPage"
 import MyChildFinancePage from "./pages/parentchildren/MyChildFinancePage"
 import StockPageLayout from "./layouts/StockPageLayout"
 import ChartPage from "./pages/stock/ChartPage"
-
+import MyDairy from "./components/my-info/Calender"
+import ChildDairyPage from "./pages/chlid/ChildDairyPage"
 function App() {
   return (
     <Routes>
@@ -43,7 +44,7 @@ function App() {
           <Route path="wallet" element={<Temp />} />
           <Route path="finance" element={<Temp />} />
           <Route path="invest-style" element={<Temp />} />
-          <Route path="diary" element={<Temp />} />
+          <Route path="diary" element={<ChildDairyPage />} />
         </Route>
         <Route path="/stock" element={<StockPageLayout/>}>
           <Route path="detail/:stockCode" element={<ChartPage />} />
