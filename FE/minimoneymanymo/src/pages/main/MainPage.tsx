@@ -1,5 +1,7 @@
+import StockList from "@/components/stock/StockList"
+
 function MainPage(): JSX.Element {
-  return <>MainPage</>
+  return <StockList />
 }
 
 export default MainPage
