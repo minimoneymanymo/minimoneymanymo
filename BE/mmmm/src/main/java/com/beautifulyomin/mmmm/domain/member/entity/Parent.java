@@ -48,11 +48,15 @@ public class Parent {
     @Column(length = 255)
     private String profileImgUrl;
 
-    public Parent(String userId, String name, String password, String phoneNumber) {
+    @Column(nullable = false, length = 255)
+    private String userKey;
+
+    public Parent(String userId, String name, String password, String phoneNumber, String userKey) {
         this.userId = userId;
         this.phoneNumber = phoneNumber;
         this.name = name;
         this.password = password;
+        this.userKey = userKey;
     }
 
     @PrePersist

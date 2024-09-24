@@ -9,4 +9,5 @@ public interface ChildrenService {
     String registerChildren(JoinRequestDto joinDto);
     String uploadProfileImage(MultipartFile file) throws IOException;
     boolean isExistByUserId(String userId);
+    long updateAccount(String childUserId, String accountNumber, String bankCode);
 }

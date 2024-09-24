@@ -18,4 +18,9 @@ public interface ParentRepositoryCustom {
 
     // 부모 잔액 업데이트(충전, 환불)
     long updateBalance(String parentUserId, Integer amount);
+
+    // 계좌 연결
+    long updateParentAccount(String parentUserId, String accountNumber, String bankCode);
+    long updateChildAccount(String childUserId, String accountNumber, String bankCode);
+
 }
