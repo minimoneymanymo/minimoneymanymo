@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/members")
+@Slf4j
 public class MembersController {
     private final ParentService parentService;
     private final ChildrenService childrenService;
@@ -356,9 +358,12 @@ public class MembersController {
     }
 
     // mypage 및 매매 시 자식 머니 불러오는 api
-    @GetMapping("/info")
-    public ResponseEntity<CommonResponseDto> childInfo(@RequestHeader("Authorization") String token, @RequestParam("stockCode") String stockCode) {
+    @GetMapping("/info/{stockCode}")
+    public ResponseEntity<CommonResponseDto> childInfo(@RequestHeader("Authorization") String token, @PathVariable("stockCode") String stockCode) {
         String userId = jwtUtil.getUsername(token);
+
+        log.info("userId는 : {}", userId);
+
         ChildInfoDto childrenInfo = childrenService.childInfoByUserId(userId, stockCode);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponseDto.builder()

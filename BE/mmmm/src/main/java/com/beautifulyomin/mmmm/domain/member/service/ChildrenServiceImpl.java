@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -84,6 +85,7 @@ public class ChildrenServiceImpl implements ChildrenService {
 
             // StocksHeld 엔티티가 존재하는지 확인하고, 존재하면 totalStockMoney 가져오기
             Integer totalStockMoney = stockHeld.map(StocksHeld::getTotalAmount).orElse(0); // 없으면 0으로 설정
+            BigDecimal totalStockShares = stockHeld.map(StocksHeld::getRemainSharesCount).orElse(BigDecimal.valueOf(0));
 
             ChildInfoDto childInfo = new ChildInfoDto();
             childInfo.setUserId(child.getUserId());
@@ -91,6 +93,7 @@ public class ChildrenServiceImpl implements ChildrenService {
             childInfo.setMoney(child.getMoney());
             childInfo.setProfileimgUrl(child.getProfileImgUrl());
             childInfo.setStockMoney(totalStockMoney);
+            childInfo.setRemainSharesCount(totalStockShares);
 
             return childInfo;
 
