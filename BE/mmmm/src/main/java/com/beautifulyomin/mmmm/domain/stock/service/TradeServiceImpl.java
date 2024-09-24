@@ -39,15 +39,22 @@ public class TradeServiceImpl implements TradeService {
 
         tradeDto.setChildrenId(children.getChildrenId());
 
-        // stocksHeld가 없는 경우 -> 신규 생성 -> 이 때는 무조건 "매수"일 것임, 만일 아무 것도 없는데 매도라면 에러 발생
-        // 여기서 tradeType 보고 바로 에러 발생 시키려 했는데, 잔액 보고 결정해도 될 것 같아서 아래에서 발생시킬 예정.
+        // stocksHeld 조회 시 매도 요청일 경우 존재하지 않으면 에러 발생
         StocksHeld stocksHeld = stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(children.getChildrenId(), stock.getStockCode())
-                .orElseGet(() -> StocksHeld.builder()
-                        .children(children)
-                        .stock(stock)
-                        .remainSharesCount(tradeDto.getTradeSharesCount()) // 보유주수
-                        .totalAmount(tradeDto.getAmount()) // 가격총합
-                        .build());
+                .orElse(null);
+
+        if (stocksHeld == null && tradeDto.getTradeType().equals("5")) {
+            // 매도 요청인데 stocksHeld가 없으면 에러 발생
+            throw new IllegalArgumentException("Cannot sell stock that is not held.");
+        }
+
+        // stocksHeld가 없고 매수인 경우에만 새로운 StocksHeld 생성
+        if (stocksHeld == null && tradeDto.getTradeType().equals("4")) {
+            stocksHeld = StocksHeld.builder()
+                    .children(children)
+                    .stock(stock)
+                    .build();
+        }
 
         BigDecimal totalProfit = null;
 
