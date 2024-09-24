@@ -28,7 +28,6 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
   const [sellMoney, setSellMoney] = useState<number>(0) // 매도 머니
   // 수익 머니
 
-
   // API 호출하여 보유 머니 가져오기
   const loadMoney = async () => {
     if (!stockCode) {
@@ -72,7 +71,9 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
     const tradeDataObj: tradeData = {
       stockCode, // useParams에서 가져온 stockCode 사용
       amount: inputMoney,
-      tradeSharesCount: isBuyMode ? Number(tradeShares.toFixed(6)): Number(sellShares.toFixed(6)), // 소수점 6자리로 표시
+      tradeSharesCount: isBuyMode
+        ? Number(tradeShares.toFixed(6))
+        : Number(sellShares.toFixed(6)), // 소수점 6자리로 표시
       reason,
       tradeType: isBuyMode ? "4" : "5",
     }
@@ -116,6 +117,7 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
         {/* 매수 모드일 때 */}
         {isBuyMode ? (
           <>
+            <p>현재가 : {closingPrice} </p>
             <h2>
               보유 머니:{" "}
               {money !== null && money !== undefined
@@ -158,6 +160,7 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
         ) : (
           <>
             {/***** 매도 모드일 때 *****/}
+            <p>현재가 : {closingPrice} </p>
             <h2>보유 주식: {remainSharesCount.toFixed(6)} 주</h2>
             <p className="availableSellShares text-xs text-gray-500">
               최대 {remainSharesCount.toFixed(6)} 주 매도 가능
@@ -166,7 +169,7 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
               <input
                 className="rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
                 type="number"
-                value={sellShares === 0 ? "" : sellShares}
+                value={sellShares === 0 ? "" : sellShares.toString()} // sellShares가 0일 때는 빈 문자열로 표시
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSellShares(Number(e.target.value))
                 }
@@ -174,6 +177,8 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
               />
             </div>
             <p>{tradeShares.toFixed(6)} 머니</p>
+            <p>**** 손익가격</p>
+            <p>**** 매도 후 잔액 계산하기..</p>
             {remainingMoney !== null && (
               <p>매도 후 잔액: {remainingMoney.toLocaleString()}</p>
             )}
