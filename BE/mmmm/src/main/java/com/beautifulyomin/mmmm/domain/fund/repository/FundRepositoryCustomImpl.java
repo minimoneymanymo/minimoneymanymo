@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.domain.fund.repository;
 
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
+import com.beautifulyomin.mmmm.domain.fund.dto.StockHeldDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
 import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.QTradeRecord;
@@ -19,6 +20,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -181,4 +184,64 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                 .orderBy(trade.createdAt.desc())
                 .fetch();
     }
+
+    private LocalDate fetchLatestDateByStockCode(String stockCode) {
+        QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
+        return jpaQueryFactory
+                .select(dailyStockChart.date.max())
+                .from(dailyStockChart)
+                .where(dailyStockChart.stockCode.eq(stockCode))
+                .fetchFirst();
+    }
+
+    @Override
+    public List<StockHeldDto> findAllStockHeld(Integer childrenId) {
+        QStocksHeld stocksheld = QStocksHeld.stocksHeld;
+        QStock stock = QStock.stock;
+        QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
+
+        List<StockHeldDto> result = jpaQueryFactory.select(Projections.constructor(StockHeldDto.class,
+                        stocksheld.children.childrenId,
+                        stocksheld.stock.stockCode,
+                        stocksheld.remainSharesCount,
+                        stocksheld.totalAmount))
+                .from(stocksheld)
+                .where(stocksheld.children.childrenId.eq(childrenId))
+                .fetch();
+
+        for (StockHeldDto dto : result) {
+            String stockCode = dto.getStockCode();
+            LocalDate latestDate = fetchLatestDateByStockCode(stockCode);
+            StockHeldDto extra = jpaQueryFactory.select(Projections.constructor(StockHeldDto.class,
+                            stock.companyName,
+                            stock.marketName,
+                            dailyStockChart.closingPrice))
+                    .from(stock)
+                    .join(dailyStockChart)
+                    .on(stock.stockCode.eq(dailyStockChart.stockCode)
+                            .and(dailyStockChart.date.eq(latestDate)))
+                    .where(stock.stockCode.eq(stockCode))  // 여기서 stockCode로 필터링
+                    .fetchFirst();
+
+            BigDecimal totalAmount = BigDecimal.valueOf(dto.getTotalAmount());
+            BigDecimal remainSharesCount = dto.getRemainSharesCount();
+            BigDecimal closingPrice = BigDecimal.valueOf(extra.getClosingPrice().doubleValue());  // double을 BigDecimal로 변환
+
+            BigDecimal averagePrice = totalAmount.divide(remainSharesCount, RoundingMode.HALF_UP);
+            BigDecimal evaluateMoney = remainSharesCount.multiply(closingPrice);
+
+            // DTO에 값 설정
+            dto.setCompanyName(extra.getCompanyName());
+            dto.setMarketName(extra.getMarketName());
+            dto.setClosingPrice(closingPrice);
+            dto.setAveragePrice(averagePrice);
+            dto.setEvaluateMoney(evaluateMoney);
+            dto.setPriceChangeRate((closingPrice.subtract(averagePrice)).divide(averagePrice, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)));
+            dto.setPriceChangeMoney(evaluateMoney.subtract(totalAmount));
+        }
+
+        return result;
+    }
+
+
 }

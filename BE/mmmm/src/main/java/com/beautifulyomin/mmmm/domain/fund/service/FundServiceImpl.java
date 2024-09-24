@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmm.domain.fund.service;
 
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
+import com.beautifulyomin.mmmm.domain.fund.dto.StockHeldDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
 import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.fund.repository.FundRepositoryCustom;
@@ -64,5 +65,12 @@ public class FundServiceImpl implements FundService {
         Children children = childrenRepository.findByUserId(childrenId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
         return fundRepositoryCustom.findAllTradeRecord(children.getChildrenId(), year, month);
+    }
+
+    @Override
+    public List<StockHeldDto> findAllStockHeld(String childrenId) {
+        Children children = childrenRepository.findByUserId(childrenId)
+                .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
+        return fundRepositoryCustom.findAllStockHeld(children.getChildrenId());
     }
 }
