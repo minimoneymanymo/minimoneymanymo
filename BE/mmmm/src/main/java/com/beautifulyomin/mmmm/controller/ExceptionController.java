@@ -1,6 +1,7 @@
 package com.beautifulyomin.mmmm.controller;
 
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
+import com.beautifulyomin.mmmm.domain.stock.exception.InvalidFilterTypeException;
 import com.beautifulyomin.mmmm.domain.stock.exception.StockNotFoundException;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
@@ -35,7 +36,7 @@ public class ExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler({StockNotFoundException.class, ConstraintViolationException.class})
+    @ExceptionHandler({StockNotFoundException.class, ConstraintViolationException.class, InvalidFilterTypeException.class})
     public ResponseEntity<CommonResponseDto> handleNotFountException(RuntimeException ex) {
         CommonResponseDto errorResponse = new CommonResponseDto(404, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);

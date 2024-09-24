@@ -1,7 +1,6 @@
 package com.beautifulyomin.mmmm.domain.stock.dto.data;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.io.Serializable;
