@@ -12,22 +12,18 @@ import {ChevronDownIcon} from "@heroicons/react/24/outline"
 // MenuComponent 정의
 interface MenuComponentProps {
   label: string
-  items: string[]
+  items: {label: string; value: string}[]
+  selected: string | null
   onSelect: (selected: string) => void
 }
 
 const StockFilterMenu: React.FC<MenuComponentProps> = ({
   label,
   items,
+  selected,
   onSelect,
 }) => {
   const [openMenu, setOpenMenu] = useState(false)
-  const [selected, setSelected] = useState<string>("")
-
-  const handleSelect = (item: string) => {
-    setSelected(item)
-    onSelect(item) // 선택된 아이템을 부모로 전달
-  }
 
   return (
     <Menu
@@ -56,13 +52,13 @@ const StockFilterMenu: React.FC<MenuComponentProps> = ({
           <MenuItem key={index} className="flex items-center gap-2">
             <Radio
               id={`radio-${item}`}
-              name="menu-radio"
+              name={`menu-radio-${label}`}
               color="blue"
-              checked={selected === item}
-              onChange={() => handleSelect(item)}
+              checked={selected === item.value}
+              onChange={() => onSelect(item.value)}
             />
             <label htmlFor={`radio-${item}`} className="cursor-pointer">
-              {item}
+              {item.label}
             </label>
           </MenuItem>
         ))}
