@@ -208,6 +208,9 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     private void applyConditionByMarket(StockFilterRequestDto filterRequestDto, BooleanBuilder condition) {
         if (filterRequestDto.getMarketType() != null) {
             MarketType marketType = MarketType.fromType(filterRequestDto.getMarketType());
+            if (marketType == MarketType.ALL) {
+                return;
+            }
             condition.and(stock.marketName.eq(marketType.getType()));
         }
     }
@@ -218,6 +221,9 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     private void applyConditionByMarketCapitalization(StockFilterRequestDto filterRequestDto, BooleanBuilder condition) {
         if (filterRequestDto.getMarketCapSize() != null) {
             MarketCapSize marketCapSize = MarketCapSize.fromLabel(filterRequestDto.getMarketCapSize());
+            if (marketCapSize == MarketCapSize.ALL) {
+                return;
+            }
             condition.and(dailyStockData.marketCapitalization.goe(marketCapSize.getMinCapAsBigDecimal()))
                     .and(dailyStockData.marketCapitalization.loe(marketCapSize.getMaxCapAsBigDecimal()));
         }

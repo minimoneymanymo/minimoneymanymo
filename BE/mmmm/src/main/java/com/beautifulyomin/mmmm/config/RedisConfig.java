@@ -34,7 +34,7 @@ public class RedisConfig {
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofDays(365)) // 캐시 유효 시간을 1년으로 설정
+                .entryTtl(Duration.ofDays(1)) // 캐시 유효 시간을 1년으로 설정
                 .disableCachingNullValues();
 
         return RedisCacheManager.builder(connectionFactory)
