@@ -22,5 +22,5 @@ public interface StockRepositoryCustom {
 
     Page<StockFilterResponseDto> findStocksWithFilters(StockFilterRequestDto filterRequestDto, Pageable pageable);
 
-    void toggleFavoriteStock(String userId, String stockCode);
+    boolean toggleFavoriteStock(String userId, String stockCode);
 }

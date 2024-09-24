@@ -57,8 +57,8 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void toggleFavoriteStock(String userId, String stockCode) {
-        stockRepositoryCustom.toggleFavoriteStock(userId, stockCode);
+    public boolean toggleFavoriteStock(String userId, String stockCode) {
+        return stockRepositoryCustom.toggleFavoriteStock(userId, stockCode);
     }
 
     private StockDto getStock(String stockCode) {

@@ -1,7 +1,6 @@
 package com.beautifulyomin.mmmm.domain.stock.entity;
 
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
-import com.beautifulyomin.mmmm.domain.stock.entity.key.DailyStockDataId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Table(name = "stock_likes")
-@IdClass(DailyStockDataId.class)
 public class StockLikes {
 
     @Id
@@ -24,7 +22,7 @@ public class StockLikes {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
+    @JoinColumn(name = "children_id", referencedColumnName = "childrenId", nullable = false)
     private Children children;
 
     @ManyToOne(fetch = FetchType.LAZY)

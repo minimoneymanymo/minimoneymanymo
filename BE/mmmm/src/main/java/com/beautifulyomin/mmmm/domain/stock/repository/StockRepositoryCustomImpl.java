@@ -164,7 +164,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     }
 
     @Override
-    public void toggleFavoriteStock(String userId, String stockCode) {
+    public boolean toggleFavoriteStock(String userId, String stockCode) {
         Children children = childrenRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         Stock stocks = stockRepository.findById(stockCode)
@@ -173,7 +173,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         Optional<StockLikes> existingLike = stockLikeRepository.findByChildrenAndStock(children, stocks);
         if (existingLike.isPresent()) {
             stockLikeRepository.delete(existingLike.get());
-            return;
+            return false;
         }
 
         StockLikes newLike = StockLikes.builder()
@@ -181,6 +181,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                 .stock(stocks)
                 .build();
         stockLikeRepository.save(newLike);
+        return true;
     }
 
     /**

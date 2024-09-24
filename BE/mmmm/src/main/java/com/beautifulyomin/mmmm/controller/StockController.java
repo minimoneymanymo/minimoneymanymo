@@ -56,11 +56,10 @@ public class StockController {
         String userId = jwtUtil.getUsername(token);
         log.info("🚀🚀🚀userId = {}, stockCode = {}", userId, stockCode);
 
-        stockService.toggleFavoriteStock(userId, stockCode);
         return ResponseEntity.ok(CommonResponseDto.builder()
                 .stateCode(201)
                 .message("관심 종목 토글 성공")
-                .data(null)
+                .data(stockService.toggleFavoriteStock(userId, stockCode))
                 .build());
     }
 }
