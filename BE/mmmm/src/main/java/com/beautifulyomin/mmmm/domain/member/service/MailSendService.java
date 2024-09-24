@@ -1,6 +1,5 @@
 package com.beautifulyomin.mmmm.domain.member.service;
 
-import org.hibernate.validator.internal.constraintvalidators.bv.AssertFalseValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
