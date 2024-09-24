@@ -37,7 +37,7 @@ function MypageNav({menuItems}: MypageNavProps): JSX.Element {
   }
 
   return (
-    <div className="mx-auto my-auto h-[calc(100vh-2rem)] w-[160px] space-y-5 py-5">
+    <div className="h-[calc(100vh-2rem)] w-fit space-y-5 pt-5">
       <button
         className="w-full cursor-pointer border-none bg-transparent p-0"
         onClick={() => navigate("/parent/my-wallet")}
@@ -47,7 +47,7 @@ function MypageNav({menuItems}: MypageNavProps): JSX.Element {
           }
         }}
       >
-        <div className="flex h-16 w-[160px] items-center space-x-2 py-5">
+        <div className="flex h-16 w-fit items-center space-x-2 py-5">
           <img
             src={"/images/profile.jpg"}
             alt="프로필사진"
@@ -60,7 +60,7 @@ function MypageNav({menuItems}: MypageNavProps): JSX.Element {
         </div>
       </button>
       <Card className="shadow-blue-gray-900/5 w-fit p-0 px-1 py-4">
-        <List className="w-[160px] min-w-[160px] p-0">
+        <List className="w-fit min-w-[160px] p-0">
           {menuItems.map((item) => (
             <ListItem
               key={item.label}
