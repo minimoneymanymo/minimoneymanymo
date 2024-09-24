@@ -19,16 +19,12 @@ public class MailSendService {
     @Autowired
     private JavaMailSender mailSender;
 
-    private int authNumber;
-
-
 
     //임의의 6자리 양수 생성 및 Redis 저장
     @CachePut(value = "emailAuthCode", key = "#email")
     public int makeRandomNumber(String email) {
         Random random = new Random();
-        authNumber =  random.nextInt(900000) + 100000;
-        return authNumber;
+        return random.nextInt(900000) + 100000;
     }
 
     @Cacheable(value = "emailAuthCode", key = "#email")
@@ -52,18 +48,18 @@ public class MailSendService {
 
     //mail을 어디서 보내는지, 어디로 보내는지 , 인증 번호를 html 형식으로 어떻게 보내는지 작성합니다.
     public String joinEmail(String email) {
-        makeRandomNumber(email);
+        int code = makeRandomNumber(email);
         String setFrom = "ci7964166@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
         String toMail = email;
         String title = "회원 가입 인증 이메일 입니다."; // 이메일 제목
         String content =
                 "나의 APP을 방문해주셔서 감사합니다." + 	//html 형식으로 작성 !
                         "<br><br>" +
-                        "인증 번호는 " + authNumber + "입니다." +
+                        "인증 번호는 " + code + "입니다." +
                         "<br>" +
                         "인증번호를 제대로 입력해주세요"; //이메일 내용 삽입
         mailSend(setFrom, toMail, title, content);
-        return Integer.toString(authNumber);
+        return Integer.toString(code);
     }
 
     //이메일을 전송합니다.
