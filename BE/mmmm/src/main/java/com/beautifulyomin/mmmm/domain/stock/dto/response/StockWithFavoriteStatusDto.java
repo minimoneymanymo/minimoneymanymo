@@ -1,7 +1,6 @@
 package com.beautifulyomin.mmmm.domain.stock.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -9,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-public class StockFilterResponseDto {
+public class StockWithFavoriteStatusDto implements StockResponse {
     private String companyName;
     private String stockCode;
     private LocalDate closingDate; //종가 날짜
@@ -19,4 +18,5 @@ public class StockFilterResponseDto {
     private BigDecimal priceChangeRate; //전일 대비율
     private BigInteger marketCapitalization; //시가총액
     private BigInteger tradingVolume; //누적 거래량
+    private boolean isFavorite; //관심종목 여부
 }
