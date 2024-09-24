@@ -6,7 +6,8 @@ import com.beautifulyomin.mmmm.domain.stock.constant.*;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockChartDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.DailyStockDataDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.request.StockFilterRequestDto;
-import com.beautifulyomin.mmmm.domain.stock.dto.response.StockFilterResponseDto;
+import com.beautifulyomin.mmmm.domain.stock.dto.response.StockResponse;
+import com.beautifulyomin.mmmm.domain.stock.dto.response.StockResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -41,6 +42,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     private final QStock stock = QStock.stock;
     private final QDailyStockData dailyStockData = QDailyStockData.dailyStockData;
     private final QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
+    private final QStockLikes stockLikes = QStockLikes.stockLikes;
     private final ChildrenRepository childrenRepository;
     private final StockRepository stockRepository;
     private final StockLikeRepository stockLikeRepository;
@@ -123,10 +125,10 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     }
 
     @Override
-    public Page<StockFilterResponseDto> findStocksWithFilters(StockFilterRequestDto filterRequestDto, Pageable pageable) {
-
+    public Page<StockResponse> findFilteredStocks(StockFilterRequestDto filterRequestDto, Pageable pageable) {
+        log.debug("🚩🚩🚩기본 주식 리스트 조회");
         LocalDate latestDate = getLatestDateAtDailyStockData();
-        log.debug("🍉🍉🍉🍉🍉 최신날짜 = {}", latestDate);
+
         BooleanBuilder condition = new BooleanBuilder();
         applyConditionByMarket(filterRequestDto, condition);
         applyConditionByMarketCapitalization(filterRequestDto, condition);
@@ -134,8 +136,8 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         applyConditionByPriceChange(filterRequestDto, condition);
         applyConditionByTrading(filterRequestDto, condition);
 
-        List<StockFilterResponseDto> results = queryFactory
-                .select(Projections.constructor(StockFilterResponseDto.class,
+        List<StockResponseDto> results = queryFactory
+                .select(Projections.constructor(StockResponseDto.class,
                         stock.companyName,
                         stock.stockCode,
                         dailyStockChart.date,
@@ -159,8 +161,12 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                 .orderBy(buildOrderSpecifiers(pageable.getSort()))
                 .fetch();
 
+        List<StockResponse> stockResponses = results.stream()
+                .map(StockResponse.class::cast)
+                .toList();
         long total = getTotal(latestDate, condition);
-        return new PageImpl<>(results, pageable, total);
+
+        return new PageImpl<>(stockResponses, pageable, total);
     }
 
     @Override
@@ -182,6 +188,15 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                 .build();
         stockLikeRepository.save(newLike);
         return true;
+    }
+
+    @Override
+    public Set<String> findStockCodesByChildrenUserId(String userId) {
+        return new HashSet<>(queryFactory
+                .select(stockLikes.stock.stockCode)
+                .from(stockLikes)
+                .where(stockLikes.children.userId.eq(userId))
+                .fetch());
     }
 
     /**

@@ -38,14 +38,14 @@ public class StockController {
 
     @GetMapping()
     public ResponseEntity<CommonResponseDto> getStockList(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @ModelAttribute StockFilterRequestDto filterRequestDto, Pageable pageable) {
-        String userId = jwtUtil.getUsername(token);
+        String userId = token != null ? jwtUtil.getUsername(token) : null;
         log.info(filterRequestDto.toString());
         return ResponseEntity.ok(CommonResponseDto.builder()
                 .stateCode(200)
                 .message("주식 리스트 조회 성공!")
-                .data(stockService.getFilteredStocks(filterRequestDto, pageable))
+                .data(stockService.getFilteredStocks(filterRequestDto, userId, pageable))
                 .build());
     }
 
