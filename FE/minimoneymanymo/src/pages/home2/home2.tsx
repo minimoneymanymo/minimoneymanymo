@@ -425,9 +425,9 @@ let i = 1
    let parts = item.date.split("-")
    console.log(Number(parts[0]), Number(parts[1]), Number(parts[2]))
    stock.push({
-  // date: new Date(Number(parts[0]), Number(parts[1]), Number(parts[2])),
+  date: new Date(Number(parts[0]), Number(parts[1]), Number(parts[2])),
   // date: new Date(item.date),
-  date: new Date(2024,1,i++),
+  // date: new Date(2024,1,i++),
   open: item.operatingPrice,
   high: item.highestPrice,
   low: item.lowestPrice,

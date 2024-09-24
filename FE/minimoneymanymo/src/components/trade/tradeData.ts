@@ -4,4 +4,5 @@ export interface tradeData {
     tradeSharesCount: number;
     reason: string;
     tradeType: string;
+    totalStockMoney?: number;
   }

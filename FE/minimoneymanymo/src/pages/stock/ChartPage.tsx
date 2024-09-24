@@ -3,16 +3,17 @@ import {IgrFinancialChartModule} from "igniteui-react-charts"
 import React, {useEffect, useState} from "react"
 import {getStockDetail} from "@/api/stock-api"
 import Home2 from "../home2/home2"
+import { useOutletContext } from "react-router-dom"; // useOutletContext 추가
 
 IgrFinancialChartModule.register()
 
 interface DailyStockData {
   date: Date
-  highestPrice: number
-  lowestPrice: number
-  tradingVolume: number
-  operatingPrice: number
-  closingPrice: number
+  highestPrice: number;
+  lowestPrice: number;
+  tradingVolume: number;
+  operatingPrice: number;
+  closingPrice: number;
 }
 
 interface FinancialChartPanesProps {
@@ -24,16 +25,26 @@ function ChartPage(): JSX.Element {
     any | undefined
   >()
 
+  // 부모 컴포넌트에서 setClosingPrice 함수 받아오기
+  const { setClosingPrice } = useOutletContext<{ setClosingPrice: (price: number) => void }>();
+
+
   useEffect(() => {
     const fetchStockData = async () => {
-      const res = await getStockDetail("000020")
-      console.log(res.data.dailyStockChart)
+      const res = await getStockDetail("000020");
+      console.log(res.data.dailyStockChart);
+      
       if (res) {
-        setDailyStockChart(res.data.dailyStockChart)
+        setDailyStockChart(res.data.dailyStockChart);
+
+        // 첫 번째 항목의 closingPrice를 setClosingPrice에 전달
+        if (res.data.dailyStockChart && res.data.dailyStockChart.length > 0) {
+          setClosingPrice(res.data.dailyStockChart[0].closingPrice);
+        }
       }
-    }
-    fetchStockData()
-  }, [])
+    };
+    fetchStockData();
+  }, [setClosingPrice]); // setClosingPrice를 의존성 배열에 추가
 
   return (
     <div className="h-full w-[900px]">
