@@ -1,18 +1,18 @@
-import {useEffect, useState} from "react"
-import {useParams} from "react-router-dom"
+import { useCallback, useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
 
-import {Card, Button} from "@material-tailwind/react"
+import { Card, Button } from "@material-tailwind/react"
 
-import {postTrade, getChildMoney} from "@/api/trade-api"
-import {tradeData} from "./tradeData"
+import { postTrade, getChildMoney } from "@/api/trade-api"
+import { tradeData } from "./tradeData"
 
 // closingPrice를 props로 받기 위해 인터페이스 정의
 interface BuyFormProps {
   closingPrice: number | null // closingPrice가 null일 수도 있으므로 타입 지정
 }
 
-function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
-  const {stockCode} = useParams() // useParams로 stockCode 가져오기
+function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
+  const { stockCode } = useParams() // useParams로 stockCode 가져오기
   const [isBuyMode, setIsBuyMode] = useState<boolean>(true)
 
   //매수 시 사용
@@ -21,15 +21,18 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
   const [tradeShares, setTradeShares] = useState<number>(0) // 머니 환산 주수 (매수할 머니 / 현재가)
   const [remainingMoney, setRemainingMoney] = useState<number | null>(null) // 매도 후 잔액 (남은 머니 : 보유머니 - 매수할 머니)
   const [reason, setReason] = useState<string>("") // 매매 이유
+  const maxShares = closingPrice
+    ? Math.floor(((money || 0) / closingPrice) * 1e7) / 1e7
+    : 0 // 최대 구매 가능 주 수
 
   // 매도 시 사용
   const [remainSharesCount, setRemainSharesCount] = useState<number>(0) // 보유 주식 수
-  const [sellShares, setSellShares] = useState<number>(0) // 매도 주수
+  const [sellShares, setSellShares] = useState<string>(0) // 매도 주수
   const [sellMoney, setSellMoney] = useState<number>(0) // 매도 머니
   // 수익 머니
 
   // API 호출하여 보유 머니 가져오기
-  const loadMoney = async () => {
+  const loadMoney = useCallback(async () => {
     if (!stockCode) {
       console.error("stockCode is missing")
       return
@@ -43,11 +46,11 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
     } catch (error) {
       console.error("Failed to load money:", error)
     }
-  }
+  }, [stockCode]) // stockCode를 의존성으로 설정
 
   useEffect(() => {
     loadMoney()
-  }, [stockCode])
+  }, [loadMoney])
 
   // 입력된 금액에 따른 주 수와 잔액 계산
   useEffect(() => {
@@ -60,7 +63,18 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
     }
   }, [inputMoney, money, closingPrice])
 
-  // 매수 처리 함수
+  // 입력된 매도 주 수에 따른 매도 금액 계산
+  useEffect(() => {
+    if (closingPrice && Number(sellShares) > 0) {
+      const calculatedSellMoney =
+        Math.floor(closingPrice * Number(sellShares) * 1e7) / 1e7
+      setSellMoney(calculatedSellMoney)
+    } else {
+      setSellMoney(0)
+    }
+  }, [sellShares, closingPrice])
+
+  // 매매 함수
   const handleTrade = async () => {
     if (!stockCode) {
       // stockCode가 없으면 처리하지 않음
@@ -70,7 +84,7 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
 
     const tradeDataObj: tradeData = {
       stockCode, // useParams에서 가져온 stockCode 사용
-      amount: inputMoney,
+      amount: isBuyMode ? inputMoney : sellMoney,
       tradeSharesCount: isBuyMode
         ? Number(tradeShares.toFixed(6))
         : Number(sellShares.toFixed(6)), // 소수점 6자리로 표시
@@ -87,11 +101,6 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
       console.error("Trade failed:", error)
     }
   }
-
-  // ***** 최대 구매 가능 주 수 계산
-  const maxShares = closingPrice
-    ? Math.floor(((money || 0) / closingPrice) * 1e7) / 1e7
-    : 0 // 최대 구매 가능 주 수
 
   return (
     <div className="flex flex-col items-center">
@@ -167,16 +176,27 @@ function BuyForm({closingPrice}: BuyFormProps): JSX.Element {
             </p>
             <div className="flex items-center">
               <input
-                className="rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
-                type="number"
-                value={sellShares === 0 ? "" : sellShares.toString()} // sellShares가 0일 때는 빈 문자열로 표시
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSellShares(Number(e.target.value))
-                }
+                className="sellSharesInputBox rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                type="text" // 입력 값을 문자열 그대로 받아야 하므로 type을 text로 변경
+                value={sellShares === "0" ? "" : sellShares} // sellShares를 문자열로 유지
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value
+                  // 유효한 숫자이거나 빈 문자열인 경우에만 업데이트
+                  if (!isNaN(Number(value)) || value === "") {
+                    setSellShares(value) // 입력 값을 문자열 그대로 저장
+                  }
+                }}
                 placeholder="매도할 주 수"
               />
             </div>
-            <p>{tradeShares.toFixed(6)} 머니</p>
+            <p className="sellMoney">
+              {sellMoney.toLocaleString("ko-KR", {
+                style: "currency",
+                currency: "KRW",
+              })}{" "}
+              머니
+            </p>
+
             <p>**** 손익가격</p>
             <p>**** 매도 후 잔액 계산하기..</p>
             {remainingMoney !== null && (
