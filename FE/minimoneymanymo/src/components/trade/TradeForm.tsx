@@ -65,7 +65,7 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
 
   // 입력된 매도 주 수에 따른 매도 금액 계산
   useEffect(() => {
-    if (closingPrice && Number(sellShares) > 0) {
+    if (closingPrice && sellShares !== "") {
       const calculatedSellMoney =
         Math.floor(closingPrice * Number(sellShares) * 1e7) / 1e7
       setSellMoney(calculatedSellMoney)
@@ -87,7 +87,7 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
       amount: isBuyMode ? inputMoney : sellMoney,
       tradeSharesCount: isBuyMode
         ? Number(tradeShares.toFixed(6))
-        : Number(sellShares.toFixed(6)), // 소수점 6자리로 표시
+        : Number(Number(sellShares).toFixed(6)), // sellShares도 숫자로 변환 후 처리
       reason,
       tradeType: isBuyMode ? "4" : "5",
     }
@@ -177,13 +177,14 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
             <div className="flex items-center">
               <input
                 className="sellSharesInputBox rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
-                type="text" // 입력 값을 문자열 그대로 받아야 하므로 type을 text로 변경
-                value={sellShares === "0" ? "" : sellShares} // sellShares를 문자열로 유지
+                type="text"
+                value={sellShares}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const value = e.target.value
-                  // 유효한 숫자이거나 빈 문자열인 경우에만 업데이트
-                  if (!isNaN(Number(value)) || value === "") {
-                    setSellShares(value) // 입력 값을 문자열 그대로 저장
+
+                  // 유효한 숫자 형식(정수 또는 소수점 포함)을 확인하고, 소수점 뒤 최대 6자리 허용
+                  if (/^\d*\.?\d{0,6}$/.test(value) || value === "") {
+                    setSellShares(value) // 입력값이 유효하면 상태에 저장
                   }
                 }}
                 placeholder="매도할 주 수"
