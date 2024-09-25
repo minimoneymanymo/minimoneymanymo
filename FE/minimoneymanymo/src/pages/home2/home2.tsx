@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
-import { IgrFinancialChartModule } from 'igniteui-react-charts';
-import { IgrFinancialChart } from 'igniteui-react-charts';
-import style from './style.module.css';
+import { useEffect, useState } from "react"
+import { IgrFinancialChartModule } from "igniteui-react-charts"
+import { IgrFinancialChart } from "igniteui-react-charts"
+import style from "./style.module.css"
 
-IgrFinancialChartModule.register();
-
+IgrFinancialChartModule.register()
 
 interface DailyStockData {
   date: string
@@ -358,8 +357,7 @@ const data = [
   // },
 ]
 
-
-export default function Home2({dailyStockChart}: any) {
+export default function Home2({ dailyStockChart }: any) {
   const title = "Financial Chart"
   const [chartData, setChartData] = useState([])
 
@@ -369,7 +367,7 @@ export default function Home2({dailyStockChart}: any) {
   //   const mappedData = dailyStockChart?.map((item) => ({
   //     time: new Date(item.date),
   //     open: Math.floor(item.operatingPrice,
-  
+
   //)     low: item.lowestPrice,
   //     close: item.closingPrice,
   //     volume: item.tradingVolume,
@@ -379,76 +377,73 @@ export default function Home2({dailyStockChart}: any) {
   //     console.log("mappedData", mappedData[0])
   //   }
   // }, [])
-  
-class StockItem {
-  public open?: number
-  public close?: number
-  public high?: number
-  public low?: number
-  public volume?: number
 
-  public date?: Date
-}
-    useEffect(() => {
-       console.log("dailyStockChart", dailyStockChart)
-   if (dailyStockChart) {
-    //  const mappedData = dailyStockChart.map((item) => {
-    //    // 기존 날짜에서 연도를 2023으로 변경
-    //   //  const newDate = item.date.replace(/^(\d{4})/, "2023")
-    //   let parts = item.date.split("-")
-    //    return {
-    //      time: new Date(Number(parts[0]), Number(parts[1]), Number(parts[2])), // Date 객체로 변환
-    //      open: item.operatingPrice,
-    //      high: item.highestPrice,
-    //      low: item.lowestPrice,
-    //      close: item.closingPrice,
-    //      volume: item.tradingVolume,
-    //    }
-    //  })
-//  let stockItems: StockItem[] = []
-//     for (let item of dailyStockChart) {
-//      let parts = item.date
-//       let stock = new StockItem();
-//        stock.date = new Date(item.date)
-//        stock.high = item.highestPrice
-//        stock.low = item.lowestPrice
-//        stock.volume = item.tradingVolume
-//        stock.open = item.operatingPrice
-//        stock.close = item.closingPrice
-//       stockItems.push(stock)
-//     }
-//       console.log("stockItems", stockItems)
+  class StockItem {
+    public open?: number
+    public close?: number
+    public high?: number
+    public low?: number
+    public volume?: number
 
-const stock = []
-let i = 1
- for (let item of dailyStockChart) {
-   const parts = item.date.split("-")
-  //  console.log( Number(parts[0]), Number(parts[1])+1, Number(parts[2]))
-  //   console.log(item.date)
-  const year = Number(parts[0])
-  const month = Number(parts[1]) - 1 // 0부터 시작하므로 1 빼기
-  const day = Number(parts[2])
-  
-   stock.push({
-     // date: new Date(item.date),
-     // date: new Date(Number(parts[0]), Number(parts[1]), Number(parts[2])),
-     time: new Date(year, month, day),
-     // time: new Date(2024,1,i++),
-     open: item.operatingPrice,
-     high: item.highestPrice,
-     low: item.lowestPrice,
-     close: item.closingPrice,
-     volume: item.tradingVolume,
-   })
+    public date?: Date
+  }
+  useEffect(() => {
+    console.log("dailyStockChart", dailyStockChart)
+    if (dailyStockChart) {
+      //  const mappedData = dailyStockChart.map((item) => {
+      //    // 기존 날짜에서 연도를 2023으로 변경
+      //   //  const newDate = item.date.replace(/^(\d{4})/, "2023")
+      //   let parts = item.date.split("-")
+      //    return {
+      //      time: new Date(Number(parts[0]), Number(parts[1]), Number(parts[2])), // Date 객체로 변환
+      //      open: item.operatingPrice,
+      //      high: item.highestPrice,
+      //      low: item.lowestPrice,
+      //      close: item.closingPrice,
+      //      volume: item.tradingVolume,
+      //    }
+      //  })
+      //  let stockItems: StockItem[] = []
+      //     for (let item of dailyStockChart) {
+      //      let parts = item.date
+      //       let stock = new StockItem();
+      //        stock.date = new Date(item.date)
+      //        stock.high = item.highestPrice
+      //        stock.low = item.lowestPrice
+      //        stock.volume = item.tradingVolume
+      //        stock.open = item.operatingPrice
+      //        stock.close = item.closingPrice
+      //       stockItems.push(stock)
+      //     }
+      //       console.log("stockItems", stockItems)
 
- }
-console.log("stock", stock)
-console.log("data", data)
+      const stock = []
+      let i = 1
+      for (let item of dailyStockChart) {
+        const parts = item.date.split("-")
+        //  console.log( Number(parts[0]), Number(parts[1])+1, Number(parts[2]))
+        //   console.log(item.date)
+        const year = Number(parts[0])
+        const month = Number(parts[1]) - 1 // 0부터 시작하므로 1 빼기
+        const day = Number(parts[2])
 
-     setChartData(stock)
-   }
-    }, [dailyStockChart])
+        stock.push({
+          date: new Date(Number(parts[0]), Number(parts[1]), Number(parts[2])),
+          // date: new Date(item.date),
+          // date: new Date(2024,1,i++),
+          open: item.operatingPrice,
+          high: item.highestPrice,
+          low: item.lowestPrice,
+          close: item.closingPrice,
+          volume: item.tradingVolume,
+        })
+      }
+      console.log("stock", stock)
+      console.log("data", data)
 
+      setChartData(stock)
+    }
+  }, [dailyStockChart])
 
   return (
     <div>
