@@ -4,6 +4,7 @@ import StockList from "./StockList"
 import { StockFilterModalForm } from "./StockFilterModalForm"
 import { Card, Typography, Button } from "@material-tailwind/react"
 import StockFilterMenu from "./StockFilterMenu"
+import { Tune } from "@mui/icons-material"
 
 interface StockFilter {
   marketType: string | null
@@ -44,10 +45,10 @@ function MainDashboard() {
       {/* 필터 모달 버튼 */}
       <div className="mb-4 mt-4 flex items-center gap-x-4">
         <Button
-          variant="gradient"
-          className="mb-3 mt-4"
+          className="flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
           onClick={handleModalOpen}
         >
+          <Tune className="h-5 w-5 text-gray-600" /> {/* 아이콘 */}
           필터 추가
         </Button>
 

@@ -34,8 +34,7 @@ const StockFilterMenu: React.FC<MenuComponentProps> = ({
     >
       <MenuHandler>
         <Button
-          variant="text"
-          className="flex items-center gap-3 text-base font-normal capitalize tracking-normal"
+          className="flex items-center gap-2 rounded-full border-none bg-gray-100 text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
           onClick={() => setOpenMenu(!openMenu)}
         >
           {label}

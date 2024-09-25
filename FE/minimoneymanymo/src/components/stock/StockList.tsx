@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react"
 import { getStockList } from "@/api/stock-api"
-import {
-  Card,
-  CardHeader,
-  Typography,
-  CardBody,
-  CardFooter,
-} from "@material-tailwind/react"
+import { Typography } from "@material-tailwind/react"
 import {
   getPriceChangeColorAndSign,
   formatMarketCapitalization,
@@ -79,7 +73,8 @@ function StockList({ filters }: { filters: StockFilter }) {
   }
 
   const TABLE_HEAD = [
-    { label: "종목", key: "" },
+    { label: "", key: "" }, //종목 번호
+    { label: "", key: "" }, //종목 이름
     { label: "현재가", key: "" },
     { label: "등락률", key: "" },
     { label: "시가총액", key: "MC" }, // 시가총액 기준 정렬
@@ -87,111 +82,127 @@ function StockList({ filters }: { filters: StockFilter }) {
   ]
 
   return (
-    <table className="mt-4 w-full min-w-max table-auto text-left">
-      <thead>
-        <tr>
-          {TABLE_HEAD.map(({ label, key }) => (
-            <th
-              key={label}
-              className="border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50 cursor-pointer border-y p-4 transition-colors"
-              onClick={() => key && handleSort(key)}
-            >
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
-              >
-                {label}
-                {key && getSortIcon(key)}
-              </Typography>
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {stockRows.map((stock) => {
-          const { color, sign } = getPriceChangeColorAndSign(stock.priceChange)
-          return (
-            <tr key={stock.stockCode}>
-              <td
-                className="border-blue-gray-50 border-b p-4"
-                style={{ width: "30%" }}
+    <div className="overflow-x-auto">
+      <table className="mt-4 w-full min-w-max table-auto text-left">
+        <thead>
+          <tr>
+            {TABLE_HEAD.map(({ label, key }) => (
+              <th
+                key={label}
+                className="border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50 cursor-pointer border-y p-4 text-right transition-colors"
+                onClick={() => key && handleSort(key)}
+                style={{ width: "5%" }}
               >
                 <Typography
                   variant="small"
                   color="blue-gray"
-                  className="truncate font-normal"
-                  style={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
+                  className="flex items-center justify-end gap-2 font-normal leading-none opacity-70"
                 >
-                  {stock.companyName}
+                  {label}
+                  {key && getSortIcon(key)}
                 </Typography>
-              </td>
-              <td
-                className="border-blue-gray-50 border-b p-4"
-                style={{ width: "15%" }}
-              >
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {stockRows.map((stock, index) => {
+            const { color, sign } = getPriceChangeColorAndSign(
+              stock.priceChange
+            )
+            return (
+              <tr key={stock.stockCode}>
+                <td
+                  className="border-blue-gray-50 border-b p-4 text-center"
+                  style={{ width: "5%" }}
                 >
-                  {stock.closingPrice.toLocaleString()}원
-                </Typography>
-              </td>
-              <td
-                className="border-blue-gray-50 border-b p-4"
-                style={{ width: "15%" }}
-              >
-                <Typography
-                  variant="small"
-                  color={color}
-                  className="font-normal"
+                  <Typography
+                    variant="small"
+                    className="font-bold text-primary-m1"
+                  >
+                    {index + 1} {/* 인덱스 번호 표시 */}
+                  </Typography>
+                </td>
+                <td
+                  className="border-blue-gray-50 border-b p-4 text-left"
+                  style={{ width: "20%" }}
                 >
-                  {sign}
-                  {stock.priceChangeRate.toFixed(2)}%
-                </Typography>
-                <Typography
-                  variant="small"
-                  color={color}
-                  className="font-normal"
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="truncate font-normal"
+                    style={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {stock.companyName}
+                  </Typography>
+                </td>
+                <td
+                  className="border-blue-gray-50 border-b p-4 text-right"
+                  style={{ width: "15%" }}
                 >
-                  {sign}
-                  {stock.priceChange}원
-                </Typography>
-              </td>
-              <td
-                className="border-blue-gray-50 border-b p-4"
-                style={{ width: "20%" }}
-              >
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {stock.closingPrice.toLocaleString()}원
+                  </Typography>
+                </td>
+                <td
+                  className="border-blue-gray-50 border-b p-4 text-right"
+                  style={{ width: "20%" }}
                 >
-                  {formatMarketCapitalization(stock.marketCapitalization)}
-                </Typography>
-              </td>
-              <td
-                className="border-blue-gray-50 border-b p-4"
-                style={{ width: "20%" }}
-              >
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal"
+                  <Typography
+                    variant="small"
+                    color={color}
+                    className="font-normal"
+                  >
+                    {sign}
+                    {stock.priceChangeRate.toFixed(2)}%
+                  </Typography>
+                  <Typography
+                    variant="small"
+                    color={color}
+                    className="font-normal"
+                  >
+                    {sign}
+                    {stock.priceChange}원
+                  </Typography>
+                </td>
+                <td
+                  className="border-blue-gray-50 border-b p-4 text-right"
+                  style={{ width: "20%" }}
                 >
-                  {stock.tradingVolume.toLocaleString()}주
-                </Typography>
-              </td>
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {formatMarketCapitalization(stock.marketCapitalization)}
+                  </Typography>
+                </td>
+                <td
+                  className="border-blue-gray-50 border-b p-4 text-right"
+                  style={{ width: "20%" }}
+                >
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {stock.tradingVolume.toLocaleString()}주
+                  </Typography>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
