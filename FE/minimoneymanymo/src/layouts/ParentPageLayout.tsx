@@ -1,5 +1,4 @@
 import MypageNav from "@/components/common/mypage/MyPageNav"
-import { Chip } from "@material-tailwind/react"
 import React from "react"
 import { Outlet } from "react-router-dom"
 
@@ -22,7 +21,7 @@ const ParentPageLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <main className="mx-auto flex h-full w-[1140px] border">
+      <main className="mx-auto flex h-full w-[1140px] rounded-xl bg-gray-50 p-3">
         <div className="h-full w-[240px]">
           <div className="h-full w-full">
             <MypageNav menuItems={menuItems}></MypageNav>
