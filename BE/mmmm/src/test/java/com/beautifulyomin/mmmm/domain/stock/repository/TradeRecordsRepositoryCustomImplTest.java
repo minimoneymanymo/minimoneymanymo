@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestPropertySource(locations = "classpath:application-test.properties")
 @DataJpaTest
 @Import(QueryDslConfig.class)
 class TradeRecordsRepositoryCustomImplTest {
@@ -35,13 +37,13 @@ class TradeRecordsRepositoryCustomImplTest {
     static Stock stock;
     static StocksHeld stocksHeld;
 
-    @BeforeAll
-    static void setUp() {  //모든 메서드 실행 전 딱 한 번
-        Dotenv dotenv = Dotenv.configure().load();
-        dotenv.entries().forEach(entry ->
-                System.setProperty(entry.getKey(), entry.getValue())
-        );
-    }
+//    @BeforeAll
+//    static void setUp() {  //모든 메서드 실행 전 딱 한 번
+//        Dotenv dotenv = Dotenv.configure().load();
+//        dotenv.entries().forEach(entry ->
+//                System.setProperty(entry.getKey(), entry.getValue())
+//        );
+//    }
 
     @BeforeEach
     void init() { //메서드 각각마다 한 번씩 실행됨 (공통으로 사용해야 하는 것들은 여기서 선언하면 좋음)
@@ -50,7 +52,8 @@ class TradeRecordsRepositoryCustomImplTest {
                 "아름자식",
                 "1234",
                 "010-8625-9046",
-                "199705080000"
+                "199705080000",
+                "userKey"
         );
 
         entityManager.persist(children); //영속성 컨텍스트에 등록

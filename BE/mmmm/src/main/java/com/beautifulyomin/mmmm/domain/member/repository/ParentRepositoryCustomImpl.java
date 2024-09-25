@@ -14,7 +14,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
-import java.beans.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -136,7 +135,8 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                         ConstantImpl.create(totalAmount != null ? totalAmount : BigDecimal.ZERO),
                         children.settingMoney,
                         children.settingWithdrawableMoney,
-                        children.settingQuizBonusMoney
+                        children.settingQuizBonusMoney,
+                        children.accountNumber
                 ))
                 .from(children)
                 .where(children.childrenId.eq(childrenId))
@@ -172,6 +172,30 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
         return jpaQueryFactory
                 .update(parent)
                 .set(parent.balance, parent.balance.add(amount))
+                .where(parent.userId.eq(parentUserId))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateChildAccount(String childUserId, String accountNumber, String bankCode) {
+        QChildren child = QChildren.children;
+        return jpaQueryFactory
+                .update(child)
+                .set(child.accountNumber, accountNumber)
+                .set(child.bankCode, bankCode)
+                .where(child.userId.eq(childUserId))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public long updateParentAccount(String parentUserId, String accountNumber, String bankCode) {
+        QParent parent = QParent.parent;
+        return jpaQueryFactory
+                .update(parent)
+                .set(parent.accountNumber, accountNumber)
+                .set(parent.bankCode, bankCode)
                 .where(parent.userId.eq(parentUserId))
                 .execute();
     }

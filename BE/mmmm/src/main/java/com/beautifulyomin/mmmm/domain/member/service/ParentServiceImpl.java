@@ -46,8 +46,12 @@ public class ParentServiceImpl implements ParentService {
         String encodedPass = bCryptPasswordEncoder.encode(joinDto.getPassword());
 
         Parent nParent = new Parent(
-                joinDto.getUserId(), joinDto.getName(),encodedPass,
-                joinDto.getPhoneNumber());
+                joinDto.getUserId(),
+                joinDto.getName(),
+                encodedPass,
+                joinDto.getPhoneNumber(),
+                joinDto.getUserKey()
+        );
         Parent sParent = parentRepository.save(nParent);
         return sParent.getName();
     }
@@ -218,6 +222,11 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public long updateBalance(String parentUserId, Integer amount) {
         return parentRepositoryCustom.updateBalance(parentUserId, amount);
+    }
+
+    @Override
+    public long updateAccount(String parentUserId, String accountNumber, String bankCode) {
+        return parentRepositoryCustom.updateParentAccount(parentUserId, accountNumber, bankCode);
     }
 
 }
