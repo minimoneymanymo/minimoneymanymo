@@ -393,7 +393,7 @@ public class MembersController {
                         .build());
     }
 
-    @GetMapping("/info/{stockCode}")
+    @GetMapping("/stock-info/{stockCode}")
     public ResponseEntity<CommonResponseDto> childInfo(@RequestHeader("Authorization") String token, @PathVariable("stockCode") String stockCode) {
         String userId = jwtUtil.getUsername(token);
 
