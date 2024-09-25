@@ -1,7 +1,7 @@
-import StockList from "@/components/stock/StockList"
+import StockDashboard from "@/components/stock/StockDashboard"
 
 function MainPage(): JSX.Element {
-  return <StockList />
+  return <StockDashboard />
 }
 
 export default MainPage

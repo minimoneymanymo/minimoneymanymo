@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, { useState } from "react"
 import {
   Menu,
   MenuHandler,
@@ -7,12 +7,12 @@ import {
   Button,
   Radio,
 } from "@material-tailwind/react"
-import {ChevronDownIcon} from "@heroicons/react/24/outline"
+import { ChevronDownIcon } from "@heroicons/react/24/outline"
 
 // MenuComponent 정의
 interface MenuComponentProps {
   label: string
-  items: {label: string; value: string}[]
+  items: { label: string; value: string }[]
   selected: string | null
   onSelect: (selected: string) => void
 }
@@ -28,8 +28,8 @@ const StockFilterMenu: React.FC<MenuComponentProps> = ({
   return (
     <Menu
       animate={{
-        mount: {y: 0},
-        unmount: {y: 25},
+        mount: { y: 0 },
+        unmount: { y: 25 },
       }}
     >
       <MenuHandler>
