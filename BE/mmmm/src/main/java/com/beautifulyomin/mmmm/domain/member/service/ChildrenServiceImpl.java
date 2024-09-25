@@ -33,7 +33,6 @@ public class ChildrenServiceImpl implements ChildrenService {
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final FileService fileService;
-    private final StocksHeldRepository stocksHeldRepository;
 
     public ChildrenServiceImpl(ChildrenRepository childrenRepository, ParentRepositoryCustom parentRepositoryCustom, ParentRepository parentRepository, ParentAndChildrenRepository parentAndChildrenRepository, BCryptPasswordEncoder bCryptPasswordEncoder, FileService fileService) {
         this.childrenRepository = childrenRepository;
@@ -42,8 +41,8 @@ public class ChildrenServiceImpl implements ChildrenService {
         this.parentAndChildrenRepository = parentAndChildrenRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.fileService = fileService;
-        this.stocksHeldRepository = stocksHeldRepository;
     }
+
 
 
     @Override
