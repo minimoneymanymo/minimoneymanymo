@@ -1,8 +1,9 @@
-import {IgrFinancialChart} from "igniteui-react-charts"
-import {IgrFinancialChartModule} from "igniteui-react-charts"
-import React, {useEffect, useState} from "react"
-import {getStockDetail} from "@/api/stock-api"
+import { IgrFinancialChart } from "igniteui-react-charts"
+import { IgrFinancialChartModule } from "igniteui-react-charts"
+import React, { useEffect, useState } from "react"
+import { getStockDetail } from "@/api/stock-api"
 import Home2 from "../home2/home2"
+import { useParams } from "react-router-dom"
 
 IgrFinancialChartModule.register()
 
@@ -20,13 +21,13 @@ interface FinancialChartPanesProps {
 }
 
 function ChartPage(): JSX.Element {
-  const [dailyStockChart, setDailyStockChart] = useState<
-    any | undefined
-  >()
+  const { stockCode } = useParams()
+  const [dailyStockChart, setDailyStockChart] = useState<any | undefined>()
 
   useEffect(() => {
     const fetchStockData = async () => {
-      const res = await getStockDetail("000020")
+      if (!stockCode) return
+      const res = await getStockDetail(stockCode)
       console.log(res.data.dailyStockChart)
       if (res) {
         setDailyStockChart(res.data.dailyStockChart)
@@ -87,7 +88,7 @@ class FinancialChartPanes extends React.Component<
   }
 
   public initData() {
-    const {dailyStockChart} = this.props
+    const { dailyStockChart } = this.props
     console.log(this.props)
     // 매핑 함수
     const mappedData = dailyStockChart?.map((item) => ({

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 import { getStockList } from "@/api/stock-api"
 import { Typography } from "@material-tailwind/react"
+import { useNavigate } from "react-router-dom"
 import {
   getPriceChangeColorAndSign,
   formatMarketCapitalization,
 } from "@/utils/stock-utils"
-import { ArrowDropUp, ArrowDropDown, UnfoldMore } from "@mui/icons-material" // 추가한 아이콘
+import { ArrowDropUp, ArrowDropDown, UnfoldMore } from "@mui/icons-material"
 
 // 주식 정보 타입 정의
 interface StockData {
@@ -32,6 +33,10 @@ function StockList({ filters }: { filters: StockFilter }) {
   const [stockRows, setStockRows] = useState<StockData[]>([])
   const [sortKey, setSortKey] = useState<string>("MC") // 초기 정렬 키
   const [sortOrder, setSortOrder] = useState<string>("desc") // 초기 정렬 순서
+  const navigate = useNavigate()
+  const handleRowClick = (stockCode: string) => {
+    navigate(`/stock/${stockCode}`)
+  }
 
   // 서버로 데이터를 요청하는 함수
   const fetchStockList = async () => {
@@ -113,7 +118,11 @@ function StockList({ filters }: { filters: StockFilter }) {
               stock.priceChange
             )
             return (
-              <tr key={stock.stockCode}>
+              <tr
+                key={stock.stockCode}
+                onClick={() => handleRowClick(stock.stockCode)}
+                className="cursor-pointer hover:bg-gray-50"
+              >
                 <td
                   className="border-blue-gray-50 border-b p-4 text-center"
                   style={{ width: "5%" }}

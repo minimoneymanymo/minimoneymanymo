@@ -1,4 +1,4 @@
-import {Routes, Route} from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import ChildPage from "@/pages/chlid/ChildPage"
 import LoginPage from "@/pages/main/LoginPage"
 import MainPage from "@/pages/main/MainPage"
@@ -46,7 +46,7 @@ function App() {
           <Route path="diary" element={<ChildDairyPage />} />
         </Route>
         <Route path="/stock" element={<StockPageLayout />}>
-          <Route path="detail" element={<ChartPage />} />
+          <Route path=":stockCode" element={<ChartPage />} />{" "}
         </Route>
       </Route>
     </Routes>
