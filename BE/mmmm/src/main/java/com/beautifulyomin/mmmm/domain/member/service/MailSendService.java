@@ -17,33 +17,19 @@ import java.util.Random;
 public class MailSendService {
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private  RedisUtil redisUtil;
 
 
-    //임의의 6자리 양수 생성 및 Redis 저장
-    @CachePut(value = "emailAuthCode", key = "#email")
+
     public int makeRandomNumber(String email) {
         Random random = new Random();
         return random.nextInt(900000) + 100000;
     }
-
-    @Cacheable(value = "emailAuthCode", key = "#email")
-    public Integer getCachedAuthCode(String email) {
-        return null;  // 없으면 null을 반환
+    public boolean checkAuthNum(String email, String authNum) {
+        String storedEmail = redisUtil.getData(authNum);
+        return storedEmail != null && storedEmail.equals(email);
     }
-
-
-    //이메일 인증번호 체크
-    public boolean checkAuthNum(String email,String authNum){
-
-        Optional<Integer> cachedAuthNum = Optional.ofNullable(getCachedAuthCode(email));
-        System.out.println(cachedAuthNum);System.out.println(cachedAuthNum);
-
-        return cachedAuthNum.map(cached -> cached.toString().equals(authNum))
-                .orElse(false);
-
-    }
-
-
 
     //mail을 어디서 보내는지, 어디로 보내는지 , 인증 번호를 html 형식으로 어떻게 보내는지 작성합니다.
     public String joinEmail(String email) {
@@ -57,12 +43,12 @@ public class MailSendService {
                         "인증 번호는 " + code + "입니다." +
                         "<br>" +
                         "인증번호를 제대로 입력해주세요"; //이메일 내용 삽입
-        mailSend(setFrom, toMail, title, content);
+        mailSend(setFrom, toMail, title, content, code);
         return Integer.toString(code);
     }
 
     //이메일을 전송합니다.
-    public void mailSend(String setFrom, String toMail, String title, String content) {
+    public void mailSend(String setFrom, String toMail, String title, String content, int code) {
         MimeMessage message = mailSender.createMimeMessage();//JavaMailSender 객체를 사용하여 MimeMessage 객체를 생성
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message,true,"utf-8");//이메일 메시지와 관련된 설정을 수행합니다.
@@ -76,6 +62,8 @@ public class MailSendService {
             // 이러한 경우 MessagingException이 발생
             e.printStackTrace();//e.printStackTrace()는 예외를 기본 오류 스트림에 출력하는 메서드
         }
+        //redis에 저장
+        redisUtil.setDataExpire(String.valueOf(code),toMail,60*5L);
 
 
     }
