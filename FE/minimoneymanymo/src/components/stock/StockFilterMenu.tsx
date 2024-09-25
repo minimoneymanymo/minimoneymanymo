@@ -52,7 +52,7 @@ const StockFilterMenu: React.FC<MenuComponentProps> = ({
             <Radio
               id={`radio-${item}`}
               name={`menu-radio-${label}`}
-              color="blue"
+              // className="primary-m1 peer"
               checked={selected === item.value}
               onChange={() => onSelect(item.value)}
             />

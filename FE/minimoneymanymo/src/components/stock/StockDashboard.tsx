@@ -9,6 +9,8 @@ import { Tune } from "@mui/icons-material"
 interface StockFilter {
   marketType: string | null
   marketCapSize: string | null
+  perMin: number | null
+  perMax: number | null
 }
 
 function MainDashboard() {
@@ -16,6 +18,8 @@ function MainDashboard() {
   const [filters, setFilters] = useState<StockFilter>({
     marketType: "ALL",
     marketCapSize: "ALL",
+    perMin: null,
+    perMax: null,
   })
 
   // 모달 끄고 닫고
@@ -39,7 +43,7 @@ function MainDashboard() {
   return (
     <div className="w-full p-4">
       <Typography variant="h5" color="blue-gray">
-        종목 정보 조회
+        주식
       </Typography>
 
       {/* 필터 모달 버튼 */}

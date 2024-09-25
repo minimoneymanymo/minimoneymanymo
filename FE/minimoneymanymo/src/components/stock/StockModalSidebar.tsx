@@ -1,56 +1,93 @@
-// MultiLevelSidebar.tsx
 import React from "react"
-
-// 필터 인터페이스 정의
-interface StockFilter {
-  marketType: string | null //시장 종류
-  marketCapSize: string | null // 시가총액 크기 (소, 중, 대)
-  // perMin: number | null // PER 최소값
-  // perMax: number | null // PER 최대값
-  // pbrMin: number | null // PBR 최소값
-  // pbrMax: number | null
-  // epsMin: number | null // EPS 최소값
-  // epsMax: number | null
-  // bpsMin: number | null // BPS 최소값
-  // bpsMax: number | null
-  // priceMin: number | null // 주가 최소값
-  // priceMax: number | null
-  // changeRateMin: number | null // 주가 등락률 최소값
-  // changeRateMax: number | null
-  // high52WeekMin: number | null // 52주 최고가 최소값
-  // high52WeekMax: number | null
-  // low52WeekMin: number | null // 52주 최저가 최소값
-  // low52WeekMax: number | null
-  // volumeMin: bigint | null // 1일 누적 거래량 최소값
-  // volumeMax: bigint | null
-  // tradingValueMin: bigint | null // 1일 누적 거래 대금 최소값
-  // tradingValueMax: bigint | null
-  // volumeTurnoverRatioMin: number | null // 거래량 회전률 최소값
-  // volumeTurnoverRatioMax: number | null
-}
+import {
+  Card,
+  Typography,
+  List,
+  ListItem,
+  ListItemPrefix,
+} from "@material-tailwind/react"
+import {
+  AssessmentOutlined, // 시장
+  BarChartOutlined, // PER, PBR, 주가 등락률
+  ShowChart, // 주가
+  AttachMoney, // 거래대금
+  TrendingUp, // 52주 최고가
+  TrendingDown, // 52주 최저가
+  SwapVert, // 거래량
+} from "@mui/icons-material" // Material UI Icons
 
 interface StockModalSidebarProps {
-  filters: StockFilter
-  updateFilters: (filters: StockFilter) => void
+  selectedCategory: string
+  setSelectedCategory: (category: string) => void
 }
 
 export function StockModalSidebar({
-  filters,
-  updateFilters,
+  selectedCategory,
+  setSelectedCategory,
 }: StockModalSidebarProps) {
-  const handleFilterChange = (key: string, value: string) => {
-    updateFilters({ ...filters, [key]: value })
-  }
   return (
-    <div className="w-full">
-      <h3 className="mb-4 text-lg font-semibold">필터 설정</h3>
-      <button onClick={() => handleFilterChange("marketType", "KOSPI")}>
-        코스피
-      </button>
-      <button onClick={() => handleFilterChange("marketCapSize", "LARGE")}>
-        대형주
-      </button>
-      {/* 다른 필터 옵션 추가 */}
-    </div>
+    <Card className="shadow-blue-gray-900/5 h-full w-full max-w-[16rem] p-4 shadow-xl">
+      <div className="mb-2 p-4">
+        <Typography variant="h5" color="blue-gray">
+          검색 조건
+        </Typography>
+      </div>
+      <List>
+        <ListItem onClick={() => setSelectedCategory("시장")}>
+          <ListItemPrefix>
+            <AssessmentOutlined className="h-5 w-5" /> {/* 시장 아이콘 */}
+          </ListItemPrefix>
+          시장
+        </ListItem>
+        <ListItem onClick={() => setSelectedCategory("PER")}>
+          <ListItemPrefix>
+            <BarChartOutlined className="h-5 w-5" /> {/* PER 아이콘 */}
+          </ListItemPrefix>
+          PER
+        </ListItem>
+        <ListItem onClick={() => setSelectedCategory("PBR")}>
+          <ListItemPrefix>
+            <BarChartOutlined className="h-5 w-5" /> {/* PBR 아이콘 */}
+          </ListItemPrefix>
+          PBR
+        </ListItem>
+        <ListItem onClick={() => setSelectedCategory("주가")}>
+          <ListItemPrefix>
+            <ShowChart className="h-5 w-5" /> {/* 주가 아이콘 */}
+          </ListItemPrefix>
+          주가
+        </ListItem>
+        <ListItem onClick={() => setSelectedCategory("주가 등락률")}>
+          <ListItemPrefix>
+            <BarChartOutlined className="h-5 w-5" /> {/* 주가 등락률 아이콘 */}
+          </ListItemPrefix>
+          주가 등락률
+        </ListItem>
+        <ListItem onClick={() => setSelectedCategory("52주 최고가")}>
+          <ListItemPrefix>
+            <TrendingUp className="h-5 w-5" /> {/* 52주 최고가 아이콘 */}
+          </ListItemPrefix>
+          52주 최고가
+        </ListItem>
+        <ListItem onClick={() => setSelectedCategory("52주 최저가")}>
+          <ListItemPrefix>
+            <TrendingDown className="h-5 w-5" /> {/* 52주 최저가 아이콘 */}
+          </ListItemPrefix>
+          52주 최저가
+        </ListItem>
+        <ListItem onClick={() => setSelectedCategory("거래량")}>
+          <ListItemPrefix>
+            <SwapVert className="h-5 w-5" /> {/* 거래량 아이콘 */}
+          </ListItemPrefix>
+          거래량
+        </ListItem>
+        <ListItem onClick={() => setSelectedCategory("거래대금")}>
+          <ListItemPrefix>
+            <AttachMoney className="h-5 w-5" /> {/* 거래대금 아이콘 */}
+          </ListItemPrefix>
+          거래대금
+        </ListItem>
+      </List>
+    </Card>
   )
 }

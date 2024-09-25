@@ -24,6 +24,8 @@ interface StockData {
 interface StockFilter {
   marketType: string | null
   marketCapSize: string | null
+  perMin: number | null
+  perMax: number | null
 }
 
 function StockList({ filters }: { filters: StockFilter }) {
