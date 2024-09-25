@@ -32,14 +32,16 @@ public class ChildrenServiceImpl implements ChildrenService {
     private final ParentRepository parentRepository;
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final StocksHeldRepository stocksHeldRepository;
     private final FileService fileService;
 
-    public ChildrenServiceImpl(ChildrenRepository childrenRepository, ParentRepositoryCustom parentRepositoryCustom, ParentRepository parentRepository, ParentAndChildrenRepository parentAndChildrenRepository, BCryptPasswordEncoder bCryptPasswordEncoder, FileService fileService) {
+    public ChildrenServiceImpl(ChildrenRepository childrenRepository, ParentRepositoryCustom parentRepositoryCustom, ParentRepository parentRepository, ParentAndChildrenRepository parentAndChildrenRepository, BCryptPasswordEncoder bCryptPasswordEncoder, StocksHeldRepository stocksHeldRepository, FileService fileService) {
         this.childrenRepository = childrenRepository;
         this.parentRepositoryCustom = parentRepositoryCustom;
         this.parentRepository = parentRepository;
         this.parentAndChildrenRepository = parentAndChildrenRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.stocksHeldRepository = stocksHeldRepository;
         this.fileService = fileService;
     }
 
@@ -84,6 +86,32 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
     @Override
+    public ChildInfoDto childInfoByUserId(String userId, String stockCode) {
+        Optional<Children> children = childrenRepository.findByUserId(userId);
+        if (children.isPresent()) {
+            Children child = children.get();
+            Optional<StocksHeld> stockHeld = stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(child.getChildrenId(), stockCode);
+
+            // StocksHeld 엔티티가 존재하는지 확인하고, 존재하면 totalStockMoney 가져오기
+            Integer totalStockMoney = stockHeld.map(StocksHeld::getTotalAmount).orElse(0); // 없으면 0으로 설정
+            BigDecimal totalStockShares = stockHeld.map(StocksHeld::getRemainSharesCount).orElse(BigDecimal.valueOf(0));
+
+            ChildInfoDto childInfo = new ChildInfoDto();
+            childInfo.setUserId(child.getUserId());
+            childInfo.setDate(child.getBirthDay());
+            childInfo.setMoney(child.getMoney());
+            childInfo.setProfileimgUrl(child.getProfileImgUrl());
+            childInfo.setStockMoney(totalStockMoney);
+            childInfo.setRemainSharesCount(totalStockShares);
+
+            return childInfo;
+
+        } else {
+            throw new RuntimeException("Child not found with id: " + userId);
+        }
+    }
+
+        @Override
     public long updateAccount(String childUserId, String accountNumber, String bankCode) {
         return parentRepositoryCustom.updateChildAccount(childUserId, accountNumber, bankCode);
     }
