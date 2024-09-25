@@ -31,7 +31,7 @@ public class TradeServiceImpl implements TradeService {
     public void createTrade(TradeDto tradeDto, String userId) {
         // stock 정보 조회
         Stock stock = stockRepository.findById(tradeDto.getStockCode())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid stock code. 주식코드가 유효하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("주식코드가 유효하지 않습니다."));
 
         // userId로 아이 정보 조회해서 dto에 childrenId 설정하기
         Children children = childrenRepository.findByUserId(userId)
@@ -46,7 +46,7 @@ public class TradeServiceImpl implements TradeService {
         if (stocksHeld == null && tradeDto.getTradeType().equals("5")) {
             // 매도 요청인데 stocksHeld가 없으면 에러 발생
             log.error("매도 주수 없음 에러");
-            throw new IllegalArgumentException("Cannot sell stock that is not held. 매도할 수 있는 보유주수가 없습니다.");
+            throw new IllegalArgumentException("매도할 수 있는 주식이 없습니다.");
         }
 
         // stocksHeld가 없고 매수인 경우에만 새로운 StocksHeld 생성
@@ -63,7 +63,7 @@ public class TradeServiceImpl implements TradeService {
         if (tradeDto.getTradeType().equals("4")) { // 매수
             // 매수 시 잔액 부족 여부 체크
             if (children.getMoney() < tradeDto.getAmount()) {
-                throw new IllegalArgumentException("Insufficient funds for this purchase. 매수하기에 머니가 부족합니다.");
+                throw new IllegalArgumentException("매수하기에 머니가 부족합니다.");
             }
             totalProfit = BigDecimal.ZERO;
             handleBuyTransaction(stocksHeld, tradeDto);
@@ -75,7 +75,7 @@ public class TradeServiceImpl implements TradeService {
             log.info("totalProfit = {}", totalProfit);
             children.setMoney(children.getMoney() + tradeDto.getAmount() + totalProfit.intValue());
         } else {
-            throw new IllegalArgumentException("Invalid trade type. 매매 타입이 유효하지 않습니다.");
+            throw new IllegalArgumentException("매매 타입이 유효하지 않습니다.");
         }
 
         // StocksHeld 저장
@@ -112,7 +112,7 @@ public class TradeServiceImpl implements TradeService {
     private BigDecimal handleSellTransaction(StocksHeld stocksHeld, TradeDto tradeDto) {
         if (stocksHeld.getRemainSharesCount().compareTo(tradeDto.getTradeSharesCount()) < 0) {
             log.debug("Not enough shares to sell");
-            throw new IllegalArgumentException("Not enough shares to sell. 매도하기에 돈이 충분하지 않습니다.");
+            throw new IllegalArgumentException("매도하기에 머니가 충분하지 않습니다.");
         }
 
         //평단가 계산
