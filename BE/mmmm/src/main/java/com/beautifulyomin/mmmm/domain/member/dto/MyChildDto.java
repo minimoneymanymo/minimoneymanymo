@@ -21,5 +21,5 @@ public class MyChildDto {
     private Integer settingMoney;
     private Integer settingWithdrawableMoney;
     private Integer settingQuizBonusMoney;
-
+    private String accountNumber;
 }

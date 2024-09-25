@@ -52,6 +52,9 @@ public class Children {
     @Column(length = 14)
     private String birthDay;
 
+    @Column(nullable = false, length = 255)
+    private String userKey;
+
     @Column(nullable = false)
     private Integer withdrawableMoney = 0;
     @Column(nullable = false)
@@ -61,15 +64,13 @@ public class Children {
     @Column(nullable = false)
     private Integer settingQuizBonusMoney = 0;
 
-
-
-    public Children(String userId, String name, String password, String phoneNumber, String birthDay) {
+    public Children(String userId, String name, String password, String phoneNumber, String birthDay, String userKey) {
         this.userId = userId;
         this.phoneNumber = phoneNumber;
         this.name = name;
         this.password = password;
         this.birthDay = birthDay;
-
+        this.userKey = userKey;
     }
 
     @PrePersist

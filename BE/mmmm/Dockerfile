@@ -8,7 +8,7 @@ RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && echo Asia/Seoul > /
 COPY build/libs/mmmm-0.0.1-SNAPSHOT.jar /app/mmmm.jar
 
 # 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "/app/mmmm.jar"]
+ENTRYPOINT ["java", "-jar", "/app/mmmm.jar", "prod"]
 
 
 # # 승철님 방식 저는 빌드 자체는 젠킨스 파일에서 작성할게요

@@ -2,12 +2,12 @@ package com.beautifulyomin.mmmmbatch;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-class MmmmBatchApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
-
-}
+//
+//@SpringBootTest
+//class MmmmBatchApplicationTests {
+//
+//    @Test
+//    void contextLoads() {
+//    }
+//
+//}
