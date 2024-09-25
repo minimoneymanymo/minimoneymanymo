@@ -110,6 +110,12 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
       }
     }
 
+    // reason 유효성 검사 추가
+    if (reason.trim() === "") {
+      alert("거래 이유를 입력해 주세요.")
+      return
+    }
+
     const tradeDataObj: tradeData = {
       stockCode, // useParams에서 가져온 stockCode 사용
       amount: isBuyMode ? inputMoney : sellMoney,
