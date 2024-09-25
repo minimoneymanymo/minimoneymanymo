@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 
 @RestController
 @RequestMapping("/members")
@@ -388,6 +389,33 @@ public class MembersController {
                         .message("계좌 연결 완료")
                         .build());
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<CommonResponseDto> findMemberInfo(
+            @RequestHeader("Authorization") String token
+    ) {
+        String userId = jwtUtil.getUsername(token);
+
+        Function<Object, CommonResponseDto> buildResponse = (data) ->
+                CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("사용자 조회 완료")
+                        .data(data)
+                        .build();
+
+        if (parentService.isExistByUserId(userId)) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(buildResponse.apply(parentService.findByUserId(userId)));
+        }
+
+        if (childrenService.isExistByUserId(userId)) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(buildResponse.apply(childrenService.findByUserId(userId)));
+        }
+
+        throw new InvalidRequestException("아이디와 일치하는 사용자가 없습니다");
+    }
+
 
     @PostMapping("/image")
     public ResponseEntity<CommonResponseDto> profileImageUpload(
