@@ -26,7 +26,7 @@ public class TradeController {
     }
 
     @PostMapping
-    public ResponseEntity<CommonResponseDto> createTrade(@Valid @RequestHeader("Authorization") String token, @Valid @RequestBody TradeDto tradeDto) {
+    public ResponseEntity<CommonResponseDto> createTrade(@RequestHeader("Authorization") String token, @Valid @RequestBody TradeDto tradeDto) {
         String userId = jwtUtil.getUsername(token); // token 에서 userId를 받아온다. ( 아이디, 즉 이메일 )
         // 아이디로 child 테이블에 접근해서 childrenId를 받아온다. -> service에서 처리
         // userId 잘 넘어오는지 로그 확인
