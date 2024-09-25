@@ -34,6 +34,7 @@ pipeline {
                 script {
                     // 오래된 이미지를 삭제합니다.
                     sh 'docker image prune -f'
+
                 }
             }
         }
