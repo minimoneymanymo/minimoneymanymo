@@ -12,6 +12,7 @@ pipeline {
             steps {
                 script {
                     dir('FE/minimoneymanymo') {
+                        sh 'rm -rf node_modules'
                         docker.build('mmmm-react-image', '-f Dockerfile .')
                     }
                 }
