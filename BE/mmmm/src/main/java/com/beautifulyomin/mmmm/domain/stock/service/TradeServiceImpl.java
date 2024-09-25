@@ -31,7 +31,7 @@ public class TradeServiceImpl implements TradeService {
     public void createTrade(TradeDto tradeDto, String userId) {
         // stock 정보 조회
         Stock stock = stockRepository.findById(tradeDto.getStockCode())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid stock code"));
+                .orElseThrow(() -> new IllegalArgumentException("주식코드가 유효하지 않습니다."));
 
         // userId로 아이 정보 조회해서 dto에 childrenId 설정하기
         Children children = childrenRepository.findByUserId(userId)
@@ -39,15 +39,29 @@ public class TradeServiceImpl implements TradeService {
 
         tradeDto.setChildrenId(children.getChildrenId());
 
-        // stocksHeld가 없는 경우 -> 신규 생성 -> 이 때는 무조건 "매수"일 것임, 만일 아무 것도 없는데 매도라면 에러 발생
-        // 여기서 tradeType 보고 바로 에러 발생 시키려 했는데, 잔액 보고 결정해도 될 것 같아서 아래에서 발생시킬 예정.
+        if (tradeDto == null) {
+            throw new IllegalArgumentException("TradeDto는 null일 수 없습니다.");
+        }
+
+        // stocksHeld 조회 시 매도 요청일 경우 존재하지 않으면 에러 발생
         StocksHeld stocksHeld = stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(children.getChildrenId(), stock.getStockCode())
-                .orElseGet(() -> StocksHeld.builder()
-                        .children(children)
-                        .stock(stock)
-                        .remainSharesCount(tradeDto.getTradeSharesCount()) // 보유주수
-                        .totalAmount(tradeDto.getAmount()) // 가격총합
-                        .build());
+                .orElse(null);
+
+        if (stocksHeld == null && tradeDto.getTradeType().equals("5")) {
+            // 매도 요청인데 stocksHeld가 없으면 에러 발생
+            log.error("매도 주수 없음 에러");
+            throw new IllegalArgumentException("매도할 수 있는 주식이 없습니다.");
+        }
+
+        // stocksHeld가 없고 매수인 경우에만 새로운 StocksHeld 생성
+        if (stocksHeld == null && tradeDto.getTradeType().equals("4")) {
+            stocksHeld = StocksHeld.builder()
+                    .children(children)
+                    .stock(stock)
+                    .remainSharesCount(BigDecimal.ZERO) // 초기값 설정
+                    .totalAmount(0) // 총합도 초기값 설정
+                    .build();
+        }
 
         BigDecimal totalProfit = null;
 
@@ -55,7 +69,7 @@ public class TradeServiceImpl implements TradeService {
         if (tradeDto.getTradeType().equals("4")) { // 매수
             // 매수 시 잔액 부족 여부 체크
             if (children.getMoney() < tradeDto.getAmount()) {
-                throw new IllegalArgumentException("Insufficient funds for this purchase");
+                throw new IllegalArgumentException("매수하기에 머니가 부족합니다.");
             }
             totalProfit = BigDecimal.ZERO;
             handleBuyTransaction(stocksHeld, tradeDto);
@@ -67,7 +81,7 @@ public class TradeServiceImpl implements TradeService {
             log.info("totalProfit = {}", totalProfit);
             children.setMoney(children.getMoney() + tradeDto.getAmount() + totalProfit.intValue());
         } else {
-            throw new IllegalArgumentException("Invalid trade type");
+            throw new IllegalArgumentException("매매 타입이 유효하지 않습니다.");
         }
 
         // StocksHeld 저장
@@ -96,14 +110,22 @@ public class TradeServiceImpl implements TradeService {
 
     // 매수 처리
     private void handleBuyTransaction(StocksHeld stocksHeld, TradeDto tradeDto) {
+        if (stocksHeld.getRemainSharesCount() == null) {
+            stocksHeld.setRemainSharesCount(BigDecimal.ZERO); // 초기화
+        }
         stocksHeld.setRemainSharesCount(stocksHeld.getRemainSharesCount().add(tradeDto.getTradeSharesCount())); // 보유주수 더하기
         stocksHeld.setTotalAmount(stocksHeld.getTotalAmount() + tradeDto.getAmount()); // 총합 더하기
     }
 
     // 매도 처리
     private BigDecimal handleSellTransaction(StocksHeld stocksHeld, TradeDto tradeDto) {
+        if (stocksHeld.getRemainSharesCount() == null) {
+            throw new IllegalArgumentException("보유 주식 수량이 초기화되지 않았습니다.");
+        }
+
         if (stocksHeld.getRemainSharesCount().compareTo(tradeDto.getTradeSharesCount()) < 0) {
-            throw new IllegalArgumentException("Not enough shares to sell");
+            log.debug("Not enough shares to sell");
+            throw new IllegalArgumentException("매도하려는 주식 수가 보유하고 있는 주식 수보다 많습니다.");
         }
 
         //평단가 계산
