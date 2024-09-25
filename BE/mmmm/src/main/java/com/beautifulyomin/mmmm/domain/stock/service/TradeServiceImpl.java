@@ -39,6 +39,10 @@ public class TradeServiceImpl implements TradeService {
 
         tradeDto.setChildrenId(children.getChildrenId());
 
+        if (tradeDto == null) {
+            throw new IllegalArgumentException("TradeDto는 null일 수 없습니다.");
+        }
+
         // stocksHeld 조회 시 매도 요청일 경우 존재하지 않으면 에러 발생
         StocksHeld stocksHeld = stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(children.getChildrenId(), stock.getStockCode())
                 .orElse(null);
@@ -54,6 +58,8 @@ public class TradeServiceImpl implements TradeService {
             stocksHeld = StocksHeld.builder()
                     .children(children)
                     .stock(stock)
+                    .remainSharesCount(BigDecimal.ZERO) // 초기값 설정
+                    .totalAmount(0) // 총합도 초기값 설정
                     .build();
         }
 
@@ -104,12 +110,19 @@ public class TradeServiceImpl implements TradeService {
 
     // 매수 처리
     private void handleBuyTransaction(StocksHeld stocksHeld, TradeDto tradeDto) {
+        if (stocksHeld.getRemainSharesCount() == null) {
+            stocksHeld.setRemainSharesCount(BigDecimal.ZERO); // 초기화
+        }
         stocksHeld.setRemainSharesCount(stocksHeld.getRemainSharesCount().add(tradeDto.getTradeSharesCount())); // 보유주수 더하기
         stocksHeld.setTotalAmount(stocksHeld.getTotalAmount() + tradeDto.getAmount()); // 총합 더하기
     }
 
     // 매도 처리
     private BigDecimal handleSellTransaction(StocksHeld stocksHeld, TradeDto tradeDto) {
+        if (stocksHeld.getRemainSharesCount() == null) {
+            throw new IllegalArgumentException("보유 주식 수량이 초기화되지 않았습니다.");
+        }
+
         if (stocksHeld.getRemainSharesCount().compareTo(tradeDto.getTradeSharesCount()) < 0) {
             log.debug("Not enough shares to sell");
             throw new IllegalArgumentException("매도하기에 머니가 충분하지 않습니다.");
