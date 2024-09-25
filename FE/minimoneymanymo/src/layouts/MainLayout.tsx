@@ -6,7 +6,7 @@ const MainPageLayout: React.FC = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main className="mx-auto flex h-full w-[1140px] border">
+      <main className="mx-auto mt-5 flex h-full w-[1140px] border">
         <Outlet></Outlet>
       </main>
     </div>
