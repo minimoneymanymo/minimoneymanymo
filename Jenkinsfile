@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     dir('FE/minimoneymanymo') {
-                        sh 'rm -rf node_modules'
+                         sh 'rm -rf node_modules package-lock.json'
                         docker.build('mmmm-react-image', '-f Dockerfile .')
                     }
                 }
