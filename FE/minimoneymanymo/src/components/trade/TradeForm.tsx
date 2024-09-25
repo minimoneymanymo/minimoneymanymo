@@ -11,6 +11,12 @@ interface BuyFormProps {
   closingPrice: number | null // closingPrice가 null일 수도 있으므로 타입 지정
 }
 
+interface CustomError extends Error {
+  data?: {
+    message: string
+  }
+}
+
 function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
   const { stockCode } = useParams() // useParams로 stockCode 가져오기
   const [isBuyMode, setIsBuyMode] = useState<boolean>(true)
@@ -19,7 +25,7 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
   const [money, setMoney] = useState<number | null>(null) // 보유머니
   const [inputMoney, setInputMoney] = useState<number>(0) // 매수할 머니
   const [tradeShares, setTradeShares] = useState<number>(0) // 머니 환산 주수 (매수할 머니 / 현재가)
-  const [remainingMoney, setRemainingMoney] = useState<number | null>(null) // 매도 후 잔액 (남은 머니 : 보유머니 - 매수할 머니)
+  const [remainingMoney, setRemainingMoney] = useState<number | null>(null) // 매수 후 잔액 (남은 머니 : 보유머니 - 매수할 머니)
   const [reason, setReason] = useState<string>("") // 매매 이유
   const maxShares = closingPrice
     ? Math.floor(((money || 0) / closingPrice) * 1e7) / 1e7
@@ -27,9 +33,11 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
 
   // 매도 시 사용
   const [remainSharesCount, setRemainSharesCount] = useState<number>(0) // 보유 주식 수
-  const [sellShares, setSellShares] = useState<string>(0) // 매도 주수
+  const [sellShares, setSellShares] = useState<string>("") // 매도 주수
   const [sellMoney, setSellMoney] = useState<number>(0) // 매도 머니
   // 수익 머니
+  // 손익가격 : ( 현재가 - 평단 ) * 매도주수
+  // 매도 후 잔액 계산하기 : 매도머니 + 손익가격 + 기존머니
 
   // API 호출하여 보유 머니 가져오기
   const loadMoney = useCallback(async () => {
@@ -42,9 +50,16 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
       const data = await getChildMoney(stockCode)
       console.log(data)
       setMoney(data.data.money)
-      setRemainSharesCount(data.data.remainSharesCount) // 보유 주식 수 설정
+      setRemainSharesCount(data.data.remainSharesCount)
     } catch (error) {
-      console.error("Failed to load money:", error)
+      if (error instanceof Error) {
+        console.error("Failed to load money:", error)
+        // 타입 단언 사용
+        const customError = error as CustomError
+        alert(customError.data?.message || "알 수 없는 오류가 발생했습니다.")
+      } else {
+        console.error("Trade failed:", error)
+      }
     }
   }, [stockCode]) // stockCode를 의존성으로 설정
 
@@ -54,7 +69,7 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
 
   // 입력된 금액에 따른 주 수와 잔액 계산
   useEffect(() => {
-    if (closingPrice) {
+    if (closingPrice && inputMoney !== 0) {
       const shares = Math.floor((inputMoney / closingPrice) * 1e7) / 1e7 // closingPrice 사용
       setTradeShares(shares)
       if (money !== null) {
@@ -82,6 +97,19 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
       return
     }
 
+    // 유효성 검사 추가
+    if (isBuyMode) {
+      if (inputMoney <= 0 || tradeShares <= 0) {
+        alert("0 이상의 매수 금액과 주 수를 입력하세요.")
+        return
+      }
+    } else {
+      if (sellShares === "" || Number(sellShares) <= 0) {
+        alert("0 이상의 매도 주 수를 입력하세요.")
+        return
+      }
+    }
+
     const tradeDataObj: tradeData = {
       stockCode, // useParams에서 가져온 stockCode 사용
       amount: isBuyMode ? inputMoney : sellMoney,
@@ -94,11 +122,17 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
 
     try {
       const result = await postTrade(tradeDataObj)
-      console.log("Trade successful:", result)
-      // 거래가 성공하면 보유 머니 재로딩
+      console.log("거래 성공", result)
+      alert("거래가 성공적으로 완료되었습니다!")
       await loadMoney()
     } catch (error) {
-      console.error("Trade failed:", error)
+      if (error instanceof Error) {
+        console.error("Trade failed:", error.message) // 오류 메시지 출력
+        alert("거래에 실패했습니다: " + error.message) // 사용자에게 오류 메시지 표시
+      } else {
+        console.error("Trade failed: 알 수 없는 오류 발생", error) // 알 수 없는 오류 처리
+        alert("거래에 실패했습니다: 알 수 없는 오류 발생") // 사용자에게 알 수 없는 오류 메시지 표시
+      }
     }
   }
 
@@ -130,10 +164,7 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
             <h2>
               보유 머니:{" "}
               {money !== null && money !== undefined
-                ? money.toLocaleString("ko-KR", {
-                    style: "currency",
-                    currency: "KRW",
-                  })
+                ? money.toLocaleString()
                 : "로딩 중..."}
             </h2>
 
@@ -153,7 +184,7 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
             </div>
             <p>{tradeShares.toFixed(6)} 주</p>
             {remainingMoney !== null && remainingMoney !== undefined && (
-              <p>매도 후 잔액: {remainingMoney.toLocaleString()}</p>
+              <p>매수 후 잔액: {remainingMoney.toLocaleString()}</p>
             )}
 
             <input
@@ -190,19 +221,11 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
                 placeholder="매도할 주 수"
               />
             </div>
-            <p className="sellMoney">
-              {sellMoney.toLocaleString("ko-KR", {
-                style: "currency",
-                currency: "KRW",
-              })}{" "}
-              머니
-            </p>
+            <p className="sellMoney">{sellMoney.toLocaleString()} 머니</p>
 
             <p>**** 손익가격</p>
             <p>**** 매도 후 잔액 계산하기..</p>
-            {remainingMoney !== null && (
-              <p>매도 후 잔액: {remainingMoney.toLocaleString()}</p>
-            )}
+            <p>매도 후 잔액: 계산 전</p>
             <input
               className="w-full rounded bg-gray-300 px-2 py-20 text-black placeholder-white"
               type="text"
