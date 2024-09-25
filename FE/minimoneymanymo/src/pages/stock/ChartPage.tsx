@@ -47,7 +47,7 @@ function ChartPage(): JSX.Element {
 
   return (
     <div className="h-full w-[900px]">
-      <Home2 dailyStockChart={dailyStockChart} />
+      {/* <Home2 dailyStockChart={dailyStockChart} /> */}
       <FinancialChartPanes dailyStockChart={dailyStockChart} />
     </div>
   )

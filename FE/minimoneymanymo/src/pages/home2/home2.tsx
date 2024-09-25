@@ -356,10 +356,19 @@ const data = [
   //   volume: 3974821,
   // },
 ]
+type ChartData = {
+  date: Date
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+}
 
 export default function Home2({ dailyStockChart }: any) {
   const title = "Financial Chart"
-  const [chartData, setChartData] = useState([])
+  // const [chartData, setChartData] = useState([])
+  const [chartData, setChartData] = useState<ChartData[]>([])
 
   // useEffect(() => {
   //   console.log("dailyStockChart",dailyStockChart)
