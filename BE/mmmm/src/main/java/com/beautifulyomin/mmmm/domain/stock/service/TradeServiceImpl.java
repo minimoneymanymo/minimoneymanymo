@@ -125,7 +125,7 @@ public class TradeServiceImpl implements TradeService {
 
         if (stocksHeld.getRemainSharesCount().compareTo(tradeDto.getTradeSharesCount()) < 0) {
             log.debug("Not enough shares to sell");
-            throw new IllegalArgumentException("매도하기에 머니가 충분하지 않습니다.");
+            throw new IllegalArgumentException("매도하려는 주식 수가 보유하고 있는 주식 수보다 많습니다.");
         }
 
         //평단가 계산
