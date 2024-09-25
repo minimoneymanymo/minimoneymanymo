@@ -1,4 +1,5 @@
 import { axiosAuthInstance, axiosPublicInstance } from "@/api/httpcommons"
+import axios from "axios"
 
 export const getStockList = async (condition: string) => {
   console.log("query" + condition)
