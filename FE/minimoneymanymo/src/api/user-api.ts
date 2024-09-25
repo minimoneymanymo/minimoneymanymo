@@ -2,19 +2,46 @@ import {axiosAuthInstance, axiosPublicInstance} from "@/api/httpcommons"
 import axios from "axios"
 
 // 아이디 체크
-export const getIsDuplicatedId = async (id: string, role: string) => {
+export const getIsDuplicatedId = async (email: string) => {
   try {
-    const res = await axiosPublicInstance.get("/members/checkid", {
-      params: {
-        id: id,
-        role: role,
-      },
-    })
-    return res.data
+    const res = await axiosPublicInstance.post("/members/checkid", {
+      email: email, // JSON 형식으로 이메일을 포함
+    });
+    return res.data; // 서버로부터 받은 응답 반환
   } catch (e) {
-    return e
+    return e; // 오류 발생 시, 오류 객체 반환
   }
 }
+//이메일 인증코드
+export const checkAuthCode = async (email: string, authNum: string) => {
+  try {
+    const res = await axiosPublicInstance.post("/members/mailauthCheck", {
+      email: email, // JSON 형식으로 이메일 포함
+      authNum: authNum, // JSON 형식으로 인증 코드 포함
+    });
+    return res.data; // 서버로부터 받은 응답 반환
+  } catch (e) {
+    return e; // 오류 발생 시, 오류 객체 반환
+  }
+};
+//회원가입
+
+export const signUp = async (
+  userId: string, password: string, 
+  name: String, role: String, 
+  userKey:String, phoneNumber: String,birthDay:String, 
+  parentsNumber : String) => {
+  try {
+    const res = await axiosPublicInstance.post("/members/join", {
+      userId,password,name,userKey,phoneNumber, parentsNumber,role,birthDay
+    });
+    return res.data; // 서버로부터 받은 응답 반환
+  } catch (e) {
+    return e; // 오류 발생 시, 오류 객체 반환
+  }
+};
+
+
 
 export const userLogin = async (formData: FormData) => {
   for (const [key, value] of formData.entries()) {
@@ -162,3 +189,5 @@ export const updateQuizBonusMoney = async (
     }
   }
 }
+
+
