@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react"
-import {getStockList} from "@/api/stock-api" // 서버 API 호출
-import {ChevronUpDownIcon} from "@heroicons/react/24/outline"
+import { useEffect, useState } from "react"
+import { getStockList } from "@/api/stock-api" // 서버 API 호출
+import { ChevronUpDownIcon } from "@heroicons/react/24/outline"
 import {
   Card,
   CardHeader,
@@ -10,6 +10,10 @@ import {
   Button,
 } from "@material-tailwind/react"
 import StockFilterMenu from "./StockFilterMenu"
+import {
+  getPriceChangeColorAndSign,
+  formatMarketCapitalization,
+} from "@/utils/stock-utils"
 
 // 주식 정보 타입 정의
 interface StockData {
@@ -88,21 +92,11 @@ function StockList(): JSX.Element {
 
   // 필터 메뉴에서 선택된 값을 업데이트하는 함수
   const handleSelectMarketType = (selected: string) => {
-    setFilters((prev) => ({...prev, marketType: selected}))
+    setFilters((prev) => ({ ...prev, marketType: selected }))
   }
 
   const handleSelectMarketCapSize = (selected: string) => {
-    setFilters((prev) => ({...prev, marketCapSize: selected}))
-  }
-
-  // 시가총액 형식 변환 함수
-  const formatMarketCapitalization = (value: number): string => {
-    if (value >= 100000000) {
-      return `${(value / 100000000).toFixed(2)} 조원`
-    } else if (value >= 10000) {
-      return `${(value / 10000).toFixed(2)} 억원`
-    }
-    return `${value.toLocaleString()} 만원`
+    setFilters((prev) => ({ ...prev, marketCapSize: selected }))
   }
 
   return (
@@ -121,11 +115,11 @@ function StockList(): JSX.Element {
         <StockFilterMenu
           label="시장"
           items={[
-            {label: "코스피", value: "KOSPI"},
-            {label: "코스닥", value: "KOSDAQ"},
-            {label: "코스피200", value: "KOSPI200"},
-            {label: "코스닥150", value: "KSQ150"},
-            {label: "코넥스", value: "KONEX"},
+            { label: "코스피200", value: "KOSPI200" },
+            { label: "코스피", value: "KOSPI" },
+            { label: "코스닥150", value: "KSQ150" },
+            { label: "코스닥", value: "KOSDAQ" },
+            { label: "코넥스", value: "KONEX" },
           ]}
           selected={filters.marketType}
           onSelect={handleSelectMarketType}
@@ -133,9 +127,9 @@ function StockList(): JSX.Element {
         <StockFilterMenu
           label="시가총액"
           items={[
-            {label: "소형주", value: "SMALL"},
-            {label: "중형주", value: "MEDIUM"},
-            {label: "대형주", value: "LARGE"},
+            { label: "소형주", value: "SMALL" },
+            { label: "중형주", value: "MEDIUM" },
+            { label: "대형주", value: "LARGE" },
           ]}
           selected={filters.marketCapSize}
           onSelect={handleSelectMarketCapSize}
@@ -167,62 +161,69 @@ function StockList(): JSX.Element {
             </tr>
           </thead>
           <tbody>
-            {stockRows.map((stock) => (
-              <tr key={stock.stockCode}>
-                <td className="border-blue-gray-50 border-b p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {stock.companyName}
-                  </Typography>
-                </td>
-                <td className="border-blue-gray-50 border-b p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {stock.closingPrice.toLocaleString()} 원
-                  </Typography>
-                </td>
-                <td className="border-blue-gray-50 border-b p-4">
-                  <Typography
-                    variant="small"
-                    color="blue"
-                    className="font-normal"
-                  >
-                    {stock.priceChangeRate.toFixed(2)}%
-                  </Typography>
-                  <Typography
-                    variant="small"
-                    color="blue"
-                    className="font-normal"
-                  >
-                    {stock.priceChange} 원
-                  </Typography>
-                </td>
-                <td className="border-blue-gray-50 border-b p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {formatMarketCapitalization(stock.marketCapitalization)}
-                  </Typography>
-                </td>
-                <td className="border-blue-gray-50 border-b p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {stock.tradingVolume.toLocaleString()} 주
-                  </Typography>
-                </td>
-              </tr>
-            ))}
+            {stockRows.map((stock) => {
+              const { color, sign } = getPriceChangeColorAndSign(
+                stock.priceChange
+              )
+              return (
+                <tr key={stock.stockCode}>
+                  <td className="border-blue-gray-50 border-b p-4">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {stock.companyName}
+                    </Typography>
+                  </td>
+                  <td className="border-blue-gray-50 border-b p-4">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {stock.closingPrice.toLocaleString()} 원
+                    </Typography>
+                  </td>
+                  <td className="border-blue-gray-50 border-b p-4">
+                    <Typography
+                      variant="small"
+                      color={color}
+                      className="font-normal"
+                    >
+                      {sign}
+                      {stock.priceChangeRate.toFixed(2)}%
+                    </Typography>
+                    <Typography
+                      variant="small"
+                      color={color}
+                      className="font-normal"
+                    >
+                      {sign}
+                      {stock.priceChange} 원
+                    </Typography>
+                  </td>
+                  <td className="border-blue-gray-50 border-b p-4">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {formatMarketCapitalization(stock.marketCapitalization)}
+                    </Typography>
+                  </td>
+                  <td className="border-blue-gray-50 border-b p-4">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {stock.tradingVolume.toLocaleString()} 주
+                    </Typography>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </CardBody>
