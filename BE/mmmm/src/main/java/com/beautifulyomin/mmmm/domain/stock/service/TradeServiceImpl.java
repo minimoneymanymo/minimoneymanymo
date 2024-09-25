@@ -4,17 +4,26 @@ import com.beautifulyomin.mmmm.domain.fund.entity.StocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
 import com.beautifulyomin.mmmm.domain.fund.repository.StocksHeldRepository;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
+import com.beautifulyomin.mmmm.domain.member.service.ParentService;
+import com.beautifulyomin.mmmm.domain.stock.dto.ReasonBonusMoneyRequestDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
+import com.beautifulyomin.mmmm.domain.stock.exception.TradeNotFoundException;
 import com.beautifulyomin.mmmm.domain.stock.repository.*;
+import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import org.springframework.security.access.AccessDeniedException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +35,8 @@ public class TradeServiceImpl implements TradeService {
     private final ChildrenRepository childrenRepository;
     private final StocksHeldRepository stocksHeldRepository;
     private final StockRepositoryCustom stockRepositoryCustom;
+   // private final TradeRecordsRepositoryCustom tradeRecordsRepositoryCustom;
+    private final ParentService parentService;
 
     @Override
     public void createTrade(TradeDto tradeDto, String userId) {
@@ -94,6 +105,8 @@ public class TradeServiceImpl implements TradeService {
         log.info("tradeRecord 저장 했음");
     }
 
+
+
     // 매수 처리
     private void handleBuyTransaction(StocksHeld stocksHeld, TradeDto tradeDto) {
         stocksHeld.setRemainSharesCount(stocksHeld.getRemainSharesCount().add(tradeDto.getTradeSharesCount())); // 보유주수 더하기
@@ -128,5 +141,40 @@ public class TradeServiceImpl implements TradeService {
 
         return bigTotalProfit;
     }
+
+    @Override
+    public int updateReaseonBonusMoney(String parentUserId, ReasonBonusMoneyRequestDto requestDto) {
+
+        //이유 보상 머니 줄 수 없는 경우
+        //부모의 계좌 잔액이 부족
+        Parent parent = parentService.findByUserId(parentUserId);
+        if(parent.getBalance() < requestDto.getReasonBonusMoney()){
+            throw new InvalidRequestException("이유 보상 금액이 마니모 계좌 잔액보다 큽니다.");
+        }
+
+
+        //거래내역을 찾을 수 없는 경우
+        Optional<TradeDto> trade =  tradeRecordsRepository.findTredeByCreateAt(requestDto.getCreatedAt());
+        if(trade.isEmpty()){
+            throw new TradeNotFoundException(requestDto.getCreatedAt());
+        }
+        // userId로 아이 정보 조회해서 dto에 childrenId 설정하기
+        Children child = childrenRepository.findByUserId(requestDto.getChildrenUserId())
+                .orElseThrow(() -> new RuntimeException("Children not found for userId: " + requestDto.getChildrenUserId()));
+        //해당 자식의 거래내역이 아닌경우
+        if(!trade.get().getChildrenId().equals(child.getChildrenId())) {
+            throw new AccessDeniedException("해당 거래는 요청한 사용자의 것이 아닙니다.");
+        }
+        //이미 이유보상머니를 지급한 경우
+        else if(trade.get().getReasonBonusMoney() != null){
+            throw new InvalidRequestException("이미 이유 보상 머니를 지급했습니다.");
+        }
+        long result = tradeRecordsRepository.UpdateReasonBonusMoneyByCreateAt(parentUserId,child.getChildrenId(),requestDto.getReasonBonusMoney() ,requestDto.getCreatedAt());
+        //성공적으로 반환한경우 result = 1
+
+
+        return (int) result;
+    }
+
 }
 
