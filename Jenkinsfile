@@ -30,22 +30,11 @@ pipeline {
         stage('Remove Old Docker Images') {
             steps {
                 script {
-                    // 오래된 이미지를 삭제합니다.
                     sh 'docker image prune -f'
                 }
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        sh 'docker tag mmmm-api-image thispear/mmmm:latest'
-                        sh 'docker push thispear/mmmm:latest'
-                    }
-                }
-            }
-        }
 
         stage('Up Docker Compose') {
             steps {
