@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.domain.fund.repository;
 
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
+import com.beautifulyomin.mmmm.domain.fund.dto.StockHeldDto;
 import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 
@@ -22,4 +23,7 @@ public interface FundRepositoryCustom {
 
     // 전체 거래내역 조회
     List<TradeDto> findAllTradeRecord(Integer childrenId, Integer year, Integer month);
+
+    // 보유 주식 조회
+    List<StockHeldDto> findAllStockHeld(Integer childrenId);
 }

@@ -9,19 +9,21 @@ pipeline {
     }
 
     stages {
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('BE/mmmm') {
+                    dir('BE/mmmmBatch') {
                         sh 'chmod +x gradlew'
                         sh './gradlew clean'
-                        sh './gradlew build --info --refresh-dependencies'
+                        sh './gradlew build --info --refresh-dependencies -x test'
+
 
                         // JAR 파일 확인
                         sh 'ls -l build/libs/'
 
                         // Docker 이미지 빌드
-                        docker.build('mmmm-api-image', '-f Dockerfile .')
+                        docker.build('mmmm-batch-image', '-f Dockerfile .')
                     }
                 }
             }
@@ -30,19 +32,12 @@ pipeline {
         stage('Remove Old Docker Images') {
             steps {
                 script {
+                    // 오래된 이미지를 삭제합니다.
                     sh 'docker image prune -f'
+
                 }
             }
         }
 
-
-        stage('Up Docker Compose') {
-            steps {
-                script {
-                    // /var/jenkins_home/compose로 이동하여 Docker Compose 실행
-                    sh 'cd /var/jenkins_home/compose && docker-compose -f docker-compose.api-blue.yml up -d'
-                }
-            }
-        }
     }
 }

@@ -64,6 +64,7 @@ class TransactionRepositoryCustomImplTest {
                 "semin_pwd",
                 "010-4321-4321",
                 "200010050000"
+                ,"userKey"
         );
 
         entityManager.persist(children); //영속성 컨텍스트에 등록
@@ -183,7 +184,8 @@ class TransactionRepositoryCustomImplTest {
                 "parentId",
                 "parentName",
                 "parentPwd",
-                "010-1111-1111"
+                "010-1111-1111",
+                "userKey"
         );
         parent.setBalance(30000);
         entityManager.persist(parent);

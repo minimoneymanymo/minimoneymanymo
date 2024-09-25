@@ -10,7 +10,7 @@ public enum MarketCapSize {
     ALL("ALL","0","4000000"),
     SMALL("SMALL", "0", "10000"), //3000억원 미만
     MEDIUM("MEDIUM", "10001", "1000000"), //1조원 미만 TODO 임의로 값 수정해둠
-    LARGE("LARGE", "1000001", "4000000"); //1조원 이상
+    LARGE("LARGE", "1000001", "400000000"); //1조원 이상
 
     private final String label;
     private final String minCap;

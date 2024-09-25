@@ -245,18 +245,6 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         if (filterRequestDto.getPbrMax() != null) {
             condition.and(dailyStockData.pbRatio.loe(filterRequestDto.getPbrMax()));
         }
-        if (filterRequestDto.getEpsMin() != null) {
-            condition.and(dailyStockData.earningsPerShare.goe(filterRequestDto.getEpsMin()));
-        }
-        if (filterRequestDto.getEpsMax() != null) {
-            condition.and(dailyStockData.earningsPerShare.loe(filterRequestDto.getEpsMax()));
-        }
-        if (filterRequestDto.getBpsMin() != null) {
-            condition.and(dailyStockData.bookValuePerShare.goe(filterRequestDto.getBpsMin()));
-        }
-        if (filterRequestDto.getBpsMax() != null) {
-            condition.and(dailyStockData.bookValuePerShare.loe(filterRequestDto.getBpsMax()));
-        }
     }
 
     /**
@@ -304,12 +292,6 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         }
         if (filterRequestDto.getTradingValueMax() != null) {
             condition.and(dailyStockData.tradingValue.loe(filterRequestDto.getTradingValueMax()));
-        }
-        if (filterRequestDto.getVolumeTurnoverRatioMin() != null) {
-            condition.and(dailyStockData.volumeTurnoverRatio.goe(filterRequestDto.getVolumeTurnoverRatioMin()));
-        }
-        if (filterRequestDto.getVolumeTurnoverRatioMax() != null) {
-            condition.and(dailyStockData.volumeTurnoverRatio.loe(filterRequestDto.getVolumeTurnoverRatioMax()));
         }
     }
 

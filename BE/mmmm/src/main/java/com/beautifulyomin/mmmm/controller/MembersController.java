@@ -5,8 +5,10 @@ import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.member.dto.*;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
+import com.beautifulyomin.mmmm.domain.member.service.MailSendService;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
@@ -26,36 +28,43 @@ public class MembersController {
     private final ParentService parentService;
     private final ChildrenService childrenService;
     private final JWTUtil jwtUtil;
+    private final MailSendService mailSendService;
 
-    public MembersController(ParentService parentService, ChildrenService childrenService, JWTUtil jwtUtil) {
+    public MembersController(ParentService parentService, ChildrenService childrenService, JWTUtil jwtUtil, MailSendService mailSendService) {
         this.parentService = parentService;
         this.childrenService = childrenService;
         this.jwtUtil = jwtUtil;
+        this.mailSendService = mailSendService;
     }
-    @GetMapping("/checkid")
-    public ResponseEntity<CommonResponseDto> checkId(@RequestParam("id") String id, @RequestParam("role") String role) {
-        CommonResponseDto commonResponseDto = null;
+    @PostMapping("/checkid")
+    public ResponseEntity<CommonResponseDto> checkId(@Valid @RequestBody EmailRequestDto emailRequestDto) {
+        String email = emailRequestDto.getEmail(); // 이메일 추출
 
-        boolean result = false;
-        if(role.equals("1")) result = !childrenService.isExistByUserId(id) ;
-        else result = !parentService.isExistByUserId(id);
+        // 자식 사용자와 부모 사용자 중복 체크
+        boolean isEmailAvailable = !childrenService.isExistByUserId(email) && !parentService.isExistByUserId(email);
+        //인증메일 발송
+        if (isEmailAvailable) System.out.println("!!!!!!!!!!!"+mailSendService.joinEmail(email)+ "!!!!!!!!!!!"); ;
 
-        if(result) {
-            commonResponseDto = CommonResponseDto.builder()
-                    .stateCode(200)
-                    .message("사용 가능한 아이디입니다.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(commonResponseDto);
-        } else {
-            commonResponseDto = CommonResponseDto.builder()
-                    .stateCode(409)
-                    .message("이미 존재하는 아이디입니다.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(commonResponseDto);
-        }
+        CommonResponseDto commonResponseDto = CommonResponseDto.builder()
+                .stateCode(isEmailAvailable ? 200 : 409)
+                .message(isEmailAvailable ? "사용 가능한 이메일입니다. 인증 코드를 입력하세요." : "이미 사용중인 이메일입니다.")
+                .build();
+        return ResponseEntity.status(isEmailAvailable ? HttpStatus.OK : HttpStatus.CONFLICT)
+                .body(commonResponseDto);
     }
+
+    @PostMapping("/mailauthCheck")
+    public ResponseEntity<CommonResponseDto> authCheck(@RequestBody @Valid EmailCheckDto emailCheckDto){
+        boolean isChecked = mailSendService.checkAuthNum(emailCheckDto.getEmail(), emailCheckDto.getAuthNum());
+        return ResponseEntity.ok(
+                CommonResponseDto.builder()
+                        .stateCode(isChecked ? 200 : 401)
+                        .message(isChecked ? "인증완료" : "인증실패")
+                        .build()
+        );
+    }
+
+
 
     @DeleteMapping()
     public ResponseEntity<CommonResponseDto> delete(@RequestHeader("Authorization") String token) {

@@ -68,6 +68,14 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0' // 최신 버전을 사용하세요
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //email
+    implementation 'javax.mail:mail:1.4.7'
+    // Spring Context Support
+    implementation 'org.springframework:spring-context-support:5.3.9'
+
+
+
 }
 
 tasks.named('test') {

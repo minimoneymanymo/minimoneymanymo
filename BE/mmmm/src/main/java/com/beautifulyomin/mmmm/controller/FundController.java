@@ -172,4 +172,21 @@ public class FundController {
                         .data(fundService.findAllTradeRecord(childrenId, year, month))
                         .build());
     }
+
+    /**
+     * 보유 주식 조회
+     */
+    @GetMapping("/stocks")
+    public ResponseEntity<CommonResponseDto> findAllStockHeld(
+            @RequestHeader("Authorization") String token
+    ) {
+        String userId = jwtUtil.getUsername(token);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("보유 주식 조회")
+                        .data(fundService.findAllStockHeld(userId))
+                        .build());
+    }
 }
