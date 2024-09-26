@@ -21,7 +21,7 @@ import java.nio.file.AccessDeniedException;
 public class ExceptionController {
 
     @ExceptionHandler({BadRequestException.class, InvalidRequestException.class})
-    public ResponseEntity<CommonResponseDto> handleBadRequestException(BadRequestException ex) {
+    public ResponseEntity<CommonResponseDto> handleBadRequestException(Exception  ex) {
         CommonResponseDto errorResponse = new CommonResponseDto(400, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }

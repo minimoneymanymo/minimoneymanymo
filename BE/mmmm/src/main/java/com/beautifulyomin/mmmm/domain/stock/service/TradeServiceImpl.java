@@ -5,7 +5,10 @@ import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
 import com.beautifulyomin.mmmm.domain.fund.repository.StocksHeldRepository;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
+import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
+import com.beautifulyomin.mmmm.domain.member.repository.ParentAndChildrenRepository;
+import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
 import com.beautifulyomin.mmmm.domain.stock.dto.ReasonBonusMoneyRequestDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
@@ -13,6 +16,7 @@ import com.beautifulyomin.mmmm.domain.stock.entity.Stock;
 import com.beautifulyomin.mmmm.domain.stock.exception.TradeNotFoundException;
 import com.beautifulyomin.mmmm.domain.stock.repository.*;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
+import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
@@ -35,6 +39,8 @@ public class TradeServiceImpl implements TradeService {
     private final ChildrenRepository childrenRepository;
     private final StocksHeldRepository stocksHeldRepository;
     private final StockRepositoryCustom stockRepositoryCustom;
+    private final ParentRepository parentRepository;
+    private final ParentAndChildrenRepository parentAndChildrenRepository;
    // private final TradeRecordsRepositoryCustom tradeRecordsRepositoryCustom;
     private final ParentService parentService;
 
@@ -146,8 +152,23 @@ public class TradeServiceImpl implements TradeService {
     public int updateReaseonBonusMoney(String parentUserId, ReasonBonusMoneyRequestDto requestDto) {
 
         //이유 보상 머니 줄 수 없는 경우
+        //없는관계인 경우
+        Parent parent = parentRepository.findByUserId(parentUserId)
+                .orElseThrow(() -> new InvalidRoleException("부모가 아닙니다."));
+        Children child = childrenRepository.findByUserId(requestDto.getChildrenUserId())
+                .orElseThrow(() -> new InvalidRoleException("이 유저아이디의 자녀 찾을 수 없음 : " + requestDto.getChildrenUserId()));
+
+
+        Integer parentId = parent.getParentId();
+        Integer childrenId = child.getChildrenId();
+        Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
+
+        // 없는 관계인 경우 에러
+        if(parentAndChildrenTrue.isEmpty()){
+           throw new InvalidRoleException("부모자식관계가 아닙니다.");
+        }
+
         //부모의 계좌 잔액이 부족
-        Parent parent = parentService.findByUserId(parentUserId);
         if(parent.getBalance() < requestDto.getReasonBonusMoney()){
             throw new InvalidRequestException("이유 보상 금액이 마니모 계좌 잔액보다 큽니다.");
         }
@@ -158,10 +179,7 @@ public class TradeServiceImpl implements TradeService {
         if(trade.isEmpty()){
             throw new TradeNotFoundException(requestDto.getCreatedAt());
         }
-        // userId로 아이 정보 조회해서 dto에 childrenId 설정하기
-        Children child = childrenRepository.findByUserId(requestDto.getChildrenUserId())
-                .orElseThrow(() -> new RuntimeException("Children not found for userId: " + requestDto.getChildrenUserId()));
-        //해당 자식의 거래내역이 아닌경우
+       //해당 자식의 거래내역이 아닌경우
         if(!trade.get().getChildrenId().equals(child.getChildrenId())) {
             throw new AccessDeniedException("해당 거래는 요청한 사용자의 것이 아닙니다.");
         }

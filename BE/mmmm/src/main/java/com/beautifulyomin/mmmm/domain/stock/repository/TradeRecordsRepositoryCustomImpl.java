@@ -46,6 +46,7 @@ public class TradeRecordsRepositoryCustomImpl implements TradeRecordsRepositoryC
 
         return Optional.ofNullable(jpaQueryFactory
                 .select(Projections.constructor(TradeDto.class,
+                        tradeRecord.children.childrenId,
                         tradeRecord.amount,
                         tradeRecord.tradeSharesCount,
                         tradeRecord.reason,

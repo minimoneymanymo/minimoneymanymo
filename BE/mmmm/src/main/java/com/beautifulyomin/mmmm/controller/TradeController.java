@@ -47,9 +47,10 @@ public class TradeController {
                         .build());
     }
 
-    @PutMapping
+    @PutMapping("/child-reason-bonus-money")
     public ResponseEntity<CommonResponseDto> updateReasonBonusMoney(@RequestHeader("Authorization") String token, @Valid @RequestBody ReasonBonusMoneyRequestDto requestDto) {
         String userId = jwtUtil.getUsername(token);
+        System.out.println(userId);
         //토큰 유저가 부모가 아닐경우 401 리턴
         if(!parentService.isExistByUserId(userId)){
             throw new InvalidRoleException("부모가 아닙니다.");
@@ -58,7 +59,7 @@ public class TradeController {
 
         int result = tradeService.updateReaseonBonusMoney(userId,requestDto);
         if(result == 0){
-            throw new InvalidRequestException("이유보상머니 지급 실패");
+            throw new InvalidRequestException("이유보상머니 지급 실패"); //400
         }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponseDto.builder()
