@@ -72,8 +72,7 @@ dependencies {
     // Spring Context Support
     implementation 'org.springframework:spring-context-support:5.3.9'
 
-
-
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
