@@ -15,7 +15,7 @@ import {
 
 // 금융 API
 export const fintechInstance = axios.create({
-  baseURL: VITE_SSAFY_API_URL
+  baseURL: "https://finopenapi.ssafy.io/ssafy/api/v1/edu"
 })
 
 export const axiosAuthInstance = axios.create({
