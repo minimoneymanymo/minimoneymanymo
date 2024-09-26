@@ -3,6 +3,7 @@ import { StockModalSidebar } from "./StockModalSidebar"
 import { useState } from "react"
 import { PERFilter } from "./filters/PERFilter"
 import { MarketTypeFilter } from "./filters/MarketTypeFilter" // Import the new component
+import { MarketCapSizeFilter } from "./filters/marketCapSizeFilter"
 
 Modal.setAppElement("#root")
 
@@ -59,6 +60,10 @@ export function StockFilterModalForm({
     setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
   }
 
+  const handleMarketCapSizeChange = (marketCapSize: string) => {
+    setTemporaryFilters({ ...temporaryFilters, marketCapSize })
+  }
+
   return (
     <Modal
       isOpen={open}
@@ -80,6 +85,13 @@ export function StockFilterModalForm({
             <MarketTypeFilter
               marketType={temporaryFilters.marketType}
               handleMarketTypeChange={handleMarketTypeChange}
+            />
+          )}
+          {/* 시가총액 */}
+          {selectedCategory === "시가총액" && (
+            <MarketCapSizeFilter
+              marketCapSize={temporaryFilters.marketCapSize}
+              handleMarketCapSizeChange={handleMarketCapSizeChange}
             />
           )}
           {/* PER */}
