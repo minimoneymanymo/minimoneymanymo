@@ -7,7 +7,7 @@ import { postTrade, getChildMoney } from "@/api/trade-api"
 import { tradeData } from "./tradeData"
 
 // closingPrice를 props로 받기 위해 인터페이스 정의
-interface BuyFormProps {
+interface TradeFormProps {
   closingPrice: number | null // closingPrice가 null일 수도 있으므로 타입 지정
 }
 
@@ -17,7 +17,7 @@ interface CustomError extends Error {
   }
 }
 
-function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
+function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   const { stockCode } = useParams() // useParams로 stockCode 가져오기
   const [isBuyMode, setIsBuyMode] = useState<boolean>(true)
 
@@ -144,21 +144,13 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
 
   return (
     <div className="flex flex-col items-center">
-      {" "}
       {/* 중앙 정렬 */}
       <div className="mb-4 flex space-x-4">
-        {" "}
         {/* 수평 배열 및 간격 설정 */}
-        <Button
-          className="bg-red-500 text-white"
-          onClick={() => setIsBuyMode(true)}
-        >
+        <Button className="bg-buy" onClick={() => setIsBuyMode(true)}>
           매수
         </Button>
-        <Button
-          className="bg-blue-500 text-white"
-          onClick={() => setIsBuyMode(false)}
-        >
+        <Button className="bg-sell" onClick={() => setIsBuyMode(false)}>
           매도
         </Button>
       </div>
@@ -247,8 +239,8 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
           투자의 책임은 본인에게 있습니다.
         </p>
         <Button
-          className={isBuyMode ? "bg-red-500" : "bg-blue-500"}
-          text-white
+          className={isBuyMode ? "bg-buy" : "bg-sell"}
+          text-white="true"
           onClick={() => handleTrade()}
         >
           {isBuyMode ? "매수" : "매도"}
@@ -258,4 +250,4 @@ function BuyForm({ closingPrice }: BuyFormProps): JSX.Element {
   )
 }
 
-export default BuyForm
+export default TradeForm
