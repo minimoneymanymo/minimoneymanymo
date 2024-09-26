@@ -1,9 +1,9 @@
 import axios from "axios"
 const { 
-  VITE_SSAFY_API_URL, 
-  VITE_API_ENDPOINT: endpoint, 
-  VITE_API_CONTEXT_PATH: contextPath,
-  VITE_API_VERSION: version
+  VITE_SSAFY_API_URL = process.env.VITE_SSAFY_API_URL, 
+  VITE_API_ENDPOINT: endpoint = process.env.VITE_API_ENDPOINT, 
+  VITE_API_CONTEXT_PATH: contextPath = process.env.VITE_API_CONTEXT_PATH,
+  VITE_API_VERSION: version = process.env.VITE_API_VERSION
 } = import.meta.env;
 const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
 
