@@ -1,8 +1,8 @@
-import {getMyChild, getMyChildren} from "@/api/user-api"
+import { getMyChild, getMyChildren } from "@/api/user-api"
 import ChildContext from "@/components/context/ChildContext"
 import MyChildItem from "@/components/my-children/MyChildItem"
-import {Child} from "@/components/my-children/types"
-import React, {useEffect, useState} from "react"
+import { Child } from "@/components/my-children/types"
+import React, { useEffect, useState } from "react"
 import {
   NavLink,
   Outlet,
@@ -16,7 +16,7 @@ const ParentChildrenPageLayout: React.FC = () => {
   const navigate = useNavigate()
 
   const [child, setChild] = useState<Child | null>(null)
-  const {childId} = useParams()
+  const { childId } = useParams()
   const [isLoading, setIsLoading] = useState(false)
   const id = childId
   useEffect(() => {
@@ -62,15 +62,15 @@ const ParentChildrenPageLayout: React.FC = () => {
 
   // 클릭 핸들러
   const handleNavClick = (path: string) => {
-    navigate(path, {state: {child}}) // 상태 전달
+    navigate(path, { state: { child } }) // 상태 전달
   }
 
   return (
-      <ChildContext.Provider value={{child,setChild}}>
+    <ChildContext.Provider value={{ child, setChild }}>
       <div className="flex w-full flex-col">
         {child ? (
           <>
-            <MyChildItem child={child}/>
+            <MyChildItem child={child} />
 
             <ul className="justfy-end my-2 ml-auto flex space-x-2">
               {navItems.map((item) => (

@@ -1,4 +1,4 @@
-import {Routes, Route} from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import ChildPage from "@/pages/chlid/ChildPage"
 import LoginPage from "@/pages/main/LoginPage"
 import MainPage from "@/pages/main/MainPage"
@@ -14,7 +14,7 @@ import MyChildrenPage from "./pages/parentchildren/MyChildrenPage"
 import MyChildFinancePage from "./pages/parentchildren/MyChildFinancePage"
 import StockPageLayout from "./layouts/StockPageLayout"
 import ChartPage from "./pages/stock/ChartPage"
-import MyDairy from "./components/my-info/Calender"
+import MyDairy from "./components/diary/Calender"
 import ChildDairyPage from "./pages/chlid/ChildDairyPage"
 function App() {
   return (
