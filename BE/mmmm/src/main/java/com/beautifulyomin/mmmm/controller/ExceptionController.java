@@ -21,15 +21,8 @@ import java.nio.file.AccessDeniedException;
 @ControllerAdvice(basePackages = "com.beautifulyomin.mmmm")
 public class ExceptionController {
 
-    @ExceptionHandler({BadRequestException.class, InvalidRequestException.class})
+    @ExceptionHandler({BadRequestException.class, InvalidRequestException.class, IllegalArgumentException.class})
     public ResponseEntity<CommonResponseDto> handleBadRequestException(BadRequestException ex) {
-        CommonResponseDto errorResponse = new CommonResponseDto(400, ex.getMessage(), null);
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<CommonResponseDto> handleIllegalArgumentException(IllegalArgumentException ex) {
-        log.error("Handling IllegalArgumentException: {}", ex.getMessage());
         CommonResponseDto errorResponse = new CommonResponseDto(400, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }

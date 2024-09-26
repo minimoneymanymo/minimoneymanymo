@@ -20,10 +20,6 @@ public class StockFilterRequestDto {
     private BigDecimal perMax; // PER 최대값
     private BigDecimal pbrMin; // PBR 최소값
     private BigDecimal pbrMax;
-    private BigDecimal epsMin; // EPS 최소값
-    private BigDecimal epsMax;
-    private BigDecimal bpsMin; // BPS 최소값
-    private BigDecimal bpsMax;
 
     //가격 조건
     private BigDecimal priceMin; // 주가 최소값
@@ -40,7 +36,5 @@ public class StockFilterRequestDto {
     private BigInteger volumeMax;
     private BigInteger tradingValueMin; // 1일 누적 거래 대금 최소값
     private BigInteger tradingValueMax;
-    private BigDecimal volumeTurnoverRatioMin; // 거래량 회전률 최소값
-    private BigDecimal volumeTurnoverRatioMax;
 
 }
