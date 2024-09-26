@@ -91,7 +91,7 @@ public class DailyStockProcessor implements ItemProcessor<String, Map<String, Ob
                 .lowestPrice(output.getBigDecimal("stck_lwpr"))
                 .highestPrice(output.getBigDecimal("stck_hgpr"))
                 .operatingPrice(output.getBigDecimal("stck_oprc"))
-                .tradingVolume(output.getBigInteger("acml_vol"))
+                .tradingVolume(output.getLong("acml_vol"))
                 .build();
     }
 
