@@ -363,7 +363,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
             BigDecimal periodClosingPrice = periodData.get(periodData.size() - 1).get(dailyStockChart.closingPrice);
             BigDecimal periodHighestPrice = getHighestPrice(periodData);
             BigDecimal periodLowestPrice = getLowestPrice(periodData);
-            BigInteger periodTradingVolume = getTotalTradingVolume(periodData);
+            Long periodTradingVolume = getTotalTradingVolume(periodData);
 
             periodStockCharts.add(new DailyStockChartDto(
                     periodStartDate, periodHighestPrice, periodLowestPrice, periodTradingVolume, periodOpeningPrice, periodClosingPrice));
@@ -375,10 +375,10 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         return periodStockCharts;
     }
 
-    private BigInteger getTotalTradingVolume(List<Tuple> periodData) {
+    private Long getTotalTradingVolume(List<Tuple> periodData) {
         return periodData.stream()
                 .map(tuple -> tuple.get(dailyStockChart.tradingVolume))
-                .reduce(BigInteger.ZERO, BigInteger::add);
+                .reduce(0L, Long::sum);
     }
 
     private BigDecimal getLowestPrice(List<Tuple> periodData) {
