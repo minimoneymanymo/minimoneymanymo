@@ -1,8 +1,8 @@
 import Modal from "react-modal"
 import { StockModalSidebar } from "./StockModalSidebar"
 import { useState } from "react"
-import { Slider } from "@material-tailwind/react"
 import { PERFilter } from "./filters/PERFilter"
+import { MarketTypeFilter } from "./filters/MarketTypeFilter" // Import the new component
 
 Modal.setAppElement("#root")
 
@@ -77,32 +77,11 @@ export function StockFilterModalForm({
         <div className="relative flex-1 overflow-auto p-6">
           {/* 시장 */}
           {selectedCategory === "시장" && (
-            <div>
-              <h3 className="text-xl font-semibold">시장</h3>
-              <p className="mb-4 text-gray-600">시장을 선택하세요.</p>
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    value="KOSPI"
-                    checked={temporaryFilters.marketType === "KOSPI"}
-                    onChange={() => handleMarketTypeChange("KOSPI")}
-                  />
-                  코스피 시장만 보기
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    value="KOSDAQ"
-                    checked={temporaryFilters.marketType === "KOSDAQ"}
-                    onChange={() => handleMarketTypeChange("KOSDAQ")}
-                  />
-                  코스닥 시장만 보기
-                </label>
-              </div>
-            </div>
+            <MarketTypeFilter
+              marketType={temporaryFilters.marketType}
+              handleMarketTypeChange={handleMarketTypeChange}
+            />
           )}
-
           {/* PER */}
           {selectedCategory === "PER" && (
             <PERFilter
