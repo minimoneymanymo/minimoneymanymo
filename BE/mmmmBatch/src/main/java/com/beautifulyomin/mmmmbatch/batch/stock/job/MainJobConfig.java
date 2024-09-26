@@ -7,6 +7,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.JobStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +19,9 @@ public class MainJobConfig { //각각의 job을 연결하는 jog flow
     private final JobLauncher jobLauncher;
 
     public MainJobConfig(JobRepository jobRepository,
-                         Job tokenRenewalJob, Job dailyStockJob, JobLauncher jobLauncher) {
+                         @Qualifier("tokenRenewalJob") Job tokenRenewalJob,
+                         @Qualifier("dailyStockJob") Job dailyStockJob,
+                         JobLauncher jobLauncher) {
         this.jobRepository = jobRepository;
         this.tokenRenewalJob = tokenRenewalJob;
         this.dailyStockJob = dailyStockJob;

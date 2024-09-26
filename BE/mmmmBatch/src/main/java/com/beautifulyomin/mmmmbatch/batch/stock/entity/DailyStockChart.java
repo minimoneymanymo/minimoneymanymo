@@ -2,13 +2,9 @@ package com.beautifulyomin.mmmmbatch.batch.stock.entity;
 
 import com.beautifulyomin.mmmmbatch.batch.stock.entity.key.DailyStockDataId;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Entity
@@ -39,7 +35,7 @@ public class DailyStockChart {
     private BigDecimal closingPrice;
 
     @Column(nullable = false)
-    private BigInteger tradingVolume;
+    private Long tradingVolume;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stockCode", insertable = false, updatable = false)
