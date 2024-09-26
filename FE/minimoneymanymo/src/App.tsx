@@ -24,6 +24,7 @@ function App() {
         <Route index element={<MainPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
+        <Route path="/stocks" element={<StockPageLayout />} />
 
         <Route path="/news" element={<NewsPage />} />
         <Route path="/parent" element={<ParentPageLayout />}>
@@ -47,7 +48,7 @@ function App() {
           <Route path="diary" element={<ChildDairyPage />} />
         </Route>
         <Route path="/stock" element={<StockPageLayout />}>
-          <Route path="detail" element={<ChartPage />} />
+          <Route path=":stockCode" element={<ChartPage />} />{" "}
         </Route>
       </Route>
     </Routes>

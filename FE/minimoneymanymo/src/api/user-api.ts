@@ -2,17 +2,55 @@ import { axiosAuthInstance, axiosPublicInstance } from "@/api/httpcommons"
 import axios from "axios"
 
 // 아이디 체크
-export const getIsDuplicatedId = async (id: string, role: string) => {
+export const getIsDuplicatedId = async (email: string) => {
   try {
-    const res = await axiosPublicInstance.get("/members/checkid", {
-      params: {
-        id: id,
-        role: role,
-      },
+    const res = await axiosPublicInstance.post("/members/checkid", {
+      email: email, // JSON 형식으로 이메일을 포함
     })
-    return res.data
+    return res.data // 서버로부터 받은 응답 반환
   } catch (e) {
-    return e
+    return e // 오류 발생 시, 오류 객체 반환
+  }
+}
+
+//이메일 인증코드
+export const checkAuthCode = async (email: string, authNum: string) => {
+  try {
+    const res = await axiosPublicInstance.post("/members/mailauthCheck", {
+      email: email, // JSON 형식으로 이메일 포함
+      authNum: authNum, // JSON 형식으로 인증 코드 포함
+    })
+    return res.data // 서버로부터 받은 응답 반환
+  } catch (e) {
+    return e // 오류 발생 시, 오류 객체 반환
+  }
+}
+
+//회원가입
+export const signUp = async (
+  userId: string,
+  password: string,
+  name: string,
+  role: string,
+  userKey: string,
+  phoneNumber: string,
+  birthDay: string,
+  parentsNumber: string
+) => {
+  try {
+    const res = await axiosPublicInstance.post("/members/join", {
+      userId,
+      password,
+      name,
+      userKey,
+      phoneNumber,
+      parentsNumber,
+      role,
+      birthDay,
+    })
+    return res.data // 서버로부터 받은 응답 반환
+  } catch (e) {
+    return e // 오류 발생 시, 오류 객체 반환
   }
 }
 
@@ -22,7 +60,7 @@ export const userLogin = async (formData: FormData) => {
   }
   try {
     const res = await axiosPublicInstance.post("/members/login", formData)
-    return res
+    return res.data
   } catch (e) {
     return e
   }
@@ -158,33 +196,6 @@ export const updateQuizBonusMoney = async (
     } else {
       // Axios 에러가 아닌 경우
       console.error("updateAllowance에서 오류 발생:", e)
-      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
-    }
-  }
-}
-
-// 사용자 정보 조회
-const requestWithdrawApi = async (
-  param: object,
-  success: (response: object) => void,
-  fail: (response: object) => void
-) => {
-  axiosAuthInstance.post(`/members/info`, param).then(success).catch(fail)
-}
-
-export const getMemberInfo = async () => {
-  try {
-    const res = await axiosAuthInstance.get(`/members/info`)
-    console.log(res.data)
-    return res.data
-  } catch (e) {
-    if (axios.isAxiosError(e) && e.response) {
-      // Axios 에러 객체인 경우
-      console.error("사용자 정보 조회 시 오류 발생:", e.response)
-      return e.response // e.response는 { data, status, headers, config }를 포함함
-    } else {
-      // Axios 에러가 아닌 경우
-      console.error("사용자 정보 조회 시 오류 발생:", e)
       return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react"
+import { useEffect, useState } from "react"
 import {
   Card,
   Button,
@@ -8,10 +8,11 @@ import {
   ListItemPrefix,
   Radio,
 } from "@material-tailwind/react"
-import {Visibility, VisibilityOff} from "@mui/icons-material"
-import {IconButton, InputAdornment, TextField} from "@mui/material"
-import passLogo from "../../assets/signin/image.png"
-import {getIsDuplicatedId, userLogin} from "@/api/user-api"
+import { Visibility, VisibilityOff, Check } from "@mui/icons-material"
+import { IconButton, InputAdornment, TextField } from "@mui/material"
+import { getIsDuplicatedId, signUp, checkAuthCode } from "@/api/user-api"
+import { useNavigate } from "react-router-dom"
+import { registerMemberApi } from "@/api/account-api"
 
 export function SimpleRegistrationForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -22,15 +23,21 @@ export function SimpleRegistrationForm() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [passwordError, setPasswordError] = useState("")
   const [id, setId] = useState("") // 상태 추가
+  const [authNum, setAuthNum] = useState("") // 상태 추가
   const [isIdValid, setIsIdValid] = useState<boolean | null>(null) // null means no validation yet
+  const [isAuthValid, setIsAuthValid] = useState<boolean | null>(null) // null means no validation yet
   const [role, setRole] = useState<string>("") // Initialize with null or default value
+  const [isDuple, setIsDuple] = useState<boolean | null>(null) // null means no validation yet
+  const [userName, setUserName] = useState("") // userName 상태 변수 선언
+  const [birthDay, setBirthDay] = useState("") // 생일 상태 변수
+  const [parentsNumber, setParentsNumber] = useState("") // 부모 번호 상태 변수
+  const [phoneNumber, setPhoneNumber] = useState("") // 전화번호 상태 변수
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    setIsIdValid(false)
-    checkId()
-  }, [role])
   const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setId(event.target.value)
+    setIsAuthValid(false)
+    setIsIdValid(false)
   }
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,25 +70,76 @@ export function SimpleRegistrationForm() {
   const handleMouseDownPassword = (event: React.MouseEvent) => {
     event.preventDefault()
   }
-  const checkId = async () => {
-    console.log(id + " " + role)
-    try {
-      const response = await getIsDuplicatedId(id, role)
-      if (response) {
-        const data = await response
-        if (data.stateCode === 200) {
-          setIsIdValid(true) // ID is available
-        } else if (data.stateCode === 409) {
-          setIsIdValid(false) // ID is not available
-        }
-      } else {
-        setIsIdValid(null) // Error in response
-        alert("서버 응답 오류")
-      }
-    } catch (error) {
-      setIsIdValid(null) // Error in request
-      console.error("아이디 확인 중 오류 발생:", error)
+  const handleCheckId = async () => {
+    const result = await getIsDuplicatedId(id) // API 호출
+
+    // 상태 코드에 따라 처리
+    if (result.stateCode === 200) {
+      setIsIdValid(true) // ID is available
+      setIsDuple(false)
+    } else if (result.stateCode === 409) {
+      setIsIdValid(false) // ID is not available
+      setIsDuple(true)
+      alert(result.message) // 이미 사용 중인 이메일 메시지 표시
+    } else {
+      alert("서버 오류 발생: " + result.message) // 기타 오류 메시지 표시
     }
+  }
+  const handleCheckAuthCode = async () => {
+    const result = await checkAuthCode(id, authNum) // 이메일과 인증 코드 전달
+    if (result.stateCode === 200) {
+      console.log("인증 코드가 확인되었습니다.") // 인증 성공 메시지
+      setIsAuthValid(true)
+    } else if (result.stateCode === 400) {
+      console.log("인증 코드가 잘못되었습니다.") // 인증 실패 메시지
+    } else {
+      alert("서버 오류 발생: " + result.message) // 오류 메시지 표시
+    }
+  }
+
+  const handleAuthNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthNum(e.target.value)
+  }
+
+  const handleSignUp = async () => {
+    const userKey = await registerMemberApi(id)
+    if (userKey != null) {
+      const result = await signUp(
+        id,
+        password,
+        userName,
+        role,
+        "userKey",
+        phoneNumber,
+        birthDay,
+        parentsNumber
+      ) // 이메일과 인증 코드 전달
+      console.log(result)
+      if (result.stateCode === 201) {
+        console.log("회원가입 성공")
+        navigate("/") // main으로 navigate
+      } else {
+        console.log("회원가입 실패")
+      }
+    }
+    // userKey 제외한 회원가입 테스트 시 위 코드 주석처리하고 하단 코드 주석 풀어서 테스트하시면 돼요!
+    // const result = await signUp(
+    //   id,
+    //   password,
+    //   userName,
+    //   role,
+    //   "userKey",
+    //   phoneNumber,
+    //   birthDay,
+    //   parentsNumber
+    // ) // 이메일과 인증 코드 전달
+    // console.log(result)
+    // if (result.stateCode === 201) {
+    //   console.log("회원가입 성공")
+    //   navigate("/") // main으로 navigate
+    // } else {
+    //   console.log("회원가입 실패")
+    // }
   }
 
   return (
@@ -102,21 +160,28 @@ export function SimpleRegistrationForm() {
       <form className="mb-2 mt-8 w-80 max-w-screen-lg sm:w-96">
         <div className="mb-1 flex flex-col gap-6">
           <Typography variant="h6" color="blue-gray" className="-mb-3">
-            아이디
+            아이디{" "}
+            {isAuthValid && (
+              <Check style={{ color: "green", marginLeft: "8px" }} />
+            )}
           </Typography>
-          <div style={{display: "flex", flexDirection: "column"}}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <TextField
               fullWidth
               variant="outlined"
+              placeholder="example@example.com"
               size="small"
               value={id}
               onChange={handleIdChange}
               className="!border-t-blue-gray-200 focus:!border-t-gray-900"
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end" style={{marginRight: "-8px"}}>
+                  <InputAdornment
+                    position="end"
+                    style={{ marginRight: "-8px" }}
+                  >
                     <Button
-                      onClick={checkId}
+                      onClick={handleCheckId}
                       className="rounded-lg bg-primary-m1 text-white"
                       style={{
                         minWidth: "auto",
@@ -124,7 +189,7 @@ export function SimpleRegistrationForm() {
                         height: "32px",
                       }}
                     >
-                      중복확인
+                      인증메일보내기
                     </Button>
                   </InputAdornment>
                 ),
@@ -137,19 +202,86 @@ export function SimpleRegistrationForm() {
                 marginTop: "4px",
               }}
             >
-              {isIdValid === true && (
-                <Typography style={{color: "green"}}>
-                  사용 가능한 아이디입니다.
-                </Typography>
+              {isIdValid && (
+                <>
+                  <Typography
+                    style={{
+                      color: "green",
+                      marginBottom: "8px",
+                      width: "340px",
+                    }}
+                  >
+                    메일이 발송되었습니다.
+                    <br />
+                    인증코드를 입력하세요.
+                  </Typography>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      size="small"
+                      value={authNum} // authNum으로 변경
+                      onChange={handleAuthNumChange}
+                      className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment
+                            position="end"
+                            style={{ marginRight: "-8px" }}
+                          >
+                            <Button
+                              onClick={handleCheckAuthCode}
+                              className="rounded-lg bg-primary-m1 text-white"
+                              style={{
+                                minWidth: "auto",
+                                padding: "0 8px",
+                                height: "32px",
+                              }}
+                            >
+                              인증
+                            </Button>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
+                </>
               )}
-              {isIdValid === false && (
-                <Typography style={{color: "red"}}>
-                  사용 불가능한 아이디입니다.
-                </Typography>
+              {isDuple === true && (
+                <>
+                  <Typography style={{ color: "red" }}>
+                    사용 불가능한 아이디입니다.
+                  </Typography>
+                </>
               )}
             </div>
           </div>
 
+          <Typography variant="h6" color="blue-gray" className="-mb-3">
+            이름
+          </Typography>
+
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="홍길동"
+            size="small"
+            className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+            value={userName} // 상태 변수로 현재 값 설정
+            onChange={(e) => setUserName(e.target.value)} // 입력값 변경 시 핸들러 호출
+          />
+          <Typography variant="h6" color="blue-gray" className="-mb-3">
+            전화번호
+          </Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="010-0000-0000"
+            size="small"
+            className="!border-t-blue-gray-200 focus:!border-t-blue-gray-900"
+            value={phoneNumber} // phoneNumber 상태 변수로 설정
+            onChange={(e) => setPhoneNumber(e.target.value)} // 전화번호 입력 시 상태 업데이트
+          />
           <Typography variant="h6" color="blue-gray" className="-mb-3">
             비밀번호
           </Typography>
@@ -171,7 +303,7 @@ export function SimpleRegistrationForm() {
                     onMouseEnter={() => setHoverPassword(true)}
                     onMouseLeave={() => setHoverPassword(false)}
                     onMouseDown={handleMouseDownPassword}
-                    sx={{padding: 0}} // Remove extra padding
+                    sx={{ padding: 0 }} // Remove extra padding
                   >
                     {showPassword || hoverPassword ? (
                       <VisibilityOff />
@@ -211,7 +343,7 @@ export function SimpleRegistrationForm() {
                     onMouseEnter={() => setHoverConfirmPassword(true)}
                     onMouseLeave={() => setHoverConfirmPassword(false)}
                     onMouseDown={handleMouseDownPassword}
-                    sx={{padding: 0}} // Remove extra padding
+                    sx={{ padding: 0 }} // Remove extra padding
                   >
                     {showConfirmPassword || hoverConfirmPassword ? (
                       <VisibilityOff />
@@ -228,26 +360,7 @@ export function SimpleRegistrationForm() {
               {passwordError}
             </Typography>
           )}
-          <>
-            <Typography variant="h6" color="blue-gray" className="-mb-3">
-              전화번호(PASS인증)
-              <Button
-                className="ml-2 p-0" // 이미지와 버튼 간의 간격 조절
-                style={{minWidth: "auto", padding: 0}} // 버튼의 최소 너비와 패딩 설정
-              >
-                <img src={passLogo} alt="Logo" className="h-9 w-9" />{" "}
-                {/* 버튼 안에 이미지 추가 및 크기 설정 */}
-              </Button>
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              placeholder="pass인증을 진행해 주세요!"
-              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-              InputProps={{readOnly: true}} // 사용자 입력을 방지
-            />
-          </>
+          <></>
 
           <Card className="w-full max-w-[24rem] shadow-none">
             <List className="flex-row">
@@ -265,7 +378,7 @@ export function SimpleRegistrationForm() {
                       onChange={handleRoleChange}
                       ripple={false}
                       className="hover:before:opacity-0"
-                      containerProps={{className: "p-0"}}
+                      containerProps={{ className: "p-0" }}
                     />
                   </ListItemPrefix>
                   <Typography
@@ -290,7 +403,7 @@ export function SimpleRegistrationForm() {
                       onChange={handleRoleChange}
                       ripple={false}
                       className="hover:before:opacity-0"
-                      containerProps={{className: "p-0"}}
+                      containerProps={{ className: "p-0" }}
                     />
                   </ListItemPrefix>
                   <Typography
@@ -312,9 +425,11 @@ export function SimpleRegistrationForm() {
               <TextField
                 fullWidth
                 variant="outlined"
-                size="small"
                 placeholder="010-0000-0000"
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                size="small"
+                className="!border-t-blue-gray-200 focus:!border-t-blue-gray-900"
+                value={parentsNumber} // parentsNumber 상태 변수로 설정
+                onChange={(e) => setParentsNumber(e.target.value)} // 부모 번호 입력 시 상태 업데이트
               />
               <Typography variant="h6" color="blue-gray" className="-mb-3">
                 생일을 입력해 주세요
@@ -322,17 +437,30 @@ export function SimpleRegistrationForm() {
               <TextField
                 fullWidth
                 variant="outlined"
+                placeholder="YYYY-MM-DD"
                 size="small"
-                placeholder="YYYYMMDD"
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                className="!border-t-blue-gray-200 focus:!border-t-blue-gray-900"
+                value={birthDay} // birthDay 상태 변수로 설정
+                onChange={(e) => setBirthDay(e.target.value)} // 생일 입력 시 상태 업데이트
               />
             </>
           )}
         </div>
-
-        <Button className="mt-6 bg-primary-m1" fullWidth>
+        <Button
+          className="mt-6 bg-primary-m1"
+          fullWidth
+          disabled={
+            !isAuthValid ||
+            passwordError !== "" ||
+            password.trim() === "" ||
+            role.length === 0 || // role의 길이가 0일 경우 버튼 비활성화
+            userName.length === 0
+          }
+          onClick={handleSignUp}
+        >
           미니마니모를 향한 여정을 시작해보아요!
         </Button>
+
         <Typography color="gray" className="mt-4 text-center font-normal">
           Already have an account?{" "}
         </Typography>

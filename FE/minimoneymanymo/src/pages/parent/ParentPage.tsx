@@ -123,7 +123,6 @@ function ParentPage(): JSX.Element {
 
   // 아래는 mmmm API
   let data = 1000
-
   // 자식-출금 요청
   const requestWithdraw = () => {
     requestWithdrawApi(

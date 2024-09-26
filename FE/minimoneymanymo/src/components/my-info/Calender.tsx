@@ -170,7 +170,7 @@ const Calender: React.FC = () => {
         selectedDate &&
         day.isSame(moment(selectedDate).add(1, "week"), "week")
       ) {
-        weeks.push(renderEventComponent!())
+        weeks.push(renderEventComponent?.() || <div />)
       }
     }
     return weeks

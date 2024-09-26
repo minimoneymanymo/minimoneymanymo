@@ -12,6 +12,7 @@ pipeline {
             steps {
                 script {
                     dir('FE/minimoneymanymo') {
+                         sh 'rm -rf node_modules'
                         docker.build('mmmm-react-image', '-f Dockerfile .')
                     }
                 }
@@ -27,5 +28,16 @@ pipeline {
             }
         }
 
+        
+        stage('Up Docker Compose') {
+            steps {
+                script {
+                    // /var/jenkins_home/compose로 이동하여 Docker Compose 실행
+                    sh 'cd /var/jenkins_home/compose && docker-compose -f docker-compose.mmmm-react-blue.yml up -d'
+                }
+            }
+        }
+
     }
 }
+

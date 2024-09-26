@@ -1,4 +1,4 @@
-import {useState} from "react"
+import { useState } from "react"
 import {
   Card,
   Button,
@@ -8,10 +8,10 @@ import {
   ListItemPrefix,
   Radio,
 } from "@material-tailwind/react"
-import {Visibility, VisibilityOff} from "@mui/icons-material"
-import {IconButton, InputAdornment, TextField} from "@mui/material"
-import passLogo from "../../assets/signin/image.png"
-import {userLogin} from "@/api/user-api"
+import { Visibility, VisibilityOff } from "@mui/icons-material"
+import { IconButton, InputAdornment, TextField } from "@mui/material"
+import { userLogin } from "@/api/user-api"
+import { useNavigate } from "react-router-dom"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -19,6 +19,7 @@ export function LoginForm() {
   const [password, setPassword] = useState("")
   const [id, setId] = useState("") // 상태 추가
   const [role, setRole] = useState<number>(0) // Initialize with null or default value
+  const navigate = useNavigate()
 
   const goLogin = async (): Promise<void> => {
     console.log("로그인 버튼 클릭")
@@ -29,13 +30,17 @@ export function LoginForm() {
 
     try {
       const response = await userLogin(formData)
+      console.log(response)
+      if (response.stateCode == 200) {
+        alert("로그인 성공")
+        navigate("/")
+      }
     } catch (error) {
       console.error("Login failed:", error)
     }
   }
 
   const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("아이디", event.target.value)
     setId(event.target.value)
   }
 
@@ -101,7 +106,7 @@ export function LoginForm() {
                       onMouseEnter={() => setHoverPassword(true)}
                       onMouseLeave={() => setHoverPassword(false)}
                       onMouseDown={handleMouseDownPassword}
-                      sx={{padding: 0}} // Remove extra padding
+                      sx={{ padding: 0 }} // Remove extra padding
                     >
                       {showPassword || hoverPassword ? (
                         <VisibilityOff />
@@ -131,7 +136,7 @@ export function LoginForm() {
                       onChange={handleRoleChange}
                       ripple={false}
                       className="hover:before:opacity-0"
-                      containerProps={{className: "p-0"}}
+                      containerProps={{ className: "p-0" }}
                     />
                   </ListItemPrefix>
                   <Typography
@@ -156,7 +161,7 @@ export function LoginForm() {
                       onChange={handleRoleChange}
                       ripple={false}
                       className="hover:before:opacity-0"
-                      containerProps={{className: "p-0"}}
+                      containerProps={{ className: "p-0" }}
                     />
                   </ListItemPrefix>
                   <Typography
