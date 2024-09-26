@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import moment from "moment"
+import MyInvestment from "./MyInvestment"
 
 interface Event {
   title: string
@@ -54,10 +55,11 @@ const Calender: React.FC = () => {
     // 밑에 여유를 두도록 하면 좋을것같음.
   }, [selectedDate])
 
+  // 아름 작업할
   const renderEventComponent = () => {
     if (!selectedDate) return null
 
-    //해당 날자 일기 내역
+    //해당 날자 일기 내역 -> MyInvestment로 넘겨라....
     const filteredEvents = events.filter((event) => {
       const eventStart = moment(event.date)
       return eventStart.isSame(selectedDate)
@@ -68,34 +70,7 @@ const Calender: React.FC = () => {
         className="mt-4 grid h-[450px] grid-cols-2 rounded border border-blue-300 bg-blue-100 p-4"
         ref={eventSectionRef}
       >
-        <div className="col-span-1">
-          <h3 className="font-bold">머니 변동 내역</h3>
-          <ul>
-            {filteredEvents.length > 0 ? (
-              filteredEvents.map((event, index) => (
-                <li key={index}>
-                  {event.title} ({event.date})
-                </li>
-              ))
-            ) : (
-              <li>No events</li>
-            )}
-          </ul>
-        </div>
-        <div className="col-span-1">
-          <h3 className="font-bold"> 투자 기록 </h3>
-          <ul>
-            {filteredEvents.length > 0 ? (
-              filteredEvents.map((event, index) => (
-                <li key={index}>
-                  {event.title} ({event.date})
-                </li>
-              ))
-            ) : (
-              <li>No events</li>
-            )}
-          </ul>
-        </div>
+        <MyInvestment />
       </div>
     )
   }
