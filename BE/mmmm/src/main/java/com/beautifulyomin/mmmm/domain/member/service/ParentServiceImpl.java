@@ -11,6 +11,7 @@ import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentAndChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
+@Slf4j
 public class ParentServiceImpl implements ParentService {
 
     private final ParentRepository parentRepository;
@@ -194,6 +197,8 @@ public class ParentServiceImpl implements ParentService {
         Parent parent = parentRepository.findByUserId(parentUserId)
                 .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
         Integer parentId = parent.getParentId();
+
+        log.info("Setting withdrawable money for child ID: {} with amount: {}", childrenId, settingWithdrawableMoney);
 
         Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
         Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
