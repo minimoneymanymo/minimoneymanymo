@@ -95,7 +95,12 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                 .from(dailyStockChart)
                 .where(dailyStockChart.stockCode.eq(stockCode))
                 .orderBy(dailyStockChart.date.desc())
-                .stream().limit(PERIOD_LIMIT_CNT).toList();
+                .stream()
+                .limit(PERIOD_LIMIT_CNT)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    Collections.reverse(list); // 리스트를 역순으로 정렬
+                    return list;
+                }));
     }
 
     @Override
@@ -330,7 +335,12 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         }
         NumberTemplate<Integer> periodNumberExpression = calculatePeriodNumber(periodType, latestDate, dailyStockChart.date);
         Map<Integer, List<Tuple>> periodGroups = groupByPeriod(periodType, stockCode, periodNumberExpression);
-        return summarizePeriodStockCharts(periodGroups);
+        List<DailyStockChartDto> charts = summarizePeriodStockCharts(periodGroups);
+
+        return charts.stream().collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+            Collections.reverse(list);
+            return list;
+        }));
     }
 
     /**
