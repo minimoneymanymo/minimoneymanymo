@@ -9,8 +9,8 @@ import java.util.Optional;
 public interface TradeRecordsRepositoryCustom {
     TradeDto findTradeByStockCode(String stockCode);
 
-    Optional<TradeDto> findTredeByCreateAt(String createAt);
+    Optional<TradeDto> findTradeByCreateAt(String createAt);
 
-    long UpdateReasonBonusMoneyByCreateAt(String parentUserId, Integer childrenId, Integer reasonBonusMoney, String createAt);
+    long updateReasonBonusMoneyByCreateAt(String parentUserId, Integer childrenId, Integer reasonBonusMoney, String createAt);
 
 }

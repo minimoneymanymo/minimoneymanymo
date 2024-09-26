@@ -175,7 +175,7 @@ public class TradeServiceImpl implements TradeService {
 
 
         //거래내역을 찾을 수 없는 경우
-        Optional<TradeDto> trade =  tradeRecordsRepository.findTredeByCreateAt(requestDto.getCreatedAt());
+        Optional<TradeDto> trade =  tradeRecordsRepository.findTradeByCreateAt(requestDto.getCreatedAt());
         if(trade.isEmpty()){
             throw new TradeNotFoundException(requestDto.getCreatedAt());
         }
@@ -187,7 +187,7 @@ public class TradeServiceImpl implements TradeService {
         else if(trade.get().getReasonBonusMoney() != null){
             throw new InvalidRequestException("이미 이유 보상 머니를 지급했습니다.");
         }
-        long result = tradeRecordsRepository.UpdateReasonBonusMoneyByCreateAt(parentUserId,child.getChildrenId(),requestDto.getReasonBonusMoney() ,requestDto.getCreatedAt());
+        long result = tradeRecordsRepository.updateReasonBonusMoneyByCreateAt(parentUserId,child.getChildrenId(),requestDto.getReasonBonusMoney() ,requestDto.getCreatedAt());
         //성공적으로 반환한경우 result = 1
 
 

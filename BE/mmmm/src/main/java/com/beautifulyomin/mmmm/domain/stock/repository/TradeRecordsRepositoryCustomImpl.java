@@ -41,7 +41,7 @@ public class TradeRecordsRepositoryCustomImpl implements TradeRecordsRepositoryC
     }
 
     @Override
-    public Optional<TradeDto> findTredeByCreateAt(String createAt) {
+    public Optional<TradeDto> findTradeByCreateAt(String createAt) {
         QTradeRecord tradeRecord = QTradeRecord.tradeRecord;
 
         return Optional.ofNullable(jpaQueryFactory
@@ -60,7 +60,7 @@ public class TradeRecordsRepositoryCustomImpl implements TradeRecordsRepositoryC
 
     @Override
     @Transactional
-    public long UpdateReasonBonusMoneyByCreateAt(String parentUserId, Integer childrenId, Integer reasonBonusMoney, String createAt) {
+    public long updateReasonBonusMoneyByCreateAt(String parentUserId, Integer childrenId, Integer reasonBonusMoney, String createAt) {
         QTradeRecord tradeRecord = QTradeRecord.tradeRecord;
         QChildren children = QChildren.children;
         QParent parent = QParent.parent;
