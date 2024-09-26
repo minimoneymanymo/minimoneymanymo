@@ -31,6 +31,7 @@ public class ParentServiceImpl implements ParentService {
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final FileService fileService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public ParentServiceImpl(ParentRepository parentRepository, ParentRepositoryCustom parentRepositoryCustom, ParentAndChildrenRepository parentAndChildrenRepository, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.parentRepository = parentRepository;
         this.parentRepositoryCustom = parentRepositoryCustom;
@@ -233,5 +234,4 @@ public class ParentServiceImpl implements ParentService {
     public long updateAccount(String parentUserId, String accountNumber, String bankCode) {
         return parentRepositoryCustom.updateParentAccount(parentUserId, accountNumber, bankCode);
     }
-
 }

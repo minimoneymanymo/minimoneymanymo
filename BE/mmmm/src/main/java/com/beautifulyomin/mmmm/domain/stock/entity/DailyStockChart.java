@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Entity
@@ -36,7 +35,7 @@ public class DailyStockChart {
     private BigDecimal closingPrice;
 
     @Column(nullable = false)
-    private BigInteger tradingVolume;
+    private Long tradingVolume;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stockCode", insertable = false, updatable = false)
