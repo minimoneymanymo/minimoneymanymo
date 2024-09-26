@@ -2,6 +2,7 @@ import Modal from "react-modal"
 import { StockModalSidebar } from "./StockModalSidebar"
 import { useState } from "react"
 import { PERFilter } from "./filters/PERFilter"
+import { PBRFilter } from "./filters/PBRFilter"
 import { MarketTypeFilter } from "./filters/MarketTypeFilter" // Import the new component
 import { MarketCapSizeFilter } from "./filters/marketCapSizeFilter"
 
@@ -52,6 +53,10 @@ export function StockFilterModalForm({
     handleOpen() // 모달 닫기
   }
 
+  const handleMarketCapSizeChange = (marketCapSize: string) => {
+    setTemporaryFilters({ ...temporaryFilters, marketCapSize })
+  }
+
   const handlePERRangeChange = (min: number, max: number) => {
     setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
   }
@@ -60,8 +65,12 @@ export function StockFilterModalForm({
     setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
   }
 
-  const handleMarketCapSizeChange = (marketCapSize: string) => {
-    setTemporaryFilters({ ...temporaryFilters, marketCapSize })
+  const handlePBRRangeChange = (min: number, max: number) => {
+    setTemporaryFilters({ ...temporaryFilters, pbrMin: min, pbrMax: max })
+  }
+
+  const handlePresetPBR = (min: number, max: number | null) => {
+    setTemporaryFilters({ ...temporaryFilters, pbrMin: min, pbrMax: max })
   }
 
   return (
@@ -104,11 +113,11 @@ export function StockFilterModalForm({
           )}
           {/* PBR */}
           {selectedCategory === "PBR" && (
-            <div>
-              <h3 className="text-xl font-semibold">PBR</h3>
-              <p className="mb-4 text-gray-600">PBR을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <PBRFilter
+              temporaryFilters={temporaryFilters}
+              handlePBRRangeChange={handlePBRRangeChange}
+              handlePresetPBR={handlePresetPBR}
+            />
           )}
           {/* 주가 */}
           {selectedCategory === "주가" && (
