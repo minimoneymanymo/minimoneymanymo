@@ -2,19 +2,45 @@ import React, { useEffect, useRef, useState } from "react"
 import moment from "moment"
 import MyInvestment from "./MyInvestment"
 import { getTradeList } from "@/api/investment-api"
-import { investmentData } from "./investmentData"
+import { investmentData } from "./investmentData" // 인터페이스로 가져옴
 
-// Event 대신 investmentData 타입 사용
-const getBackgroundColor = (tradeType: number) => {
+// 배경 색상 설정
+const getBackgroundColor = (tradeType: string) => {
   switch (tradeType) {
-    case 1:
-      return "bg-green-100" // type 1: 연두색
-    case 2:
-      return "bg-yellow-100" // type 2: 노란색
-    case 3:
-      return "bg-red-100" // type 3: 빨간색
+    case "4":
+      return "bg-red-100" // type 4: 빨간색 매수
+    case "5":
+      return "bg-blue-100" // type 5: 파란색 매도
+    case "0":
+      return "bg-yellow-100" // type 0: 용돈
+    case "1":
+      return "bg-gray-100" // type 1: 출금
+    case "2":
+      return "bg-orange-100" // type 2: 퀴즈
+    case "3":
+      return "bg-green-100" // type 3: 이유
     default:
       return "bg-white"
+  }
+}
+
+// 달력에 출력 멘트 설정
+const getTradeTypeLabel = (tradeType: string) => {
+  switch (tradeType) {
+    case "0":
+      return "용돈"
+    case "1":
+      return "출금"
+    case "2":
+      return "퀴즈"
+    case "3":
+      return "이유"
+    case "4":
+      return "매수"
+    case "5":
+      return "매도"
+    default:
+      return "알 수 없음" // 기본값
   }
 }
 
@@ -23,7 +49,7 @@ interface TradeListResponse {
     amount: number
     tradeSharesCount: number
     reason: string
-    tradeType: number // tradeType은 number라고 가정
+    tradeType: number
     remainAmount: number
     stockTradingGain: number | null
     createdAt: string
@@ -67,7 +93,7 @@ const getTradeListData = async (
 const Calender: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState(moment())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [events, setEvents] = useState<(typeof investmentData)[]>([]) // 상태로 events 관리
+  const [events, setEvents] = useState<investmentData[]>([]) // 수정된 부분
 
   const startOfMonth = currentMonth.clone().startOf("month").startOf("week")
   const endOfMonth = currentMonth.clone().endOf("month").endOf("week")
@@ -101,7 +127,10 @@ const Calender: React.FC = () => {
         className="mt-4 grid h-[450px] grid-cols-2 rounded border border-blue-300 bg-blue-100 p-4"
         ref={eventSectionRef}
       >
-        <MyInvestment filteredEvents={filteredEvents} />
+        <MyInvestment
+          filteredEvents={filteredEvents}
+          selectedDate={selectedDate}
+        />
       </div>
     )
   }
@@ -151,7 +180,8 @@ const Calender: React.FC = () => {
                       key={index}
                       className={`m-1 w-fit overflow-hidden text-ellipsis rounded p-1 text-start ${getBackgroundColor(event.tradeType)}`}
                     >
-                      {event.companyName}
+                      {getTradeTypeLabel(event.tradeType)}{" "}
+                      {/* tradeType에 따른 문자열 출력 */}
                     </div>
                   ))}
                 </div>
@@ -159,6 +189,7 @@ const Calender: React.FC = () => {
             )}
           </div>
         )
+
         day.add(1, "day")
       }
       weeks.push(
