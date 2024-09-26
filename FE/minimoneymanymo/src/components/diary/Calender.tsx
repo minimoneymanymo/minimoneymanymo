@@ -1,29 +1,10 @@
 import React, { useEffect, useRef, useState } from "react"
 import moment from "moment"
 import MyInvestment from "./MyInvestment"
+import { getTradeList } from "@/api/investment-api"
+import { investmentData } from "./investmentData"
 
-interface Event {
-  title: string
-  date: string
-
-  tradeType: number // tradeType 추가
-}
-
-const events: Event[] = [
-  { title: "Meeting", date: "2024-09-04", tradeType: 1 }, // 월요일
-  {
-    title: "ConferenceConferenceConference",
-    date: "2024-09-07",
-    tradeType: 2,
-  }, // 목요일
-  { title: "Workshop", date: "2024-09-09", tradeType: 3 }, // 토요일
-  { title: "Workshop", date: "2024-09-09", tradeType: 2 },
-  { title: "Workshop", date: "2024-09-09", tradeType: 1 },
-  { title: "Workshop", date: "2024-09-09", tradeType: 1 },
-  { title: "Workshop", date: "2024-09-09", tradeType: 1 },
-]
-
-// tradeType에 따라 배경 색상을 반환하는 함수
+// Event 대신 investmentData 타입 사용
 const getBackgroundColor = (tradeType: number) => {
   switch (tradeType) {
     case 1:
@@ -37,14 +18,61 @@ const getBackgroundColor = (tradeType: number) => {
   }
 }
 
+interface TradeListResponse {
+  data: {
+    amount: number
+    tradeSharesCount: number
+    reason: string
+    tradeType: number // tradeType은 number라고 가정
+    remainAmount: number
+    stockTradingGain: number | null
+    createdAt: string
+    reasonBonusMoney: number | null
+    companyName: string
+  }[]
+}
+
+// getTradeListData 함수를 컴포넌트 외부에 정의
+const getTradeListData = async (
+  year: number,
+  month: number
+): Promise<investmentData[]> => {
+  try {
+    const tradeList: TradeListResponse = await getTradeList(year, month)
+
+    // API에서 반환된 데이터와 investmentData 인터페이스를 매핑
+    const formattedEvents: investmentData[] = tradeList.data.map(
+      (item): investmentData => ({
+        amount: item.amount,
+        tradeSharesCount: item.tradeSharesCount,
+        reason: item.reason,
+        tradeType: item.tradeType.toString(), // tradeType을 string으로 변환
+        remainAmount: item.remainAmount,
+        stockTradingGain: item.stockTradingGain,
+        createdAt: moment(item.createdAt, "YYYYMMDDHHmmss").format(
+          "YYYY-MM-DD"
+        ),
+        reasonBonusMoney: item.reasonBonusMoney,
+        companyName: item.companyName,
+      })
+    )
+
+    return formattedEvents
+  } catch (error) {
+    console.error("Failed to fetch trade list:", error)
+    return []
+  }
+}
+
 const Calender: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState(moment())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [events, setEvents] = useState<(typeof investmentData)[]>([]) // 상태로 events 관리
 
   const startOfMonth = currentMonth.clone().startOf("month").startOf("week")
   const endOfMonth = currentMonth.clone().endOf("month").endOf("week")
   const eventSectionRef = useRef<HTMLDivElement | null>(null)
-  // 컴포넌트가 렌더링될 때 컴포넌트의 하단으로 스크롤 이동
+
   useEffect(() => {
     if (selectedDate && eventSectionRef.current) {
       eventSectionRef.current.scrollIntoView({
@@ -52,17 +80,20 @@ const Calender: React.FC = () => {
         block: "end",
       })
     }
-    // 밑에 여유를 두도록 하면 좋을것같음.
   }, [selectedDate])
 
-  // 아름 작업할
+  useEffect(() => {
+    const year = currentMonth.year()
+    const month = currentMonth.month() + 1 // month는 0부터 시작하므로 1을 더해줌
+    getTradeListData(year, month).then(setEvents) // 가져온 이벤트를 상태로 설정
+  }, [currentMonth])
+
   const renderEventComponent = () => {
     if (!selectedDate) return null
 
-    //해당 날자 일기 내역 -> MyInvestment로 넘겨라....
     const filteredEvents = events.filter((event) => {
-      const eventStart = moment(event.date)
-      return eventStart.isSame(selectedDate)
+      const eventStart = moment(event.createdAt)
+      return eventStart.isSame(selectedDate, "day")
     })
 
     return (
@@ -70,7 +101,7 @@ const Calender: React.FC = () => {
         className="mt-4 grid h-[450px] grid-cols-2 rounded border border-blue-300 bg-blue-100 p-4"
         ref={eventSectionRef}
       >
-        <MyInvestment />
+        <MyInvestment filteredEvents={filteredEvents} />
       </div>
     )
   }
@@ -79,7 +110,6 @@ const Calender: React.FC = () => {
     const weeks: JSX.Element[] = []
     let day = startOfMonth.clone()
 
-    // 요일 헤더 추가
     const weekDaysHeader = (
       <div className="grid w-[840px] grid-cols-7 bg-gray-200 p-2 text-center font-bold">
         <div>일</div>
@@ -91,14 +121,14 @@ const Calender: React.FC = () => {
         <div>토</div>
       </div>
     )
-    weeks.push(weekDaysHeader) // 요일 헤더를 weeks 배열에 추가
+    weeks.push(weekDaysHeader)
 
     while (day.isBefore(endOfMonth)) {
       const weekDays: JSX.Element[] = []
       for (let i = 0; i < 7; i++) {
         const currentDay = day.clone()
         const dayEvents = events.filter((event) =>
-          moment(event.date).isSame(currentDay, "day")
+          moment(event.createdAt).isSame(currentDay, "day")
         )
 
         weekDays.push(
@@ -121,7 +151,7 @@ const Calender: React.FC = () => {
                       key={index}
                       className={`m-1 w-fit overflow-hidden text-ellipsis rounded p-1 text-start ${getBackgroundColor(event.tradeType)}`}
                     >
-                      {event.title}
+                      {event.companyName}
                     </div>
                   ))}
                 </div>
@@ -140,7 +170,6 @@ const Calender: React.FC = () => {
         </div>
       )
 
-      // 선택된 날짜에 따라 컴포넌트 렌더링
       if (
         selectedDate &&
         day.isSame(moment(selectedDate).add(1, "week"), "week")
@@ -152,7 +181,7 @@ const Calender: React.FC = () => {
   }
 
   const handleDayClick = (date: string) => {
-    setSelectedDate(date === selectedDate ? null : date) // 클릭한 날짜 선택 해제
+    setSelectedDate(date === selectedDate ? null : date)
   }
 
   const prevMonth = () =>
