@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { getStockList } from "@/api/stock-api"
 import { Typography } from "@material-tailwind/react"
 import { useNavigate } from "react-router-dom"
@@ -33,33 +33,72 @@ function StockList({ filters }: { filters: StockFilter }) {
   const [stockRows, setStockRows] = useState<StockData[]>([])
   const [sortKey, setSortKey] = useState<string>("MC") // 초기 정렬 키
   const [sortOrder, setSortOrder] = useState<string>("desc") // 초기 정렬 순서
+  const [page, setPage] = useState<number>(0)
+  const [hasMore, setHasMore] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(false)
+  const observerRef = useRef<IntersectionObserver | null>(null)
   const navigate = useNavigate()
+
   const handleRowClick = (stockCode: string) => {
     navigate(`/stock/${stockCode}`)
   }
 
-  // 서버로 데이터를 요청하는 함수
-  const fetchStockList = async () => {
+  // 공통으로 사용할 데이터 로드 함수
+  const fetchStockList = async (page: number, reset: boolean = false) => {
     try {
+      setLoading(true)
       const queryParams = new URLSearchParams({
         marketType: filters.marketType || "",
         marketCapSize: filters.marketCapSize || "",
-        sort: `${sortKey},${sortOrder}`, // 정렬 조건 추가
+        sort: `${sortKey},${sortOrder}`,
+        page: page.toString(),
       }).toString()
 
       const res = await getStockList(queryParams)
-      setStockRows(res.data.content)
+      if (reset) {
+        // 필터가 변경되었을 때 초기화 후 데이터 로드
+        setStockRows(res.data.content)
+      } else {
+        // 무한스크롤 또는 정렬 시 기존 데이터에 붙이기
+        setStockRows((prevRows) => [...prevRows, ...res.data.content])
+      }
+      setHasMore(!res.data.last)
+      setLoading(false)
     } catch (error) {
       console.error("Failed to fetch stock list:", error)
+      setLoading(false)
     }
   }
 
-  // 필터 또는 정렬이 변경될 때마다 서버에 새 요청을 보냄
-  useEffect(() => {
-    fetchStockList()
-  }, [filters, sortKey, sortOrder])
+  //무한스크롤
+  const lastStockElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (loading) return
+      if (observerRef.current) observerRef.current.disconnect()
 
-  // 정렬 핸들러
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1)
+        }
+      })
+
+      if (node) observerRef.current.observe(node)
+    },
+    [loading, hasMore]
+  )
+
+  // 페이지나 정렬이 변경될 때 데이터를 추가로 가져옴
+  useEffect(() => {
+    fetchStockList(page)
+  }, [page, sortKey, sortOrder])
+
+  // 필터가 변경되면 데이터 초기화 후 새로 불러옴
+  useEffect(() => {
+    setPage(0)
+    setStockRows([])
+    fetchStockList(0, true) // reset 플래그를 통해 초기화 후 새로 로드
+  }, [filters])
+
   const handleSort = (key: string) => {
     if (sortKey === key) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc")
@@ -67,6 +106,8 @@ function StockList({ filters }: { filters: StockFilter }) {
       setSortKey(key)
       setSortOrder("desc")
     }
+    setPage(0) // 페이지를 초기화
+    setStockRows([]) // 기존 데이터 리셋
   }
 
   // 정렬 아이콘 렌더링 함수
@@ -122,6 +163,9 @@ function StockList({ filters }: { filters: StockFilter }) {
                 key={stock.stockCode}
                 onClick={() => handleRowClick(stock.stockCode)}
                 className="cursor-pointer hover:bg-gray-50"
+                ref={
+                  index === stockRows.length - 1 ? lastStockElementRef : null
+                }
               >
                 <td
                   className="border-blue-gray-50 border-b p-4 text-center"
@@ -213,6 +257,7 @@ function StockList({ filters }: { filters: StockFilter }) {
           })}
         </tbody>
       </table>
+      {loading && <p>Loading...</p>}
     </div>
   )
 }
