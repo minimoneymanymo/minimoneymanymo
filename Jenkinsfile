@@ -13,7 +13,7 @@ pipeline {
             steps {
                 script {
                     dir('FE/minimoneymanymo') {
-                        withCredentials([file(credentialsId: 'ENV', variable: 'env_file')]) {
+                        withCredentials([file(credentialsId: 'FRONT_ENV', variable: 'env_file')]) {
                                             sh 'echo $env_file'
                                             sh 'cp $env_file ./.env'
                                         }
