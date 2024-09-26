@@ -21,5 +21,5 @@ public interface StockResponse {
 
     BigInteger getMarketCapitalization(); //시가총액
 
-    BigInteger getTradingVolume(); //누적 거래량
+    Long getTradingVolume(); //누적 거래량
 }
