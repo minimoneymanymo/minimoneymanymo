@@ -115,4 +115,9 @@ public class ChildrenServiceImpl implements ChildrenService {
     public long updateAccount(String childUserId, String accountNumber, String bankCode) {
         return parentRepositoryCustom.updateChildAccount(childUserId, accountNumber, bankCode);
     }
+
+    @Override
+    public Children findByUserId(String childUserId) {
+        return childrenRepository.findByUserId(childUserId).orElseThrow(() -> new RuntimeException("아이디 없음" + childUserId));
+    }
 }
