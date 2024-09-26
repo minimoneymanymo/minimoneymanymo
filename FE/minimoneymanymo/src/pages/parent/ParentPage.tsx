@@ -244,7 +244,7 @@ function ParentPage(): JSX.Element {
   return (
     <>
       <div className="">ParentPage</div>
-      <button onClick={linkAccount}>API 확인</button>
+      <button onClick={getBankCodes }>API 확인</button>
     </>
   )
 }
