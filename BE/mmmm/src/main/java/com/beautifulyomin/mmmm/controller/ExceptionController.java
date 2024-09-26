@@ -7,6 +7,7 @@ import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.naming.AuthenticationException;
 import java.nio.file.AccessDeniedException;
 
+@Slf4j
 @ControllerAdvice(basePackages = "com.beautifulyomin.mmmm")
 public class ExceptionController {
 
-    @ExceptionHandler({BadRequestException.class, InvalidRequestException.class})
+    @ExceptionHandler({BadRequestException.class, InvalidRequestException.class, IllegalArgumentException.class})
     public ResponseEntity<CommonResponseDto> handleBadRequestException(BadRequestException ex) {
         CommonResponseDto errorResponse = new CommonResponseDto(400, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -46,8 +48,10 @@ public class ExceptionController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponseDto> handleGenericException(Exception ex) {
-        ex.printStackTrace();
+        log.error("Handling Generic Exception: {}", ex.getMessage());
         CommonResponseDto errorResponse = new CommonResponseDto(500, "서버 오류: " + ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 }

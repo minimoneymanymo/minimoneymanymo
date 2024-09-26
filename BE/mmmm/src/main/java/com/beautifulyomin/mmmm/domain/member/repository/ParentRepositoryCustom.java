@@ -22,5 +22,4 @@ public interface ParentRepositoryCustom {
     // 계좌 연결
     long updateParentAccount(String parentUserId, String accountNumber, String bankCode);
     long updateChildAccount(String childUserId, String accountNumber, String bankCode);
-
 }
