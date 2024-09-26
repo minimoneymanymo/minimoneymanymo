@@ -81,7 +81,7 @@ class TradeServiceImplTest {
                 .highestPrice(BigDecimal.valueOf(61300.00))
                 .lowestPrice(BigDecimal.valueOf(56300.00))
                 .closingPrice(BigDecimal.valueOf(1500.00)) // 평단가가 2000원이어서 closingPrice를 임의로 1500원으로 맞추겠음.
-                .tradingVolume(BigInteger.valueOf(234643))
+                .tradingVolume(Long.valueOf(234643))
                 .build();
 
         dailyStockChartDto = DailyStockChartDto.builder()
