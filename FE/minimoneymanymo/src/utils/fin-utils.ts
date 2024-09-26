@@ -1,5 +1,7 @@
-const { VITE_SSAFY_API_KEY: apiKey, VITE_SSAFY_USER_KEY: userKey } = import.meta
-  .env
+const {
+  VITE_SSAFY_API_KEY: apiKey = process.env.VITE_SSAFY_API_KEY,
+  VITE_SSAFY_USER_KEY: userKey = process.env.VITE_SSAFY_USER_KEY,
+} = import.meta.env
 
 export const makeParam = (apiName: string, data: object = {}): object => {
   const random = String(Math.floor(100000 + Math.random() * 900000))
