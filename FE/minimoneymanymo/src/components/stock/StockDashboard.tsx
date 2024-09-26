@@ -1,10 +1,26 @@
 // MainDashboard.tsx
-import React, { useState } from "react"
+import { useState } from "react"
 import StockList from "./StockList"
 import { StockFilterModalForm } from "./StockFilterModalForm"
-import { Card, Typography, Button } from "@material-tailwind/react"
+import { Typography, Button } from "@material-tailwind/react"
 import StockFilterMenu from "./StockFilterMenu"
 import { Tune } from "@mui/icons-material"
+import StockFilterTag from "./StockFilterTag"
+
+// Label과 value의 매핑 객체 정의
+const marketCapSizeMapping: Record<string, string> = {
+  SMALL: "소형주",
+  MEDIUM: "중형주",
+  LARGE: "대형주",
+}
+
+const marketTypeMapping: Record<string, string> = {
+  KOSPI200: "코스피200",
+  KOSPI: "코스피",
+  KSQ150: "코스닥150",
+  KOSDAQ: "코스닥",
+  KONEX: "코넥스",
+}
 
 interface StockFilter {
   marketType: string | null // 시장 유형 (예: KOSPI, KOSDAQ)
@@ -66,6 +82,42 @@ function MainDashboard() {
   const handleSelectMarketCapSize = (selected: string) => {
     setFilters((prev) => ({ ...prev, marketCapSize: selected }))
   }
+  // 필터 관련 태그 설정
+  const renderFilterTags = () => {
+    const tags = []
+
+    if (filters.marketType && filters.marketType !== "ALL") {
+      const marketTypeLabel =
+        marketTypeMapping[filters.marketType] || filters.marketType
+      tags.push(
+        <StockFilterTag key="market" label={`시장 · ${marketTypeLabel}`} />
+      )
+    }
+
+    if (filters.marketCapSize && filters.marketCapSize !== "ALL") {
+      const marketCapLabel =
+        marketCapSizeMapping[filters.marketCapSize] || filters.marketCapSize
+      tags.push(
+        <StockFilterTag
+          key="marketCap"
+          label={`시가총액 · ${marketCapLabel}`}
+        />
+      )
+    }
+
+    if (filters.perMin !== null || filters.perMax !== null) {
+      const perRange = `${filters.perMin || 0}배 이상 ~ ${filters.perMax || "무제한"}배`
+      tags.push(<StockFilterTag key="per" label={`PER · ${perRange}`} />)
+    }
+
+    if (filters.pbrMin !== null || filters.pbrMax !== null) {
+      const pbrRange = `${filters.pbrMin || 0}배 이상 ~ ${filters.pbrMax || "무제한"}배`
+      tags.push(<StockFilterTag key="pbr" label={`PBR · ${pbrRange}`} />)
+    }
+
+    // TODO: 다른 필터 추가
+    return tags
+  }
 
   return (
     <div className="w-full p-4">
@@ -116,6 +168,9 @@ function MainDashboard() {
           selected={filters.marketCapSize}
           onSelect={handleSelectMarketCapSize}
         />
+
+        {/* 필터 태그 표시 */}
+        <div className="flex flex-wrap gap-2">{renderFilterTags()}</div>
       </div>
 
       {/* 주식 목록 */}

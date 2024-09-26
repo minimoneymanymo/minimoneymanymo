@@ -5,6 +5,7 @@ import { PERFilter } from "./filters/PERFilter"
 import { PBRFilter } from "./filters/PBRFilter"
 import { MarketTypeFilter } from "./filters/MarketTypeFilter" // Import the new component
 import { MarketCapSizeFilter } from "./filters/marketCapSizeFilter"
+import { RestartAlt } from "@mui/icons-material"
 
 Modal.setAppElement("#root")
 
@@ -42,6 +43,49 @@ export function StockFilterModalForm({
 }: StockFilterFormProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("시장") // 사이드바에서 선택된 카테고리
   const [temporaryFilters, setTemporaryFilters] = useState<StockFilter>(filters) // 임시 필터 상태 추가
+
+  const resetFilters = () => {
+    //여기서 temp필터만 변경하는게 아니고 대시보드 전체의 필터를 초기화
+    setTemporaryFilters({
+      marketType: "ALL",
+      marketCapSize: "ALL",
+      perMin: null,
+      perMax: null,
+      pbrMin: null,
+      pbrMax: null,
+      priceMin: null,
+      priceMax: null,
+      changeRateMin: null,
+      changeRateMax: null,
+      high52WeekMin: null,
+      high52WeekMax: null,
+      low52WeekMin: null,
+      low52WeekMax: null,
+      tradingValueMin: null,
+      tradingValueMax: null,
+      volumeMax: null,
+    })
+    updateFilters({
+      marketType: "ALL",
+      marketCapSize: "ALL",
+      perMin: null,
+      perMax: null,
+      pbrMin: null,
+      pbrMax: null,
+      priceMin: null,
+      priceMax: null,
+      changeRateMin: null,
+      changeRateMax: null,
+      high52WeekMin: null,
+      high52WeekMax: null,
+      low52WeekMin: null,
+      low52WeekMax: null,
+      tradingValueMin: null,
+      tradingValueMax: null,
+      volumeMax: null,
+    })
+    handleOpen() // 모달 닫기
+  }
 
   const INF: number = 100000000000
   const handleMarketTypeChange = (marketType: string) => {
@@ -167,6 +211,15 @@ export function StockFilterModalForm({
               {/* PER 관련 콘텐츠 추가 */}
             </div>
           )}
+          {/* 하단의 초기화 버튼 */}
+          <div className="absolute bottom-4 right-32">
+            <button
+              onClick={resetFilters}
+              className="flex items-center gap-1 px-4 py-2 text-gray-600"
+            >
+              <RestartAlt className="h-5 w-5 text-gray-600" /> 초기화
+            </button>
+          </div>
 
           {/* 하단의 검색 및 초기화 버튼 */}
           <div className="absolute bottom-4 right-4">
@@ -174,7 +227,7 @@ export function StockFilterModalForm({
               onClick={handleSearch}
               className="rounded-lg bg-primary-m1 px-4 py-2 text-white hover:bg-primary-600"
             >
-              검색하기
+              조회하기
             </button>
           </div>
         </div>

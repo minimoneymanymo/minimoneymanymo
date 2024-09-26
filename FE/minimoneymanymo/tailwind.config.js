@@ -20,6 +20,7 @@ export default {
         "primary-400": "#45A4DC",
         "primary-200": "#89C7E9",
         "primary-100": "#B5DDF2",
+        "primary-50": "#E2F2FA",
         "secondary-900": "#335048",
         "secondary-800": "#3C6C63",
         "secondary-700": "#417D72",
