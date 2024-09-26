@@ -2,7 +2,7 @@ import { IgrFinancialChart } from "igniteui-react-charts"
 import { IgrFinancialChartModule } from "igniteui-react-charts"
 import React, { useEffect, useState } from "react"
 import { getStockDetail } from "@/api/stock-api"
-import Home2 from "../home2/home2"
+import {useOutletContext} from "react-router-dom" // useOutletContext 추가
 import { useParams } from "react-router-dom"
 
 IgrFinancialChartModule.register()
@@ -21,6 +21,12 @@ interface FinancialChartPanesProps {
 }
 
 function ChartPage(): JSX.Element {
+  const [dailyStockChart, setDailyStockChart] = useState<any | undefined>()
+
+  // 부모 컴포넌트에서 setClosingPrice 함수 받아오기
+  const {setClosingPrice} = useOutletContext<{
+    setClosingPrice: (price: number) => void
+  }>()
   const { stockCode } = useParams()
   const [dailyStockChart, setDailyStockChart] = useState<any | undefined>()
 
@@ -29,16 +35,22 @@ function ChartPage(): JSX.Element {
       if (!stockCode) return
       const res = await getStockDetail(stockCode)
       console.log(res.data.dailyStockChart)
+
       if (res) {
         setDailyStockChart(res.data.dailyStockChart)
+
+        // 첫 번째 항목의 closingPrice를 setClosingPrice에 전달
+        if (res.data.dailyStockChart && res.data.dailyStockChart.length > 0) {
+          setClosingPrice(res.data.dailyStockChart[0].closingPrice)
+        }
       }
     }
     fetchStockData()
-  }, [])
+  }, [setClosingPrice]) // setClosingPrice를 의존성 배열에 추가
 
   return (
     <div className="h-full w-[900px]">
-      <Home2 dailyStockChart={dailyStockChart} />
+      {/* <Home2 dailyStockChart={dailyStockChart} /> */}
       <FinancialChartPanes dailyStockChart={dailyStockChart} />
     </div>
   )

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom"
+import {Routes, Route} from "react-router-dom"
 import ChildPage from "@/pages/chlid/ChildPage"
 import LoginPage from "@/pages/main/LoginPage"
 import MainPage from "@/pages/main/MainPage"
@@ -23,6 +23,7 @@ function App() {
         <Route index element={<MainPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
+        <Route path="/stocks" element={<StockPageLayout />} />
 
         <Route path="/news" element={<NewsPage />} />
         <Route path="/parent" element={<ParentPageLayout />}>

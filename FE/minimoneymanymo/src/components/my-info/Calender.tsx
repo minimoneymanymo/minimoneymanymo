@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react"
+import React, { useEffect, useRef, useState } from "react"
 import moment from "moment"
 
 interface Event {
@@ -9,17 +9,17 @@ interface Event {
 }
 
 const events: Event[] = [
-  {title: "Meeting", date: "2024-09-04", tradeType: 1}, // 월요일
+  { title: "Meeting", date: "2024-09-04", tradeType: 1 }, // 월요일
   {
     title: "ConferenceConferenceConference",
     date: "2024-09-07",
     tradeType: 2,
   }, // 목요일
-  {title: "Workshop", date: "2024-09-09", tradeType: 3}, // 토요일
-  {title: "Workshop", date: "2024-09-09", tradeType: 2},
-  {title: "Workshop", date: "2024-09-09", tradeType: 1},
-  {title: "Workshop", date: "2024-09-09", tradeType: 1},
-  {title: "Workshop", date: "2024-09-09", tradeType: 1},
+  { title: "Workshop", date: "2024-09-09", tradeType: 3 }, // 토요일
+  { title: "Workshop", date: "2024-09-09", tradeType: 2 },
+  { title: "Workshop", date: "2024-09-09", tradeType: 1 },
+  { title: "Workshop", date: "2024-09-09", tradeType: 1 },
+  { title: "Workshop", date: "2024-09-09", tradeType: 1 },
 ]
 
 // tradeType에 따라 배경 색상을 반환하는 함수
@@ -170,7 +170,7 @@ const Calender: React.FC = () => {
         selectedDate &&
         day.isSame(moment(selectedDate).add(1, "week"), "week")
       ) {
-        weeks.push(renderEventComponent!())
+        weeks.push(renderEventComponent?.() || <div />)
       }
     }
     return weeks
