@@ -40,7 +40,7 @@ public class StockController {
     public ResponseEntity<CommonResponseDto> getStockList(
             @RequestHeader(value = "Authorization", required = false) String token,
             @ModelAttribute StockFilterRequestDto filterRequestDto, Pageable pageable) {
-        String userId = token != null ? jwtUtil.getUsername(token) : null;
+        String userId =  (token != null && !token.isEmpty()) ? jwtUtil.getUsername(token) : null;
         log.info(filterRequestDto.toString());
         return ResponseEntity.ok(CommonResponseDto.builder()
                 .stateCode(200)

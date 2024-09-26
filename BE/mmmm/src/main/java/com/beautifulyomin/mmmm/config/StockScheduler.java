@@ -16,11 +16,11 @@ public class StockScheduler {
         this.cacheManager = cacheManager;
     }
 
-    @Scheduled(cron = "0 23 14 ? * MON-FRI")
-    public void clearCache() {
-        cacheManager.getCacheNames().forEach(cacheName -> {
-            cacheManager.getCache(cacheName).clear();
-        });
-        log.info("Redis 캐시가 초기화 되었습니다.");
-    }
+//    @Scheduled(cron = "0 23 14 ? * MON-FRI")
+//    public void clearCache() {
+//        cacheManager.getCacheNames().forEach(cacheName -> {
+//            cacheManager.getCache(cacheName).clear();
+//        });
+//        log.info("Redis 캐시가 초기화 되었습니다.");
+//    }
 }

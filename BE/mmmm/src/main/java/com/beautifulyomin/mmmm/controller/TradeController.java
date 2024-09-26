@@ -13,11 +13,13 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/stocks")
+@Validated // 추가: 클래스 레벨에서 유효성 검사를 활성화
 public class TradeController {
 
     private final TradeService tradeService;
