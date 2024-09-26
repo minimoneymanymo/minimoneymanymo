@@ -1,7 +1,17 @@
+import { axiosAuthInstance, axiosPublicInstance } from "@/api/httpcommons"
 import axios from "axios"
-import { axiosPublicInstance } from "./httpcommons"
 
-// 종목 상세 조회(차트) + 기업 개요
+export const getStockList = async (condition: string) => {
+  console.log("query" + condition)
+  try {
+    const res = await axiosAuthInstance.get(`/stocks?${condition}`)
+    console.log(res.data)
+    return res.data
+  } catch (e) {
+    return e
+  }
+}
+
 export const getStockDetail = async (stockCode: string) => {
   try {
     const res = await axiosPublicInstance.get(`/stocks/${stockCode}`)
@@ -15,7 +25,7 @@ export const getStockDetail = async (stockCode: string) => {
     } else {
       // Axios 에러가 아닌 경우
       console.error("getStockDetail 오류 발생:", e)
-      return {status: 500, message: "서버 오류"} // 기본적인 에러 메시지
+      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }
 }

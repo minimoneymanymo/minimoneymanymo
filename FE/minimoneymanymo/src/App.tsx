@@ -46,9 +46,8 @@ function App() {
           <Route path="invest-style" element={<Temp />} />
           <Route path="diary" element={<ChildDairyPage />} />
         </Route>
-        <Route path="/stock" element={<StockPageLayout/>}>
-          <Route path="detail/:stockCode" element={<ChartPage />} />
-        
+        <Route path="/stock" element={<StockPageLayout />}>
+          <Route path=":stockCode" element={<ChartPage />} />{" "}
         </Route>
       </Route>
     </Routes>

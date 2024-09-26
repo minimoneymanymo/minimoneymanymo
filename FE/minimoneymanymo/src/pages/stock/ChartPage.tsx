@@ -1,9 +1,10 @@
-import {IgrFinancialChart} from "igniteui-react-charts"
-import {IgrFinancialChartModule} from "igniteui-react-charts"
-import React, {useEffect, useState} from "react"
-import {getStockDetail} from "@/api/stock-api"
+import { IgrFinancialChart } from "igniteui-react-charts"
+import { IgrFinancialChartModule } from "igniteui-react-charts"
+import React, { useEffect, useState } from "react"
+import { getStockDetail } from "@/api/stock-api"
 import Home2 from "../home2/home2"
-import {useOutletContext} from "react-router-dom" // useOutletContext 추가
+import { useParams } from "react-router-dom"
+import { useOutletContext } from "react-router-dom" // useOutletContext 추가
 
 IgrFinancialChartModule.register()
 
@@ -21,16 +22,20 @@ interface FinancialChartPanesProps {
 }
 
 function ChartPage(): JSX.Element {
-  const [dailyStockChart, setDailyStockChart] = useState<any | undefined>()
+  const { stockCode } = useParams()
+  const [dailyStockChart, setDailyStockChart] = useState<
+    DailyStockData[] | undefined
+  >()
 
   // 부모 컴포넌트에서 setClosingPrice 함수 받아오기
-  const {setClosingPrice} = useOutletContext<{
+  const { setClosingPrice } = useOutletContext<{
     setClosingPrice: (price: number) => void
   }>()
 
   useEffect(() => {
     const fetchStockData = async () => {
-      const res = await getStockDetail("462870")
+      if (!stockCode) return
+      const res = await getStockDetail(stockCode)
       console.log(res.data.dailyStockChart)
 
       if (res) {
@@ -43,7 +48,7 @@ function ChartPage(): JSX.Element {
       }
     }
     fetchStockData()
-  }, [setClosingPrice]) // setClosingPrice를 의존성 배열에 추가
+  }, [stockCode, setClosingPrice]) // setClosingPrice를 의존성 배열에 추가
 
   return (
     <div className="h-full w-[900px]">
@@ -59,7 +64,7 @@ class FinancialChartPanes extends React.Component<
   FinancialChartPanesProps,
   any
 > {
-  public data: any[] = [] // 초기값 할당
+  public data: any[] = []
 
   constructor(props: FinancialChartPanesProps) {
     super(props)
@@ -97,7 +102,7 @@ class FinancialChartPanes extends React.Component<
   }
 
   public initData() {
-    const {dailyStockChart} = this.props
+    const { dailyStockChart } = this.props
     console.log(this.props)
     // 매핑 함수
     const mappedData = dailyStockChart?.map((item) => ({
