@@ -20,6 +20,7 @@ pipeline {
 
                         sh 'rm -rf node_modules'
                         docker.build('mmmm-react-image', '-f Dockerfile .')
+                         sh 'ls -l'
                     }
                 }
             }
