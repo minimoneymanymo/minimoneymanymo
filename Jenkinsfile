@@ -14,10 +14,11 @@ pipeline {
                 script {
                     dir('FE/minimoneymanymo') {
                         withCredentials([file(credentialsId: 'ENV', variable: 'env_file')]) {
-                                                sh 'cp $env_file ./.env'
-                                            }
+                                            sh 'echo $env_file'
+                                            sh 'cp $env_file ./.env'
+                                        }
 
-                         sh 'rm -rf node_modules'
+                        sh 'rm -rf node_modules'
                         docker.build('mmmm-react-image', '-f Dockerfile .')
                     }
                 }
