@@ -5,7 +5,7 @@ interface MyChildProps {
   child: Children | Children
 }
 
-function MyChildItem({child}: MyChildProps): JSX.Element {
+function MyChildItem({ child }: MyChildProps): JSX.Element {
   return (
     <div className="m-5 h-44 rounded-lg border">
       <p>Profile Image URL: {child.profileimgUrl || "No image available"}</p>

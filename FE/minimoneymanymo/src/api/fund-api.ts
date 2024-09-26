@@ -68,6 +68,8 @@ const linkAccountApi = async (
     .catch(fail)
 }
 
+// 부모 - 이유 보상 머니 지급
+
 export {
   depositBalanceApi,
   refundBalanceApi,
