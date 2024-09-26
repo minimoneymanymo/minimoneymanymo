@@ -11,17 +11,19 @@ import {
 import storageSession from "redux-persist/lib/storage/session"
 import counterReducer from "./slice/counter"
 import parentReducer from "./slice/parent"
+import accountReducer from "./slice/account"
 
 // reducer를 여기에 추가하시면 됩니다
 const rootReducer = combineReducers({
   counter: counterReducer,
   parent: parentReducer,
+  account: accountReducer,
 })
 
 const persistConfig = {
   key: "root",
   storage: storageSession,
-  whitelist: ["counter", "parent"], // 세션에 저장할 리듀서만 추가
+  whitelist: ["counter", "parent", "account"], // 세션에 저장할 리듀서만 추가
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

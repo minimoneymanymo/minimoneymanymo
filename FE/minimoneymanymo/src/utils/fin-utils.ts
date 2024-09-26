@@ -1,7 +1,14 @@
+import { useAppSelector } from "@/store/hooks"
+import { selectParent } from "@/store/slice/parent"
+
 const { VITE_SSAFY_API_KEY: apiKey, VITE_SSAFY_USER_KEY: userKey } = import.meta
   .env
 
-export const makeParam = (apiName: string, data: object = {}): object => {
+export const makeParam = (
+  userKey: string,
+  apiName: string,
+  data: object = {}
+): object => {
   const random = String(Math.floor(100000 + Math.random() * 900000))
   const { date, time } = getNow() // 구조분해할당
   const param = {

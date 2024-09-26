@@ -5,12 +5,13 @@ import AlertIcon from "@mui/icons-material/ReportGmailerrorredOutlined"
 import ToggleList from "@/components/common/mypage/ToggleList"
 import PriceModal from "@/components/common/PriceModal"
 import { depositBalanceApi, refundBalanceApi } from "@/api/fund-api"
-import { depositApi, withdrawApi } from "@/api/account-api"
+import { depositApi, inquireAccountApi, withdrawApi } from "@/api/account-api"
 import { makeParam } from "@/utils/fin-utils"
 import { getMemberInfo } from "@/api/user-api"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectParent, parentActions } from "@/store/slice/parent"
+import { accountActions } from "@/store/slice/account"
 
 interface MAccountInfoProps {
   name: string
@@ -59,7 +60,36 @@ const ParentAccountPage = () => {
     accountBalance: "990001",
   }
 
-  useEffect(() => {}, [parent])
+  useEffect(() => {
+    // 계좌 정보 조회
+    const fetchAccountInfo = async () => {
+      try {
+        const accountRes = await inquireAccountApi(
+          makeParam(parent.userKey, "inquireDemandDepositAccount", {
+            accountNo: parent.accountNumber,
+          })
+        )
+        if (accountRes != null) {
+          const { bankName, accountNo, accountName, accountBalance } =
+            accountRes
+
+          const accountPayload = {
+            bankName,
+            accountNo,
+            accountName,
+            accountBalance,
+          }
+          // 필요한 경우 accountPayload를 사용하여 상태 업데이트
+          dispatch(accountActions.setAccount(accountPayload))
+        }
+      } catch (error) {
+        console.error("계좌 정보 조회 중 오류 발생:", error)
+      }
+    }
+
+    fetchAccountInfo()
+  }, [dispatch, parent.accountNumber, parent.userKey])
+
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
@@ -101,64 +131,64 @@ const ParentAccountPage = () => {
     fetchMemberInfo() // 함수 호출
   }, [navigate, dispatch])
 
-  const handleCharge = (amount: number) => {
-    console.log(amount)
-    // 부모-계좌 충전 -> 계좌 출금(부모)
-    depositBalanceApi(
-      amount,
-      (res) => {
+  const handleCharge = async (amount: number) => {
+    try {
+      console.log(amount)
+      // 부모-계좌 충전 -> 계좌 출금(부모)
+      const res = await depositBalanceApi(amount)
+      if (res.stateCode === 201) {
         console.log(res)
-        withdrawApi(
-          makeParam("updateDemandDepositAccountDeposit", {
+        const aRes = await withdrawApi(
+          makeParam(parent.userKey, "updateDemandDepositAccountDeposit", {
             accountNo: "입력한 계좌번호",
             transactionBalance: amount.toString(),
-          }),
-          (res) => {
-            console.log(res)
-            alert("마니모 계좌에 머니가 충전되었습니다.")
-          },
-          (err) => {
-            console.log(err)
-            alert("충전에 실패했습니다. 다시 시도해주세요.")
-          }
+          })
         )
-      },
-      (err) => {
-        console.log(err)
-        alert("충전에 실패했습니다. 다시 시도해주세요.")
+        console.log(aRes)
+        if (!aRes.responseCode) {
+          alert("마니모 계좌에 머니가 충전되었습니다.") // 성공
+        } else {
+          alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
+        }
+      } else {
+        alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
       }
-    )
-    closeChargeModal()
+    } catch (err) {
+      console.log(err)
+      alert("충전에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+    } finally {
+      closeChargeModal() // 모달 닫기
+    }
   }
 
-  const handleRefund = (amount: number) => {
+  const handleRefund = async (amount: number) => {
     console.log(amount)
     // 부모-계좌 충전 -> 계좌 출금(부모)
-    refundBalanceApi(
-      amount,
-      (res) => {
+    try {
+      const res = await refundBalanceApi(amount)
+      if (res.stateCode === 201) {
         console.log(res)
-        depositApi(
-          makeParam("updateDemandDepositAccountDeposit", {
+        const aRes = await depositApi(
+          makeParam(parent.userKey, "updateDemandDepositAccountDeposit", {
             accountNo: "입력한 계좌번호",
             transactionBalance: amount.toString(),
-          }),
-          (res) => {
-            console.log(res)
-            alert("마니모 계좌의 머니가 환불되었습니다.")
-          },
-          (err) => {
-            console.log(err)
-            alert("환불에 실패했습니다. 다시 시도해주세요.")
-          }
+          })
         )
-      },
-      (err) => {
-        console.log(err)
-        alert("환불에 실패했습니다. 다시 시도해주세요.")
+        console.log(aRes)
+        if (!aRes.responseCode) {
+          alert("마니모 계좌의 머니가 환불되었습니다.") // 성공
+        } else {
+          alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
+        }
+      } else {
+        alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
       }
-    )
-    closeChargeModal()
+    } catch (err) {
+      console.log(err)
+      alert("환불에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+    } finally {
+      closeChargeModal()
+    }
   }
 
   return (

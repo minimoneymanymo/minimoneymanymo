@@ -33,6 +33,9 @@ export const parentSlice = createSlice({
     setUserInfo: (state, action: PayloadAction<object>) => {
       return { ...state, ...action.payload }
     },
+    setUserKey: (state, action: PayloadAction<string>) => {
+      state.userKey = action.payload
+    },
   },
 })
 
