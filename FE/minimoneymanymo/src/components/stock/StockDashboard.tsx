@@ -7,10 +7,23 @@ import StockFilterMenu from "./StockFilterMenu"
 import { Tune } from "@mui/icons-material"
 
 interface StockFilter {
-  marketType: string | null
-  marketCapSize: string | null
-  perMin: number | null
-  perMax: number | null
+  marketType: string | null // 시장 유형 (예: KOSPI, KOSDAQ)
+  marketCapSize: string | null // 시가총액 크기 (예: Large, Mid, Small)
+  perMin: number | null // 최소 PER 값
+  perMax: number | null // 최대 PER 값
+  pbrMin: number | null // 최소 PBR 값
+  pbrMax: number | null // 최대 PBR 값
+  priceMin: number | null // 최소 가격
+  priceMax: number | null // 최대 가격
+  changeRateMin: number | null // 최소 등락률
+  changeRateMax: number | null // 최대 등락률
+  high52WeekMin: number | null // 52주 최고가 최소값
+  high52WeekMax: number | null // 52주 최고가 최대값
+  low52WeekMin: number | null // 52주 최저가 최소값
+  low52WeekMax: number | null // 52주 최저가 최대값
+  tradingValueMin: number | null // 최소 거래대금
+  tradingValueMax: number | null // 최대 거래대금
+  volumeMax: number | null // 최대 거래량
 }
 
 function MainDashboard() {
@@ -20,6 +33,19 @@ function MainDashboard() {
     marketCapSize: "ALL",
     perMin: null,
     perMax: null,
+    pbrMin: null,
+    pbrMax: null,
+    priceMin: null,
+    priceMax: null,
+    changeRateMin: null,
+    changeRateMax: null,
+    high52WeekMin: null,
+    high52WeekMax: null,
+    low52WeekMin: null,
+    low52WeekMax: null,
+    tradingValueMin: null,
+    tradingValueMax: null,
+    volumeMax: null,
   })
 
   // 모달 끄고 닫고
@@ -27,6 +53,7 @@ function MainDashboard() {
 
   // 필터 업데이트
   const updateFilters = (newFilters: StockFilter) => {
+    console.log(newFilters)
     setFilters(newFilters)
   }
 

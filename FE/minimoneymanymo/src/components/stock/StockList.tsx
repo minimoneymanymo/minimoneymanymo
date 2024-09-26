@@ -23,10 +23,23 @@ interface StockData {
 
 // 필터 인터페이스 정의
 interface StockFilter {
-  marketType: string | null
-  marketCapSize: string | null
-  perMin: number | null
-  perMax: number | null
+  marketType: string | null // 시장 유형 (예: KOSPI, KOSDAQ)
+  marketCapSize: string | null // 시가총액 크기 (예: Large, Mid, Small)
+  perMin: number | null // 최소 PER 값
+  perMax: number | null // 최대 PER 값
+  pbrMin: number | null // 최소 PBR 값
+  pbrMax: number | null // 최대 PBR 값
+  priceMin: number | null // 최소 가격
+  priceMax: number | null // 최대 가격
+  changeRateMin: number | null // 최소 등락률
+  changeRateMax: number | null // 최대 등락률
+  high52WeekMin: number | null // 52주 최고가 최소값
+  high52WeekMax: number | null // 52주 최고가 최대값
+  low52WeekMin: number | null // 52주 최저가 최소값
+  low52WeekMax: number | null // 52주 최저가 최대값
+  tradingValueMin: number | null // 최소 거래대금
+  tradingValueMax: number | null // 최대 거래대금
+  volumeMax: number | null // 최대 거래량
 }
 
 function StockList({ filters }: { filters: StockFilter }) {
@@ -48,8 +61,74 @@ function StockList({ filters }: { filters: StockFilter }) {
     try {
       setLoading(true)
       const queryParams = new URLSearchParams({
-        marketType: filters.marketType || "",
-        marketCapSize: filters.marketCapSize || "",
+        marketType:
+          filters.marketType !== null ? filters.marketType.toString() : "",
+        marketCapSize:
+          filters.marketCapSize !== null
+            ? filters.marketCapSize.toString()
+            : "",
+        perMin:
+          filters.perMin !== undefined && filters.perMin !== null
+            ? filters.perMin.toString()
+            : "",
+        perMax:
+          filters.perMax !== undefined && filters.perMax !== null
+            ? filters.perMax.toString()
+            : "",
+        pbrMin:
+          filters.pbrMin !== undefined && filters.pbrMin !== null
+            ? filters.pbrMin.toString()
+            : "",
+        pbrMax:
+          filters.pbrMax !== undefined && filters.pbrMax !== null
+            ? filters.pbrMax.toString()
+            : "",
+        priceMin:
+          filters.priceMin !== undefined && filters.priceMin !== null
+            ? filters.priceMin.toString()
+            : "",
+        priceMax:
+          filters.priceMax !== undefined && filters.priceMax !== null
+            ? filters.priceMax.toString()
+            : "",
+        changeRateMin:
+          filters.changeRateMin !== undefined && filters.changeRateMin !== null
+            ? filters.changeRateMin.toString()
+            : "",
+        changeRateMax:
+          filters.changeRateMax !== undefined && filters.changeRateMax !== null
+            ? filters.changeRateMax.toString()
+            : "",
+        high52WeekMin:
+          filters.high52WeekMin !== undefined && filters.high52WeekMin !== null
+            ? filters.high52WeekMin.toString()
+            : "",
+        high52WeekMax:
+          filters.high52WeekMax !== undefined && filters.high52WeekMax !== null
+            ? filters.high52WeekMax.toString()
+            : "",
+        low52WeekMin:
+          filters.low52WeekMin !== undefined && filters.low52WeekMin !== null
+            ? filters.low52WeekMin.toString()
+            : "",
+        low52WeekMax:
+          filters.low52WeekMax !== undefined && filters.low52WeekMax !== null
+            ? filters.low52WeekMax.toString()
+            : "",
+        tradingValueMin:
+          filters.tradingValueMin !== undefined &&
+          filters.tradingValueMin !== null
+            ? filters.tradingValueMin.toString()
+            : "",
+        volumeMax:
+          filters.volumeMax !== undefined && filters.volumeMax !== null
+            ? filters.volumeMax.toString()
+            : "",
+        tradingValueMax:
+          filters.tradingValueMax !== undefined &&
+          filters.tradingValueMax !== null
+            ? filters.tradingValueMax.toString()
+            : "",
         sort: `${sortKey},${sortOrder}`,
         page: page.toString(),
       }).toString()

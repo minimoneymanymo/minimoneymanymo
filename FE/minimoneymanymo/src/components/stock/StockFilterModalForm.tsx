@@ -1,16 +1,30 @@
 import Modal from "react-modal"
 import { StockModalSidebar } from "./StockModalSidebar"
 import { useState } from "react"
+import { Slider } from "@material-tailwind/react"
+import { PERFilter } from "./filters/PERFilter"
 
 Modal.setAppElement("#root")
 
 interface StockFilter {
-  marketType: string | null
-  marketCapSize: string | null
-  perMin: number | null
-  perMax: number | null
+  marketType: string | null // 시장 유형 (예: KOSPI, KOSDAQ)
+  marketCapSize: string | null // 시가총액 크기 (예: Large, Mid, Small)
+  perMin: number | null // 최소 PER 값
+  perMax: number | null // 최대 PER 값
+  pbrMin: number | null // 최소 PBR 값
+  pbrMax: number | null // 최대 PBR 값
+  priceMin: number | null // 최소 가격
+  priceMax: number | null // 최대 가격
+  changeRateMin: number | null // 최소 등락률
+  changeRateMax: number | null // 최대 등락률
+  high52WeekMin: number | null // 52주 최고가 최소값
+  high52WeekMax: number | null // 52주 최고가 최대값
+  low52WeekMin: number | null // 52주 최저가 최소값
+  low52WeekMax: number | null // 52주 최저가 최대값
+  tradingValueMin: number | null // 최소 거래대금
+  tradingValueMax: number | null // 최대 거래대금
+  volumeMax: number | null // 최대 거래량
 }
-
 interface StockFilterFormProps {
   open: boolean
   handleOpen: () => void
@@ -27,6 +41,7 @@ export function StockFilterModalForm({
   const [selectedCategory, setSelectedCategory] = useState<string>("시장") // 사이드바에서 선택된 카테고리
   const [temporaryFilters, setTemporaryFilters] = useState<StockFilter>(filters) // 임시 필터 상태 추가
 
+  const INF: number = 100000000000
   const handleMarketTypeChange = (marketType: string) => {
     setTemporaryFilters({ ...temporaryFilters, marketType })
   }
@@ -34,6 +49,14 @@ export function StockFilterModalForm({
   const handleSearch = () => {
     updateFilters(temporaryFilters)
     handleOpen() // 모달 닫기
+  }
+
+  const handlePERRangeChange = (min: number, max: number) => {
+    setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
+  }
+
+  const handlePresetPER = (min: number, max: number | null) => {
+    setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
   }
 
   return (
@@ -79,14 +102,14 @@ export function StockFilterModalForm({
               </div>
             </div>
           )}
-          {/* 시가 총액 */}
+
           {/* PER */}
           {selectedCategory === "PER" && (
-            <div>
-              <h3 className="text-xl font-semibold">PER</h3>
-              <p className="mb-4 text-gray-600">PER을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <PERFilter
+              temporaryFilters={temporaryFilters}
+              handlePERRangeChange={handlePERRangeChange}
+              handlePresetPER={handlePresetPER}
+            />
           )}
           {/* PBR */}
           {selectedCategory === "PBR" && (

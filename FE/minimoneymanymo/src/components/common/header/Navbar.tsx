@@ -1,5 +1,5 @@
-import {Link, NavLink} from "react-router-dom"
-import {logOutUser} from "../../../utils/user-utils"
+import { Link, NavLink } from "react-router-dom"
+import { logOutUser } from "../../../utils/user-utils"
 
 const NavItemList = (): JSX.Element => {
   let itemId = 0
@@ -14,11 +14,6 @@ const NavItemList = (): JSX.Element => {
       category: "news",
       to: "/news",
     },
-    {
-      id: itemId++,
-      category: "stocks",
-      to: "/stock/detail/462870",
-    },
   ]
   return (
     <nav className="flex h-16 items-center sm:h-10 md:h-12">
@@ -27,7 +22,7 @@ const NavItemList = (): JSX.Element => {
           <NavLink
             key={item.id}
             to={item.to}
-            className={({isActive}) =>
+            className={({ isActive }) =>
               `truncate rounded-xl ${isActive ? "bg-yellow font-bold" : ""}`
             }
           >
