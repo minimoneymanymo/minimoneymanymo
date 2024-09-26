@@ -123,55 +123,6 @@ function ParentPage(): JSX.Element {
 
   // 아래는 mmmm API
   let data = 1000
-  // 부모-계좌 충전 -> 계좌 출금(부모)
-  const depositBalance = () => {
-    depositBalanceApi(
-      data, // 잔액
-      (res) => {
-        console.log("mmmm -> " + res)
-        withdrawApi(
-          makeParam("updateDemandDepositAccountWithdrawal", {
-            accountNo: "부모 계좌번호",
-            transactionBalance: "출금할 금액",
-          }),
-          (res) => {
-            console.log("fin -> " + res)
-          },
-          (err) => {
-            console.log(err)
-          }
-        )
-      },
-      (err) => {
-        console.log(err)
-      }
-    )
-  }
-
-  // 부모-계좌 환불 -> 계좌 입금(부모)
-  const refundBalance = () => {
-    refundBalanceApi(
-      data,
-      (res) => {
-        console.log(res)
-        depositApi(
-          makeParam("updateDemandDepositAccountDeposit", {
-            accountNo: "부모 계좌번호",
-            transactionBalance: "입금할 금액",
-          }),
-          (res) => {
-            console.log(res)
-          },
-          (err) => {
-            console.log(err)
-          }
-        )
-      },
-      (err) => {
-        console.log(err)
-      }
-    )
-  }
 
   // 자식-출금 요청
   const requestWithdraw = () => {

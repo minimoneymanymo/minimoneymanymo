@@ -4,6 +4,13 @@ import RegisterAccount from "@/components/common/mypage/RegisterAccount"
 import AlertIcon from "@mui/icons-material/ReportGmailerrorredOutlined"
 import ToggleList from "@/components/common/mypage/ToggleList"
 import PriceModal from "@/components/common/PriceModal"
+import { depositBalanceApi, refundBalanceApi } from "@/api/fund-api"
+import { depositApi, withdrawApi } from "@/api/account-api"
+import { makeParam } from "@/utils/fin-utils"
+import { getMemberInfo } from "@/api/user-api"
+import { useNavigate } from "react-router-dom"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { selectParent, parentActions } from "@/store/slice/parent"
 
 interface MAccountInfoProps {
   name: string
@@ -20,6 +27,10 @@ interface AccountInfoProps {
 }
 
 const ParentAccountPage = () => {
+  const parent = useAppSelector(selectParent) // parent state 가져옴
+  const dispatch = useAppDispatch() // state 값 변경(action 실행) 시 사용
+  // dispatch(parentActions.setUserInfo({userInfo 객체}))
+  const navigate = useNavigate()
   const [isChargeOpen, setIsChargeOpen] = useState(false)
   const [isRefundOpen, setIsRefundOpen] = useState(false)
 
@@ -48,9 +59,107 @@ const ParentAccountPage = () => {
     accountBalance: "990001",
   }
 
+  useEffect(() => {}, [parent])
   useEffect(() => {
-    // 계좌조회 API + 내 정보 불러오는 API
-  }, [])
+    const fetchMemberInfo = async () => {
+      try {
+        const res = await getMemberInfo()
+        if (res.stateCode === 200) {
+          console.log(res)
+          const {
+            userId,
+            phoneNumber,
+            accountNumber,
+            name,
+            balance,
+            profileImgUrl,
+            userKey,
+          } = res.data
+
+          const payload = {
+            userId,
+            phoneNumber,
+            accountNumber,
+            name,
+            balance,
+            profileImgUrl,
+            userKey,
+          }
+          dispatch(parentActions.setUserInfo(payload))
+        } else if (res.status === 403) {
+          console.error("로그인이 필요합니다.", res)
+          alert("로그인이 필요합니다.")
+          navigate("/login")
+        } else {
+          console.log("사용자 정보 조회 실패:", res)
+        }
+      } catch (error) {
+        console.error("API 호출 중 오류 발생:", error)
+      }
+    }
+
+    fetchMemberInfo() // 함수 호출
+  }, [navigate, dispatch])
+
+  const handleCharge = (amount: number) => {
+    console.log(amount)
+    // 부모-계좌 충전 -> 계좌 출금(부모)
+    depositBalanceApi(
+      amount,
+      (res) => {
+        console.log(res)
+        withdrawApi(
+          makeParam("updateDemandDepositAccountDeposit", {
+            accountNo: "입력한 계좌번호",
+            transactionBalance: amount.toString(),
+          }),
+          (res) => {
+            console.log(res)
+            alert("마니모 계좌에 머니가 충전되었습니다.")
+          },
+          (err) => {
+            console.log(err)
+            alert("충전에 실패했습니다. 다시 시도해주세요.")
+          }
+        )
+      },
+      (err) => {
+        console.log(err)
+        alert("충전에 실패했습니다. 다시 시도해주세요.")
+      }
+    )
+    closeChargeModal()
+  }
+
+  const handleRefund = (amount: number) => {
+    console.log(amount)
+    // 부모-계좌 충전 -> 계좌 출금(부모)
+    refundBalanceApi(
+      amount,
+      (res) => {
+        console.log(res)
+        depositApi(
+          makeParam("updateDemandDepositAccountDeposit", {
+            accountNo: "입력한 계좌번호",
+            transactionBalance: amount.toString(),
+          }),
+          (res) => {
+            console.log(res)
+            alert("마니모 계좌의 머니가 환불되었습니다.")
+          },
+          (err) => {
+            console.log(err)
+            alert("환불에 실패했습니다. 다시 시도해주세요.")
+          }
+        )
+      },
+      (err) => {
+        console.log(err)
+        alert("환불에 실패했습니다. 다시 시도해주세요.")
+      }
+    )
+    closeChargeModal()
+  }
 
   return (
     <div className="flex w-full flex-col space-y-4">
@@ -77,9 +186,7 @@ const ParentAccountPage = () => {
         onRequestClose={closeChargeModal}
         title="충전"
         content="충전할 금액을 입력해주세요"
-        onSave={() => {
-          closeChargeModal()
-        }}
+        onSave={(amount) => handleCharge(amount)}
       />
 
       <PriceModal
@@ -87,9 +194,7 @@ const ParentAccountPage = () => {
         onRequestClose={closeRefundModal}
         title="환불"
         content="환불할 금액을 입력해주세요"
-        onSave={() => {
-          closeRefundModal()
-        }}
+        onSave={(amount) => handleRefund(amount)}
       />
     </div>
   )

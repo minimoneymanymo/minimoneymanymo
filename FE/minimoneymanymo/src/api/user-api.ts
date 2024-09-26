@@ -1,4 +1,4 @@
-import {axiosAuthInstance, axiosPublicInstance} from "@/api/httpcommons"
+import { axiosAuthInstance, axiosPublicInstance } from "@/api/httpcommons"
 import axios from "axios"
 
 // 아이디 체크
@@ -77,7 +77,7 @@ export const getMyChild = async (childrenId: number) => {
     } else {
       // Axios 에러가 아닌 경우
       console.error("getMyChild 오류 발생:", e)
-      return {status: 500, message: "서버 오류"} // 기본적인 에러 메시지
+      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }
 }
@@ -106,7 +106,7 @@ export const updateAllowance = async (
     } else {
       // Axios 에러가 아닌 경우
       console.error("updateAllowance에서 오류 발생:", e)
-      return {status: 500, message: "서버 오류"} // 기본적인 에러 메시지
+      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }
 }
@@ -134,7 +134,7 @@ export const updateWithdrawableMoney = async (
     } else {
       // Axios 에러가 아닌 경우
       console.error("updateAllowance에서 오류 발생:", e)
-      return {status: 500, message: "서버 오류"} // 기본적인 에러 메시지
+      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }
 }
@@ -146,7 +146,7 @@ export const updateQuizBonusMoney = async (
   try {
     const res = await axiosAuthInstance.put(`/members/mychild/setQuiz`, {
       childrenId,
-      settingQuizBonusMoney : inputValue,
+      settingQuizBonusMoney: inputValue,
     })
     console.log(res.data)
     return res.data
@@ -158,7 +158,34 @@ export const updateQuizBonusMoney = async (
     } else {
       // Axios 에러가 아닌 경우
       console.error("updateAllowance에서 오류 발생:", e)
-      return {status: 500, message: "서버 오류"} // 기본적인 에러 메시지
+      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
+    }
+  }
+}
+
+// 사용자 정보 조회
+const requestWithdrawApi = async (
+  param: object,
+  success: (response: object) => void,
+  fail: (response: object) => void
+) => {
+  axiosAuthInstance.post(`/members/info`, param).then(success).catch(fail)
+}
+
+export const getMemberInfo = async () => {
+  try {
+    const res = await axiosAuthInstance.get(`/members/info`)
+    console.log(res.data)
+    return res.data
+  } catch (e) {
+    if (axios.isAxiosError(e) && e.response) {
+      // Axios 에러 객체인 경우
+      console.error("사용자 정보 조회 시 오류 발생:", e.response)
+      return e.response // e.response는 { data, status, headers, config }를 포함함
+    } else {
+      // Axios 에러가 아닌 경우
+      console.error("사용자 정보 조회 시 오류 발생:", e)
+      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }
 }

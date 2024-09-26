@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import Modal from "react-modal"
 import AlertIcon from "@mui/icons-material/ErrorOutlineOutlined"
 import CloseIcon from "@mui/icons-material/CloseOutlined"
@@ -10,11 +10,29 @@ interface ModalComponentProps {
   onRequestClose: () => void
   title: string
   content: string
-  onSave: () => void
+  onSave: (amount: number) => void
 }
 
 const PriceModal: React.FC<ModalComponentProps> = (props) => {
   const { isOpen, onRequestClose, title, content, onSave } = props
+  const [inputValue, setInputValue] = useState<string>("") // 입력값을 상태로 관리
+
+  // 입력값 변경 핸들러
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value)
+  }
+
+  // 저장 버튼 클릭 핸들러
+  const handleSave = () => {
+    const amount = parseFloat(inputValue)
+    if (!isNaN(amount)) {
+      // TODO: 잔액보다 크면 안되게 하기
+      onSave(amount)
+    } else {
+      alert("유효한 금액을 입력해주세요.")
+    }
+    setInputValue("")
+  }
 
   return (
     <Modal
@@ -36,6 +54,8 @@ const PriceModal: React.FC<ModalComponentProps> = (props) => {
         <input
           type="text"
           placeholder="금액 입력"
+          value={inputValue} // 입력값을 상태에 바인딩
+          onChange={handleInputChange} // 입력값 변경 핸들러 연결
           className="flex-1 rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-gray-300"
         />
         <div className="ml-5 mt-1 w-full pl-20 text-sm">
@@ -52,7 +72,7 @@ const PriceModal: React.FC<ModalComponentProps> = (props) => {
           취소
         </button>
         <button
-          onClick={onSave}
+          onClick={handleSave} // 저장 버튼 클릭 시 handleSave 호출
           className="ml-6 rounded bg-primary-m1 px-4 py-2 text-white"
         >
           저장
