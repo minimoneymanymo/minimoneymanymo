@@ -70,5 +70,4 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
     </div>
   )
 }
-
 export default Chart
