@@ -7,14 +7,15 @@ Modal.setAppElement("#root")
 
 interface ModalComponentProps {
   isOpen: boolean
-  onRequestClose: () => void
   title: string
   content: string
+  balance: number
+  onRequestClose: () => void
   onSave: (amount: number) => void
 }
 
 const PriceModal: React.FC<ModalComponentProps> = (props) => {
-  const { isOpen, onRequestClose, title, content, onSave } = props
+  const { isOpen, title, content, balance, onRequestClose, onSave } = props
   const [inputValue, setInputValue] = useState<string>("") // 입력값을 상태로 관리
 
   // 입력값 변경 핸들러
@@ -60,7 +61,7 @@ const PriceModal: React.FC<ModalComponentProps> = (props) => {
         />
         <div className="ml-5 mt-1 w-full pl-20 text-sm">
           <span className="text-gray-400">잔액 </span>
-          <span className="text-gray-500"> 300,000 원</span>
+          <span className="text-gray-500"> {balance.toLocaleString()} 원</span>
         </div>
       </div>
 

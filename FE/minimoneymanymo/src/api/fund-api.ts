@@ -73,9 +73,12 @@ const approveRequestApi = async (param: object) => {
 }
 
 // 계좌 연결
-const linkAccountApi = async (param: object) => {
+const linkAccountApi = async (accountNumber: string) => {
   try {
-    const response = await axiosAuthInstance.put(`/members/link-account`, param)
+    const response = await axiosAuthInstance.put(`/members/link-account`, {
+      accountNumber: accountNumber,
+      bankCode: "001",
+    })
     return response.data
   } catch (error) {
     handleApiError(error)

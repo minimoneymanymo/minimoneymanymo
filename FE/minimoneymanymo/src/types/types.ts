@@ -23,3 +23,8 @@ export interface AccountState {
   accountName: string
   accountBalance: string
 }
+
+export interface Bank {
+  bankCode: string
+  bankName: string
+}

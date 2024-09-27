@@ -5,8 +5,7 @@ import AlertIcon from "@mui/icons-material/ReportGmailerrorredOutlined"
 import ToggleList from "@/components/common/mypage/ToggleList"
 import PriceModal from "@/components/common/PriceModal"
 import { depositBalanceApi, refundBalanceApi } from "@/api/fund-api"
-import { depositApi, inquireAccountApi, withdrawApi } from "@/api/account-api"
-import { makeParam } from "@/utils/fin-utils"
+import { inquireAccountApi, inquireBankCodesApi } from "@/api/account-api"
 import { getMemberInfo } from "@/api/user-api"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
@@ -35,6 +34,7 @@ const ParentAccountPage = () => {
   const navigate = useNavigate()
   const [isChargeOpen, setIsChargeOpen] = useState(false)
   const [isRefundOpen, setIsRefundOpen] = useState(false)
+  const [banks, setBanks] = useState([])
 
   const openChargeModal = () => {
     setIsChargeOpen(true)
@@ -90,7 +90,7 @@ const ParentAccountPage = () => {
           }
           dispatch(parentActions.setUserInfo(payload))
 
-          // 계좌 정보 조회
+          // 계좌 조회
           if (accountNumber != null) {
             try {
               const accountRes = await inquireAccountApi(
@@ -111,6 +111,12 @@ const ParentAccountPage = () => {
               }
             } catch (error) {
               console.error("계좌 정보 조회 중 오류 발생:", error)
+            }
+          } else {
+            // 은행 리스트 조회
+            const res = await inquireBankCodesApi()
+            if (res != null) {
+              setBanks(res.REC)
             }
           }
         } else if (res.status === 403) {
@@ -186,30 +192,38 @@ const ParentAccountPage = () => {
 
       <Heading title="마니모 계좌" />
       <MAccountInfo
-        name={name}
-        balance={balance}
+        name={parent.name}
+        balance={parent.balance}
         modalOnClick={openRefundModal}
       />
       <div className="h-1" />
 
       <Heading title="계좌 관리" />
-      <ToggleList title="계좌 연동하기">
-        <RegisterAccount />
-      </ToggleList>
+      {parent.accountNumber ? (
+        <ToggleList title="계좌 연동 해지">
+          <div>계좌 연결을 해지하시겠습니까?</div>
+        </ToggleList>
+      ) : (
+        <ToggleList title="계좌 연동하기">
+          <RegisterAccount banks={banks} />
+        </ToggleList>
+      )}
 
       <PriceModal
         isOpen={isChargeOpen}
-        onRequestClose={closeChargeModal}
         title="충전"
         content="충전할 금액을 입력해주세요"
+        balance={Number(account.accountBalance)}
+        onRequestClose={closeChargeModal}
         onSave={(amount) => handleCharge(amount)}
       />
 
       <PriceModal
         isOpen={isRefundOpen}
-        onRequestClose={closeRefundModal}
         title="환불"
         content="환불할 금액을 입력해주세요"
+        balance={parent.balance}
+        onRequestClose={closeRefundModal}
         onSave={(amount) => handleRefund(amount)}
       />
     </div>
@@ -272,7 +286,8 @@ const MAccountInfo: React.FC<MAccountInfoProps> = (props) => {
       <span className="flex w-full flex-col items-end">
         <span className="text-right">
           <b className="mr-1">
-            <span className="mr-5 text-secondary-600-m2">₩ </span> {balance}
+            <span className="mr-5 text-secondary-600-m2">₩ </span>
+            {Number(balance).toLocaleString()}
           </b>
           원
         </span>
