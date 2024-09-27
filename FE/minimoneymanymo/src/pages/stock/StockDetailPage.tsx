@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import { useEffect, useState } from "react"
-import { getStockDetail } from "@/api/stock-api"
+import { getStockDetail, toggleFavoriteStock } from "@/api/stock-api"
 import { useParams } from "react-router-dom"
 import { useOutletContext } from "react-router-dom"
 import {
@@ -24,7 +24,7 @@ function StockDetailPage(): JSX.Element {
   const [stockInfo, setStockInfo] = useState<Stock>()
   const [stockData, setStockData] = useState<DailyStockData>()
   const [selectedTab, setSelectedTab] = useState<"chart" | "news">("chart")
-
+  const [isLike, setIsLike] = useState<boolean>(false)
   // OutletContext에서 setClosingPrice 함수 가져오기
   const { setClosingPrice } = useOutletContext<{
     setClosingPrice: (price: number) => void
@@ -41,6 +41,7 @@ function StockDetailPage(): JSX.Element {
         setWeeklyStockChart(res.data.weeklyStockChart || [])
         setStockInfo(res.data.stock)
         setStockData(res.data.dailyStockData)
+        setIsLike(res.data.stock.favorite)
         // 첫 번째 항목의 closingPrice를 setClosingPrice에 전달
         if (res.data.dailyStockChart && res.data.dailyStockChart.length > 0) {
           setClosingPrice(res.data.dailyStockChart[0].closingPrice)
@@ -85,6 +86,19 @@ function StockDetailPage(): JSX.Element {
   }
 
   const StockInfo = (): JSX.Element => {
+    const toggleLike = async () => {
+      
+      setIsLike((prev)=>!prev)
+      const res = await toggleFavoriteStock(stockCode!)
+
+      if (res.stateCode === 201) {
+        if (res.data === true) {
+          console.log("좋아요 등록", stockCode)
+        } else {
+          console.log("좋아요 삭제", stockCode)
+        }
+      }
+    }
     return (
       <div className="m-6 mb-2 flex flex-col gap-2">
         {stockInfo ? (
@@ -92,8 +106,18 @@ function StockDetailPage(): JSX.Element {
             <div className="flex gap-3 text-xl">
               <div>{stockInfo.companyName}</div>
               <div className="text-lg text-gray-500">{stockInfo.stockCode}</div>
+              <button onClick={toggleLike}>
+                <img
+                  src={
+                    isLike
+                      ? "/icons/icon-detail-like.svg"
+                      : "/icons/icon-detail-unlike.svg"
+                  }
+                  alt="unlike"
+                />
+              </button>
             </div>
-            <div className="flex gap-3 text-xl items-end">
+            <div className="flex items-end gap-3 text-xl">
               <div className="text-3xl font-bold">
                 {dailyStockChart[0]?.closingPrice ?? "Loading..."} 머니
               </div>
