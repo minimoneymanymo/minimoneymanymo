@@ -14,10 +14,6 @@ pipeline {
                 script {
                     dir('FE/minimoneymanymo') {
                         sh 'ls -l'
-                        withCredentials([file(credentialsId: 'FRONT_ENV', variable: 'env_file')]) {
-                                            sh 'cp $env_file ./.env'
-                                        }
-                        sh 'ls -l'
                         sh 'rm -rf node_modules'
                         docker.build('mmmm-react-image', '-f Dockerfile .')
                         
