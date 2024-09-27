@@ -17,6 +17,7 @@ import ChartPage from "./pages/stock/ChartPage"
 import MyDairy from "./components/diary/Calender"
 import ChildDairyPage from "./pages/chlid/ChildDairyPage"
 import MyChildDiaryCheckPage from "./pages/parentchildren/MyChildDiaryCheckPage"
+import ParentAccountPage from "./pages/parent/ParentAccountPage"
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
 
         <Route path="/news" element={<NewsPage />} />
         <Route path="/parent" element={<ParentPageLayout />}>
-          <Route path="my-wallet" element={<Temp />} />
+          <Route path="my-wallet" element={<ParentAccountPage />} />
           <Route path="my-info" element={<ParentPage />} />
           <Route path="my-children" element={<MyChildrenPage />} />
           <Route
