@@ -15,6 +15,9 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
   const [loading, setLoading] = useState(true)
   const { child } = useChild()
 
+  // **childName 변수를 상태로 관리**
+  const childName = child ? child.name : "우리 아이"
+
   useEffect(() => {
     // child가 null인지 확인
     if (!child) {
@@ -50,7 +53,7 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
     }
 
     getMyChildDiaryList()
-  }, [])
+  }, [child]) // **child 의존성 추가**
 
   if (loading) {
     return <div>로딩 중...</div> // 로딩 상태 표시
@@ -58,7 +61,7 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
 
   return (
     <div>
-      <h2>00이의 투자 일기</h2>
+      <h2>{childName}의 투자 일기</h2> {/* **childName 사용** */}
       <br />
       <ul>
         {diaryList.map((diary) => {
@@ -81,10 +84,9 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
             <li key={diary.createdAt} className="mb-4">
               {/* 여백 추가 */}
               <button onClick={() => onSelectDiary(diary)}>
-                {diary.companyName} - {diary.amount} 머니
+                {year}년 {month}월 {day}일 {hour}시 {minute}분<br />
+                {diary.companyName} {tradeTypeDisplay} : {diary.amount} 머니
                 <br />
-                {year}년 {month}월 {day}일 {hour}시 {minute}분 :{" "}
-                {tradeTypeDisplay} {diary.amount} 머니
                 {diary.reasonBonusMoney === null ? (
                   <div>
                     <p>머니 미지급</p>

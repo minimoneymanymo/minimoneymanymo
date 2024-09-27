@@ -58,14 +58,15 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
 
   return (
     <div>
-      <p>MyChildDiaryGiveMoney 페이지 입니다. </p>
       <h2>상세 정보</h2>
-      <p>거래 유형: {tradeTypeDisplay}</p>
-      <p>회사명: {diary.companyName}</p>
-      <p>금액: {diary.amount}원</p>
-      <p>거래 수량: {diary.tradeSharesCount}</p>
-      <p>이유: {diary.reason}</p>
-      <p>잔액: {diary.remainAmount}원</p>
+      <p>
+        {diary.companyName} {tradeTypeDisplay} {diary.amount}원
+      </p>
+      <p>일시 : {diary.createdAt}</p>
+      <p>
+        이유
+        <br /> {diary.reason}
+      </p>
       {!transactionCompleted &&
         diary.reasonBonusMoney === null && ( // 거래가 완료되지 않았고 reasonBonusMoney가 null인 경우에만 표시
           <div>
