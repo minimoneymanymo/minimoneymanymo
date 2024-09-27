@@ -1,8 +1,7 @@
 package com.beautifulyomin.mmmm.domain.member.service;
 
+import com.beautifulyomin.mmmm.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -18,9 +16,7 @@ public class MailSendService {
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
-    private  RedisUtil redisUtil;
-
-
+    private RedisUtil redisUtil;
 
     public int makeRandomNumber(String email) {
         Random random = new Random();

@@ -18,7 +18,7 @@ import java.time.Duration;
 @Slf4j
 @EnableCaching
 @Configuration
-public class RedisConfig {
+public class RedisConfig { //이제 안씀
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
