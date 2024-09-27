@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectParent, parentActions } from "@/store/slice/parent"
 import { accountActions, selectAccount } from "@/store/slice/account"
+import { AccountBalance } from "@mui/icons-material"
 
 interface MAccountInfoProps {
   name: string
@@ -93,13 +94,12 @@ const ParentAccountPage = () => {
           // 계좌 조회
           if (accountNumber != null) {
             try {
-              const accountRes = await inquireAccountApi(
-                accountNumber,
-                parent.userKey
-              )
-              if (accountRes != null) {
+              console.log("🎈🎈🎈🎈")
+              console.log(accountNumber + " " + userKey)
+              const res = await inquireAccountApi(accountNumber, userKey)
+              if (res != null) {
                 const { bankName, accountNo, accountName, accountBalance } =
-                  accountRes.REC
+                  res.REC
 
                 const accountPayload = {
                   bankName,
@@ -144,6 +144,14 @@ const ParentAccountPage = () => {
       )
       if (res.stateCode === 201) {
         console.log(res)
+        dispatch(
+          parentActions.setUserInfo({ balance: parent.balance + amount })
+        )
+        dispatch(
+          accountActions.setAccount({
+            accountBalance: Number(account.accountBalance) - amount,
+          })
+        )
         alert("마니모 계좌에 머니가 충전되었습니다.") // 성공
       } else {
         alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
@@ -168,6 +176,14 @@ const ParentAccountPage = () => {
       if (res.stateCode === 201) {
         console.log(res)
         alert("마니모 계좌의 머니가 환불되었습니다.") // 성공
+        dispatch(
+          parentActions.setUserInfo({ balance: parent.balance - amount })
+        )
+        dispatch(
+          accountActions.setAccount({
+            accountBalance: Number(account.accountBalance) + amount,
+          })
+        )
       } else {
         alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
       }
@@ -175,7 +191,7 @@ const ParentAccountPage = () => {
       console.log(err)
       alert("환불에 실패했습니다. 다시 시도해주세요.") // 예외 처리
     } finally {
-      closeChargeModal()
+      closeRefundModal()
     }
   }
 

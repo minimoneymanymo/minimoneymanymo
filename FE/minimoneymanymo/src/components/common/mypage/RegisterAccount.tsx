@@ -2,7 +2,7 @@ import { authAccountApi, checkAuthCodeApi } from "@/api/account-api"
 import { linkAccountApi } from "@/api/fund-api"
 import { useAppSelector } from "@/store/hooks"
 import { selectParent } from "@/store/slice/parent"
-import { Bank } from "@/types/types"
+import { Bank } from "@/types/accountTypes"
 import React, { useState } from "react"
 
 // 은행 리스트 받아오기

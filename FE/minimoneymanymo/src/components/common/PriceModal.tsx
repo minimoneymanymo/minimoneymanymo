@@ -2,6 +2,9 @@ import React, { useState } from "react"
 import Modal from "react-modal"
 import AlertIcon from "@mui/icons-material/ErrorOutlineOutlined"
 import CloseIcon from "@mui/icons-material/CloseOutlined"
+import { selectAccount } from "@/store/slice/account"
+import { selectParent } from "@/store/slice/parent"
+import { useAppSelector } from "@/store/hooks"
 
 Modal.setAppElement("#root")
 
@@ -15,6 +18,8 @@ interface ModalComponentProps {
 }
 
 const PriceModal: React.FC<ModalComponentProps> = (props) => {
+  const parent = useAppSelector(selectParent) // parent state 가져옴
+  const account = useAppSelector(selectAccount)
   const { isOpen, title, content, balance, onRequestClose, onSave } = props
   const [inputValue, setInputValue] = useState<string>("") // 입력값을 상태로 관리
 
@@ -28,7 +33,8 @@ const PriceModal: React.FC<ModalComponentProps> = (props) => {
     const amount = parseFloat(inputValue)
     if (!isNaN(amount)) {
       // TODO: 잔액보다 크면 안되게 하기
-      onSave(amount)
+      if (amount > balance) alert("요청금액이 잔액보다 큽니다.")
+      else onSave(amount)
     } else {
       alert("유효한 금액을 입력해주세요.")
     }
