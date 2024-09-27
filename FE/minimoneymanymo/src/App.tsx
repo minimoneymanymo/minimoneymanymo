@@ -15,6 +15,7 @@ import MyChildFinancePage from "./pages/parentchildren/MyChildFinancePage"
 import StockPageLayout from "./layouts/StockPageLayout"
 import StockDetailPage from "./pages/stock/StockDetailPage"
 import ChildDairyPage from "./pages/chlid/ChildDairyPage"
+import ParentAccountPage from "./pages/parent/ParentAccountPage"
 function App() {
   return (
     <Routes>
@@ -26,7 +27,7 @@ function App() {
 
         <Route path="/news" element={<NewsPage />} />
         <Route path="/parent" element={<ParentPageLayout />}>
-          <Route path="my-wallet" element={<Temp />} />
+          <Route path="my-wallet" element={<ParentAccountPage />} />
           <Route path="my-info" element={<ParentPage />} />
           <Route path="my-children" element={<MyChildrenPage />} />
           <Route
