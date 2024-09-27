@@ -16,6 +16,8 @@ import StockPageLayout from "./layouts/StockPageLayout"
 import ChartPage from "./pages/stock/ChartPage"
 import MyDairy from "./components/diary/Calender"
 import ChildDairyPage from "./pages/chlid/ChildDairyPage"
+import MyChildDiaryCheckPage from "./pages/parentchildren/MyChildDiaryCheckPage"
+
 function App() {
   return (
     <Routes>
@@ -36,7 +38,7 @@ function App() {
           >
             <Route path="finance" element={<MyChildFinancePage />} />
             <Route path="invest-style" element={<Temp />} />
-            <Route path="diary" element={<Temp />} />
+            <Route path="diary" element={<MyChildDiaryCheckPage />} />
           </Route>
         </Route>
         <Route path="/my-info" element={<ChildPageLayout />}>
