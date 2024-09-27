@@ -41,7 +41,7 @@ public class TradeDto { // trade put 들어오면 사용하는 dto
         this.remainAmount = remainAmount;
     }
 
-    public TradeDto(String createdAt, String companyName, Integer amount, BigDecimal tradeSharesCount, String reason, Integer reasonBonusMoney, String tradeType, Integer remainAmount) {
+    public TradeDto(String createdAt, String companyName, Integer amount, BigDecimal tradeSharesCount, String reason, Integer reasonBonusMoney, String tradeType, Integer remainAmount, BigDecimal stockTradingGain) {
         this.createdAt = createdAt;
         this.companyName = companyName;
         this.amount = amount;
@@ -50,6 +50,7 @@ public class TradeDto { // trade put 들어오면 사용하는 dto
         this.reasonBonusMoney = reasonBonusMoney;
         this.tradeType = tradeType;
         this.remainAmount = remainAmount;
+        this.stockTradingGain = stockTradingGain;
     }
 
     public TradeDto(Integer childrenId, Integer amount, BigDecimal tradeSharesCount, String reason, String tradeType, Integer remainAmount) {

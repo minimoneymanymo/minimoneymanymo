@@ -176,7 +176,8 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                         trade.reason,
                         trade.reasonBonusMoney,
                         trade.tradeType,
-                        trade.remainAmount
+                        trade.remainAmount,
+                        trade.stockTradingGain
                 ))
                 .from(trade)
                 .where(trade.children.childrenId.eq(childrenId)
