@@ -51,4 +51,13 @@ public class TradeDto { // trade put 들어오면 사용하는 dto
         this.tradeType = tradeType;
         this.remainAmount = remainAmount;
     }
+
+    public TradeDto(Integer childrenId, Integer amount, BigDecimal tradeSharesCount, String reason, String tradeType, Integer remainAmount) {
+        this.childrenId = childrenId;
+        this.amount = amount;
+        this.tradeSharesCount = tradeSharesCount;
+        this.reason = reason;
+        this.tradeType = tradeType;
+        this.remainAmount = remainAmount;
+    }
 }

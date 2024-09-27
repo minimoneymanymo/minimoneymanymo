@@ -95,7 +95,7 @@ public class StockServiceImpl implements StockService {
 
     private StockDto getStock(String stockCode) {
         Stock stock = stockRepository.findById(stockCode)
-                .orElseThrow(() -> new StockNotFoundException(stockCode));
+                .orElseThrow(() -> new StockNotFoundException("stock", stockCode));
 
         return StockDto.builder()
                 .stockCode(stockCode)
@@ -116,7 +116,7 @@ public class StockServiceImpl implements StockService {
         DailyStockDataDto dailyStockData = stockRepositoryCustom.findLatestDateByStockCode(stockCode);
         Stock52weekData stock52weekData = stock52weekDataRepository
                 .findById(new DailyStockDataId(dailyStockData.getDate(), dailyStockData.getStockCode()))
-                .orElseThrow(() -> new StockNotFoundException(stockCode));
+                .orElseThrow(() -> new StockNotFoundException(stockCode, "stock52weekData"));
 
         return DailyStockDataDto.builder()
                 .stockCode(dailyStockData.getStockCode())

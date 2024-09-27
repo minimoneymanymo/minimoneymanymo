@@ -17,6 +17,6 @@ public class StockWithFavoriteStatusDto implements StockResponse {
     private BigDecimal priceChange; //전일 대비 금액
     private BigDecimal priceChangeRate; //전일 대비율
     private BigInteger marketCapitalization; //시가총액
-    private BigInteger tradingVolume; //누적 거래량
+    private Long tradingVolume; //누적 거래량
     private boolean isFavorite; //관심종목 여부
 }

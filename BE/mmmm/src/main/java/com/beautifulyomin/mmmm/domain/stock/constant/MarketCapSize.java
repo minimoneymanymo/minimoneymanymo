@@ -7,9 +7,10 @@ import java.math.BigDecimal;
 
 @Getter
 public enum MarketCapSize {
-    SMALL("SMALL", "0", "300000000000"), //3000억원 미만
-    MEDIUM("MIDIUM", "300000000001", "1000000000000"), //1조원 미만
-    LARGE("LARGE", "1000000000001", "9223372036854775807"); //1조원 이상
+    ALL("ALL","0","4000000"),
+    SMALL("SMALL", "0", "10000"), //3000억원 미만
+    MEDIUM("MEDIUM", "10001", "1000000"), //1조원 미만 TODO 임의로 값 수정해둠
+    LARGE("LARGE", "1000001", "400000000"); //1조원 이상
 
     private final String label;
     private final String minCap;

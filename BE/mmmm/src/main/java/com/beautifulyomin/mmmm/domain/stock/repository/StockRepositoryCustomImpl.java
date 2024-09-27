@@ -208,6 +208,9 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     private void applyConditionByMarket(StockFilterRequestDto filterRequestDto, BooleanBuilder condition) {
         if (filterRequestDto.getMarketType() != null) {
             MarketType marketType = MarketType.fromType(filterRequestDto.getMarketType());
+            if (marketType == MarketType.ALL) {
+                return;
+            }
             condition.and(stock.marketName.eq(marketType.getType()));
         }
     }
@@ -218,6 +221,9 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
     private void applyConditionByMarketCapitalization(StockFilterRequestDto filterRequestDto, BooleanBuilder condition) {
         if (filterRequestDto.getMarketCapSize() != null) {
             MarketCapSize marketCapSize = MarketCapSize.fromLabel(filterRequestDto.getMarketCapSize());
+            if (marketCapSize == MarketCapSize.ALL) {
+                return;
+            }
             condition.and(dailyStockData.marketCapitalization.goe(marketCapSize.getMinCapAsBigDecimal()))
                     .and(dailyStockData.marketCapitalization.loe(marketCapSize.getMaxCapAsBigDecimal()));
         }
@@ -238,18 +244,6 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         }
         if (filterRequestDto.getPbrMax() != null) {
             condition.and(dailyStockData.pbRatio.loe(filterRequestDto.getPbrMax()));
-        }
-        if (filterRequestDto.getEpsMin() != null) {
-            condition.and(dailyStockData.earningsPerShare.goe(filterRequestDto.getEpsMin()));
-        }
-        if (filterRequestDto.getEpsMax() != null) {
-            condition.and(dailyStockData.earningsPerShare.loe(filterRequestDto.getEpsMax()));
-        }
-        if (filterRequestDto.getBpsMin() != null) {
-            condition.and(dailyStockData.bookValuePerShare.goe(filterRequestDto.getBpsMin()));
-        }
-        if (filterRequestDto.getBpsMax() != null) {
-            condition.and(dailyStockData.bookValuePerShare.loe(filterRequestDto.getBpsMax()));
         }
     }
 
@@ -298,12 +292,6 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         }
         if (filterRequestDto.getTradingValueMax() != null) {
             condition.and(dailyStockData.tradingValue.loe(filterRequestDto.getTradingValueMax()));
-        }
-        if (filterRequestDto.getVolumeTurnoverRatioMin() != null) {
-            condition.and(dailyStockData.volumeTurnoverRatio.goe(filterRequestDto.getVolumeTurnoverRatioMin()));
-        }
-        if (filterRequestDto.getVolumeTurnoverRatioMax() != null) {
-            condition.and(dailyStockData.volumeTurnoverRatio.loe(filterRequestDto.getVolumeTurnoverRatioMax()));
         }
     }
 
@@ -375,7 +363,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
             BigDecimal periodClosingPrice = periodData.get(periodData.size() - 1).get(dailyStockChart.closingPrice);
             BigDecimal periodHighestPrice = getHighestPrice(periodData);
             BigDecimal periodLowestPrice = getLowestPrice(periodData);
-            BigInteger periodTradingVolume = getTotalTradingVolume(periodData);
+            Long periodTradingVolume = getTotalTradingVolume(periodData);
 
             periodStockCharts.add(new DailyStockChartDto(
                     periodStartDate, periodHighestPrice, periodLowestPrice, periodTradingVolume, periodOpeningPrice, periodClosingPrice));
@@ -387,10 +375,10 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         return periodStockCharts;
     }
 
-    private BigInteger getTotalTradingVolume(List<Tuple> periodData) {
+    private Long getTotalTradingVolume(List<Tuple> periodData) {
         return periodData.stream()
                 .map(tuple -> tuple.get(dailyStockChart.tradingVolume))
-                .reduce(BigInteger.ZERO, BigInteger::add);
+                .reduce(0L, Long::sum);
     }
 
     private BigDecimal getLowestPrice(List<Tuple> periodData) {

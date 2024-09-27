@@ -16,7 +16,7 @@ public class DailyStockChartDto  implements Serializable {
     private LocalDate date;
     private BigDecimal highestPrice;
     private BigDecimal lowestPrice;
-    private BigInteger tradingVolume;
+    private Long tradingVolume;
     private BigDecimal operatingPrice;
     private BigDecimal closingPrice;
 }

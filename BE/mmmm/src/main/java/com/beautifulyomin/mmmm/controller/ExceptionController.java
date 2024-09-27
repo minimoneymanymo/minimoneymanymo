@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmm.controller;
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.domain.stock.exception.InvalidFilterTypeException;
 import com.beautifulyomin.mmmm.domain.stock.exception.StockNotFoundException;
+import com.beautifulyomin.mmmm.domain.stock.exception.TradeNotFoundException;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,15 +22,8 @@ import java.nio.file.AccessDeniedException;
 @ControllerAdvice(basePackages = "com.beautifulyomin.mmmm")
 public class ExceptionController {
 
-    @ExceptionHandler({BadRequestException.class, InvalidRequestException.class})
-    public ResponseEntity<CommonResponseDto> handleBadRequestException(BadRequestException ex) {
-        CommonResponseDto errorResponse = new CommonResponseDto(400, ex.getMessage(), null);
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<CommonResponseDto> handleIllegalArgumentException(IllegalArgumentException ex) {
-        log.error("Handling IllegalArgumentException: {}", ex.getMessage());
+    @ExceptionHandler({BadRequestException.class, InvalidRequestException.class, IllegalArgumentException.class})
+    public ResponseEntity<CommonResponseDto> handleBadRequestException(Exception  ex) {
         CommonResponseDto errorResponse = new CommonResponseDto(400, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -47,7 +41,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler({StockNotFoundException.class, ConstraintViolationException.class, InvalidFilterTypeException.class
-            , EntityNotFoundException.class})
+            , EntityNotFoundException.class, TradeNotFoundException.class})
     public ResponseEntity<CommonResponseDto> handleNotFountException(RuntimeException ex) {
         CommonResponseDto errorResponse = new CommonResponseDto(404, ex.getMessage(), null);
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);

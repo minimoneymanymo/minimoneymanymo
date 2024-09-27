@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum MarketType {
+    ALL("ALL",null),
     KOSDAQ("KOSDAQ", "KOSDAQ"),
     KOSPI("KOSPI", "KOSPI"),
     KOSPI200("KOSPI200", "KOSPI200"),
