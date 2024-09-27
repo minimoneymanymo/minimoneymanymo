@@ -58,10 +58,10 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
 
   return (
     <div>
-      <h2>상세 정보</h2>
       <p>
-        {diary.companyName} {tradeTypeDisplay} {diary.amount}원
+        {diary.companyName} {tradeTypeDisplay} <br />
       </p>
+      <p>{diary.amount}원</p>
       <p>일시 : {diary.createdAt}</p>
       <p>
         이유
