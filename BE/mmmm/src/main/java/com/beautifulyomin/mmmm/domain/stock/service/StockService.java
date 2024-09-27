@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface StockService {
 
-    StockDetailResponseDto getStockDetailResponse(String stockCode);
+    StockDetailResponseDto getStockDetailResponse(String stockCode, String userId);
 
     Page<StockResponse> getFilteredStocks(StockFilterRequestDto filterRequestDto, String userId, Pageable pageable);
 

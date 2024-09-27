@@ -1,5 +1,7 @@
 package com.beautifulyomin.mmmm.domain.stock.service;
 
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
+import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.*;
 import com.beautifulyomin.mmmm.domain.stock.dto.request.StockFilterRequestDto;
 import com.beautifulyomin.mmmm.domain.stock.dto.response.StockDetailResponseDto;
@@ -13,6 +15,7 @@ import com.beautifulyomin.mmmm.domain.stock.repository.Stock52weekDataRepository
 import com.beautifulyomin.mmmm.domain.stock.repository.StockLikeRepository;
 import com.beautifulyomin.mmmm.domain.stock.repository.StockRepository;
 import com.beautifulyomin.mmmm.domain.stock.repository.StockRepositoryCustom;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,21 +33,25 @@ import java.util.stream.Collectors;
 @Service
 public class StockServiceImpl implements StockService {
     private final Stock52weekDataRepository stock52weekDataRepository;
+    private final StockLikeRepository stockLikeRepository;
+    private final ChildrenRepository childrenRepository;
     private StockRepository stockRepository;
     private StockRepositoryCustom stockRepositoryCustom;
 
     @Autowired
-    public StockServiceImpl(StockRepository stockRepository, StockRepositoryCustom stockRepositoryCustom, Stock52weekDataRepository stock52weekDataRepository) {
+    public StockServiceImpl(StockRepository stockRepository, StockRepositoryCustom stockRepositoryCustom, Stock52weekDataRepository stock52weekDataRepository, StockLikeRepository stockLikeRepository, ChildrenRepository childrenRepository) {
         this.stockRepository = stockRepository;
         this.stockRepositoryCustom = stockRepositoryCustom;
         this.stock52weekDataRepository = stock52weekDataRepository;
+        this.stockLikeRepository = stockLikeRepository;
+        this.childrenRepository = childrenRepository;
     }
 
 
     @Override
-    @Cacheable(value = "stockDetail", key = "#stockCode")
-    public StockDetailResponseDto getStockDetailResponse(String stockCode) {
-        StockDto stockDto = getStock(stockCode);
+//    @Cacheable(value = "stockDetail", key = "#stockCode + #userId")
+    public StockDetailResponseDto getStockDetailResponse(String stockCode, String userId) {
+        StockDto stockDto = getStock(stockCode, userId);
         DailyStockDataDto dailyStockDataDto = getDailyStockData(stockCode);
         List<DailyStockChartDto> dailyStockChartDto = getDailyStockCharts(stockCode);
         List<DailyStockChartDto> weeklyStockChartDto = getWeeklyStockCharts(stockCode);
@@ -93,11 +101,11 @@ public class StockServiceImpl implements StockService {
         return stockRepositoryCustom.toggleFavoriteStock(userId, stockCode);
     }
 
-    private StockDto getStock(String stockCode) {
+    private StockDto getStock(String stockCode, String userId) {
         Stock stock = stockRepository.findById(stockCode)
                 .orElseThrow(() -> new StockNotFoundException("stock", stockCode));
 
-        return StockDto.builder()
+        StockDto stockDto = StockDto.builder()
                 .stockCode(stockCode)
                 .companyName(stock.getCompanyName())
                 .industry(stock.getIndustry())
@@ -110,6 +118,16 @@ public class StockServiceImpl implements StockService {
                 .faceValue(stock.getFaceValue())
                 .currencyName(stock.getCurrencyName())
                 .build();
+
+        if (userId == null) //사용자가 없으면 기본만 반환
+            return stockDto;
+
+        Optional<Children> children  = childrenRepository.findByUserId(userId);
+        if(children.isEmpty()) throw new EntityNotFoundException(userId+"의 회원이 없습니다.");
+        boolean isFavorite = stockLikeRepository.existsByStockAndChildren(stock, children.orElse(null));
+        stockDto.setFavorite(isFavorite);
+        return stockDto;
+
     }
 
     private DailyStockDataDto getDailyStockData(String stockCode) {

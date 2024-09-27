@@ -28,11 +28,13 @@ public class StockController {
 
     @GetMapping("/{stockCode}")
     public ResponseEntity<CommonResponseDto> getStockDetail(
+            @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable(name = "stockCode") @NotNull @Pattern(regexp = "\\d{6}") String stockCode) {
+        String userId =  (token != null && !token.isEmpty()) ? jwtUtil.getUsername(token) : null;
         return ResponseEntity.ok(CommonResponseDto.builder()
                 .stateCode(200)
                 .message("주식 상세 조회 성공!")
-                .data(stockService.getStockDetailResponse(stockCode))
+                .data(stockService.getStockDetailResponse(stockCode, userId))
                 .build());
     }
 
