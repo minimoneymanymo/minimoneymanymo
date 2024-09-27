@@ -28,6 +28,7 @@ export interface Stock {
   marketName: string
   faceValue: string
   currencyName: string
+  favorite: boolean
 }
 export interface DailyStockData {
   stockCode: string
