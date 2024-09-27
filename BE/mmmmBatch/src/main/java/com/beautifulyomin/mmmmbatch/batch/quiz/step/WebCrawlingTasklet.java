@@ -46,7 +46,11 @@ public class WebCrawlingTasklet implements Tasklet {
         } finally {
             driver.quit(); // WebDriver 종료
         }
-        chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put(NEWS_QUIZ_LIST_KEY, newsQuizList);
+        chunkContext.getStepContext()
+                .getStepExecution()
+                .getJobExecution()
+                .getExecutionContext()
+                .put(NEWS_QUIZ_LIST_KEY, newsQuizList);
 
         System.out.println(newsQuizList.size());
         System.out.println(newsQuizList.size());
