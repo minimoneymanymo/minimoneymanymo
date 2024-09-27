@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmm.domain.member.service;
+package com.beautifulyomin.mmmm.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
