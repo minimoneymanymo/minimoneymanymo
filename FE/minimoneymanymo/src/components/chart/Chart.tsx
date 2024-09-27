@@ -26,7 +26,7 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
   // }
 
   return (
-    <div className="box-border size-full">
+    <div className="h-full w-full">
       <IgrFinancialChart
         width="100%"
         height="100%"

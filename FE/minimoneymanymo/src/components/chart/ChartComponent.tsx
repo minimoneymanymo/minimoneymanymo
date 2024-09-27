@@ -47,31 +47,33 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
 
   const Info2 = (): JSX.Element => {
     return (
-      <div className="relative col-span-4 m-2 ms-8 box-border flex rounded p-4 shadow-md">
-        <div className="flex flex-1 flex-col space-y-1">
-          <div className="mb-2 flex items-center gap-4">
-            <span className="w-fit whitespace-nowrap text-xl font-bold">
-              {stockInfo?.companyName}
+      <div className="relative col-span-4 m-2 box-border flex flex-col rounded p-4 shadow-md">
+        <div className="mb-2 flex items-center gap-4">
+          <span className="w-fit whitespace-nowrap text-xl font-bold">
+            {stockInfo?.companyName}
+          </span>
+          <div className="flex w-full flex-col">
+            <span className="text-sm">{stockInfo?.marketName}</span>
+            <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+              {stockInfo?.industry}
             </span>
-            <div className="flex w-full flex-col">
-              <span className="text-sm">{stockInfo?.marketName}</span>
-              <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">
-                {stockInfo?.industry}
-              </span>
-            </div>
           </div>
-          {Element("시가총액(억)", stockData?.marketCapitalization)}
-          {Element("누적거래대금(만)", stockData?.tradingValue)}
-          {Element("상장주식수(주)", stockData?.outstandingShares)}
         </div>
-        <div className="mt-3 flex w-full flex-1 flex-col space-y-1">
-          {/* {Element("", "")} */}
-          {Element("거래량 회전률", `${stockData?.volumeTurnoverRatio} %`)}
-          {Element("액면가", stockInfo?.faceValue)}
-          {Element("52주 최고가", stockData?.high52Week)}
-          {Element("52주 최저가", stockData?.low52Week)}
+        <div className="flex">
+          <div className="flex flex-1 flex-col space-y-1">
+            {Element("시가총액(억)", stockData?.marketCapitalization)}
+            {Element("누적거래대금(만)", stockData?.tradingValue)}
+            {Element("상장주식수(주)", stockData?.outstandingShares)}
+          </div>
+          <div className="flex w-full flex-1 flex-col space-y-1">
+            {/* {Element("", "")} */}
+            {Element("거래량 회전률", `${stockData?.volumeTurnoverRatio} %`)}
+            {/* {Element("액면가", stockInfo?.faceValue)} */}
+            {Element("52주 최고가", stockData?.high52Week)}
+            {Element("52주 최저가", stockData?.low52Week)}
+          </div>
+          {/* <div className="absolute inset-0 rounded bg-primary-m1 opacity-10"></div> */}
         </div>
-        {/* <div className="absolute inset-0 rounded bg-primary-m1 opacity-10"></div> */}
       </div>
     )
   }
@@ -88,17 +90,19 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
   }
 
   return (
-    <div className="z-10 flex h-full w-full flex-col bg-white shadow-md">
-      <div className="flex h-fit w-full items-center justify-between ps-8">
-        <span className="">차트</span>
-        <div className="flex h-fit justify-end">
-          {renderButton("일", "daily")}
-          {renderButton("주", "weekly")}
-          {renderButton("월", "monthly")}
+    <div className="z-10 flex h-full w-full flex-col bg-white">
+      <div className="m-2 mt-0 rounded border border-t pb-14 shadow-md">
+        <div className="flex h-fit w-full items-center justify-between ps-8">
+          <span className="h-fit">차트</span>
+          <div className="flex h-fit justify-end">
+            {renderButton("일", "daily")}
+            {renderButton("주", "weekly")}
+            {renderButton("월", "monthly")}
+          </div>
         </div>
+        <Chart chartData={chartData} />
       </div>
-      <Chart chartData={chartData} />
-      <div className="grid w-full grid-cols-5 pr-8">
+      <div className="grid w-full grid-cols-5 pr-6">
         <Info2 />
         <Info />
       </div>

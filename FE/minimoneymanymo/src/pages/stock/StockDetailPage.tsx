@@ -93,7 +93,7 @@ function StockDetailPage(): JSX.Element {
               <div>{stockInfo.companyName}</div>
               <div className="text-lg text-gray-500">{stockInfo.stockCode}</div>
             </div>
-            <div className="flex gap-3 text-xl">
+            <div className="flex gap-3 text-xl items-end">
               <div className="text-3xl font-bold">
                 {dailyStockChart[0]?.closingPrice ?? "Loading..."} 머니
               </div>
@@ -101,7 +101,7 @@ function StockDetailPage(): JSX.Element {
                 어제보다
                 {stockData ? (
                   <span
-                    className={`ms-8 ${stockData.priceChange > 0 ? "text-red-500" : "text-blue-500"}`}
+                    className={`ms-4 ${stockData.priceChange > 0 ? "text-red-500" : "text-blue-500"}`}
                   >
                     {stockData.priceChange > 0 ? "+" : "-"}
                     {stockData.priceChange ?? 0} 머니(
