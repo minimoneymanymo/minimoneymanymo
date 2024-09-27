@@ -13,6 +13,8 @@ import { IconButton, InputAdornment, TextField } from "@mui/material"
 import { getIsDuplicatedId, signUp, checkAuthCode } from "@/api/user-api"
 import { useNavigate } from "react-router-dom"
 import { registerMemberApi } from "@/api/account-api"
+import { useAppDispatch } from "@/store/hooks"
+import { parentActions } from "@/store/slice/parent"
 
 export function SimpleRegistrationForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -33,6 +35,7 @@ export function SimpleRegistrationForm() {
   const [parentsNumber, setParentsNumber] = useState("") // 부모 번호 상태 변수
   const [phoneNumber, setPhoneNumber] = useState("") // 전화번호 상태 변수
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setId(event.target.value)
@@ -109,7 +112,7 @@ export function SimpleRegistrationForm() {
         password,
         userName,
         role,
-        "userKey",
+        userKey,
         phoneNumber,
         birthDay,
         parentsNumber
@@ -117,6 +120,7 @@ export function SimpleRegistrationForm() {
       console.log(result)
       if (result.stateCode === 201) {
         console.log("회원가입 성공")
+        dispatch(parentActions.setUserKey(userKey))
         navigate("/") // main으로 navigate
       } else {
         console.log("회원가입 실패")

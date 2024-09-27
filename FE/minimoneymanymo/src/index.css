@@ -2,7 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+* {
+  font-family: "Pretendard-Regular", sans-serif;
+  /* WAGURITTF 폰트 적용, 폰트가 로드되지 않았을 경우에는 sans-serif 폰트를 대체로 사용 */
+}
 
 /* For Firefox */
 .scrollable-container {
@@ -42,8 +52,7 @@
 
 .custom-scrollbar {
   @apply overflow-auto; /* Tailwind의 overflow-auto 유틸리티 클래스 적용 */
-    overflow-x: hidden; /* 가로 스크롤 숨기기 */
-
+  overflow-x: hidden; /* 가로 스크롤 숨기기 */
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -64,4 +73,3 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(136, 136, 136, 0.7); /* 커스텀 스타일 */
 }
-

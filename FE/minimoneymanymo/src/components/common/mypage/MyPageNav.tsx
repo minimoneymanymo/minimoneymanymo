@@ -14,19 +14,19 @@ import {
   InboxIcon,
   PowerIcon,
 } from "@heroicons/react/24/solid"
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 
 interface MenuItem {
   label: string
   path: string
-  chip?: Number
+  chip?: number
 }
 
 interface MypageNavProps {
   menuItems: MenuItem[]
 }
-function MypageNav({menuItems}: MypageNavProps): JSX.Element {
+function MypageNav({ menuItems }: MypageNavProps): JSX.Element {
   const navigate = useNavigate()
 
   const [selectedPath, setSelectedPath] = useState<string>("")
@@ -71,7 +71,7 @@ function MypageNav({menuItems}: MypageNavProps): JSX.Element {
             >
               {item.label}
               {item.chip && (
-                <ListItemSuffix className="w-[20px] text-sm bg-primary-m1 rounded-full text-white">
+                <ListItemSuffix className="w-[20px] rounded-full bg-primary-m1 text-sm text-white">
                   {item.chip}
                 </ListItemSuffix>
               )}

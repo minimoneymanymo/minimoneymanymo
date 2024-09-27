@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react"
-import {useNavigate} from "react-router-dom"
-import {useChild} from "../context/ChildContext"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useChild } from "../context/ChildContext"
 import {
   updateAllowance,
   updateQuizBonusMoney,
@@ -9,7 +9,7 @@ import {
 import Heading from "../common/Heading"
 
 function MyChildMoneySetting(): JSX.Element {
-  const {child} = useChild()
+  const { child } = useChild()
   const navigate = useNavigate()
   const [allowance, setAllowance] = useState<number | null>(null)
   const [withdrawableMoney, setWithdrawableMoney] = useState<number | null>(
@@ -111,7 +111,7 @@ function MyChildMoneySetting(): JSX.Element {
   }
 
   return (
-    <div className="h-[500px] space-y-12 ">
+    <div className="h-[500px] space-y-12">
       <Heading title="머니 설정" />
       <div className="grid grid-cols-3 gap-8 px-8">
         <button

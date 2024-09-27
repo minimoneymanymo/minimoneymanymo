@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react"
-import { getStockList } from "@/api/stock-api"
+import { getStockList, toggleFavoriteStock } from "@/api/stock-api"
 import { Typography } from "@material-tailwind/react"
 import { useNavigate } from "react-router-dom"
 import {
@@ -19,6 +19,7 @@ interface StockData {
   priceChangeRate: number
   marketCapitalization: number
   tradingVolume: number
+  favorite: boolean
 }
 
 // 필터 인터페이스 정의
@@ -208,6 +209,22 @@ function StockList({ filters }: { filters: StockFilter }) {
     { label: "거래량", key: "TV" }, // 거래량 기준 정렬
   ]
 
+  const toggleLike = async (stockCode: string, index: number) => {
+    const newList = [...stockRows]
+    const res = await toggleFavoriteStock(stockCode!)
+    console.log(newList[index], index)
+    if (res.stateCode === 201) {
+      if (res.data === true) {
+        newList[index].favorite = true
+        console.log("좋아요 등록", stockCode)
+      } else {
+        newList[index].favorite = false
+        console.log("좋아요 삭제", stockCode)
+      }
+    }
+    setStockRows(newList)
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="mt-4 w-full min-w-max table-auto text-left">
@@ -247,15 +264,32 @@ function StockList({ filters }: { filters: StockFilter }) {
                 }
               >
                 <td
-                  className="border-blue-gray-50 border-b p-4 text-center"
+                  className="border-blue-gray-50 border-b p-4"
                   style={{ width: "5%" }}
                 >
-                  <Typography
-                    variant="small"
-                    className="font-bold text-primary-m1"
-                  >
-                    {index + 1} {/* 인덱스 번호 표시 */}
-                  </Typography>
+                  <div className="flex gap-6">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleLike(stock.stockCode, index)
+                      }}
+                    >
+                      <img
+                        src={
+                          stock.favorite
+                            ? "/icons/icon-list-like.svg"
+                            : "/icons/icon-list-unlike.svg"
+                        }
+                        alt="unlike"
+                      />
+                    </button>
+                    <Typography
+                      variant="small"
+                      className="font-bold text-primary-m1"
+                    >
+                      {index + 1} {/* 인덱스 번호 표시 */}
+                    </Typography>
+                  </div>
                 </td>
                 <td
                   className="border-blue-gray-50 border-b p-4 text-left"
