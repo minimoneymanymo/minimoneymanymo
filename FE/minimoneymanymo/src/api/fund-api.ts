@@ -69,7 +69,7 @@ const linkAccountApi = async (
     .catch(fail)
 }
 
-// 부모 - 이유 보상 머니 지급
+// 부모 - 이유 보상 머니 지급을 위한 투자이유 목록 불러오기
 
 const getChildTradelistApi = async (
   childrenId: string,
@@ -77,7 +77,7 @@ const getChildTradelistApi = async (
   month: number
 ) => {
   try {
-    const res = await axiosPublicInstance.get("/funds/child-trade-list", {
+    const res = await axiosAuthInstance.get("/funds/child-trade-list", {
       params: {
         childrenId: childrenId,
         year: year,

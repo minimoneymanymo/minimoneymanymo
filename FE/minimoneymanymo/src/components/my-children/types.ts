@@ -21,3 +21,17 @@ export interface Child {
   settingWithdrawableMoney: 5999
   settingQuizBonusMoney: 4000
 }
+
+export interface MyChildDiary {
+  childrenId: string | null
+  stockCode: string | null
+  amount: number
+  tradeSharesCount: number
+  reason: string
+  tradeType: string
+  remainAmount: number
+  stockTradingGain: number
+  createdAt: string
+  reasonBonusMoney: number | null
+  companyName: string
+}
