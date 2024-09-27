@@ -10,7 +10,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient(){
         return WebClient.builder()
-                .baseUrl("https://finopenapi.ssafy.io/ssafy/api/v1/edu")
+                .baseUrl("https://finopenapi.ssafy.io/ssafy/api/v1/")
                 .build();
     }
 }
