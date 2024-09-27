@@ -36,8 +36,20 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.batch:spring-batch-test'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    // Selenium
+    implementation 'org.seleniumhq.selenium:selenium-java:4.14.0'
+
+    // Optional: WebDriver Manager (크롬 드라이버를 자동으로 다운로드 및 관리해주는 라이브러리)
+    implementation 'io.github.bonigarcia:webdrivermanager:5.5.1'
+
+
 //    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 //    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
 }
 
 tasks.named('test') {
