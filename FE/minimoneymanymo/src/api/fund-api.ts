@@ -3,10 +3,15 @@ import { axiosAuthInstance } from "@/api/httpcommons"
 import axios from "axios"
 
 // 부모-계좌 충전
-const depositBalanceApi = async (param: number) => {
+const depositBalanceApi = async (
+  balance: number,
+  accountNo: string,
+  userKey: string
+) => {
   try {
     const response = await axiosAuthInstance.put(
-      `/members/deposit?balance=${param}`
+      `/members/deposit?balance=${balance}&accountNo=${accountNo}`,
+      { userKey: userKey }
     )
     return response.data
   } catch (error) {
@@ -15,10 +20,15 @@ const depositBalanceApi = async (param: number) => {
 }
 
 // 부모-계좌 환불
-const refundBalanceApi = async (param: number) => {
+const refundBalanceApi = async (
+  balance: number,
+  accountNo: string,
+  userKey: string
+) => {
   try {
     const response = await axiosAuthInstance.put(
-      `/members/withdraw?balance=${param}`
+      `/members/withdraw?balance=${balance}&accountNo=${accountNo}`,
+      { userKey: userKey }
     )
     return response.data
   } catch (error) {

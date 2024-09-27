@@ -12,17 +12,17 @@ export const makeParam = (
   const random = String(Math.floor(100000 + Math.random() * 900000))
   const { date, time } = getNow() // 구조분해할당
   const param = {
-    Header: {
-      apiName: apiName,
-      transmissionDate: date,
-      transmissionTime: time,
-      institutionCode: "00100",
-      fintechAppNo: "001",
-      apiServiceCode: apiName,
-      institutionTransactionUniqueNo: date + time + random,
-      apiKey: apiKey,
-      userKey: userKey,
-    },
+    // Header: {
+    apiName: apiName,
+    transmissionDate: date,
+    transmissionTime: time,
+    institutionCode: "00100",
+    fintechAppNo: "001",
+    apiServiceCode: apiName,
+    institutionTransactionUniqueNo: date + time + random,
+    apiKey: apiKey,
+    userKey: userKey,
+    // },
   }
 
   // 스프레드 연산자(...)를 사용하여 기존 객체를 복사한 후, 원하는 값을 추가

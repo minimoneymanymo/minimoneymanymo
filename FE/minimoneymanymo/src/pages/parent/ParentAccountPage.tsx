@@ -11,7 +11,7 @@ import { getMemberInfo } from "@/api/user-api"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectParent, parentActions } from "@/store/slice/parent"
-import { accountActions } from "@/store/slice/account"
+import { accountActions, selectAccount } from "@/store/slice/account"
 
 interface MAccountInfoProps {
   name: string
@@ -29,6 +29,7 @@ interface AccountInfoProps {
 
 const ParentAccountPage = () => {
   const parent = useAppSelector(selectParent) // parent state 가져옴
+  const account = useAppSelector(selectAccount)
   const dispatch = useAppDispatch() // state 값 변경(action 실행) 시 사용
   // dispatch(parentActions.setUserInfo({userInfo 객체}))
   const navigate = useNavigate()
@@ -61,36 +62,8 @@ const ParentAccountPage = () => {
   }
 
   useEffect(() => {
-    // 계좌 정보 조회
-    const fetchAccountInfo = async () => {
-      try {
-        const accountRes = await inquireAccountApi(
-          makeParam(parent.userKey, "inquireDemandDepositAccount", {
-            accountNo: parent.accountNumber,
-          })
-        )
-        if (accountRes != null) {
-          const { bankName, accountNo, accountName, accountBalance } =
-            accountRes
-
-          const accountPayload = {
-            bankName,
-            accountNo,
-            accountName,
-            accountBalance,
-          }
-          // 필요한 경우 accountPayload를 사용하여 상태 업데이트
-          dispatch(accountActions.setAccount(accountPayload))
-        }
-      } catch (error) {
-        console.error("계좌 정보 조회 중 오류 발생:", error)
-      }
-    }
-
-    fetchAccountInfo()
-  }, [dispatch, parent.accountNumber, parent.userKey])
-
-  useEffect(() => {
+    // 사용자 정보 조회 -> 계좌번호 있으면 계좌 조회
+    //                 -> 없으면 은행리스트 조회
     const fetchMemberInfo = async () => {
       try {
         const res = await getMemberInfo()
@@ -116,6 +89,30 @@ const ParentAccountPage = () => {
             userKey,
           }
           dispatch(parentActions.setUserInfo(payload))
+
+          // 계좌 정보 조회
+          if (accountNumber != null) {
+            try {
+              const accountRes = await inquireAccountApi(
+                accountNumber,
+                parent.userKey
+              )
+              if (accountRes != null) {
+                const { bankName, accountNo, accountName, accountBalance } =
+                  accountRes.REC
+
+                const accountPayload = {
+                  bankName,
+                  accountNo,
+                  accountName,
+                  accountBalance,
+                }
+                dispatch(accountActions.setAccount(accountPayload))
+              }
+            } catch (error) {
+              console.error("계좌 정보 조회 중 오류 발생:", error)
+            }
+          }
         } else if (res.status === 403) {
           console.error("로그인이 필요합니다.", res)
           alert("로그인이 필요합니다.")
@@ -127,29 +124,21 @@ const ParentAccountPage = () => {
         console.error("API 호출 중 오류 발생:", error)
       }
     }
-
     fetchMemberInfo() // 함수 호출
-  }, [navigate, dispatch])
+  }, [])
 
   const handleCharge = async (amount: number) => {
     try {
       console.log(amount)
       // 부모-계좌 충전 -> 계좌 출금(부모)
-      const res = await depositBalanceApi(amount)
+      const res = await depositBalanceApi(
+        amount,
+        parent.accountNumber,
+        parent.userKey
+      )
       if (res.stateCode === 201) {
         console.log(res)
-        const aRes = await withdrawApi(
-          makeParam(parent.userKey, "updateDemandDepositAccountDeposit", {
-            accountNo: "입력한 계좌번호",
-            transactionBalance: amount.toString(),
-          })
-        )
-        console.log(aRes)
-        if (!aRes.responseCode) {
-          alert("마니모 계좌에 머니가 충전되었습니다.") // 성공
-        } else {
-          alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
-        }
+        alert("마니모 계좌에 머니가 충전되었습니다.") // 성공
       } else {
         alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
       }
@@ -165,21 +154,14 @@ const ParentAccountPage = () => {
     console.log(amount)
     // 부모-계좌 충전 -> 계좌 출금(부모)
     try {
-      const res = await refundBalanceApi(amount)
+      const res = await refundBalanceApi(
+        amount,
+        parent.accountNumber,
+        parent.userKey
+      )
       if (res.stateCode === 201) {
         console.log(res)
-        const aRes = await depositApi(
-          makeParam(parent.userKey, "updateDemandDepositAccountDeposit", {
-            accountNo: "입력한 계좌번호",
-            transactionBalance: amount.toString(),
-          })
-        )
-        console.log(aRes)
-        if (!aRes.responseCode) {
-          alert("마니모 계좌의 머니가 환불되었습니다.") // 성공
-        } else {
-          alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
-        }
+        alert("마니모 계좌의 머니가 환불되었습니다.") // 성공
       } else {
         alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
       }
@@ -191,10 +173,14 @@ const ParentAccountPage = () => {
     }
   }
 
+  if (!parent || !account) {
+    return <div>로딩 중...</div> // 로딩 상태를 표시
+  }
+
   return (
     <div className="flex w-full flex-col space-y-4">
       <Heading title="연결 계좌 정보" />
-      <AccountInfo {...accountInfo} modalOnClick={openChargeModal} />
+      <AccountInfo {...account} modalOnClick={openChargeModal} />
       {/* {...accountInfo} */}
       <div className="h-1" />
 

@@ -1,44 +1,89 @@
 /* eslint-disable */
-import { fintechInstance } from "@/api/httpcommons"
-import { AccountResponse } from "@/types/types"
+import { fintechInstance, axiosAuthInstance } from "@/api/httpcommons"
 import axios from "axios"
 
 const { VITE_SSAFY_API_KEY: apiKey } = import.meta.env
 
+// 금융 API 사용할거면 result가 null인지 확인!
+// response.data를 return, result.REC 통해 필요한 데이터 접근하면 됨
+
 // 사용자 계정 생성
-const registerMemberApi = async (param: string) => {
+const registerMemberApi = async (userId: string) => {
   try {
-    const res = await fintechInstance.post("/member", {
-      apiKey: apiKey,
-      userId: param,
-    })
-    return res.data.userKey
+    const response = await axiosAuthInstance.post(
+      `/fin/member?userId=${userId}`
+    )
+    console.log(response)
+    if (response.status === 200) return response.data.userKey
+    else return null
   } catch (e) {
-    return e
+    return handleApiError(e)
   }
 }
 
 // 은행코드 조회
-const inquireBankCodesApi = async (param: object) => {
-  console.log(param)
+const inquireBankCodesApi = async () => {
   try {
-    const response = await fintechInstance.post("/bank/inquireBankCodes", param)
-    return response.data
+    const response = await axiosAuthInstance.post("/fin/inquireBankCodes")
+    console.log(response)
+    if (response.status === 200) return response.data
+    else return null
   } catch (error) {
-    handleApiError(error)
+    return handleApiError(error)
   }
 }
 
 // 계좌 조회
-const inquireAccountApi = async (param: object) => {
+const inquireAccountApi = async (accountNo: string, userKey: string) => {
   try {
-    const response = await fintechInstance.post(
-      "/demandDeposit/inquireDemandDepositAccount",
-      param
+    const response = await axiosAuthInstance.post(
+      `/fin/inquireDemandDepositAccount?accountNo=${accountNo}`,
+      { userKey: userKey }
     )
-    return response.data.REC
+    console.log(response)
+    if (response.status === 200) return response.data
+    else return null
   } catch (error) {
-    handleApiError(error)
+    return handleApiError(error)
+  }
+}
+
+// 1원 송금
+const authAccountApi = async (
+  accountNo: string,
+  authText: string,
+  userKey: string
+) => {
+  try {
+    const response = await axiosAuthInstance.post(
+      `/fin/openAccountAuth?accountNo=${accountNo}&authText=${authText}`,
+      { userKey: userKey }
+    )
+    console.log(response)
+    if (response.status === 200) return response.data
+    else return null
+  } catch (error) {
+    return handleApiError(error)
+  }
+}
+
+// 1원 송금 검증
+const checkAuthCodeApi = async (
+  accountNo: string,
+  authText: string,
+  authCode: string,
+  userKey: string
+) => {
+  try {
+    const response = await axiosAuthInstance.post(
+      `/fin/checkAuthCode?accountNo=${accountNo}&authText=${authText}&authCode=${authCode}`,
+      { userKey: userKey }
+    )
+    console.log(response)
+    if (response.status === 200) return response.data
+    else return null
+  } catch (error) {
+    return handleApiError(error)
   }
 }
 
@@ -49,9 +94,11 @@ const withdrawApi = async (param: object) => {
       "/demandDeposit/updateDemandDepositAccountWithdrawal",
       param
     )
-    return response.data
+    console.log(response)
+    if (response.status === 200) return response.data
+    else return null
   } catch (error) {
-    handleApiError(error)
+    return handleApiError(error)
   }
 }
 
@@ -62,35 +109,11 @@ const depositApi = async (param: object) => {
       "/demandDeposit/updateDemandDepositAccountDeposit",
       param
     )
-    return response.data
+    console.log(response)
+    if (response.status === 200) return response.data
+    else return null
   } catch (error) {
-    handleApiError(error)
-  }
-}
-
-// 1원 송금
-const authAccountApi = async (param: object) => {
-  try {
-    const response = await fintechInstance.post(
-      "/accountAuth/openAccountAuth",
-      param
-    )
-    return response.data
-  } catch (error) {
-    handleApiError(error)
-  }
-}
-
-// 1원 송금 검증
-const checkAuthCodeApi = async (param: object) => {
-  try {
-    const response = await fintechInstance.post(
-      "/accountAuth/checkAuthCode",
-      param
-    )
-    return response.data
-  } catch (error) {
-    handleApiError(error)
+    return handleApiError(error)
   }
 }
 

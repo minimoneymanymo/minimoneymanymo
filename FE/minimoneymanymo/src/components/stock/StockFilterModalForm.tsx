@@ -1,16 +1,33 @@
 import Modal from "react-modal"
 import { StockModalSidebar } from "./StockModalSidebar"
 import { useState } from "react"
+import { PERFilter } from "./filters/PERFilter"
+import { PBRFilter } from "./filters/PBRFilter"
+import { MarketTypeFilter } from "./filters/MarketTypeFilter" // Import the new component
+import { MarketCapSizeFilter } from "./filters/marketCapSizeFilter"
+import { RestartAlt } from "@mui/icons-material"
 
 Modal.setAppElement("#root")
 
 interface StockFilter {
-  marketType: string | null
-  marketCapSize: string | null
-  perMin: number | null
-  perMax: number | null
+  marketType: string | null // 시장 유형 (예: KOSPI, KOSDAQ)
+  marketCapSize: string | null // 시가총액 크기 (예: Large, Mid, Small)
+  perMin: number | null // 최소 PER 값
+  perMax: number | null // 최대 PER 값
+  pbrMin: number | null // 최소 PBR 값
+  pbrMax: number | null // 최대 PBR 값
+  priceMin: number | null // 최소 가격
+  priceMax: number | null // 최대 가격
+  changeRateMin: number | null // 최소 등락률
+  changeRateMax: number | null // 최대 등락률
+  high52WeekMin: number | null // 52주 최고가 최소값
+  high52WeekMax: number | null // 52주 최고가 최대값
+  low52WeekMin: number | null // 52주 최저가 최소값
+  low52WeekMax: number | null // 52주 최저가 최대값
+  tradingValueMin: number | null // 최소 거래대금
+  tradingValueMax: number | null // 최대 거래대금
+  volumeMax: number | null // 최대 거래량
 }
-
 interface StockFilterFormProps {
   open: boolean
   handleOpen: () => void
@@ -27,6 +44,50 @@ export function StockFilterModalForm({
   const [selectedCategory, setSelectedCategory] = useState<string>("시장") // 사이드바에서 선택된 카테고리
   const [temporaryFilters, setTemporaryFilters] = useState<StockFilter>(filters) // 임시 필터 상태 추가
 
+  const resetFilters = () => {
+    //여기서 temp필터만 변경하는게 아니고 대시보드 전체의 필터를 초기화
+    setTemporaryFilters({
+      marketType: "ALL",
+      marketCapSize: "ALL",
+      perMin: null,
+      perMax: null,
+      pbrMin: null,
+      pbrMax: null,
+      priceMin: null,
+      priceMax: null,
+      changeRateMin: null,
+      changeRateMax: null,
+      high52WeekMin: null,
+      high52WeekMax: null,
+      low52WeekMin: null,
+      low52WeekMax: null,
+      tradingValueMin: null,
+      tradingValueMax: null,
+      volumeMax: null,
+    })
+    updateFilters({
+      marketType: "ALL",
+      marketCapSize: "ALL",
+      perMin: null,
+      perMax: null,
+      pbrMin: null,
+      pbrMax: null,
+      priceMin: null,
+      priceMax: null,
+      changeRateMin: null,
+      changeRateMax: null,
+      high52WeekMin: null,
+      high52WeekMax: null,
+      low52WeekMin: null,
+      low52WeekMax: null,
+      tradingValueMin: null,
+      tradingValueMax: null,
+      volumeMax: null,
+    })
+    handleOpen() // 모달 닫기
+  }
+
+  const INF: number = 100000000000
   const handleMarketTypeChange = (marketType: string) => {
     setTemporaryFilters({ ...temporaryFilters, marketType })
   }
@@ -34,6 +95,26 @@ export function StockFilterModalForm({
   const handleSearch = () => {
     updateFilters(temporaryFilters)
     handleOpen() // 모달 닫기
+  }
+
+  const handleMarketCapSizeChange = (marketCapSize: string) => {
+    setTemporaryFilters({ ...temporaryFilters, marketCapSize })
+  }
+
+  const handlePERRangeChange = (min: number, max: number) => {
+    setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
+  }
+
+  const handlePresetPER = (min: number, max: number | null) => {
+    setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
+  }
+
+  const handlePBRRangeChange = (min: number, max: number) => {
+    setTemporaryFilters({ ...temporaryFilters, pbrMin: min, pbrMax: max })
+  }
+
+  const handlePresetPBR = (min: number, max: number | null) => {
+    setTemporaryFilters({ ...temporaryFilters, pbrMin: min, pbrMax: max })
   }
 
   return (
@@ -54,47 +135,33 @@ export function StockFilterModalForm({
         <div className="relative flex-1 overflow-auto p-6">
           {/* 시장 */}
           {selectedCategory === "시장" && (
-            <div>
-              <h3 className="text-xl font-semibold">시장</h3>
-              <p className="mb-4 text-gray-600">시장을 선택하세요.</p>
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    value="KOSPI"
-                    checked={temporaryFilters.marketType === "KOSPI"}
-                    onChange={() => handleMarketTypeChange("KOSPI")}
-                  />
-                  코스피 시장만 보기
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    value="KOSDAQ"
-                    checked={temporaryFilters.marketType === "KOSDAQ"}
-                    onChange={() => handleMarketTypeChange("KOSDAQ")}
-                  />
-                  코스닥 시장만 보기
-                </label>
-              </div>
-            </div>
+            <MarketTypeFilter
+              marketType={temporaryFilters.marketType}
+              handleMarketTypeChange={handleMarketTypeChange}
+            />
           )}
-          {/* 시가 총액 */}
+          {/* 시가총액 */}
+          {selectedCategory === "시가총액" && (
+            <MarketCapSizeFilter
+              marketCapSize={temporaryFilters.marketCapSize}
+              handleMarketCapSizeChange={handleMarketCapSizeChange}
+            />
+          )}
           {/* PER */}
           {selectedCategory === "PER" && (
-            <div>
-              <h3 className="text-xl font-semibold">PER</h3>
-              <p className="mb-4 text-gray-600">PER을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <PERFilter
+              temporaryFilters={temporaryFilters}
+              handlePERRangeChange={handlePERRangeChange}
+              handlePresetPER={handlePresetPER}
+            />
           )}
           {/* PBR */}
           {selectedCategory === "PBR" && (
-            <div>
-              <h3 className="text-xl font-semibold">PBR</h3>
-              <p className="mb-4 text-gray-600">PBR을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <PBRFilter
+              temporaryFilters={temporaryFilters}
+              handlePBRRangeChange={handlePBRRangeChange}
+              handlePresetPBR={handlePresetPBR}
+            />
           )}
           {/* 주가 */}
           {selectedCategory === "주가" && (
@@ -144,6 +211,15 @@ export function StockFilterModalForm({
               {/* PER 관련 콘텐츠 추가 */}
             </div>
           )}
+          {/* 하단의 초기화 버튼 */}
+          <div className="absolute bottom-4 right-32">
+            <button
+              onClick={resetFilters}
+              className="flex items-center gap-1 px-4 py-2 text-gray-600"
+            >
+              <RestartAlt className="h-5 w-5 text-gray-600" /> 초기화
+            </button>
+          </div>
 
           {/* 하단의 검색 및 초기화 버튼 */}
           <div className="absolute bottom-4 right-4">
@@ -151,7 +227,7 @@ export function StockFilterModalForm({
               onClick={handleSearch}
               className="rounded-lg bg-primary-m1 px-4 py-2 text-white hover:bg-primary-600"
             >
-              검색하기
+              조회하기
             </button>
           </div>
         </div>

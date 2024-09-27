@@ -205,7 +205,6 @@ export const updateQuizBonusMoney = async (
 export const getMemberInfo = async () => {
   try {
     const res = await axiosAuthInstance.get(`/members/info`)
-    console.log(res.data)
     return res.data
   } catch (e) {
     if (axios.isAxiosError(e) && e.response) {
