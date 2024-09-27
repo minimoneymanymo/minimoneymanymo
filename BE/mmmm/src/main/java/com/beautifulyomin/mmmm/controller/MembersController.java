@@ -1,13 +1,17 @@
 package com.beautifulyomin.mmmm.controller;
 
+import com.beautifulyomin.mmmm.common.JsonRequestUtil;
 import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
+import com.beautifulyomin.mmmm.domain.fund.dto.UserKeyDto;
 import com.beautifulyomin.mmmm.domain.member.dto.*;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.service.MailSendService;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,6 +23,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,12 +39,16 @@ public class MembersController {
     private final ChildrenService childrenService;
     private final JWTUtil jwtUtil;
     private final MailSendService mailSendService;
+    private final JsonRequestUtil jsonRequestUtil;
+    private final WebClient webClient;
 
-    public MembersController(ParentService parentService, ChildrenService childrenService, JWTUtil jwtUtil, MailSendService mailSendService) {
+    public MembersController(ParentService parentService, ChildrenService childrenService, JWTUtil jwtUtil, MailSendService mailSendService, JsonRequestUtil jsonRequestUtil, WebClient webClient) {
         this.parentService = parentService;
         this.childrenService = childrenService;
         this.jwtUtil = jwtUtil;
         this.mailSendService = mailSendService;
+        this.jsonRequestUtil = jsonRequestUtil;
+        this.webClient = webClient;
     }
 
     @PostMapping("/checkid")
@@ -315,12 +326,15 @@ public class MembersController {
     }
 
     /**
-     * 부모 - 마니모 계좌 환불
+     * 부모 - 마니모 계좌 환불(환불API -> 부모 계좌 입금)
      */
     @PutMapping("/withdraw")
+    @Transactional
     public ResponseEntity<CommonResponseDto> withdrawBalance(
             @RequestHeader("Authorization") String token,
-            @RequestParam("balance") Integer balance
+            @RequestBody UserKeyDto userKeyDto,
+            @RequestParam("balance") Integer balance,
+            @RequestParam("accountNo") String accountNo
     ) {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
@@ -331,26 +345,46 @@ public class MembersController {
         if (parent.getBalance() < balance) {
             throw new InvalidRequestException("잔액보다 큰 금액을 환불할 수 없습니다.");
         }
-
         long result = parentService.updateBalance(userId, balance * -1);
         if (result == 0) {
             throw new InvalidRequestException("마니모 계좌 환불 실패");
         }
+        ObjectNode jsonObject = jsonRequestUtil.createRequestBody("updateDemandDepositAccountDeposit", userKeyDto.getUserKey());
+        jsonObject.put("accountNo", accountNo);
+        jsonObject.put("transactionBalance", balance);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(CommonResponseDto.builder()
-                        .stateCode(201)
-                        .message("마니모 계좌 환불 완료")
-                        .build());
+        try {
+            String response = webClient.post()
+                    .uri("/edu/demandDeposit/updateDemandDepositAccountDeposit")
+                    .bodyValue(jsonObject)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            System.out.println("✨✨✨✨✨✨✨");
+            System.out.println(response);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(201)
+                            .message("마니모 계좌 환불 완료")
+                            .build());
+        } catch (WebClientException e) {
+            // API 호출 실패 시 롤백
+            throw new InvalidRequestException("외부 API 호출 실패로 인한 롤백");
+        }
     }
 
     /**
      * 부모 - 마니모 계좌 충전
      */
     @PutMapping("/deposit")
+    @Transactional
     public ResponseEntity<CommonResponseDto> depositBalance(
             @RequestHeader("Authorization") String token,
-            @RequestParam("balance") Integer balance
+            @RequestBody UserKeyDto userKeyDto,
+            @RequestParam("balance") Integer balance,
+            @RequestParam("accountNo") String accountNo
     ) {
         String userId = jwtUtil.getUsername(token);
         //토큰 유저가 부모가 아닐경우 401 리턴
@@ -362,11 +396,31 @@ public class MembersController {
         if (result == 0) {
             throw new InvalidRequestException("마니모 계좌 환불 실패");
         }
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(CommonResponseDto.builder()
-                        .stateCode(201)
-                        .message("마니모 계좌 충전 완료")
-                        .build());
+
+        ObjectNode jsonObject = jsonRequestUtil.createRequestBody("updateDemandDepositAccountWithdrawal", userKeyDto.getUserKey());
+        jsonObject.put("accountNo", accountNo);
+        jsonObject.put("transactionBalance", balance);
+
+        try {
+            String response  = webClient.post()
+                    .uri("/edu/demandDeposit/updateDemandDepositAccountWithdrawal") // URI에서 기본 URL 제외
+                    .bodyValue(jsonObject)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            System.out.println("✨✨✨✨✨✨✨");
+            System.out.println(response);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(201)
+                            .message("마니모 계좌 충전 완료")
+                            .build());
+        } catch (WebClientException e) {
+            // API 호출 실패 시 롤백
+            throw new InvalidRequestException("외부 API 호출 실패로 인한 롤백");
+        }
     }
 
     @PutMapping("/link-account")
