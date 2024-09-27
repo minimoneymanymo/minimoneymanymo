@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuizJobRunner  implements CommandLineRunner {
+public class QuizJobRunner  { // implements CommandLineRunner
     private final JobLauncher jobLauncher;
     private final Job webCrawlingJob;
 
@@ -20,18 +20,18 @@ public class QuizJobRunner  implements CommandLineRunner {
         this.webCrawlingJob = webCrawlingJob;
     }
 
-//    @Scheduled(cron = "35 37 13 ? * MON-FRI")
-//    public void run() throws Exception {
-//        JobParameters params = new JobParametersBuilder()
-//                .addLong("time", System.currentTimeMillis()) // JobParameters에 현재 시간 추가
-//                .toJobParameters();
-//        jobLauncher.run(webCrawlingJob, params); // 잡 실행
-//    }
-    @Override
-    public void run(String... args) throws Exception {
+    @Scheduled(cron = "0 0 0 ? * MON-FRI")
+    public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addLong("time", System.currentTimeMillis()) // JobParameters에 현재 시간 추가
                 .toJobParameters();
-        jobLauncher.run(webCrawlingJob, params); // 애플리케이션 시작 시 배치 작업 실행
+        jobLauncher.run(webCrawlingJob, params); // 잡 실행
     }
+//    @Override
+//    public void run(String... args) throws Exception {
+//        JobParameters params = new JobParametersBuilder()
+//                .addLong("time", System.currentTimeMillis())
+//                .toJobParameters();
+//        jobLauncher.run(webCrawlingJob, params); // 애플리케이션 시작 시 배치 작업 실행
+//    }
 }
