@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { getChildTradelistApi } from "@/api/fund-api"
 import { MyChildDiary } from "./types"
+import { useChild } from "../context/ChildContext"
 
 // 상위 페이지로 선택한 다이어리 넘김
 interface MyChildDiaryListProps {
@@ -12,15 +13,23 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
 }) => {
   const [diaryList, setDiaryList] = useState<MyChildDiary[]>([])
   const [loading, setLoading] = useState(true)
+  const { child } = useChild()
 
   useEffect(() => {
+    // child가 null인지 확인
+    if (!child) {
+      console.error("child 정보가 없습니다.")
+      setLoading(false) // 로딩 종료
+      return
+    }
+
     // API 호출 함수로 데이터 가져오기
     const getMyChildDiaryList = async () => {
-      const childrenId = "areumbaby" // 실제 childrenId 값을 넣어야 함
-      const year = 2024
-      const month = 9
-
       try {
+        const childrenId = child.userId // 실제 childrenId 값을 넣어야 함
+        const year = parseInt(child.createdAt.slice(0, 4))
+        const month = parseInt(child.createdAt.slice(4, 6))
+
         const response = await getChildTradelistApi(childrenId, year, month)
         console.log("API 응답:", response) // API 응답 로그 출력
 

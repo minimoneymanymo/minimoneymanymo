@@ -1,3 +1,4 @@
+// 자식 목록 불러올 때
 export interface Children {
   childrenId: number
   createdAt?: string
@@ -9,6 +10,7 @@ export interface Children {
   withdrawableMoney: number
 }
 
+//자식 한명 클릭할 때 씀
 export interface Child {
   childrenId: number
   userId: string
@@ -20,6 +22,7 @@ export interface Child {
   settingMoney: 3000
   settingWithdrawableMoney: 5999
   settingQuizBonusMoney: 4000
+  createdAt: string
 }
 
 export interface MyChildDiary {

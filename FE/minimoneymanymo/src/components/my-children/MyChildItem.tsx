@@ -1,4 +1,3 @@
-import { useChild } from "../context/ChildContext"
 import { Children } from "./types"
 
 interface MyChildProps {

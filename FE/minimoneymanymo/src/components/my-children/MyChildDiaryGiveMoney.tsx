@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { MyChildDiary } from "@/components/my-children/types"
 import { putReasonBonusMoney } from "@/api/stock-api" // 수정된 API 호출 함수 가져오기
+import { useChild } from "../context/ChildContext"
 
 // diary prop 타입 정의
 interface MyChildDiaryGiveMoneyProps {
@@ -12,6 +13,7 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
 }) => {
   const [bonusMoney, setBonusMoney] = useState<string>("") // 입력된 보너스 머니 상태
   const [message, setMessage] = useState<string>("") // 처리 결과 메시지 상태
+  const { child } = useChild()
 
   // tradeType 표시 변환
   const tradeTypeDisplay =
@@ -19,9 +21,15 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
 
   // 보너스 머니 전송 함수
   const handleSendBonusMoney = async () => {
+    // child가 null인지 확인
+    if (!child) {
+      console.error("child 정보가 없습니다.")
+      return
+    }
+
     const reasonBonusMoneyRequest = {
-      childrenUserId: Number(diary.childrenId), // childrenId를 적절하게 사용
-      createAt: diary.createdAt, // createdAt 값을 전달
+      childrenUserId: child.childrenId, // childrenId를 적절하게 사용
+      createAt: child.createdAt, // createdAt 값을 전달
       reasonBonusMoney: Number(bonusMoney), // 입력된 보너스 머니를 숫자로 변환
     }
 
