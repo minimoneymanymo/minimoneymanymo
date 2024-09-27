@@ -28,7 +28,8 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
       try {
         const childrenId = child.userId // 실제 childrenId 값을 넣어야 함
         const year = parseInt(child.createdAt.slice(0, 4))
-        const month = parseInt(child.createdAt.slice(4, 6))
+        const month = parseInt(child.createdAt.slice(5, 7))
+        console.log(childrenId, year, month)
 
         const response = await getChildTradelistApi(childrenId, year, month)
         console.log("API 응답:", response) // API 응답 로그 출력

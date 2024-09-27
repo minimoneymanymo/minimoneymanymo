@@ -2,8 +2,8 @@ import { axiosAuthInstance, axiosPublicInstance } from "@/api/httpcommons"
 import axios from "axios"
 
 interface ReasonBonusMoneyRequest {
-  childrenUserId: number
-  createAt: string
+  childrenUserId: string
+  createdAt: string
   reasonBonusMoney: number
 }
 
@@ -41,6 +41,7 @@ export const putReasonBonusMoney = async (
   reasonBonusMoneyRequest: ReasonBonusMoneyRequest
 ) => {
   try {
+    console.log(reasonBonusMoneyRequest)
     const res = await axiosAuthInstance.put(
       `/stocks/child-reason-bonus-money`,
       reasonBonusMoneyRequest // 요청 본문에 reasonBonusMoneyRequest 추가
