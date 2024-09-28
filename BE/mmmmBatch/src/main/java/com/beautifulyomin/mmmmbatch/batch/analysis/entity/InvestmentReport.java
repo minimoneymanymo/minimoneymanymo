@@ -30,7 +30,7 @@ public class InvestmentReport {
 
     @Id
     @Column(nullable = false)
-    private String childrenId;
+    private Integer childrenId;
 
     @Column(nullable = false)
     @Range(min = 0, max = 100)

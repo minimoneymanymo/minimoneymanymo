@@ -7,11 +7,13 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "trade_records")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "trade_records", indexes = {
+        @Index(name = "idx_trade_records_date", columnList = "created_at"),
+})
 public class TradeRecord { // 매수매도 거래내역
 
     @ManyToOne(fetch = FetchType.LAZY) // 자식1 : 내역n

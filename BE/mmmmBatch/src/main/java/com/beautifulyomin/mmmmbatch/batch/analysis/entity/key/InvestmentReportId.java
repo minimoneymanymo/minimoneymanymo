@@ -17,5 +17,5 @@ public class InvestmentReportId implements Serializable {
     @Column(nullable = false)
     private LocalDate date;
     @Column(nullable = false)
-    private String childrenId;
+    private Integer childrenId;
 }
