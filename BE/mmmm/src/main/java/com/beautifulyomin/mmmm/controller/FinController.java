@@ -5,6 +5,7 @@ import com.beautifulyomin.mmmm.domain.fund.dto.UserKeyDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -13,6 +14,9 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/fin")
 @RequiredArgsConstructor
 public class FinController {
+
+    @Value("${api.ssafy.apikey}")
+    private String apiKey;
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
@@ -34,7 +38,7 @@ public class FinController {
     @PostMapping("/member")
     public Mono<String> registerMember(@RequestParam("userId") String userId) {
         ObjectNode jsonObject = objectMapper.createObjectNode();
-        jsonObject.put("apiKey", "3b3bd8e345c643ce8b0d6bb77d93e649");
+        jsonObject.put("apiKey", apiKey);
         jsonObject.put("userId", userId);
 
         return webClient.post()

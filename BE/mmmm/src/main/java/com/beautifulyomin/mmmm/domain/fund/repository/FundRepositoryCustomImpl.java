@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -83,14 +84,18 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
         QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
 
         // 서브쿼리로 총 평가금액 계산
-        BigDecimal totalAmount = jpaQueryFactory
-                .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
-                .from(stocksHeld)
-                .join(dailyStockChart)
-                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
-                .where(stocksHeld.children.userId.eq(childrenId))
-                .fetchOne();
+        BigDecimal totalAmount = Optional.ofNullable(
+                jpaQueryFactory
+                        .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
+                        .from(stocksHeld)
+                        .join(dailyStockChart)
+                        .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
+                        .where(stocksHeld.children.userId.eq(childrenId))
+                        .fetchOne()
+        ).orElse(BigDecimal.ZERO);
 
+        System.out.println("🎈🎈🎈🎈🎈");
+        System.out.println(totalAmount);
         // 메인 쿼리: children의 money와 withdrawable_money 가져오기
         return jpaQueryFactory
                 .select(Projections.constructor(MoneyDto.class,
