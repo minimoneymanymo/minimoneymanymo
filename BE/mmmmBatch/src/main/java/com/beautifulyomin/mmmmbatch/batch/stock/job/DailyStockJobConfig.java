@@ -4,6 +4,7 @@ import com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock.DailyStockWriter
 import com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock.DailyStockProcessor;
 import com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock.DailyStockReader;
 import com.beautifulyomin.mmmmbatch.listner.JobDurationListener;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class DailyStockJobConfig {
 
     private final JobRepository jobRepository;
@@ -26,19 +28,6 @@ public class DailyStockJobConfig {
     private final DailyStockProcessor dailyStockProcessor;
     private final DailyStockWriter dailyStockDataWriter;
     private final JobDurationListener jobDurationListener;
-
-    public DailyStockJobConfig(JobRepository jobRepository,
-                               PlatformTransactionManager transactionManager,
-                               DailyStockReader dailyStockReader,
-                               DailyStockProcessor dailyStockProcessor,
-                               DailyStockWriter dailyStockDataWriter, JobDurationListener jobDurationListener) {
-        this.jobRepository = jobRepository;
-        this.transactionManager = transactionManager;
-        this.dailyStockReader = dailyStockReader;
-        this.dailyStockProcessor = dailyStockProcessor;
-        this.dailyStockDataWriter = dailyStockDataWriter;
-        this.jobDurationListener = jobDurationListener;
-    }
 
     //jobRepository 를 통해 job의 실행 상태와 메타데이터가 관리된다.
     @Bean
