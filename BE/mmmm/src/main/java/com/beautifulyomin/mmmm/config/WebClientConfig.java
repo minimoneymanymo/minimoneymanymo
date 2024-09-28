@@ -1,5 +1,6 @@
 package com.beautifulyomin.mmmm.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -7,10 +8,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
+    @Value("${api.ssafy.url}")
+    private String url;
+
     @Bean
     public WebClient webClient(){
+
         return WebClient.builder()
-                .baseUrl("https://finopenapi.ssafy.io/ssafy/api/v1/")
+                .baseUrl(url)
                 .build();
     }
 }
