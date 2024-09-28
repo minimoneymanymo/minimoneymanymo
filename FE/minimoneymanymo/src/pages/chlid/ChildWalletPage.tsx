@@ -1,17 +1,20 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Heading from "@/components/common/Heading"
 import AlertIcon from "@mui/icons-material/ReportGmailerrorredOutlined"
 import {
   AccountInfoProps,
   MoneyInfoProps,
-  RecordItemProps,
+  WithdrawableMoneyProps,
 } from "@/types/accountTypes"
 import RegisterAccount from "@/components/common/mypage/RegisterAccount"
 import ToggleList from "@/components/common/mypage/ToggleList"
 import WithdrawablReqItem from "@/components/child/WithdrawalReqItem"
 import RecordForm from "@/components/child/RecordForm"
+import { getAllMoneyRecordsApi, getWithdrawListApi } from "@/api/fund-api"
 
 function ChildWalletPage(): JSX.Element {
+  const [withdrawList, setWithdrawList] = useState<WithdrawableMoneyProps[]>([])
+  const [recordList, setRecordList] = useState([])
   const accountInfo = {
     bankName: "우리은행",
     accoutNo: "1231-249-723984",
@@ -19,73 +22,28 @@ function ChildWalletPage(): JSX.Element {
     accountBalance: "120000",
   }
 
-  const recordItem = {
-    createdAt: "20240927140000",
-    tradeType: "1",
-    amount: "1000",
-    balance: "30000",
-    title: "삼성전자",
-  }
+  useEffect(() => {
+    // 사용자정보, 출금요청내역, 머니사용내역
+    const fetchFundList = async () => {
+      try {
+        const res1 = await getAllMoneyRecordsApi()
+        const res2 = await getWithdrawListApi()
+        if (res1.stateCode == 200) {
+          console.log(res1)
+          setRecordList(res1.data)
+        } else console.error("머니내역 오류: ", res1)
 
-  const dataList = [
-    { createdAt: "20240927140000", amount: "10000", approvedAt: "" },
-    {
-      createdAt: "20240916140000",
-      amount: "3000",
-      approvedAt: "20240916140000",
-    },
-  ]
+        if (res2.stateCode == 200) {
+          console.log(res2)
+          setWithdrawList(res2.data)
+        } else console.error("출금요청내역 오류: ", res1)
+      } catch (error) {
+        console.error("오류 발생:", error)
+      }
+    }
 
-  const recordList = [
-    {
-      amount: 1000,
-      tradeType: "1",
-      createdAt: "20240928162204",
-      companyName: null,
-      tradeSharesCount: null,
-      remainAmount: 4100,
-    },
-    {
-      amount: 1300,
-      tradeType: "4",
-      createdAt: "20240924104254",
-      companyName: "BGF리테일",
-      tradeSharesCount: 0.04,
-      remainAmount: 4100,
-    },
-    {
-      amount: 3300,
-      tradeType: "4",
-      createdAt: "20240924104230",
-      companyName: "BGF리테일",
-      tradeSharesCount: 0.04,
-      remainAmount: 5400,
-    },
-    {
-      amount: 1300,
-      tradeType: "4",
-      createdAt: "20240924103641",
-      companyName: "시프트업",
-      tradeSharesCount: 0.5,
-      remainAmount: 8700,
-    },
-    {
-      amount: 30300,
-      tradeType: "4",
-      createdAt: "20240923103121",
-      companyName: "시프트업",
-      tradeSharesCount: 0.5,
-      remainAmount: 0,
-    },
-    {
-      amount: 30300,
-      tradeType: "5",
-      createdAt: "20240923102948",
-      companyName: "시프트업",
-      tradeSharesCount: 0.5,
-      remainAmount: 30300,
-    },
-  ]
+    fetchFundList()
+  }, [])
   return (
     <>
       <Heading title="나의 지갑" />
@@ -101,7 +59,7 @@ function ChildWalletPage(): JSX.Element {
         <div className="px-8">
           <ToggleList title="출금 요청 내역">
             <div className="border-t-2 border-gray-100 p-4">
-              {dataList.map((item, index) => (
+              {withdrawList.map((item, index) => (
                 <WithdrawablReqItem
                   key={index}
                   createdAt={item.createdAt}

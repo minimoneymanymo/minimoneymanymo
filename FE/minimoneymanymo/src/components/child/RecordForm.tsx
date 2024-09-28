@@ -44,7 +44,7 @@ const RecordForm: React.FC<{ data: RecordItemProps[] }> = ({ data }) => {
   const groupedData = groupByDate(data)
 
   return (
-    <div className="mx-5 my-3 rounded-2xl bg-white px-4 pt-4 shadow-md">
+    <div className="mx-8 my-3 rounded-2xl bg-white px-8 pt-4 shadow-md">
       {Object.keys(groupedData)
         .sort((a, b) => b.localeCompare(a))
         .map((date) => (
@@ -78,7 +78,7 @@ const RecordItem: React.FC<RecordItemProps> = (props) => {
   return (
     <div className="flex w-full justify-between pb-6">
       <div className="flex flex-col">
-        <b className="text-">{companyName || printType(tradeType)}</b>
+        <b>{companyName || printType(tradeType)}</b>
         <span className="mt-1 text-sm text-gray-500">
           {formatTime(createdAt, false)} | {printType(tradeType)}
         </span>
