@@ -12,7 +12,6 @@ const ChildDairyPage = () => {
           투자란 길고도 흥미로운 여행이에요. 지금까지 걸어온 길을 돌아보며
           앞으로의 여정을 계획해 보세요.{" "}
         </span>
-
         <Calender />
       </div>
     </div>

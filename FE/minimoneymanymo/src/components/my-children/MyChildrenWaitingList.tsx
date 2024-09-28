@@ -1,7 +1,7 @@
-import {addMyChildWaiting, getMyChildWaiting} from "@/api/user-api"
-import {useEffect, useState} from "react"
-import {Children} from "./types"
-import {computeTime} from "@/utils/datefuntion"
+import { addMyChildWaiting, getMyChildWaiting } from "@/api/user-api"
+import { useEffect, useState } from "react"
+import { Children } from "./types"
+import { computeTime } from "@/utils/datefuntion"
 import Heading from "../common/Heading"
 
 interface MyChildrenWaitingListProps {
