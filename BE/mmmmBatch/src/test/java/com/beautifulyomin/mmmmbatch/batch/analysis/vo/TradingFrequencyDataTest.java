@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.dto;
+package com.beautifulyomin.mmmmbatch.batch.analysis.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

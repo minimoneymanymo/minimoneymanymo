@@ -1,6 +1,8 @@
 package com.beautifulyomin.mmmmbatch.batch.analysis.step;
 
-import com.beautifulyomin.mmmmbatch.batch.analysis.dto.TradingFrequencyData;
+import com.beautifulyomin.mmmmbatch.batch.analysis.repository.ChildrenRepository;
+import com.beautifulyomin.mmmmbatch.batch.analysis.vo.CashData;
+import com.beautifulyomin.mmmmbatch.batch.analysis.vo.TradingFrequencyData;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.AnalysisCustom;
@@ -13,6 +15,7 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +29,7 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
     private final StocksHeldRepository stocksHeldRepository;
     private final StockRepository stockRepository;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    private final ChildrenRepository childrenRepository;
 
 
     @Override
@@ -39,7 +43,7 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
         report.setTradingFrequency(calculateTradingFrequency(children));
 
         // 3-4. 현금 비중 및 비현금 비중 계산
-        report.setNotCashRatio(BigDecimal.valueOf(0));
+        report.setCashRatio(calculateCashRatio(children));
 
         // 5-6. 승률 및 손익 비율 계산
         report.setWinLossRatio(BigDecimal.valueOf(0));
@@ -52,6 +56,12 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
 
         log.info("🌠🌠🌠report={}", report);
         return report;
+    }
+
+    private BigDecimal calculateCashRatio(Children children) {
+        int totalHoldingMarketAmount = analysisCustom.getTotalAmountSumByChildrenId(children.getChildrenId());
+        CashData cashData = new CashData(children.getMoney(), totalHoldingMarketAmount);
+        return BigDecimal.valueOf(cashData.getCashRatio()).setScale(2, RoundingMode.HALF_UP);
     }
 
     private int calculateTradingFrequency(Children children) {

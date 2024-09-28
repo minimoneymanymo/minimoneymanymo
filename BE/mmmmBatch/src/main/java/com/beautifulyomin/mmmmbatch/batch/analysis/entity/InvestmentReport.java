@@ -38,7 +38,7 @@ public class InvestmentReport {
 
     @Column(precision = 5, scale = 2)
     @Range(min = 0, max = 100)
-    private BigDecimal notCashRatio;
+    private BigDecimal cashRatio;
 
     @Column(precision = 5, scale = 2)
     @Range(min = 0, max = 100)

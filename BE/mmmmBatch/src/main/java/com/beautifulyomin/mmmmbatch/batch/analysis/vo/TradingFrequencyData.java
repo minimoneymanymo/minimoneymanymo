@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.dto;
+package com.beautifulyomin.mmmmbatch.batch.analysis.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
