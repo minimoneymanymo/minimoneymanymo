@@ -11,21 +11,7 @@ import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectParent, parentActions } from "@/store/slice/parent"
 import { accountActions, selectAccount } from "@/store/slice/account"
-import { AccountBalance } from "@mui/icons-material"
-
-interface MAccountInfoProps {
-  name: string
-  balance: number
-  modalOnClick?: () => void
-}
-
-interface AccountInfoProps {
-  bankName?: string
-  accoutNo?: string
-  accountName?: string
-  accountBalance?: string
-  modalOnClick?: () => void
-}
+import { AccountInfoProps, MAccountInfoProps } from "@/types/accountTypes"
 
 const ParentAccountPage = () => {
   const parent = useAppSelector(selectParent) // parent state 가져옴
@@ -275,7 +261,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
             </span>
             <button
               onClick={modalOnClick}
-              className="mt-2 rounded bg-primary-m1 px-4 py-2 text-white"
+              className="mt-2 rounded-xl bg-primary-m1 px-4 py-2 text-white"
             >
               충전 ₩
             </button>
@@ -309,7 +295,7 @@ const MAccountInfo: React.FC<MAccountInfoProps> = (props) => {
         </span>
         <button
           onClick={modalOnClick}
-          className="mt-2 rounded bg-secondary-600-m2 px-4 py-2 text-white"
+          className="mt-2 rounded-xl bg-secondary-600-m2 px-4 py-2 text-white"
         >
           환불 ↻
         </button>

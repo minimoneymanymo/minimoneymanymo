@@ -28,3 +28,37 @@ export interface Bank {
   bankCode: string
   bankName: string
 }
+
+export interface MAccountInfoProps {
+  name: string
+  balance: number
+  modalOnClick?: () => void
+}
+
+export interface AccountInfoProps {
+  bankName?: string
+  accoutNo?: string
+  accountName?: string
+  accountBalance?: string
+  modalOnClick?: () => void
+}
+
+export interface MoneyInfoProps {
+  money: number
+  withdrawableMoney: number
+}
+
+export interface WithdrawableMoneyProps {
+  createdAt: string
+  amount: string
+  approvedAt: string
+}
+
+export interface RecordItemProps {
+  createdAt: string
+  tradeType: string
+  amount: number
+  companyName?: string | null
+  tradeSharesCount?: number | null
+  remainAmount: number
+}

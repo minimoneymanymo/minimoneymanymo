@@ -17,6 +17,7 @@ import ChartPage from "./pages/stock/ChartPage"
 import MyDairy from "./components/my-info/Calender"
 import ChildDairyPage from "./pages/chlid/ChildDairyPage"
 import ParentAccountPage from "./pages/parent/ParentAccountPage"
+import ChildWalletPage from "./pages/chlid/ChildWalletPage"
 function App() {
   return (
     <Routes>
@@ -42,7 +43,7 @@ function App() {
         </Route>
         <Route path="/my-info" element={<ChildPageLayout />}>
           <Route index element={<ChildPage />} />
-          <Route path="wallet" element={<Temp />} />
+          <Route path="wallet" element={<ChildWalletPage />} />
           <Route path="finance" element={<Temp />} />
           <Route path="invest-style" element={<Temp />} />
           <Route path="diary" element={<ChildDairyPage />} />

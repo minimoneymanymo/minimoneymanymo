@@ -48,7 +48,7 @@ const RegisterAccount: React.FC<{ banks: Bank[] }> = ({ banks }) => {
   }
 
   return (
-    <div>
+    <div className="bg-gray-100 p-4">
       <div className="flex w-full">
         <div className="flex flex-1 flex-col space-y-4 pr-2">
           {/* 계좌번호 입력란 */}
