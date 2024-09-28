@@ -1,0 +1,31 @@
+package com.beautifulyomin.mmmmbatch.batch.analysis.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
+@ToString
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class TradingFrequencyData {
+    private long tradingCount;
+
+    public int getScore() {
+        if (this.tradingCount < 5) {
+            return 0;
+        }
+        if (this.tradingCount < 15) {
+            return 20;
+        }
+        if (this.tradingCount < 30) {
+            return 40;
+        }
+        if (this.tradingCount < 50) {
+            return 60;
+        }
+        if (this.tradingCount < 75) {
+            return 80;
+        }
+        return 100; //100이상이여도 전부 100
+    }
+}
