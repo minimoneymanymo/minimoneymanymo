@@ -12,6 +12,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { IconButton, InputAdornment, TextField } from "@mui/material"
 import { userLogin } from "@/api/user-api"
 import { useNavigate } from "react-router-dom"
+import { setMemberInfo } from "@/utils/user-utils"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { selectChild } from "@/store/slice/child"
+import { selectParent } from "@/store/slice/parent"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -20,6 +24,10 @@ export function LoginForm() {
   const [id, setId] = useState("") // 상태 추가
   const [role, setRole] = useState<number>(0) // Initialize with null or default value
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const parent = useAppSelector(selectParent) // 부모 상태 선택
+  const child = useAppSelector(selectChild) // 자식 상태 선택
 
   const goLogin = async (): Promise<void> => {
     console.log("로그인 버튼 클릭")
@@ -33,7 +41,11 @@ export function LoginForm() {
       console.log(response)
       if (response.stateCode == 200) {
         alert("로그인 성공")
-        navigate("/")
+        setMemberInfo(dispatch, role)
+        // 선택한 상태 확인
+        console.log("Parent state: ", parent)
+        console.log("Child state: ", child)
+        // navigate("/")
       }
     } catch (error) {
       console.error("Login failed:", error)

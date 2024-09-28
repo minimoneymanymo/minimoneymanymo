@@ -1,3 +1,8 @@
+import { getMemberInfo } from "@/api/user-api"
+import { AppDispatch } from "@/store"
+import { childActions } from "@/store/slice/child"
+import { parentActions } from "@/store/slice/parent"
+
 // 액세스 토큰을 세션에서 가져옴
 export const getAccessTokenFromSession = (): string | null => {
   const accessToken = sessionStorage.getItem("accessToken")
@@ -61,11 +66,65 @@ export const setUserInfosAtSession = (
 
 // 로그아웃
 export const logOutUser = (): void => {
-  deleteJWT()
   sessionStorage.clear()
 }
 
 // 액세스 토큰 삭제
 export const deleteJWT = (): void => {
   sessionStorage.removeItem("accessToken")
+}
+
+export const setMemberInfo = async (dispatch: AppDispatch, role: number) => {
+  const res = await getMemberInfo()
+  if (res.stateCode === 200) {
+    console.log(res)
+    console.log(role)
+    if (role === 0) {
+      const {
+        userId,
+        phoneNumber,
+        accountNumber,
+        name,
+        balance,
+        profileImgUrl,
+        userKey,
+      } = res.data
+      const payload = {
+        userId,
+        phoneNumber,
+        accountNumber,
+        name,
+        balance,
+        profileImgUrl,
+        userKey,
+      }
+      dispatch(parentActions.setUserInfo(payload))
+    } else if (role === 1) {
+      const {
+        childrenId,
+        userId,
+        name,
+        profileImgUrl,
+        money,
+        withdrawableMoney,
+        totalAmount,
+        userKey,
+        createdAt,
+        accountNumber,
+      } = res.data
+      const payload = {
+        childrenId,
+        userId,
+        name,
+        profileImgUrl,
+        money,
+        withdrawableMoney,
+        totalAmount,
+        userKey,
+        createdAt,
+        accountNumber,
+      }
+      dispatch(childActions.setUserInfo(payload))
+    }
+  }
 }
