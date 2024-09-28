@@ -4,9 +4,10 @@ import {
   logOutUser,
 } from "../../../utils/user-utils"
 import { useAppSelector } from "@/store/hooks"
-import { selectParent } from "@/store/slice/parent"
-import { selectChild } from "@/store/slice/child"
+import { parentActions, selectParent } from "@/store/slice/parent"
+import { childActions, selectChild } from "@/store/slice/child"
 import { useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
 
 const NavItemList = (): JSX.Element => {
   let itemId = 0
@@ -48,20 +49,30 @@ const NavAction = (): JSX.Element => {
   const child = useAppSelector(selectChild) // 자식 상태 선택
   const [isLogin, setIsLogin] = useState<string | null>()
   const [profileImgUrl, setProfileImgUrl] = useState<string>("")
-
+  const [name, setName] = useState<string>("")
+  const dispatch = useDispatch()
   useEffect(() => {
     setIsLogin(getAccessTokenFromSession())
-    if (parent) {
+    if (parent.userId) {
       setProfileImgUrl(parent.profileImgUrl)
-    } else {
+      setName(parent.name)
+    } else if (child.userId) {
       setProfileImgUrl(child.profileImgUrl)
+      setName(child.name)
+    } else {
+      setIsLogin("")
     }
+    console.log(parent)
+    console.log(child)
   }, [parent, child.profileImgUrl, isLogin])
 
   const handleLogOut = () => {
     alert("로그아웃")
     logOutUser()
     setIsLogin(getAccessTokenFromSession())
+    // Redux 상태 초기화
+    dispatch(parentActions.clearParent())
+    dispatch(childActions.clearChild())
     console.log(getAccessTokenFromSession())
   }
 
@@ -69,7 +80,7 @@ const NavAction = (): JSX.Element => {
     <ul className="flex h-16 text-center">
       {isLogin ? (
         <div className="flex items-center space-x-5">
-          {parent ? (
+          {parent.userId ? (
             <>
               <li className="flex items-center">
                 <img
@@ -80,7 +91,7 @@ const NavAction = (): JSX.Element => {
                   }}
                   className="mx-2 size-8"
                 />
-                {parent.name} 님{" "}
+                {name} 님{" "}
               </li>
               <li className="mx-2.5 flex h-full cursor-pointer items-center">
                 <Link to="/parent/my-wallet">마이페이지</Link>
@@ -95,9 +106,9 @@ const NavAction = (): JSX.Element => {
                   onError={(e) => {
                     e.currentTarget.src = "/images/profile.jpg" // 이미지 로드 실패 시 기본 이미지로 대체
                   }}
-                  className="size-16"
+                  className="mx-2 size-8"
                 />
-                {child.name} 님{" "}
+                {name} 님{" "}
               </li>
               <li className="mx-2.5 flex h-full cursor-pointer items-center">
                 <Link to="/my-info/wallet">마이페이지</Link>

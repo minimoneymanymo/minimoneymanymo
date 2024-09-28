@@ -41,7 +41,7 @@ export function LoginForm() {
       console.log(response)
       if (response.stateCode == 200) {
         alert("로그인 성공")
-        setMemberInfo(dispatch, role)
+        await setMemberInfo(dispatch, role)
         // 선택한 상태 확인
         console.log("Parent state: ", parent)
         console.log("Child state: ", child)

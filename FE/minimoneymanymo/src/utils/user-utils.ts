@@ -66,7 +66,7 @@ export const setUserInfosAtSession = (
 
 // 로그아웃
 export const logOutUser = (): void => {
-  sessionStorage.clear()
+  sessionStorage.removeItem("accessToken")
 }
 
 // 액세스 토큰 삭제

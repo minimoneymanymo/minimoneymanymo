@@ -37,6 +37,9 @@ export const childSlice = createSlice({
     setUserInfo: (state, action: PayloadAction<object>) => {
       return { ...state, ...action.payload }
     },
+    clearChild(state) {
+      return initialState // 상태를 초기 상태로 리셋
+    },
   },
 })
 
