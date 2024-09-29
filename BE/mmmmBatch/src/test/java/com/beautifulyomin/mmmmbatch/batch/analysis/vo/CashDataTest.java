@@ -23,7 +23,7 @@ class CashDataTest {
         })
         void it_returns_correct_cash_ratio(int myMoney, int marketValueSum, int expectedRatio) {
             CashData cashData = new CashData(myMoney, marketValueSum);
-            assertThat(cashData.getCashRatio()).isEqualTo(expectedRatio);
+            assertThat(cashData.calculateCashRatio()).isEqualTo(expectedRatio);
         }
     }
 

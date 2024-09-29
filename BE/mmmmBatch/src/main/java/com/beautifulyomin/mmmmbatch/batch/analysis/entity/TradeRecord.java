@@ -32,7 +32,7 @@ public class TradeRecord { // 매수매도 거래내역
     private Integer amount;
 
     @Column(precision = 10, scale = 2)
-    private BigDecimal stockTradingGain = null;
+    private BigDecimal stockTradingGain = null; // TODO: 확인 필요.. money가 소숫점이 있을 수가 있나..?
 
     @Column(nullable = false, length = 14)
     private String createdAt;
