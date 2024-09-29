@@ -2,16 +2,17 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.repository;
 
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.QStocksHeld;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.QTradeRecord;
+import com.beautifulyomin.mmmmbatch.batch.analysis.entity.TradeRecord;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @AllArgsConstructor
-public class AnalysisCustom {
+public class AnalysisRepositoryCustom {
     private final JPAQueryFactory queryFactory;
-    private final EntityManager entityManager;
     private final QTradeRecord tradeRecord = QTradeRecord.tradeRecord;
     private final QStocksHeld stocksHeld = QStocksHeld.stocksHeld;
 
@@ -31,5 +32,13 @@ public class AnalysisCustom {
                 .where(stocksHeld.children.childrenId.eq(childrenId))
                 .fetchOne();
         return totalAmountSum != null ? totalAmountSum : 0;
+    }
+
+    public List<TradeRecord> getTradeRecordsByDateRange(Integer childrenId, String startDate, String endDate) {
+        return queryFactory.select(tradeRecord)
+                .from(tradeRecord)
+                .where(tradeRecord.children.childrenId.eq(childrenId)
+                        .and(tradeRecord.createdAt.between(startDate, endDate)))
+                .fetch();
     }
 }
