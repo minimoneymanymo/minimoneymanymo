@@ -10,7 +10,7 @@ import lombok.ToString;
 public class TradingFrequencyData {
     private long tradingCount;
 
-    public int getScore() {
+    public int calculateScore() {
         if (this.tradingCount < 5) {
             return 0;
         }
