@@ -18,7 +18,18 @@ RUN apk add --no-cache \
     libxi \
     nss \
     freetype \
-    alsa-lib
+    alsa-lib \
+    libstdc++ \
+    libgcc \
+    libx11 \
+    libxcomposite \
+    libxrandr \
+    libxtst \
+    libxi \
+    libxcb \
+    gdk-pixbuf \
+    glib \
+    pango
 
 # 크롬 설치
 RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip && \
@@ -28,12 +39,11 @@ RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSI
     rm chrome-linux64.zip
 
 # 크롬 드라이버 설치
-RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip && \
-    unzip chromedriver-linux64.zip && \
-    mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
+RUN wget https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    mv chromedriver /usr/local/bin/chromedriver && \
     chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver-linux64.zip && \
-    rm -r chromedriver-linux64
+    rm chromedriver_linux64.zip
 
 # JAR 파일을 /app 디렉터리에 복사
 COPY build/libs/mmmmBatch-0.0.1-SNAPSHOT.jar /app/mmmm.jar
