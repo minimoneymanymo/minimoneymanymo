@@ -80,7 +80,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
 
   // 입력된 매도 주 수에 따른 매도 금액 계산
   useEffect(() => {
-    if (closingPrice && sellShares !== "") {
+    if (closingPrice !== null && closingPrice > 0 && sellShares !== "") {
       const calculatedSellMoney =
         Math.floor(closingPrice * Number(sellShares) * 1e7) / 1e7
       setSellMoney(calculatedSellMoney)
@@ -143,9 +143,9 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex w-[340px] flex-col items-center p-2">
       {/* 중앙 정렬 */}
-      <div className="mb-4 flex space-x-4">
+      <div className="mb-4 flex h-[80px] space-x-4">
         {/* 수평 배열 및 간격 설정 */}
         <Button className="bg-buy" onClick={() => setIsBuyMode(true)}>
           매수
@@ -154,24 +154,33 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
           매도
         </Button>
       </div>
-      <Card className="shadow-blue-gray-900/5 w-fit p-0 px-1 py-4">
+      <Card className="shadow-blue-gray-900/5 w-full border p-0 px-5 py-5">
         {/* 매수 모드일 때 */}
         {isBuyMode ? (
           <>
-            <p>현재가 : {closingPrice} </p>
+            <div className="flex w-full justify-between">
+              <p className="text-left">현재가</p>
+              <p className="text-right">
+                {closingPrice !== null
+                  ? closingPrice.toLocaleString()
+                  : "현재가를 불러올 수 없습니다"}{" "}
+                머니
+              </p>
+            </div>
             <h2>
-              보유 머니:{" "}
+              보유 머니{" "}
               {money !== null && money !== undefined
                 ? money.toLocaleString()
-                : "로딩 중..."}
+                : "로딩 중..."}{" "}
+              머니
             </h2>
 
-            <p className="availablePurchaseShares text-xs text-gray-500">
+            <p className="availablePurchaseShares text-right text-xs text-gray-300">
               최대 {maxShares.toFixed(6)} 주 매수 가능
             </p>
             <div className="flex items-center">
               <input
-                className="appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                className="w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
                 type="number"
                 value={inputMoney === 0 ? "" : inputMoney}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -185,11 +194,10 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
               <p>매수 후 잔액: {remainingMoney.toLocaleString()}</p>
             )}
 
-            <input
-              className="w-full rounded bg-gray-300 px-2 py-20 text-black placeholder-white"
-              type="text"
+            <textarea
+              className="h-[150px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
               value={reason}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setReason(e.target.value)
               }
               placeholder="매수를 생각하게 된 이유를 적어주세요!"
@@ -198,7 +206,12 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         ) : (
           <>
             {/***** 매도 모드일 때 *****/}
-            <p>현재가 : {closingPrice} </p>
+            <p>
+              현재가 :{" "}
+              {closingPrice !== null
+                ? closingPrice.toLocaleString()
+                : "현재가를 불러올 수 없습니다"}{" "}
+            </p>
             <h2>보유 주식: {remainSharesCount.toFixed(6)} 주</h2>
             <p className="availableSellShares text-xs text-gray-500">
               최대 {remainSharesCount.toFixed(6)} 주 매도 가능
@@ -224,18 +237,18 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
             <p>**** 손익가격</p>
             <p>**** 매도 후 잔액 계산하기..</p>
             <p>매도 후 잔액: 계산 전</p>
-            <input
-              className="w-full rounded bg-gray-300 px-2 py-20 text-black placeholder-white"
-              type="text"
+            <textarea
+              className="py-15 w-full rounded bg-gray-300 px-2 text-black placeholder-white"
               value={reason}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setReason(e.target.value)
               }
               placeholder="매도를 생각하게 된 이유를 적어주세요!"
+              rows={4}
             />
           </>
         )}
-        <p className="warning mt-2 text-xs text-red-500">
+        <p className="warning mt-2 text-right text-xs text-red-500">
           투자의 책임은 본인에게 있습니다.
         </p>
         <Button
@@ -243,7 +256,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
           text-white="true"
           onClick={() => handleTrade()}
         >
-          {isBuyMode ? "매수" : "매도"}
+          {isBuyMode ? "매수하겠습니다" : "매도"}
         </Button>
       </Card>
     </div>
