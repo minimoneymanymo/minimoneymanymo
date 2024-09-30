@@ -5,7 +5,9 @@ FROM openjdk:17-jdk
 RUN apt-get update && \
     apt-get install -y tzdata && \
     ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-    echo "Asia/Seoul" > /etc/timezone
+    echo "Asia/Seoul" > /etc/timezone && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*  # 불필요한 캐시 제거
 
 # 크롬과 크롬 드라이버 설치
 # 크롬 브라우저와 드라이버 버전
