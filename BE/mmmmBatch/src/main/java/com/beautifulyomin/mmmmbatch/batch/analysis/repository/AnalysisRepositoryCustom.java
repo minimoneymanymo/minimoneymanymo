@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.repository;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.QStocksHeld;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.QTradeRecord;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.TradeRecord;
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.QStock;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,7 @@ public class AnalysisRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final QTradeRecord tradeRecord = QTradeRecord.tradeRecord;
     private final QStocksHeld stocksHeld = QStocksHeld.stocksHeld;
+    private final QStock stock= QStock.stock;
 
     public long countTradesByChildrenIdAndDateRange(Integer childrenId, String startDate, String endDate) {
         Long tradRecordCount = queryFactory
@@ -41,4 +43,13 @@ public class AnalysisRepositoryCustom {
                         .and(tradeRecord.createdAt.between(startDate, endDate)))
                 .fetch();
     }
+
+    public List<String> findAllMarketTypeByChildrenId(Integer childrenId) {
+        return queryFactory.select(stock.marketName)
+                .from(stocksHeld)
+                .where(stocksHeld.children.childrenId.eq(childrenId))
+                .join(stock)
+                .on(stock.stockCode.eq(stocksHeld.stock.stockCode))
+                .fetch();
+        }
 }

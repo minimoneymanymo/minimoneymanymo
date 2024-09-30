@@ -11,9 +11,9 @@ public class CashData {
 
     public double calculateCashRatio() {
         if (this.myMoney == 0 && this.totalHoldingMarketAmount == 0) {
-            return 100.0; //투자를 안한 건 보유 머니가 어찌 되었든 현금 비중이 0이다. -> 공격적 성향 x
+            return 0.0; //처음부터 투자할 돈이 없었던 자녀 -> 분석 대상 x -> 0
         }
-        if (this.totalHoldingMarketAmount == 0) {
+        if (this.totalHoldingMarketAmount == 0) { // 현금은 있고 평가금만 !=0 이면 현금 비중 100%
             return 100.0;
         }
         double ratio = (double) (this.myMoney * 100) / (this.myMoney + this.totalHoldingMarketAmount);
@@ -21,6 +21,9 @@ public class CashData {
     }
 
     public double getNotCashRatio() {
+        if (this.myMoney == 0 && this.totalHoldingMarketAmount == 0) {
+            return 0.0; //처음부터 투자할 돈이 없었던 자녀 -> 분석 대상 x -> 0
+        }
         return Math.round((100.0 - calculateCashRatio()) * 100) / 100.0;
     }
 }

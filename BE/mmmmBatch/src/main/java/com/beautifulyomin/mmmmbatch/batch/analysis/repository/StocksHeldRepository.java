@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StocksHeldRepository extends JpaRepository<StocksHeld, Integer> {
+    int countByChildren_ChildrenId(Integer childrenId);
 }
