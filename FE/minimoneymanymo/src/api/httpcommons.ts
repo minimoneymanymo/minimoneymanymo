@@ -5,6 +5,7 @@ const {
   VITE_API_CONTEXT_PATH: contextPath = process.env.VITE_API_CONTEXT_PATH,
   VITE_API_VERSION: version = process.env.VITE_API_VERSION,
 } = import.meta.env
+
 const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
 
 import {
