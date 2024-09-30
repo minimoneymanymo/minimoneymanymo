@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { axiosAuthInstance } from "@/api/httpcommons"
+import { axiosAuthInstance, axiosPublicInstance } from "@/api/httpcommons"
 import axios from "axios"
 
 // 부모-계좌 충전
@@ -96,6 +96,35 @@ const handleApiError = (error: any) => {
   }
 }
 
+// 부모 - 이유 보상 머니 지급을 위한 투자이유 목록 불러오기
+
+const getChildTradelistApi = async (
+  childrenId: string,
+  year: number,
+  month: number
+) => {
+  try {
+    const res = await axiosAuthInstance.get("/funds/child-trade-list", {
+      params: {
+        childrenId: childrenId,
+        year: year,
+        month: month,
+      },
+    })
+    return res.data
+  } catch (e) {
+    if (axios.isAxiosError(e) && e.response) {
+      // Axios 에러 객체인 경우
+      console.error("getChildTradelist axios 오류 발생:", e.response)
+      return e.response
+    } else {
+      // Axios 에러가 아닌 경우
+      console.error("getChildTradelist 서버 오류 발생:", e)
+      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
+    }
+  }
+}
+
 export {
   depositBalanceApi,
   refundBalanceApi,
@@ -103,4 +132,5 @@ export {
   getWithdrawListApi,
   approveRequestApi,
   linkAccountApi,
+  getChildTradelistApi,
 }

@@ -24,7 +24,7 @@ export const postTrade = async (tradeData: tradeData) => {
 // 보유머니 API 호출 함수
 export const getChildMoney = async (stockCode: string) => {
   try {
-    const res = await axiosAuthInstance.get(`/members/info/${stockCode}`)
+    const res = await axiosAuthInstance.get(`/members/stock-info/${stockCode}`)
     console.log(res.data)
     return res.data
   } catch (e) {

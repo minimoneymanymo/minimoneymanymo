@@ -4,7 +4,7 @@ function MyChildFinancePage(): JSX.Element {
   return (
     <>
       MyChildFinancePage
-    <MyChildMoneySetting />
+      <MyChildMoneySetting />
     </>
   )
 }
