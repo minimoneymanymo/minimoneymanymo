@@ -1,5 +1,6 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.vo;
+package com.beautifulyomin.mmmmbatch.batch.analysis.data;
 
+import com.beautifulyomin.mmmmbatch.batch.analysis.data.report.WinLossData;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

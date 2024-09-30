@@ -1,5 +1,6 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.vo;
+package com.beautifulyomin.mmmmbatch.batch.analysis.data;
 
+import com.beautifulyomin.mmmmbatch.batch.analysis.data.report.StabilityData;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

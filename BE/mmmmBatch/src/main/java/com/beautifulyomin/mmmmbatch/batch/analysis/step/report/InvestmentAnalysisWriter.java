@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.step;
+package com.beautifulyomin.mmmmbatch.batch.analysis.step.report;
 
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.InvestmentAnalysisRepository;
