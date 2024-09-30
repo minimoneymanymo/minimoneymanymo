@@ -6,9 +6,10 @@ RUN apk add --no-cache tzdata && \
     cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     echo "Asia/Seoul" > /etc/timezone
 
-<<<<<<< Updated upstream
-=======
+
 # 크롬과 크롬 드라이버 설치
+# 크롬 브라우저와 드라이버 버전
+
 ENV CHROME_VERSION=129.0.6668.70
 ENV CHROMEDRIVER_VERSION=129.0.6668.70
 
@@ -32,7 +33,6 @@ RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER
     chmod +x /usr/local/bin/chromedriver && \
     rm chromedriver-linux64.zip
 
->>>>>>> Stashed changes
 # JAR 파일을 /app 디렉터리에 복사
 COPY build/libs/mmmmBatch-0.0.1-SNAPSHOT.jar /app/mmmm.jar
 
