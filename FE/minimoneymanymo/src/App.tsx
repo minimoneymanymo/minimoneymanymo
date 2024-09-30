@@ -13,8 +13,7 @@ import MainPageLayout from "@/layouts/MainLayout"
 import MyChildrenPage from "./pages/parentchildren/MyChildrenPage"
 import MyChildFinancePage from "./pages/parentchildren/MyChildFinancePage"
 import StockPageLayout from "./layouts/StockPageLayout"
-import ChartPage from "./pages/stock/ChartPage"
-import MyDairy from "./components/my-info/Calender"
+import StockDetailPage from "./pages/stock/StockDetailPage"
 import ChildDairyPage from "./pages/chlid/ChildDairyPage"
 import ParentAccountPage from "./pages/parent/ParentAccountPage"
 import ChildWalletPage from "./pages/chlid/ChildWalletPage"
@@ -49,7 +48,7 @@ function App() {
           <Route path="diary" element={<ChildDairyPage />} />
         </Route>
         <Route path="/stock" element={<StockPageLayout />}>
-          <Route path=":stockCode" element={<ChartPage />} />{" "}
+          <Route path=":stockCode" element={<StockDetailPage />} />{" "}
         </Route>
       </Route>
     </Routes>

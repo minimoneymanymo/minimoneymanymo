@@ -6,7 +6,7 @@ function StockPageLayout(): JSX.Element {
   const [closingPrice, setClosingPrice] = useState<number | null>(null)
 
   return (
-    <div className="flex">
+    <div className="flex h-[calc(100vh-110px)] w-full">
       <Outlet context={{ setClosingPrice }} />{" "}
       {/* Outlet에 상태 변경 함수 전달 */}
       <TradeForm closingPrice={closingPrice} />{" "}
