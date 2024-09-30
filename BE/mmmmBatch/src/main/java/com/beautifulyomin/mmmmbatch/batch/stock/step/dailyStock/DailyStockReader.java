@@ -1,36 +1,36 @@
 package com.beautifulyomin.mmmmbatch.batch.stock.step.dailyStock;
 
+import com.beautifulyomin.mmmmbatch.batch.stock.entity.Stock;
+import com.beautifulyomin.mmmmbatch.batch.stock.repository.StockRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class DailyStockReader implements ItemReader<String> {
-    private final JdbcTemplate jdbcTemplate;
-    private List<String> stockCodes;
-    private int nextIndex;
+    private final StockRepository stockRepository;
+    private Iterator<Stock> stockIterator;
 
-    public DailyStockReader(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.nextIndex = 0;
+    @BeforeStep
+    public void beforeStep() {
+        Sort sort = Sort.by(Sort.Direction.ASC, "stockCode");
+        stockIterator = stockRepository.findAll(sort).iterator();
     }
 
     @Override
     public String read() {
-        log.info("⭐⭐⭐⭐⭐⭐⭐read 진입");
-        if (stockCodes == null) {
-            stockCodes = jdbcTemplate.queryForList("select stock_code " +
-                    "from stocks " +
-                    "order by stock_code", String.class);
+        log.info("⭐⭐⭐read");
+        if (stockIterator.hasNext()) {
+            return stockIterator.next().getStockCode();
         }
-        if (nextIndex < stockCodes.size()) {
-            return stockCodes.get(nextIndex++);
-        }
-        nextIndex = 0;
         return null;
     }
+
 }

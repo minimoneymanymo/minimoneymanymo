@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,9 @@ import java.util.Random;
 
 @Component
 public class JsonRequestUtil {
+
+    @Value("${api.ssafy.apikey}")
+    private String apiKey;
 
     private final ObjectMapper objectMapper;
 
@@ -40,7 +44,7 @@ public class JsonRequestUtil {
         headerObject.put("fintechAppNo", "001");
         headerObject.put("apiServiceCode", apiName);
         headerObject.put("institutionTransactionUniqueNo", transmissionDate + transmissionTime + number);
-        headerObject.put("apiKey", "3b3bd8e345c643ce8b0d6bb77d93e649");
+        headerObject.put("apiKey", apiKey);
         headerObject.put("userKey", userKey);
 
         jsonObject.set("Header", headerObject);

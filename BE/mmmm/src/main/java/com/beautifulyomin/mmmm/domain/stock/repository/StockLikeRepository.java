@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface StockLikeRepository extends JpaRepository<StockLikes, Integer> {
     Optional<StockLikes> findByChildrenAndStock(Children children, Stock stock);
+
+    boolean existsByStockAndChildren(Stock stock, Children children);
 }

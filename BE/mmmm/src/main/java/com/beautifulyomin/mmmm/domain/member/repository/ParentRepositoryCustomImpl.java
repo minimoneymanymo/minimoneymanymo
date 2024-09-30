@@ -136,7 +136,8 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                         children.settingMoney,
                         children.settingWithdrawableMoney,
                         children.settingQuizBonusMoney,
-                        children.accountNumber
+                        children.accountNumber,
+                        children.createdAt
                 ))
                 .from(children)
                 .where(children.childrenId.eq(childrenId))

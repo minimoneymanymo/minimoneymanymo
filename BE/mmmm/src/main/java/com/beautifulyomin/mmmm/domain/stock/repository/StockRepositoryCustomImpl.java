@@ -29,7 +29,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +36,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Repository
 public class StockRepositoryCustomImpl implements StockRepositoryCustom {
-    private static final int PERIOD_LIMIT_CNT = 30;
+    private static final int PERIOD_LIMIT_CNT = 60;
     private final JPAQueryFactory queryFactory;
     private final QStock stock = QStock.stock;
     private final QDailyStockData dailyStockData = QDailyStockData.dailyStockData;

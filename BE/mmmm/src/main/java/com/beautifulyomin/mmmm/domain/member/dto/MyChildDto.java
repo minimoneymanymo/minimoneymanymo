@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -22,4 +23,5 @@ public class MyChildDto {
     private Integer settingWithdrawableMoney;
     private Integer settingQuizBonusMoney;
     private String accountNumber;
+    private LocalDateTime createdAt;
 }
