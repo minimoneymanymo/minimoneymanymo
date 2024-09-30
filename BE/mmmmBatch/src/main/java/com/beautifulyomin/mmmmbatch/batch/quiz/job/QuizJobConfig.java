@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmmbatch.batch.quiz.job;
 
 
 import com.beautifulyomin.mmmmbatch.batch.quiz.step.CreateQuizTasklet;
+import com.beautifulyomin.mmmmbatch.batch.quiz.step.SaveQuizzesTasklet;
 import com.beautifulyomin.mmmmbatch.batch.quiz.step.WebCrawlingTasklet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -24,12 +25,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class  QuizJobConfig {
     private final CreateQuizTasklet createQuiz;
     private final WebCrawlingTasklet webCrawlingTasklet;
+    private final SaveQuizzesTasklet saveQuizzesTasklet;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
-    public QuizJobConfig(CreateQuizTasklet createQuiz, WebCrawlingTasklet webCrawlingTasklet, JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
+    public QuizJobConfig(CreateQuizTasklet createQuiz, WebCrawlingTasklet webCrawlingTasklet, SaveQuizzesTasklet saveQuizzesTasklet, JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
         this.createQuiz = createQuiz;
         this.webCrawlingTasklet = webCrawlingTasklet;
+        this.saveQuizzesTasklet = saveQuizzesTasklet;
         this.jobRepository = jobRepository;
         this.platformTransactionManager = platformTransactionManager;
     }
@@ -38,7 +41,8 @@ public class  QuizJobConfig {
     public Job newsQuizJob() {
         return new JobBuilder("newsQuizJob", jobRepository)
                 .start(webCrawlingStep())
-                .next(createQuizStep()) // 두 번째 Step 추가
+                .next(createQuizStep())
+                .next(saveQuizzesStep())
                 .build();
     }
 
@@ -53,6 +57,13 @@ public class  QuizJobConfig {
     public Step createQuizStep() {
         return new StepBuilder("createQuizStep", jobRepository)
                 .tasklet(createQuiz, platformTransactionManager) // 동일한 Tasklet을 사용
+                .build();
+    }
+
+    @Bean
+    public Step saveQuizzesStep() {
+        return new StepBuilder("saveQuizzesStep", jobRepository)
+                .tasklet(saveQuizzesTasklet, platformTransactionManager) // 동일한 Tasklet을 사용
                 .build();
     }
 }

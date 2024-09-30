@@ -56,7 +56,7 @@ public class CreateQuizTasklet implements Tasklet {
                 .getExecutionContext()
                 .put(NEWS_QUIZ_LIST_KEY, newsQuizList);
 
-        return RepeatStatus.FINISHED; // 상태를 적절히 반환
+        return RepeatStatus.FINISHED;
     }
 
     public Optional<JSONObject> validateQuizResponse(String jsonResponse) {

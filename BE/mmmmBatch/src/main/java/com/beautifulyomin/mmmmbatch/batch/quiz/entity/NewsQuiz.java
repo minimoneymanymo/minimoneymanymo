@@ -49,9 +49,8 @@ public class NewsQuiz implements Serializable {
     @Column(columnDefinition = "TEXT", nullable = true)
     private String options; // 선지별로 구분 문자열 필수
 
-
     @Column
-    private Integer answer = 0;
+    private Integer answer = null;
 
 
 
