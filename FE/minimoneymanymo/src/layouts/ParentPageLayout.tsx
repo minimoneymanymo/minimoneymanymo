@@ -24,7 +24,7 @@ const ParentPageLayout: React.FC = () => {
       <main className="mx-auto flex h-full w-[1140px] rounded-xl bg-gray-50 p-3">
         <div className="h-full w-[240px]">
           <div className="h-full w-full">
-            <MypageNav menuItems={menuItems}></MypageNav>
+            <MypageNav menuItems={menuItems} role={0}></MypageNav>
           </div>
         </div>
         <Outlet></Outlet>
