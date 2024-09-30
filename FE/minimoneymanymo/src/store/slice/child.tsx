@@ -10,9 +10,9 @@ interface ChildState {
   money: number // 보유머니
   withdrawableMoney: number // 출금가능금액
   totalAmount: number // 평가금 총합(주식보유내역의 가격총합의 합)
-  userKey: number
+  userKey: string
   createdAt: string
-  accountNumber: number
+  accountNumber: string
 }
 
 const initialState: ChildState = {
@@ -23,10 +23,11 @@ const initialState: ChildState = {
   money: 0, // 보유머니
   withdrawableMoney: 0, // 출금가능금액
   totalAmount: 0, // 평가금 총합(주식보유내역의 가격총합의 합)
-  userKey: 0,
+  userKey: "",
   createdAt: "",
-  accountNumber: 0,
+  accountNumber: "",
 }
+
 export const childSlice = createSlice({
   name: "child",
   initialState,

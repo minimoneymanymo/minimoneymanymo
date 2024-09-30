@@ -85,6 +85,76 @@ const linkAccountApi = async (accountNumber: string) => {
   }
 }
 
+// 자식-머니사용내역
+const getAllMoneyRecordsApi = async () => {
+  try {
+    const response = await axiosAuthInstance.get(`/funds/money-list`)
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
+// 자식-보유자금내역
+const getMoneyApi = async () => {
+  try {
+    const response = await axiosAuthInstance.get(`/funds`)
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
+// 부모-자식의출금요청내역
+const getChildWithdrawListApi = async (childrenId: string) => {
+  try {
+    const response = await axiosAuthInstance.get(
+      `/funds/child-withdraw-list?childrenId=${childrenId}`
+    )
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
+// 자식-거래내역
+const getTradeListApi = async (year: number, month: number) => {
+  try {
+    const response = await axiosAuthInstance.get(
+      `/funds/trade-list?year=${year}&month=${month}`
+    )
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
+// 부모-투자일기(거래내역) 조회
+const getChildTradeListApi = async (
+  childrenId: string,
+  year: number,
+  month: number
+) => {
+  try {
+    const response = await axiosAuthInstance.get(
+      `/funds/child-trade-list?childrenId=${childrenId}&year=${year}&month=${month}`
+    )
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
+// 자식-보유주식 조회
+const getStockApi = async () => {
+  try {
+    const response = await axiosAuthInstance.get(`/funds/stocks`)
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
 // 오류 처리 함수
 const handleApiError = (error: any) => {
   if (axios.isAxiosError(error) && error.response) {
@@ -132,5 +202,11 @@ export {
   getWithdrawListApi,
   approveRequestApi,
   linkAccountApi,
+  getAllMoneyRecordsApi,
+  getMoneyApi,
+  getChildWithdrawListApi,
+  getTradeListApi,
+  getChildTradeListApi,
+  getStockApi,
   getChildTradelistApi,
 }

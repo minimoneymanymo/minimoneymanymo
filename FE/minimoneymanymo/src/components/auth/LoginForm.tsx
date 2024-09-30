@@ -80,7 +80,7 @@ export function LoginForm() {
         <Typography variant="h5" color="blue-gray">
           환영해요 !
         </Typography>
-        <Typography className="mt-1 text-3xl font-bold text-tertiary-600-m4">
+        <Typography className="mt-1 text-3xl font-bold text-tertiary-m4">
           minimoneymanymo
         </Typography>
 
@@ -186,11 +186,7 @@ export function LoginForm() {
               </ListItem>
             </List>
           </Card>
-          <Button
-            className="mt-6 bg-tertiary-600-m4"
-            fullWidth
-            onClick={goLogin}
-          >
+          <Button className="mt-6 bg-tertiary-m4" fullWidth onClick={goLogin}>
             로그인
           </Button>
           <Typography color="gray" className="mt-4 text-center font-normal">
