@@ -39,6 +39,7 @@ RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSI
     rm chrome-linux64.zip
 
 # 크롬 드라이버 설치
+# 크롬 드라이버 설치
 RUN wget https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/local/bin/chromedriver && \  
