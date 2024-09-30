@@ -1,6 +1,6 @@
 import MyChildrenList from "@/components/my-children/MyChildrenList"
 import MyChildrenWaitingList from "@/components/my-children/MyChildrenWaitingList"
-import {useState} from "react"
+import { useState } from "react"
 
 function MyChildrenPage(): JSX.Element {
   const [childrenListUpdated, setChildrenListUpdated] = useState(false)

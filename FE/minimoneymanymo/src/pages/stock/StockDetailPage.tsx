@@ -87,8 +87,7 @@ function StockDetailPage(): JSX.Element {
 
   const StockInfo = (): JSX.Element => {
     const toggleLike = async () => {
-      
-      setIsLike((prev)=>!prev)
+      setIsLike((prev) => !prev)
       const res = await toggleFavoriteStock(stockCode!)
 
       if (res.stateCode === 201) {
@@ -119,7 +118,9 @@ function StockDetailPage(): JSX.Element {
             </div>
             <div className="flex items-end gap-3 text-xl">
               <div className="text-3xl font-bold">
-                {dailyStockChart[0]?.closingPrice ?? "Loading..."} 머니
+                {dailyStockChart[0]?.closingPrice.toLocaleString() ??
+                  "Loading..."}{" "}
+                머니
               </div>
               <span className="text-base text-gray-500">
                 어제보다

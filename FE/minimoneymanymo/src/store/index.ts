@@ -11,11 +11,13 @@ import {
 import storageSession from "redux-persist/lib/storage/session"
 import parentReducer from "./slice/parent"
 import accountReducer from "./slice/account"
+import childReducer from "./slice/child"
 
 // reducer를 여기에 추가하시면 됩니다
 const rootReducer = combineReducers({
   parent: parentReducer,
   account: accountReducer,
+  child: childReducer,
 })
 
 const persistConfig = {

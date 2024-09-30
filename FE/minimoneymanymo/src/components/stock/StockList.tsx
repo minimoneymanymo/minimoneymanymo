@@ -265,7 +265,7 @@ function StockList({ filters }: { filters: StockFilter }) {
               >
                 <td
                   className="border-blue-gray-50 border-b p-4"
-                  style={{ width: "5%" }}
+                  style={{ width: "10%" }}
                 >
                   <div className="flex gap-6">
                     <button

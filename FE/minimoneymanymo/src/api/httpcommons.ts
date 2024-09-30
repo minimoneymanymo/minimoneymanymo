@@ -1,10 +1,11 @@
 import axios from "axios"
-const { 
-  VITE_SSAFY_API_URL = process.env.VITE_SSAFY_API_URL, 
-  VITE_API_ENDPOINT: endpoint = process.env.VITE_API_ENDPOINT, 
+const {
+  VITE_SSAFY_API_URL = process.env.VITE_SSAFY_API_URL,
+  VITE_API_ENDPOINT: endpoint = process.env.VITE_API_ENDPOINT,
   VITE_API_CONTEXT_PATH: contextPath = process.env.VITE_API_CONTEXT_PATH,
-  VITE_API_VERSION: version = process.env.VITE_API_VERSION
-} = import.meta.env;
+  VITE_API_VERSION: version = process.env.VITE_API_VERSION,
+} = import.meta.env
+
 const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
 
 import {
@@ -15,14 +16,14 @@ import {
 
 // 금융 API
 export const fintechInstance = axios.create({
-  baseURL: "https://finopenapi.ssafy.io/ssafy/api/v1/edu"
+  baseURL: "https://finopenapi.ssafy.io/ssafy/api/v1/edu",
 })
 
 export const axiosAuthInstance = axios.create({
   baseURL: BASE_API_URL,
   timeout: 10000, // 10초
   //   RestAPI 표준 준수를 위해 JSON 형식 데이터 교환
-  headers: {"Content-Type": "application/json"},
+  headers: { "Content-Type": "application/json" },
 })
 
 export const axiosPublicInstance = axios.create({
@@ -32,7 +33,7 @@ export const axiosPublicInstance = axios.create({
 
 // 액세스 토큰 만료 확인
 const checkAccessTokenExpiration = async (
-  accessToken: String
+  accessToken: string
 ): Promise<boolean> => {
   let isAccessTokenValid = true
   console.log("accessToken", accessToken)
@@ -89,7 +90,7 @@ axiosAuthInstance.interceptors.response.use(
     // console.log("axios-instances.js > 응답 인터셉터 res: ", res)
 
     // 응답의 headers를 언패킹
-    const {headers} = res
+    const { headers } = res
 
     // headers에서 액세스 토큰 따로
     const accessToken = headers["authorization"]
@@ -132,7 +133,7 @@ axiosPublicInstance.interceptors.response.use(
     // // console.log("axios-instances.js > 응답 인터셉터 res: ", res)
 
     // // 응답의 headers를 언패킹
-    const {headers} = res
+    const { headers } = res
     // headers에서 액세스 토큰 따로
     const accessToken = headers["authorization"]
 
