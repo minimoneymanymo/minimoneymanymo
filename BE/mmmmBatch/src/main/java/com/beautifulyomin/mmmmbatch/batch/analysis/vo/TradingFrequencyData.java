@@ -11,8 +11,11 @@ public class TradingFrequencyData {
     private long tradingCount;
 
     public int calculateScore() {
-        if (this.tradingCount < 5) {
+        if(tradingCount==0){ //분석 대상 x
             return 0;
+        }
+        if (this.tradingCount < 5) {
+            return 10;
         }
         if (this.tradingCount < 15) {
             return 20;

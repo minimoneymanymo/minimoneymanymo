@@ -2,10 +2,7 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.entity;
 
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.key.InvestmentReportId;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 
@@ -13,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

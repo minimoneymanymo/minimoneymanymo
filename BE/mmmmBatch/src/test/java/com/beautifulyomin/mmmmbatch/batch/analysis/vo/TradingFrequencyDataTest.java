@@ -17,7 +17,7 @@ class TradingFrequencyDataTest {
         @ParameterizedTest(name = "거래 횟수가 {0}일 때, 점수는 {1}이어야 한다.")
         @CsvSource({
                 "0, 0",
-                "4, 0",
+                "4, 10",
                 "5, 20",
                 "14, 20",
                 "15, 40",
