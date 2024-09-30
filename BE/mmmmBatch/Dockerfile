@@ -23,7 +23,8 @@ RUN apk add --no-cache \
 # 크롬 설치
 RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip && \
     unzip chrome-linux64.zip && \
-    mv chrome /usr/bin/google-chrome && \
+    mv chrome-linux64/chrome /usr/bin/google-chrome && \
+    rm -r chrome-linux64 && \
     rm chrome-linux64.zip
 
 # 크롬 드라이버 설치
