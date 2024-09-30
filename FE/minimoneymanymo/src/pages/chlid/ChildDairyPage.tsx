@@ -1,5 +1,5 @@
 import Heading from "@/components/common/Heading"
-import Calender from "@/components/my-info/Calender"
+import Calender from "@/components/diary/Calender"
 import React from "react"
 
 const ChildDairyPage = () => {
