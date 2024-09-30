@@ -14,6 +14,7 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -27,7 +28,9 @@ import java.util.NoSuchElementException;
 @Component
 public class WebCrawlingTasklet implements Tasklet {
 
-    private static final String DRIVER_PATH = "C:\\Users\\SSAFY\\Driver\\chromedriver-win64\\chromedriver.exe"; // ChromeDriver 경로
+    @Value("${chromedriver.path}") // 프로퍼티에서 경로 가져오기
+    private String DRIVER_PATH;
+
     private static final String URL = "https://news.naver.com/breakingnews/section/101/262"; // 크롤링할 URL
     private static final int TIMEOUT_SECONDS = 3; // 대기 시간
     private static final String NEWS_QUIZ_LIST_KEY = "newsQuizList";  // StepExecutionContext 키

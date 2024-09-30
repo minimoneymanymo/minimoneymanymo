@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
-public class AnalysisJobRunner implements CommandLineRunner {
+public class AnalysisJobRunner  { //implements CommandLineRunner
     private final JobLauncher jobLauncher;
     private final Job investmentAnalysisJob;
 
@@ -22,12 +22,12 @@ public class AnalysisJobRunner implements CommandLineRunner {
 //        jobLauncher.run(webCrawlingJob, params); // 잡 실행
 //    }
 
-    @Override
-    public void run(String... args) throws Exception {
-        JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters();
-        jobLauncher.run(investmentAnalysisJob, params);
-    }
+//    @Override
+//    public void run(String... args) throws Exception {
+//        JobParameters params = new JobParametersBuilder()
+//                .addLong("time", System.currentTimeMillis())
+//                .toJobParameters();
+//        jobLauncher.run(investmentAnalysisJob, params);
+//    }
 
 }
