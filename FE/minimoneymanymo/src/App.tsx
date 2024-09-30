@@ -17,6 +17,8 @@ import StockDetailPage from "./pages/stock/StockDetailPage"
 import ChildDairyPage from "./pages/chlid/ChildDairyPage"
 import MyChildDiaryCheckPage from "./pages/parentchildren/MyChildDiaryCheckPage"
 import ParentAccountPage from "./pages/parent/ParentAccountPage"
+import MyChildInvestStylePage from "./pages/parentchildren/MyChildInvestStylePage"
+import ChildInvestStylePage from "./pages/chlid/ChildInvestStylePage"
 
 function App() {
   return (
@@ -25,8 +27,6 @@ function App() {
         <Route index element={<MainPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
-        <Route path="/stocks" element={<StockPageLayout />} />
-
         <Route path="/news" element={<NewsPage />} />
         <Route path="/parent" element={<ParentPageLayout />}>
           <Route path="my-wallet" element={<ParentAccountPage />} />
@@ -37,7 +37,7 @@ function App() {
             element={<ParentChildrenPageLayout />}
           >
             <Route path="finance" element={<MyChildFinancePage />} />
-            <Route path="invest-style" element={<Temp />} />
+            <Route path="invest-style" element={<MyChildInvestStylePage />} />
             <Route path="diary" element={<MyChildDiaryCheckPage />} />
           </Route>
         </Route>
@@ -45,11 +45,11 @@ function App() {
           <Route index element={<ChildPage />} />
           <Route path="wallet" element={<Temp />} />
           <Route path="finance" element={<Temp />} />
-          <Route path="invest-style" element={<Temp />} />
+          <Route path="invest-style" element={<ChildInvestStylePage />} />
           <Route path="diary" element={<ChildDairyPage />} />
         </Route>
         <Route path="/stock" element={<StockPageLayout />}>
-          <Route path=":stockCode" element={<StockDetailPage />} />{" "}
+          <Route path=":stockCode" element={<StockDetailPage />} />
         </Route>
       </Route>
     </Routes>
