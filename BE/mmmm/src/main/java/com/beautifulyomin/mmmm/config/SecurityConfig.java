@@ -66,7 +66,8 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://127.0.0.1:5173");
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("http://127.0.0.1:3000");
-        configuration.addAllowedOrigin("https://i11b105.p.ssafy.io");
+        configuration.addAllowedOrigin("https://j11b105.p.ssafy.io");
+        configuration.addAllowedOrigin("http://j11b105.p.ssafy.io");
 
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
