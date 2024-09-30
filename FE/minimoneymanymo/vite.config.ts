@@ -28,14 +28,7 @@ export default defineConfig({
       //     "ignite-vendors": ["igniteui-react", "igniteui-react-charts"],
       //   },
       // },
-      external: [
-        "react",
-        "react-dom",
-        "igniteui-react",
-        "igniteui-react-charts",
-        "@mui/material",
-        "@mui/icons-material",
-      ],
+      external: [],
     },
   },
 })
