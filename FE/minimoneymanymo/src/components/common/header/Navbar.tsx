@@ -47,21 +47,27 @@ const NavItemList = (): JSX.Element => {
 const NavAction = (): JSX.Element => {
   const parent = useAppSelector(selectParent) // 부모 상태 선택
   const child = useAppSelector(selectChild) // 자식 상태 선택
-  const [isLogin, setIsLogin] = useState<string | null>()
+  const [isLogin, setIsLogin] = useState<boolean>()
   const [profileImgUrl, setProfileImgUrl] = useState<string>("")
   const [name, setName] = useState<string>("")
   const dispatch = useDispatch()
   useEffect(() => {
-    setIsLogin(getAccessTokenFromSession())
-    if (parent.userId) {
-      setProfileImgUrl(parent.profileImgUrl)
-      setName(parent.name)
-    } else if (child.userId) {
-      setProfileImgUrl(child.profileImgUrl)
-      setName(child.name)
+    if (getAccessTokenFromSession() !== null) {
+      setIsLogin(true)
+      if (parent.userId) {
+        setProfileImgUrl(parent.profileImgUrl)
+        setName(parent.name)
+      } else if (child.userId) {
+        setProfileImgUrl(child.profileImgUrl)
+        setName(child.name)
+      } else {
+        setIsLogin(false)
+      }
     } else {
-      setIsLogin("")
+      setIsLogin(false)
     }
+
+    console.log("logintoken", getAccessTokenFromSession())
     console.log(parent)
     console.log(child)
   }, [parent, child.profileImgUrl, isLogin])
@@ -69,7 +75,7 @@ const NavAction = (): JSX.Element => {
   const handleLogOut = () => {
     alert("로그아웃")
     logOutUser()
-    setIsLogin(getAccessTokenFromSession())
+    setIsLogin(false)
     // Redux 상태 초기화
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
