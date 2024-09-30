@@ -44,7 +44,9 @@ function StockDetailPage(): JSX.Element {
         setIsLike(res.data.stock.favorite)
         // 첫 번째 항목의 closingPrice를 setClosingPrice에 전달
         if (res.data.dailyStockChart && res.data.dailyStockChart.length > 0) {
-          setClosingPrice(res.data.dailyStockChart[0].closingPrice)
+          setClosingPrice(
+            res.data.dailyStockChart[dailyStockChart.length - 1].closingPrice
+          )
           setSelectedChartData(
             mapStockDataToChartData(res.data.dailyStockChart)
           )
@@ -87,8 +89,7 @@ function StockDetailPage(): JSX.Element {
 
   const StockInfo = (): JSX.Element => {
     const toggleLike = async () => {
-      
-      setIsLike((prev)=>!prev)
+      setIsLike((prev) => !prev)
       const res = await toggleFavoriteStock(stockCode!)
 
       if (res.stateCode === 201) {
