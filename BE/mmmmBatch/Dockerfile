@@ -39,11 +39,11 @@ RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSI
     rm chrome-linux64.zip
 
 # 크롬 드라이버 설치
-RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip && \
-    unzip chromedriver-linux64.zip && \
-    mv chromedriver /usr/local/bin/chromedriver && \
+RUN wget https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    mv chromedriver /usr/local/bin/chromedriver && \  # 올바른 경로 지정
     chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver-linux64.zip
+    rm chromedriver_linux64.zip
 
 # JAR 파일을 /app 디렉터리에 복사
 COPY build/libs/mmmmBatch-0.0.1-SNAPSHOT.jar /app/mmmm.jar
