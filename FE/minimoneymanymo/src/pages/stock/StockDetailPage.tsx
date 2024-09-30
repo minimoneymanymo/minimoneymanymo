@@ -43,10 +43,11 @@ function StockDetailPage(): JSX.Element {
         setStockData(res.data.dailyStockData)
         setIsLike(res.data.stock.favorite)
         // 첫 번째 항목의 closingPrice를 setClosingPrice에 전달
+        // dailyStockChart가 비어있지 않은 경우에만 마지막 항목의 closingPrice를 setClosingPrice에 전달
         if (res.data.dailyStockChart && res.data.dailyStockChart.length > 0) {
-          setClosingPrice(
-            res.data.dailyStockChart[dailyStockChart.length - 1].closingPrice
-          )
+          const lastDailyStock =
+            res.data.dailyStockChart[res.data.dailyStockChart.length - 1]
+          setClosingPrice(lastDailyStock.closingPrice)
           setSelectedChartData(
             mapStockDataToChartData(res.data.dailyStockChart)
           )
@@ -118,27 +119,29 @@ function StockDetailPage(): JSX.Element {
                 />
               </button>
             </div>
-            <div className="flex items-end gap-3 text-xl">
-              <div className="text-3xl font-bold">
-                {dailyStockChart[0]?.closingPrice.toLocaleString() ??
-                  "Loading..."}{" "}
-                머니
-              </div>
-              <span className="text-base text-gray-500">
-                어제보다
-                {stockData ? (
+            {stockData ? (
+              <div className="flex items-end gap-3 text-xl">
+                <div
+                  className={`ms-4 text-3xl font-bold ${stockData.priceChange > 0 ? "text-buy" : "text-sell"}`}
+                >
+                  {dailyStockChart[
+                    dailyStockChart.length - 1
+                  ]?.closingPrice.toLocaleString() ?? "Loading..."}{" "}
+                  머니
+                </div>
+                <span className="text-base text-gray-500">
+                  어제보다
                   <span
                     className={`ms-4 ${stockData.priceChange > 0 ? "text-red-500" : "text-blue-500"}`}
                   >
-                    {stockData.priceChange > 0 ? "+" : "-"}
                     {stockData.priceChange ?? 0} 머니(
                     {stockData?.priceChangeRate ?? "N/A"}%)
                   </span>
-                ) : (
-                  <span>Loading...</span>
-                )}
-              </span>
-            </div>
+                </span>
+              </div>
+            ) : (
+              <span>Loading...</span>
+            )}
           </>
         ) : (
           <div>Loading stock information...</div>
