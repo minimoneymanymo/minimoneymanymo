@@ -11,19 +11,62 @@ import ToggleList from "@/components/common/mypage/ToggleList"
 import WithdrawablReqItem from "@/components/child/WithdrawalReqItem"
 import RecordForm from "@/components/child/RecordForm"
 import { getAllMoneyRecordsApi, getWithdrawListApi } from "@/api/fund-api"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { inquireAccountApi, inquireBankCodesApi } from "@/api/account-api"
+import { accountActions, selectAccount } from "@/store/slice/account"
+import { useNavigate } from "react-router-dom"
+import { selectChild } from "@/store/slice/child"
 
 function ChildWalletPage(): JSX.Element {
+  const child = useAppSelector(selectChild) // parent state 가져옴
+  const account = useAppSelector(selectAccount)
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
   const [withdrawList, setWithdrawList] = useState<WithdrawableMoneyProps[]>([])
   const [recordList, setRecordList] = useState([])
-  const accountInfo = {
-    bankName: "우리은행",
-    accoutNo: "1231-249-723984",
-    accountName: "우리SUPER주거래통장",
-    accountBalance: "120000",
-  }
+  const [banks, setBanks] = useState([])
 
   useEffect(() => {
-    // 사용자정보, 출금요청내역, 머니사용내역
+    // 출금요청내역, 머니사용내역
+    const fetchAccountInfo = async () => {
+      try {
+        // 계좌 조회
+        if (child.accountNumber != null) {
+          try {
+            const res = await inquireAccountApi(
+              child.accountNumber,
+              child.userKey
+            )
+            console.log(res)
+            if (res != null) {
+              const { bankName, accountNo, accountName, accountBalance } =
+                res.REC
+
+              const accountPayload = {
+                bankName,
+                accountNo,
+                accountName,
+                accountBalance,
+              }
+              dispatch(accountActions.setAccount(accountPayload))
+            } else {
+              console.error("계좌 정보 조회 실패")
+            }
+          } catch (error) {
+            console.error("계좌 정보 조회 중 오류 발생:", error)
+          }
+        } else {
+          // 은행 리스트 조회
+          const res = await inquireBankCodesApi()
+          if (res != null) {
+            setBanks(res.REC)
+          }
+        }
+      } catch (error) {
+        console.error("API 호출 중 오류 발생:", error)
+      }
+    }
     const fetchFundList = async () => {
       try {
         const res1 = await getAllMoneyRecordsApi()
@@ -43,6 +86,7 @@ function ChildWalletPage(): JSX.Element {
     }
 
     fetchFundList()
+    fetchAccountInfo()
   }, [])
   return (
     <>
@@ -50,10 +94,10 @@ function ChildWalletPage(): JSX.Element {
       <div className="mb-4">
         <div className="mb-3 flex w-full justify-center px-8">
           <div className="flex flex-1">
-            <MoneyInfo money={32000} withdrawableMoney={132000} />
+            <MoneyInfo {...child} />
           </div>
           <div className="flex flex-1">
-            <AccountInfo {...accountInfo} />
+            <AccountInfo {...account} />
           </div>
         </div>
         <div className="px-8">
@@ -70,9 +114,15 @@ function ChildWalletPage(): JSX.Element {
             </div>
           </ToggleList>
           <div className="h-3" />
-          <ToggleList title="계좌 연동하기">
-            <RegisterAccount banks={[]} />
-          </ToggleList>
+          {child.accountNumber ? (
+            <ToggleList title="계좌 연동 해지">
+              <div>계좌 연결을 해지하시겠습니까?</div>
+            </ToggleList>
+          ) : (
+            <ToggleList title="계좌 연동하기">
+              <RegisterAccount banks={banks} userKey={child.userKey} />
+            </ToggleList>
+          )}
         </div>
       </div>
 

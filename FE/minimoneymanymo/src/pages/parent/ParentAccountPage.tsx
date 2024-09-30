@@ -207,7 +207,7 @@ const ParentAccountPage = () => {
         </ToggleList>
       ) : (
         <ToggleList title="계좌 연동하기">
-          <RegisterAccount banks={banks} />
+          <RegisterAccount banks={banks} userKey={parent.userKey} />
         </ToggleList>
       )}
 

@@ -23,7 +23,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage: storageSession,
-  whitelist: ["parent", "account"], // 세션에 저장할 리듀서만 추가
+  whitelist: ["parent", "account", "child"], // 세션에 저장할 리듀서만 추가
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
