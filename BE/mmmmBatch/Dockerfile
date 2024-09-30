@@ -1,13 +1,10 @@
 # JDK 17
-FROM openjdk:17-jdk
+FROM openjdk:17-alpine
 
 # 타임존 설정
-RUN apt-get update && \
-    apt-get install -y tzdata && \
-    ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-    echo "Asia/Seoul" > /etc/timezone && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*  # 불필요한 캐시 제거
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone
 
 # 크롬과 크롬 드라이버 설치
 # 크롬 브라우저와 드라이버 버전
@@ -15,12 +12,13 @@ ENV CHROME_VERSION=129.0.6668.70
 ENV CHROMEDRIVER_VERSION=129.0.6668.70
 
 # 필수 패키지 설치
-RUN apt-get install -y \
+RUN apk add --no-cache \
     wget \
     unzip \
-    libxi6 \
-    libgconf-2-4 \
-    && apt-get clean
+    libxi \
+    nss \
+    freetype \
+    alsa-lib
 
 # 크롬 설치
 RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip && \
