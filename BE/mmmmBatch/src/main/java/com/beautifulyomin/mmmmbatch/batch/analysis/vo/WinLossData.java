@@ -23,7 +23,7 @@ public class WinLossData {
 
     // 최종 점수 계산
     public BigDecimal calculateFinalScore() {
-        if (this.totalTradeCount == 0) {
+        if (this.totalTradeCount == 0) { //분석 대상 x
             return BigDecimal.ZERO;
         }
         BigDecimal winRate = calculateWinRate();

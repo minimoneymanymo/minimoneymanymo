@@ -44,6 +44,15 @@ class WinLossDataTest {
             assertThat(score).isLessThan(new BigDecimal("5.00"))
                     .isGreaterThanOrEqualTo(BigDecimal.ZERO);
         }
+
+        @Test
+        @DisplayName("거래가 없을 때 0을 반환해야 한다.")
+        void test4() {
+            WinLossData data = new WinLossData(0, 0, BigDecimal.ZERO, BigDecimal.valueOf(0));
+            BigDecimal score = data.calculateFinalScore();
+            log.info("score = {}", score);
+            assertThat(score).isEqualTo(BigDecimal.ZERO);
+        }
     }
 
     @Nested
