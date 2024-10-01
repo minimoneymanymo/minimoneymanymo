@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmm.security.config;
+package com.beautifulyomin.mmmm.config;
 
 import com.beautifulyomin.mmmm.common.jwt.*;
 import org.springframework.context.annotation.Bean;
