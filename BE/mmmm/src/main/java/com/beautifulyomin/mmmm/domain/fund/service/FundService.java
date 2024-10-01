@@ -1,9 +1,6 @@
 package com.beautifulyomin.mmmm.domain.fund.service;
 
-import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
-import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
-import com.beautifulyomin.mmmm.domain.fund.dto.StockHeldDto;
-import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
+import com.beautifulyomin.mmmm.domain.fund.dto.*;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 
 import java.util.List;
@@ -29,4 +26,11 @@ public interface FundService {
 
     // 보유 주식 조회
     List<StockHeldDto> findAllStockHeld(String childrenId);
+
+    // 매월 1일 용돈 지급
+    long updateAllowanceMonthly();
+
+    List<AllowancePaymentDto> findAllUnpaid(String userId);
+
+    long updateAllowance(String userId, AllowancePaymentDto request);
 }

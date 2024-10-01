@@ -189,4 +189,60 @@ public class FundController {
                         .data(fundService.findAllStockHeld(userId))
                         .build());
     }
+
+    /**
+     * 부모 - 머니 미지급 내역 조회
+     * */
+    @GetMapping("/nopaid")
+    public ResponseEntity<CommonResponseDto> getNoPaidList(@RequestHeader("Authorization") String token) {
+        String userId = jwtUtil.getUsername(token);
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("용돈 미지급 내역 조회")
+                        .data(fundService.findAllUnpaid(userId))
+                        .build());
+    }
+
+    /**
+     * 부모 - 용돈 지급
+     * */
+    @PutMapping("/giveMoney")
+    public ResponseEntity<CommonResponseDto> giveAllowance(@RequestHeader("Authorization") String token, @RequestBody AllowancePaymentDto request){
+        String userId = jwtUtil.getUsername(token);
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        long result = fundService.updateAllowance(userId,request);
+        if(result == 0){
+            throw new InvalidRequestException("용돈 지급 실패"); //400
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(201)
+                            .message(request.getChildrenId() + " 한테  "+request.getAmount()+"머니 용돈 지급 성공")
+                            .build());
+        }
+
+    }
+
+    /**
+     * 매월 1일 용돈 스케줄러 테스트용
+
+    @PutMapping("/test")
+    public ResponseEntity<CommonResponseDto> allowance(@RequestHeader("Authorization") String token) {
+        fundService.updateAllowanceMonthly();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("용돈 지급 ")
+                        .build());
+    }
+     */
+
 }
