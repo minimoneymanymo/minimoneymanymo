@@ -8,7 +8,9 @@ public enum RedisKey {
     DAILY_STOCK_CHARTS("dailyStockCharts::%s"),
     WEEKLY_STOCK_CHARTS("weeklyStockCharts::%s"),
     MONTHLY_STOCK_CHARTS("monthlyStockCharts::%s"),
-    OVERALL_STATISTICS("overallStatistics::%s");
+    OVERALL_STATISTICS("overallStatistics::%s"),
+    EMAIL_AUTHENTICATION("emailAuthentication::%s"),
+    ;
 
     private final String keyPattern;
 
