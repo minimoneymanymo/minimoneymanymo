@@ -67,17 +67,19 @@ function ChildStockPage(): JSX.Element {
         등락 금액은 소숫점 둘째 자리까지 반올림되어 표시됩니다. <br />
         금액이 빨간색이면 이익, 파란색이면 손해를 의미해요!
       </div>
-      <div className="grid grid-cols-2 gap-5 pb-6 pt-3">
-        {stockList.length === 0 ? (
-          <div className="p-3 text-center text-gray-500">
-            조회 결과가 없습니다.
-          </div>
-        ) : (
-          stockList.map((stock) => (
+
+      {stockList.length === 0 ? (
+        <div className="p-3 text-center text-gray-500">
+          조회 결과가 없습니다.
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-5 pb-6 pt-3">
+          {stockList.map((stock) => (
             <StockHeldItem key={stock.stockCode} {...stock} />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
+
       <Heading title="나의 거래 기록" />
       <div className="p-3">
         거래 내역을 클릭하면 더 많은 정보와 매매 이유를 볼 수 있어요{" "}
