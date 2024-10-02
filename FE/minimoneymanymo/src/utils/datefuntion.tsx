@@ -4,6 +4,16 @@ export const formatDate = (dateString: string) => {
   return formattedDateString
 }
 
+export function formatDateTime(dateString: string): string {
+  const year = dateString.substring(0, 4)
+  const month = dateString.substring(4, 6)
+  const day = dateString.substring(6, 8)
+  const hour = dateString.substring(8, 10)
+  const minute = dateString.substring(10, 12)
+
+  return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일 ${hour}:${minute}`
+}
+
 export const computeTime = (recentTime: string) => {
   const timeNow = new Date()
   const timeRecent = new Date(recentTime)

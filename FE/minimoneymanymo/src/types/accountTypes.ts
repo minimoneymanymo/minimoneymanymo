@@ -58,9 +58,14 @@ export interface RecordItemProps {
   createdAt: string
   tradeType: string
   amount: number
+  remainAmount: number
+  // 매매에만 있는 속성
   companyName?: string | null
   tradeSharesCount?: number | null
-  remainAmount: number
+  reason?: string | null
+  stockTradingGain?: number | null
+  reasonBonusMoney?: number | null
+  stockCode?: string | null
 }
 
 export interface MoneyChartProps {
