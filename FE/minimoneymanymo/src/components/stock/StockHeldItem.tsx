@@ -25,9 +25,14 @@ const StockHeldItem: React.FC<StockHeld> = (props) => {
     return "text-black"
   }
 
-  // 양수일 경우 + 기호 추가
   const formatWithSign = (value: number) => {
-    return value > 0 ? `+${value}` : value.toString()
+    if (value > 0) {
+      return `+ ${Math.round(value * 100) / 100}`
+    } else if (value < 0) {
+      return `- ${Math.abs(Math.round(value * 100) / 100)}`
+    } else {
+      return `${Math.round(value * 100) / 100}`
+    }
   }
 
   const movePage = () => {

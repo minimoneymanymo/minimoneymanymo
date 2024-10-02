@@ -38,17 +38,13 @@ const LineChart: React.FC<{ data: GroupedRecordData }> = ({ data }) => {
     .sort((a, b) => b.localeCompare(a))
     .forEach((date, index) => {
       const list = data[date]
-      let sum = 0
-      list.forEach((item) => {
-        if (item.tradeType === "1" || item.tradeType === "4") {
-          sum -= item.amount // 출금
-        } else {
-          sum += item.amount // 입금
-        }
-      })
+      let latestAmount = 0
+      if (list.length > 0) {
+        latestAmount = list[list.length - 1].remainAmount
+      }
 
       labels[labels.length - 1 - index] = formatDate(date) // date를 labels의 끝에서부터 넣음
-      chartData[chartData.length - 1 - index] = sum
+      chartData[chartData.length - 1 - index] = latestAmount
     })
 
   const ex = {
