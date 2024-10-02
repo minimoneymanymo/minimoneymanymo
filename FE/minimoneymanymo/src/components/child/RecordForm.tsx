@@ -1,4 +1,6 @@
+import { useState } from "react"
 import { RecordItemProps } from "@/types/accountTypes"
+import { formatDateTime } from "@/utils/datefuntion"
 
 function formatTime(dateString: string, isDate: boolean): string {
   const month = dateString.substring(4, 6)
@@ -30,8 +32,7 @@ function printType(type: string): string {
 
 function groupByDate(items: RecordItemProps[]) {
   return items.reduce((groups: { [key: string]: RecordItemProps[] }, item) => {
-    // reduce: 배열을 순회하며 하나의 결과로 축약
-    const dateKey = item.createdAt.substring(0, 8) // yyyyMMdd 형식의 날짜 추출
+    const dateKey = item.createdAt.substring(0, 8)
     if (!groups[dateKey]) {
       groups[dateKey] = []
     }
@@ -40,24 +41,89 @@ function groupByDate(items: RecordItemProps[]) {
   }, {})
 }
 
-const RecordForm: React.FC<{ data: RecordItemProps[] }> = ({ data }) => {
+interface RecordFormProps {
+  data: RecordItemProps[]
+  isMoneyList: boolean
+}
+
+const RecordForm: React.FC<RecordFormProps> = ({ data, isMoneyList }) => {
   const groupedData = groupByDate(data)
+  const [expandedItem, setExpandedItem] = useState<RecordItemProps | null>(null)
+
+  const handleToggle = (item: RecordItemProps) => {
+    if (!isMoneyList) {
+      setExpandedItem((prev) => (prev === item ? null : item))
+    }
+  }
 
   return (
-    <div className="mx-8 my-3 rounded-2xl bg-white px-8 pt-4 shadow-md">
+    <div
+      className={`${
+        isMoneyList
+          ? "mx-8 my-3 rounded-2xl bg-white px-8 pt-4 shadow-md"
+          : "my-3 rounded-2xl bg-white px-8 pt-4 shadow-md"
+      }`}
+    >
       {Object.keys(groupedData)
         .sort((a, b) => b.localeCompare(a))
         .map((date) => (
-          <div key={date} className="flex flex-row">
+          <div key={date} className="mb-4 flex flex-row">
             {/* 날짜 구분 */}
             <h2 className="mr-5 text-xl font-bold text-gray-500">
               {formatTime(date, true)}
             </h2>
 
             {/* 해당 날짜의 거래 기록 */}
-            <div className="mb-3 w-full">
+            <div className="flex w-full flex-col">
               {groupedData[date].map((item, index) => (
-                <RecordItem key={index} {...item} />
+                <div key={index}>
+                  <RecordItem {...item} onToggle={() => handleToggle(item)} />
+                  {expandedItem === item && (
+                    <div className="mb-5 flex flex-row border-y border-t-gray-300 px-6 py-5">
+                      <div className="flex flex-[2] flex-col">
+                        {/* 거래 유형에 따라 isNegative 결정 */}
+                        <div className="flex flex-row justify-between">
+                          <span className="mb-3 text-lg font-bold">
+                            {item.companyName}
+                          </span>
+                          <span
+                            className={`mb-3 text-lg font-bold ${item.tradeType == "1" || item.tradeType == "4" ? "text-blue-500" : "text-red-500"}`}
+                          >
+                            {item.tradeType == "1" || item.tradeType == "4"
+                              ? `- ${Number(item.amount).toLocaleString()}`
+                              : `+ ${Number(item.amount).toLocaleString()}`}{" "}
+                            머니
+                          </span>
+                        </div>
+                        <div className="mb-1 flex flex-row justify-between text-gray-500">
+                          <span>거래유형</span>
+                          <span>{printType(item.tradeType)}</span>
+                        </div>
+                        <div className="flex flex-row justify-between text-gray-500">
+                          <span>일시</span>
+                          <span>{formatDateTime(item.createdAt)}</span>
+                        </div>
+                      </div>
+                      <div className="ml-10 flex flex-[3] flex-col">
+                        <div className="mb-3 flex justify-between">
+                          <span className="text-gray-500">이유</span>
+                          <span
+                            className={
+                              item.reasonBonusMoney
+                                ? "text-primary-m1"
+                                : "text-gray-400"
+                            }
+                          >
+                            {item.reasonBonusMoney
+                              ? `${item.reasonBonusMoney} 머니`
+                              : "미지급"}
+                          </span>
+                        </div>
+                        <span className="text-black">{item.reason}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>
@@ -65,10 +131,19 @@ const RecordForm: React.FC<{ data: RecordItemProps[] }> = ({ data }) => {
     </div>
   )
 }
-const RecordItem: React.FC<RecordItemProps> = (props) => {
-  let { createdAt, tradeType, amount, remainAmount, companyName } = props
 
-  // 트레이트 타입에 따라 텍스트 및 색상 설정
+interface RecordItemPropsExtended extends RecordItemProps {
+  onToggle: () => void
+}
+
+const RecordItem: React.FC<RecordItemPropsExtended> = ({
+  onToggle,
+  createdAt,
+  tradeType,
+  amount,
+  remainAmount,
+  companyName,
+}) => {
   const isNegative = tradeType === "1" || tradeType === "4"
   const formattedAmount = isNegative
     ? `- ${Number(amount).toLocaleString()}`
@@ -76,7 +151,10 @@ const RecordItem: React.FC<RecordItemProps> = (props) => {
   const amountColor = isNegative ? "text-blue-500" : "text-red-500"
 
   return (
-    <div className="flex w-full justify-between pb-6">
+    <div
+      className="flex w-full cursor-pointer justify-between pb-6"
+      onClick={onToggle}
+    >
       <div className="flex flex-col">
         <b>{companyName || printType(tradeType)}</b>
         <span className="mt-1 text-sm text-gray-500">
