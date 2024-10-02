@@ -146,8 +146,7 @@ function ChildWalletPage(): JSX.Element {
       <div className="m-2 bg-white">
         <LineChart data={getRecent7Days(recordList)} />
       </div>
-
-      <RecordForm data={recordList} />
+      <RecordForm data={recordList} isMoneyList={true} />
     </>
   )
 }
