@@ -262,19 +262,20 @@ function MyChildMoneySetting(): JSX.Element {
         </button>
       </div>
 
-      <div className="flex w-full justify-end px-12 text-xl font-bold">
+      <div className="flex w-full justify-end px-10 text-xl font-bold">
         {selectedMenu && (
           <div>
             {selectedMenu === "allowance" && (
               <div className="flex items-center space-x-8">
                 <span>용돈</span>
                 <div className="flex w-[350px] items-center">
-                  <textarea
-                    className="h-[30px] w-[110px] border-b border-gray-400 text-right"
+                  <input
+                    type="tel"
+                    className="h-[35px] w-full border-b border-gray-400 bg-transparent text-right"
                     value={
                       inputValue === 0 ? "" : inputValue.toLocaleString("ko-KR")
                     } // 숫자 세 자리마다 쉼표
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
                       setInputValue(Number(onlyNumbers)) // 상태 업데이트
                     }}
@@ -289,13 +290,15 @@ function MyChildMoneySetting(): JSX.Element {
                       }
                     }}
                   />
-                  머니
-                  <button
-                    onClick={handlegiveAllowance}
-                    className="m-2 ml-4 rounded-lg bg-secondary-m2 px-6 py-2 text-sm font-normal text-white"
-                  >
-                    지급
-                  </button>
+                  <div className="flex w-[230px] items-center justify-end">
+                    <span>머니</span>
+                    <button
+                      onClick={handlegiveAllowance}
+                      className="ml-4 rounded-lg bg-secondary-m2 px-6 py-2 text-sm font-normal text-white"
+                    >
+                      지급
+                    </button>
+                  </div>
                 </div>
 
                 {error && (
@@ -308,14 +311,15 @@ function MyChildMoneySetting(): JSX.Element {
                 <div className="flex items-center space-x-8">
                   <span>한 달 출금 가능 금액</span>
                   <div className="flex w-[350px] items-center">
-                    <textarea
-                      className="h-[30px] w-[110px] border-b border-gray-400 text-right"
+                    <input
+                      type="tel"
+                      className="h-[35px] w-full border-b border-gray-400 bg-transparent text-right"
                       value={
                         inputValue === 0
                           ? ""
                           : inputValue.toLocaleString("ko-KR")
                       } // 숫자 세 자리마다 쉼표
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
                         setInputValue(Number(onlyNumbers)) // 상태 업데이트
                       }}
@@ -330,20 +334,22 @@ function MyChildMoneySetting(): JSX.Element {
                         }
                       }}
                     />
-                    머니
-                    <div className="flex">
-                      <button
-                        onClick={handleUpdateWithdrawableMoney}
-                        className="m-2 ml-4 rounded-lg bg-secondary-m2 px-6 py-2 text-sm font-normal text-white"
-                      >
-                        저장
-                      </button>
-                      <button
-                        onClick={handleSetWithdrawableMoney}
-                        className="m-2 rounded-lg bg-secondary-m2 px-3.5 py-2 text-sm font-normal text-white"
-                      >
-                        즉시반영
-                      </button>
+                    <div className="flex w-[550px] items-center justify-end space-x-3">
+                      <span>머니</span>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={handleUpdateWithdrawableMoney}
+                          className="rounded-lg bg-secondary-m2 px-6 py-2 text-sm font-normal text-white"
+                        >
+                          저장
+                        </button>
+                        <button
+                          onClick={handleSetWithdrawableMoney}
+                          className="rounded-lg bg-secondary-m2 px-3.5 py-2 text-sm font-normal text-white"
+                        >
+                          즉시반영
+                        </button>
+                      </div>
                     </div>
                   </div>
                   {error && (
@@ -359,14 +365,15 @@ function MyChildMoneySetting(): JSX.Element {
                 <div className="flex items-center space-x-8">
                   <span>한 달 퀴즈 보상 머니</span>
                   <div className="flex w-[350px] items-center">
-                    <textarea
-                      className="h-[30px] w-[110px] border-b border-gray-400 text-right"
+                    <input
+                      type="tel"
+                      className="h-[35px] w-full border-b border-gray-400 bg-transparent text-right"
                       value={
                         inputValue === 0
                           ? ""
                           : inputValue.toLocaleString("ko-KR")
                       } // 숫자 세 자리마다 쉼표
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
                         setInputValue(Number(onlyNumbers)) // 상태 업데이트
                       }}
@@ -381,13 +388,15 @@ function MyChildMoneySetting(): JSX.Element {
                         }
                       }}
                     />
-                    머니
-                    <button
-                      onClick={handleSave}
-                      className="m-2 ml-4 rounded-lg bg-secondary-m2 px-6 py-2 text-sm font-normal text-white"
-                    >
-                      저장
-                    </button>
+                    <div className="flex w-[230px] items-center justify-end">
+                      <span>머니</span>
+                      <button
+                        onClick={handleSave}
+                        className="ml-4 rounded-lg bg-secondary-m2 px-6 py-2 text-sm font-normal text-white"
+                      >
+                        저장
+                      </button>
+                    </div>
                   </div>
                   {error && (
                     <p className="text-base font-normal text-red-700">
@@ -400,7 +409,7 @@ function MyChildMoneySetting(): JSX.Element {
           </div>
         )}
       </div>
-      <div className="mx-8 flex items-start gap-4 rounded-lg border p-2 px-8">
+      <div className="mx-10 flex items-start gap-4 rounded-lg border px-4 py-2">
         <InfoIcon style={{ color: "black", fontSize: 20 }} className="mt-2" />
 
         {showNotice()}
