@@ -1,5 +1,6 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.vo;
+package com.beautifulyomin.mmmmbatch.batch.analysis.data;
 
+import com.beautifulyomin.mmmmbatch.batch.analysis.data.report.DiversificationData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,8 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
-class TradingFrequencyDataTest {
+class DiversificationDataTest {
     @Nested
     @DisplayName("calculateScore 메소드는 ")
     class Describe_getScore {
@@ -17,23 +17,15 @@ class TradingFrequencyDataTest {
         @ParameterizedTest(name = "거래 횟수가 {0}일 때, 점수는 {1}이어야 한다.")
         @CsvSource({
                 "0, 0",
-                "4, 10",
-                "5, 20",
-                "14, 20",
-                "15, 40",
-                "29, 40",
-                "30, 60",
-                "49, 60",
-                "50, 80",
-                "74, 80",
-                "75, 100",
-                "100, 100",
-                "1000, 100"
+                "1, 10",
+                "2, 20",
+                "4, 40",
+                "10, 100",
+                "15, 100"
         })
-        void it_returns_correct_score(long tradingCount, int expectedScore) {
-            TradingFrequencyData data = new TradingFrequencyData(tradingCount);
+        void it_returns_correct_score(int stockHeldCount, int expectedScore) {
+            DiversificationData data = new DiversificationData(stockHeldCount);
             assertThat(data.calculateScore()).isEqualTo(expectedScore);
         }
     }
-
 }

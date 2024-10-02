@@ -11,11 +11,12 @@ import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
-public class AnalysisJobRunner  { //implements CommandLineRunner
+public class AnalysisJobRunner { //implements CommandLineRunner
     private final JobLauncher jobLauncher;
     private final Job investmentAnalysisJob;
+    private final Job investorClusteringJob;
 
-    @Scheduled(cron = "0 0 16? * MON-FRI")
+    @Scheduled(cron = "0 0 17 ? * MON-FRI")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis()) // JobParameters에 현재 시간 추가
@@ -30,5 +31,14 @@ public class AnalysisJobRunner  { //implements CommandLineRunner
 //                .toJobParameters();
 //        jobLauncher.run(investmentAnalysisJob, params);
 //    }
+
+//    @Override
+//    public void run(String... args) throws Exception {
+//        JobParameters params = new JobParametersBuilder()
+//                .addLong("time", System.currentTimeMillis())
+//                .toJobParameters();
+//        jobLauncher.run(investorClusteringJob, params);
+//    }
+
 
 }

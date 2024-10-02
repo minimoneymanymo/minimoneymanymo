@@ -1,8 +1,8 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.step;
+package com.beautifulyomin.mmmmbatch.batch.analysis.step.report;
 
+import com.beautifulyomin.mmmmbatch.batch.analysis.data.report.*;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.TradeRecord;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.ChildrenRepository;
-import com.beautifulyomin.mmmmbatch.batch.analysis.vo.*;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.AnalysisRepositoryCustom;

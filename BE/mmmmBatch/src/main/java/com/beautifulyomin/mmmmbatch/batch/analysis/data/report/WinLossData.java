@@ -1,4 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.vo;
+package com.beautifulyomin.mmmmbatch.batch.analysis.data.report;
 
 import lombok.AllArgsConstructor;
 import lombok.ToString;
