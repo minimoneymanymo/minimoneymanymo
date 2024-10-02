@@ -69,9 +69,13 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
 
   // 입력된 금액에 따른 주 수와 잔액 계산
   useEffect(() => {
-    if (closingPrice && inputMoney !== 0) {
-      const shares = Math.floor((inputMoney / closingPrice) * 1e7) / 1e7 // closingPrice 사용
-      setTradeShares(shares)
+    if (closingPrice) {
+      if (inputMoney > 0) {
+        const shares = Math.floor((inputMoney / closingPrice) * 1e7) / 1e7 // closingPrice 사용
+        setTradeShares(shares)
+      } else {
+        setTradeShares(0) // ***** 추가: inputMoney가 0일 경우 tradeShares를 0으로 설정
+      }
       if (money !== null) {
         setRemainingMoney(money - inputMoney)
       }
@@ -129,6 +133,9 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
     try {
       const result = await postTrade(tradeDataObj)
       console.log("거래 성공", result)
+      setInputMoney(0)
+      setTradeShares(0)
+      setReason("") // textarea 초기화
       alert("거래가 성공적으로 완료되었습니다!")
       await loadMoney()
     } catch (error) {
@@ -154,48 +161,77 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
           매도
         </Button>
       </div>
-      <Card className="shadow-blue-gray-900/5 w-full border p-0 px-5 py-5">
+      <Card className="shadow-blue-gray-900/5 h-[496px] w-full border p-0 px-5 py-5">
         {/* 매수 모드일 때 */}
         {isBuyMode ? (
           <>
-            <div className="flex w-full justify-between">
-              <p className="text-left">현재가</p>
-              <p className="text-right">
+            <div className="flex w-full items-end justify-between">
+              <p className="text-base-16 text-left">현재가</p>
+              <p className="ml-2 text-right text-lg">
                 {closingPrice !== null
                   ? closingPrice.toLocaleString()
                   : "현재가를 불러올 수 없습니다"}{" "}
                 머니
               </p>
             </div>
-            <h2>
-              보유 머니{" "}
-              {money !== null && money !== undefined
-                ? money.toLocaleString()
-                : "로딩 중..."}{" "}
-              머니
-            </h2>
 
-            <p className="availablePurchaseShares text-right text-xs text-gray-300">
+            <div className="flex w-full items-end justify-between">
+              <p className="text-base-16 text-left">보유 머니</p>
+              <p className="text-right text-lg">
+                {money !== null && money !== undefined
+                  ? money.toLocaleString()
+                  : "로딩 중..."}{" "}
+                머니
+              </p>
+            </div>
+
+            <p className="availablePurchaseShares text-right text-sm text-gray-300">
               최대 {maxShares.toFixed(6)} 주 매수 가능
             </p>
+            <p className="py-1"></p>
+            {/* <br /> */}
             <div className="flex items-center">
-              <input
+              <textarea
                 className="w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
-                type="number"
-                value={inputMoney === 0 ? "" : inputMoney}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setInputMoney(Number(e.target.value))
-                }
+                value={
+                  inputMoney === 0 ? "" : inputMoney.toLocaleString("ko-KR")
+                } // 숫자 세 자리마다 쉼표
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
+                  setInputMoney(Number(onlyNumbers)) // 상태 업데이트
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[0-9]$/.test(e.key) && // 숫자키가 아닌 경우
+                    e.key !== "Backspace" && // 백스페이스 허용
+                    e.key !== "ArrowLeft" && // 왼쪽 화살표 허용
+                    e.key !== "ArrowRight" // 오른쪽 화살표 허용
+                  ) {
+                    e.preventDefault() // 그 외의 입력을 막음
+                  }
+                }}
                 placeholder="매수할 머니"
+                style={{
+                  height: "36px",
+                  maxHeight: "35px",
+                  overflow: "hidden",
+                }} // 높이 35px로 설정
               />
             </div>
             <p>{tradeShares.toFixed(6)} 주</p>
-            {remainingMoney !== null && remainingMoney !== undefined && (
-              <p>매수 후 잔액: {remainingMoney.toLocaleString()}</p>
-            )}
+            <div className="flex w-full items-end justify-between">
+              <p className="text-left text-lg">매수 후 잔액</p>
+              {/* 이 부분 */}
+              <p className="text-right text-lg">
+                {remainingMoney !== null && remainingMoney !== undefined
+                  ? remainingMoney.toLocaleString()
+                  : "로딩 중..."}{" "}
+                머니
+              </p>
+            </div>
 
             <textarea
-              className="h-[150px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
+              className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
               value={reason}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setReason(e.target.value)
@@ -205,23 +241,31 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
           </>
         ) : (
           <>
-            {/***** 매도 모드일 때 *****/}
-            <p>
-              현재가 :{" "}
-              {closingPrice !== null
-                ? closingPrice.toLocaleString()
-                : "현재가를 불러올 수 없습니다"}{" "}
-            </p>
-            <h2>보유 주식: {remainSharesCount.toFixed(6)} 주</h2>
-            <p className="availableSellShares text-xs text-gray-500">
+            {/********** 매도 모드일 때 ***********/}
+            {/********** 매도 모드일 때 ***********/}
+            <div className="flex w-full items-end justify-between">
+              <p className="text-base-16 text-left">현재가</p>
+              <p className="ml-2 text-right text-lg">
+                {closingPrice !== null
+                  ? closingPrice.toLocaleString()
+                  : "현재가를 불러올 수 없습니다"}{" "}
+                머니
+              </p>
+            </div>
+            <div className="flex w-full items-end justify-between">
+              <p className="text-base-16 text-left">보유 주식</p>
+              <p className="text-right text-lg">
+                {remainSharesCount.toFixed(6)} 주
+              </p>
+            </div>
+            <p className="availablePurchaseShares text-right text-sm text-gray-300">
               최대 {remainSharesCount.toFixed(6)} 주 매도 가능
             </p>
             <div className="flex items-center">
-              <input
-                className="sellSharesInputBox rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
-                type="text"
-                value={sellShares}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              <textarea
+                className="sellSharesInputBox w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                value={sellShares} // 기존의 sellShares 값 사용
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                   const value = e.target.value
 
                   // 유효한 숫자 형식(정수 또는 소수점 포함)을 확인하고, 소수점 뒤 최대 6자리 허용
@@ -230,21 +274,22 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                   }
                 }}
                 placeholder="매도할 주 수"
+                style={{
+                  height: "36px",
+                  maxHeight: "35px",
+                  overflow: "hidden",
+                }} // 높이 35px로 설정
               />
             </div>
             <p className="sellMoney">{sellMoney.toLocaleString()} 머니</p>
-
             <p>**** 손익가격</p>
-            <p>**** 매도 후 잔액 계산하기..</p>
-            <p>매도 후 잔액: 계산 전</p>
             <textarea
-              className="py-15 w-full rounded bg-gray-300 px-2 text-black placeholder-white"
+              className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
               value={reason}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setReason(e.target.value)
               }
               placeholder="매도를 생각하게 된 이유를 적어주세요!"
-              rows={4}
             />
           </>
         )}
