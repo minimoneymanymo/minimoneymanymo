@@ -4,12 +4,14 @@ import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.dto.ParentWithBalanceDto;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
 import com.beautifulyomin.mmmm.domain.member.entity.QParent;
 import com.beautifulyomin.mmmm.domain.member.entity.QParentAndChildren;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
@@ -46,9 +48,16 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
                 .from(stocksHeld)
                 .join(dailyStockChart)
-                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
+                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode)
+                        .and(dailyStockChart.date.eq(
+                                JPAExpressions.select(dailyStockChart.date.max())
+                                        .from(dailyStockChart)
+                                        .where(dailyStockChart.stockCode.eq(stocksHeld.stock.stockCode)) // 동일한 stockCode에 대해
+                        ))
+                )
                 .where(stocksHeld.children.childrenId.eq(childrenId))
                 .fetchOne();
+
 
         //메인쿼리 MyChildrenDto반환
         return jpaQueryFactory
@@ -116,11 +125,18 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
         QStocksHeld stocksHeld = QStocksHeld.stocksHeld;
         QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
 
+
         BigDecimal totalAmount = jpaQueryFactory
                 .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
                 .from(stocksHeld)
                 .join(dailyStockChart)
-                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
+                .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode)
+                        .and(dailyStockChart.date.eq(
+                                JPAExpressions.select(dailyStockChart.date.max())
+                                        .from(dailyStockChart)
+                                        .where(dailyStockChart.stockCode.eq(stocksHeld.stock.stockCode)) // 동일한 stockCode에 대해
+                        ))
+                )
                 .where(stocksHeld.children.childrenId.eq(childrenId))
                 .fetchOne();
 
@@ -187,6 +203,16 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .set(child.bankCode, bankCode)
                 .where(child.userId.eq(childUserId))
                 .execute();
+    }
+
+    @Override
+    public List<ParentWithBalanceDto> getParentIdAndBalanceList() {
+        QParent parent = QParent.parent;
+        return jpaQueryFactory
+                .select(Projections.constructor(ParentWithBalanceDto.class,
+                        parent.parentId,parent.balance))
+                .from(parent)
+                .fetch();
     }
 
     @Override

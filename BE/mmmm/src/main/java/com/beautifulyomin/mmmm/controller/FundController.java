@@ -4,7 +4,9 @@ import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.fund.dto.*;
 import com.beautifulyomin.mmmm.domain.fund.service.FundService;
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
+import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
@@ -19,11 +21,13 @@ import java.util.List;
 @RequestMapping("/funds")
 public class FundController {
 
+    private final ChildrenService childrenService;
     private final ParentService parentService;
     private final FundService fundService;
     private final JWTUtil jwtUtil;
 
-    public FundController(ParentService parentService, FundService fundService, JWTUtil jwtUtil) {
+    public FundController(ChildrenService childrenService, ParentService parentService, FundService fundService, JWTUtil jwtUtil) {
+        this.childrenService = childrenService;
         this.parentService = parentService;
         this.fundService = fundService;
         this.jwtUtil = jwtUtil;
@@ -54,8 +58,21 @@ public class FundController {
     }
 
     @PostMapping("/request-withdraw")
-    public ResponseEntity<CommonResponseDto> requestWithdraw(@RequestHeader("Authorization") String token, @RequestBody WithdrawDto amount) {
+    public ResponseEntity<CommonResponseDto> requestWithdraw(
+            @RequestHeader("Authorization") String token, 
+            @RequestBody WithdrawDto amount
+    ) {
         String userId = jwtUtil.getUsername(token);
+
+        Children child = childrenService.findByUserId(userId);
+        if(child.getMoney() < amount.getWithdrawableMoney()){
+            throw new InvalidRequestException("요청한 금액이 머니 잔액보다 큽니다.");
+        }else if(child.getWithdrawableMoney() < amount.getWithdrawableMoney()){
+            throw new InvalidRequestException("요청한 금액이 출금 가능 금액보다 큽니다.");
+        }
+        
+        System.out.println("🎈🎈🎈🎈");
+        System.out.println(amount);
         fundService.requestWithdraw(userId, amount.getWithdrawableMoney());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponseDto.builder()
@@ -189,4 +206,60 @@ public class FundController {
                         .data(fundService.findAllStockHeld(userId))
                         .build());
     }
+
+    /**
+     * 부모 - 머니 미지급 내역 조회
+     * */
+    @GetMapping("/nopaid")
+    public ResponseEntity<CommonResponseDto> getNoPaidList(@RequestHeader("Authorization") String token) {
+        String userId = jwtUtil.getUsername(token);
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("용돈 미지급 내역 조회")
+                        .data(fundService.findAllUnpaid(userId))
+                        .build());
+    }
+
+    /**
+     * 부모 - 용돈 지급
+     * */
+    @PutMapping("/giveMoney")
+    public ResponseEntity<CommonResponseDto> giveAllowance(@RequestHeader("Authorization") String token, @RequestBody AllowancePaymentDto request){
+        String userId = jwtUtil.getUsername(token);
+        if(!parentService.isExistByUserId(userId)){
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        long result = fundService.updateAllowance(userId,request);
+        if(result == 0){
+            throw new InvalidRequestException("용돈 지급 실패"); //400
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(201)
+                            .message(request.getChildrenId() + " 한테  "+request.getAmount()+"머니 용돈 지급 성공")
+                            .build());
+        }
+
+    }
+
+    /**
+     * 매월 1일 용돈 스케줄러 테스트용
+
+    @PutMapping("/test")
+    public ResponseEntity<CommonResponseDto> allowance(@RequestHeader("Authorization") String token) {
+        fundService.updateAllowanceMonthly();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponseDto.builder()
+                        .stateCode(200)
+                        .message("용돈 지급 ")
+                        .build());
+    }
+     */
+
 }

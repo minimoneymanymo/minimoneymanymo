@@ -1,42 +1,42 @@
 package com.beautifulyomin.mmmm.domain.fund.repository;
 
-import com.beautifulyomin.mmmm.domain.fund.dto.MoneyChangeDto;
-import com.beautifulyomin.mmmm.domain.fund.dto.MoneyDto;
-import com.beautifulyomin.mmmm.domain.fund.dto.StockHeldDto;
-import com.beautifulyomin.mmmm.domain.fund.dto.WithdrawRequestDto;
-import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
-import com.beautifulyomin.mmmm.domain.fund.entity.QTradeRecord;
-import com.beautifulyomin.mmmm.domain.fund.entity.QTransactionRecord;
-import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
+import com.beautifulyomin.mmmm.domain.fund.dto.*;
+import com.beautifulyomin.mmmm.domain.fund.entity.*;
+import com.beautifulyomin.mmmm.domain.member.dto.ParentWithBalanceDto;
+import com.beautifulyomin.mmmm.domain.member.entity.*;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
-import com.beautifulyomin.mmmm.domain.member.entity.QParent;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+@Slf4j
 @Repository
 public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
     private final EntityManager entityManager;
-
-    public FundRepositoryCustomImpl(JPAQueryFactory jpaQueryFactory, EntityManager entityManager) {
+    private final TransactionRepository transactionRepository;
+    public FundRepositoryCustomImpl(JPAQueryFactory jpaQueryFactory, EntityManager entityManager, TransactionRepository transactionRepository) {
         this.jpaQueryFactory = jpaQueryFactory;
         this.entityManager = entityManager;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
@@ -89,7 +89,13 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                         .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
                         .from(stocksHeld)
                         .join(dailyStockChart)
-                        .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
+                        .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode)
+                                .and(dailyStockChart.date.eq(
+                                        JPAExpressions.select(dailyStockChart.date.max())
+                                                .from(dailyStockChart)
+                                                .where(dailyStockChart.stockCode.eq(stocksHeld.stock.stockCode)) // 동일한 stockCode에 대해
+                                ))
+                        )
                         .where(stocksHeld.children.userId.eq(childrenId))
                         .fetchOne()
         ).orElse(BigDecimal.ZERO);
@@ -248,6 +254,158 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
         return result;
     }
+
+    @Override
+    public List<AllowancePaymentDto> findAllUnpaid(String parentUserId) {
+        QTransactionRecord transaction =QTransactionRecord.transactionRecord;
+        QParentAndChildren parentAndChildren = QParentAndChildren.parentAndChildren;
+
+        List<Integer> childrenIdList= jpaQueryFactory
+                .select(parentAndChildren.child.childrenId)
+                .from(QParentAndChildren.parentAndChildren)
+                .where(parentAndChildren.parent.userId.eq(parentUserId),
+                        parentAndChildren.isApproved.eq(true))
+                .fetch();
+
+        List<AllowancePaymentDto> result = new ArrayList<>();
+
+        for (Integer childrenId: childrenIdList) {
+            List<AllowancePaymentDto> list =  jpaQueryFactory
+                .select(Projections.constructor(AllowancePaymentDto.class,
+                        transaction.transactionId,
+                        transaction.children.childrenId,
+                        transaction.createdAt,
+                        transaction.amount,
+                        transaction.children.name
+                ))
+                .from(transaction)
+                .where(transaction.children.childrenId.eq(childrenId),transaction.approvedAt.isNull())
+                .orderBy(transaction.createdAt.desc())
+                .fetch();
+            result.addAll(list);
+        }
+        return result;
+    }
+
+
+
+    @Override
+    @Transactional
+    public long updateAllowance( Integer amount, Integer parentId, Integer childrenId) {
+        QChildren children = QChildren.children;
+        QParent parent = QParent.parent;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        // 새로 용돈을 주는 경우
+        // 자식 머니 증가
+        jpaQueryFactory
+                .update(children)
+                .set(children.money, children.money.add(amount))
+                .where(children.childrenId.eq(childrenId))
+                .execute();
+
+        // 부모의 마니모 계좌 충전금액 변경
+        jpaQueryFactory
+                .update(parent)
+                .set(parent.balance, parent.balance.subtract(amount))
+                .where(parent.parentId.eq(parentId))
+                .execute();
+
+        // 자식객체조회
+        Children child = jpaQueryFactory
+                .selectFrom(children)
+                .where(children.childrenId.eq(childrenId))
+                .fetchOne();
+        child.setMoney(child.getMoney()+amount);
+
+        TransactionRecord request = new TransactionRecord();
+        request.setChildren(child);
+        request.setAmount(amount);
+        request.setTradeType("0"); //입금
+        request.setRemainAmount(child.getMoney()+amount);
+        request.setApprovedAt(LocalDateTime.now().format(formatter));
+        transactionRepository.save(request);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return 1;
+    }
+
+
+    @Override
+    @Transactional
+    public long updateAllowanceMonthly(ParentWithBalanceDto nowParent) {
+        QParentAndChildren parentAndChildren = QParentAndChildren.parentAndChildren;
+        QChildren children = QChildren.children;
+        QParent parent = QParent.parent;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        //부모에게 딸린 자식 조회
+        List<Children> childrenList = jpaQueryFactory
+                .select(children)
+                .from(parentAndChildren)
+                .join(parentAndChildren.child, children)
+                .where(parent.parentId.eq(nowParent.getParentId()))  // Filter by parent's userId
+                .fetch();
+
+        //자식들의 세팅 머니 합 확인
+        Integer totalSettingMoney = jpaQueryFactory
+                .select(children.settingMoney.sum())  // settingMoney의 합계를 구함
+                .from(parentAndChildren)  // 부모-자식 관계 테이블에서
+                .join(parentAndChildren.child, children)  // 자식 테이블과 조인
+                .where(parentAndChildren.parent.parentId.eq(nowParent.getParentId()))  // 부모 ID로 필터링
+                .fetchOne();
+
+        // 자식에게 줘야할 용돈이 없는경우 return
+        if(totalSettingMoney == null || totalSettingMoney == 0){
+            return 0;
+        }
+
+        // 자식에게 줄 돈이 없는경우
+        if(totalSettingMoney > nowParent.getBalance()){
+            for(Children child: childrenList) {
+                Integer settingMoney = child.getSettingMoney();
+                //transactionRecord 에만 업데이트
+                TransactionRecord request = new TransactionRecord();
+                request.setChildren(child);
+                request.setAmount(settingMoney);
+                request.setTradeType("0");
+                request.setRemainAmount(child.getMoney());
+                transactionRepository.save(request);
+            }
+            return 0; //지급 실패
+        }
+
+        // 잔액이 충분함. 용돈주기.
+        // 부모의 마니모 계좌 충전금액 차감
+        jpaQueryFactory
+            .update(parent)
+            .set(parent.balance, parent.balance.subtract(totalSettingMoney))
+            .where(parent.parentId.eq(nowParent.getParentId()))
+            .execute();
+
+        for(Children child: childrenList){
+            Integer settingMoney = child.getSettingMoney();
+
+            //자식 money 증가
+            jpaQueryFactory
+                .update(children)
+                .set(children.money, children.money.add(children.settingMoney))
+                .where(children.childrenId.eq(child.getChildrenId()))
+                .execute();
+
+            TransactionRecord request = new TransactionRecord();
+            request.setChildren(child);
+            request.setAmount(settingMoney);
+            request.setTradeType("0");
+            request.setApprovedAt(LocalDateTime.now().format(formatter));
+            request.setRemainAmount(child.getMoney()+child.getSettingMoney());
+            transactionRepository.save(request);
+        }
+            return 1; //지급 성공
+    }
+
 
 
 }

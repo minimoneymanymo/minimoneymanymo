@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmm.domain.member.repository;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.dto.ParentWithBalanceDto;
 
 import java.util.List;
 
@@ -22,4 +23,5 @@ public interface ParentRepositoryCustom {
     // 계좌 연결
     long updateParentAccount(String parentUserId, String accountNumber, String bankCode);
     long updateChildAccount(String childUserId, String accountNumber, String bankCode);
+    List<ParentWithBalanceDto> getParentIdAndBalanceList();
 }
