@@ -9,6 +9,7 @@ import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
 import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -88,7 +89,13 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                         .select(stocksHeld.remainSharesCount.multiply(dailyStockChart.closingPrice).sum())
                         .from(stocksHeld)
                         .join(dailyStockChart)
-                        .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode))
+                        .on(stocksHeld.stock.stockCode.eq(dailyStockChart.stockCode)
+                                .and(dailyStockChart.date.eq(
+                                        JPAExpressions.select(dailyStockChart.date.max())
+                                                .from(dailyStockChart)
+                                                .where(dailyStockChart.stockCode.eq(stocksHeld.stock.stockCode)) // 동일한 stockCode에 대해
+                                ))
+                        )
                         .where(stocksHeld.children.userId.eq(childrenId))
                         .fetchOne()
         ).orElse(BigDecimal.ZERO);
