@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @IdClass(InvestmentReportId.class)
-@Table(indexes = {
+@Table(name="investment_reports", indexes = {
         @Index(name = "idx_investment_report_date", columnList = "date"),
         @Index(name = "idx_investment_report_children_id", columnList = "childrenId")
 })
