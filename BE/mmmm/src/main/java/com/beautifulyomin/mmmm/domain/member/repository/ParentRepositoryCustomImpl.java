@@ -4,6 +4,7 @@ import com.beautifulyomin.mmmm.domain.fund.entity.QStocksHeld;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.dto.ParentWithBalanceDto;
 import com.beautifulyomin.mmmm.domain.member.entity.QChildren;
 import com.beautifulyomin.mmmm.domain.member.entity.QParent;
 import com.beautifulyomin.mmmm.domain.member.entity.QParentAndChildren;
@@ -187,6 +188,16 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
                 .set(child.bankCode, bankCode)
                 .where(child.userId.eq(childUserId))
                 .execute();
+    }
+
+    @Override
+    public List<ParentWithBalanceDto> getParentIdAndBalanceList() {
+        QParent parent = QParent.parent;
+        return jpaQueryFactory
+                .select(Projections.constructor(ParentWithBalanceDto.class,
+                        parent.parentId,parent.balance))
+                .from(parent)
+                .fetch();
     }
 
     @Override
