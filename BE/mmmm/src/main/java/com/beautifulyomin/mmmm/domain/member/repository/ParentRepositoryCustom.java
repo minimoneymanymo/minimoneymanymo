@@ -15,6 +15,7 @@ public interface ParentRepositoryCustom {
     long updateSettingMoneyById(Integer childrenId, Integer settingMoney);
     MyChildDto findAllMyChildByChildrenId(Integer childrenId);
     long updateSettingWithdrawableMoneyById(Integer childrenId, Integer settingWithdrawableMoney);
+    long setWithdrawableMoneyById(Integer childrenId, Integer settingWithdrawableMoney);
     long updateSettingQuizBonusMoneyById(Integer childrenId, Integer settingQuizBonusMoney);
 
     // 부모 잔액 업데이트(충전, 환불)

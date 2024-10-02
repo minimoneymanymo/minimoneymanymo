@@ -198,8 +198,6 @@ public class ParentServiceImpl implements ParentService {
                 .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
         Integer parentId = parent.getParentId();
 
-        log.info("Setting withdrawable money for child ID: {} with amount: {}", childrenId, settingWithdrawableMoney);
-
         Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
         Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
 
@@ -211,6 +209,33 @@ public class ParentServiceImpl implements ParentService {
         //있는 관계인경우 실행
         if(parentAndChildrenTrue.isPresent() ) {
             long result = parentRepositoryCustom.updateSettingWithdrawableMoneyById(childrenId,settingWithdrawableMoney);
+            //바뀐 요청이 1개인경우 성공.
+            if(result == 1){
+                return 1;
+            }
+        }
+        //이외의 경우 에러반환
+        return 0;
+    }
+
+  @Override
+    public int setMyChildWithdrawableMoneyForce(String parentUserId, Integer childrenId, Integer settingWithdrawableMoney) {
+
+        Parent parent = parentRepository.findByUserId(parentUserId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
+        Integer parentId = parent.getParentId();
+
+        Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
+        Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
+
+        // 없는 관계인 경우 -1 반환
+        if(parentAndChildrenFalse.isPresent()){
+            return -1;
+        }
+
+        //있는 관계인경우 실행
+        if(parentAndChildrenTrue.isPresent() ) {
+            long result = parentRepositoryCustom.setWithdrawableMoneyById(childrenId,settingWithdrawableMoney);
             //바뀐 요청이 1개인경우 성공.
             if(result == 1){
                 return 1;
