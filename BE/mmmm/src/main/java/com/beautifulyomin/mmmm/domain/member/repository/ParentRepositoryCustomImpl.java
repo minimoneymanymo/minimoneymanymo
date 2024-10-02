@@ -163,12 +163,28 @@ public class ParentRepositoryCustomImpl implements ParentRepositoryCustom {
     @Transactional
     public long updateSettingWithdrawableMoneyById(Integer childrenId, Integer settingWithdrawableMoney) {
         QChildren children = QChildren.children;
+        //settiing 출가금 변경
         return jpaQueryFactory
                 .update(children)
-                .set(children.settingWithdrawableMoney,settingWithdrawableMoney)
+                .set(children.settingWithdrawableMoney, settingWithdrawableMoney)
+                .where(children.childrenId.eq(childrenId))
+                .execute();
+
+    }
+
+    @Override
+    @Transactional
+    public long setWithdrawableMoneyById(Integer childrenId, Integer settingWithdrawableMoney) {
+        QChildren children = QChildren.children;
+        // 출가금 변경
+        return jpaQueryFactory
+                .update(children)
+                .set(children.withdrawableMoney,settingWithdrawableMoney)
                 .where(children.childrenId.eq(childrenId))
                 .execute();
     }
+
+
 
     @Override
     @Transactional
