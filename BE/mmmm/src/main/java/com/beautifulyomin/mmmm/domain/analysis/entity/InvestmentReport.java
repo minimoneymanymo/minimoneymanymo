@@ -1,10 +1,12 @@
-package com.beautifulyomin.mmmmbatch.batch.analysis.entity;
+package com.beautifulyomin.mmmm.domain.analysis.entity;
 
-import com.beautifulyomin.mmmmbatch.batch.analysis.entity.key.InvestmentReportId;
+import com.beautifulyomin.mmmm.domain.analysis.entity.key.InvestmentReportId;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
-
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

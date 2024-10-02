@@ -56,8 +56,6 @@ public class StockController {
             @RequestHeader("Authorization") String token,
             @PathVariable(name = "stockCode") @NotNull @Pattern(regexp = "\\d{6}") String stockCode) {
         String userId = jwtUtil.getUsername(token);
-        log.info("🚀🚀🚀userId = {}, stockCode = {}", userId, stockCode);
-
         return ResponseEntity.ok(CommonResponseDto.builder()
                 .stateCode(201)
                 .message("관심 종목 토글 성공")

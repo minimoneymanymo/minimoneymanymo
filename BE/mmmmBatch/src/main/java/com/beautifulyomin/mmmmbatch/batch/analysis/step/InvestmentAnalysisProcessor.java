@@ -2,27 +2,25 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.step;
 
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.TradeRecord;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.ChildrenRepository;
-import com.beautifulyomin.mmmmbatch.batch.analysis.vo.CashData;
-import com.beautifulyomin.mmmmbatch.batch.analysis.vo.TradingFrequencyData;
+import com.beautifulyomin.mmmmbatch.batch.analysis.vo.*;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.AnalysisRepositoryCustom;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.StocksHeldRepository;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.TradeRecordRepository;
-import com.beautifulyomin.mmmmbatch.batch.analysis.vo.WinLossData;
 import com.beautifulyomin.mmmmbatch.batch.stock.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -40,22 +38,31 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
     @Override
     public InvestmentReport process(Children children) {
         log.debug("🔥🔥🔥InvestmentAnalysisProcessor");
-        InvestmentReport report = new InvestmentReport();
-        report.setChildrenId(children.getChildrenId());
-        report.setDate(LocalDate.now());
-
-        report.setTradingFrequency(calculateTradingFrequency(children));
-        report.setCashRatio(calculateCashRatio(children));
-        report.setWinLossRatio(calculateWinLossRatio(children));
-
-        // 7. 다양성 점수 계산
-        report.setDiversification(BigDecimal.valueOf(0));
-
-        // 8. 안정성 점수 계산
-        report.setStability(0);
+        InvestmentReport report = InvestmentReport.builder()
+                .childrenId(children.getChildrenId())
+                .date(LocalDate.now())
+                .cashRatio(calculateCashRatio(children))
+                .diversification(calculateStockHeldCount(children))
+                .stability(calculateStability(children))
+                .tradingFrequency(calculateTradingFrequency(children))
+                .winLossRatio(calculateWinLossRatio(children))
+                .build();
 
         log.info("🌠🌠🌠report={}", report);
         return report;
+    }
+
+    private Integer calculateStability(Children children) {
+        List<String> marketTypesOfHeldStock = analysisRepositoryCustom.findAllMarketTypeByChildrenId(children.getChildrenId());
+        return new StabilityData(marketTypesOfHeldStock).calculateScore();
+    }
+
+    /**
+     * @return 일간 분산 투자 비율
+     */
+    private Integer calculateStockHeldCount(Children children) {
+        int stockHeldCount = stocksHeldRepository.countByChildren_ChildrenId(children.getChildrenId());
+        return new DiversificationData(stockHeldCount).calculateScore();
     }
 
     /**
@@ -111,7 +118,7 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
         TradingFrequencyData tradingFrequencyData = new TradingFrequencyData(
                 analysisRepositoryCustom.countTradesByChildrenIdAndDateRange(children.getChildrenId(), startDate, endDate)
         );
-        return tradingFrequencyData.getScore();
+        return tradingFrequencyData.calculateScore();
     }
 
 }

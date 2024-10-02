@@ -1,5 +1,7 @@
 package com.beautifulyomin.mmmm.domain.stock.service;
 
+import com.beautifulyomin.mmmm.constant.RedisExpireTime;
+import com.beautifulyomin.mmmm.constant.RedisKey;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.stock.dto.data.*;
@@ -33,8 +35,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class StockServiceImpl implements StockService {
-
-    private final int CACHE_SEC = 3600; //1시간
 
     private final Stock52weekDataRepository stock52weekDataRepository;
     private final StockLikeRepository stockLikeRepository;
@@ -131,7 +131,7 @@ public class StockServiceImpl implements StockService {
             return stockDto;
 
         Optional<Children> children = childrenRepository.findByUserId(userId);
-        if (children.isEmpty()) throw new EntityNotFoundException(userId + "의 회원이 없습니다.");
+        if (children.isEmpty()) throw new IllegalArgumentException(userId + "의 회원이 없습니다.");
         boolean isFavorite = stockLikeRepository.existsByStockAndChildren(stock, children.orElse(null));
         stockDto.setFavorite(isFavorite);
         return stockDto;
@@ -139,7 +139,7 @@ public class StockServiceImpl implements StockService {
     }
 
     public DailyStockDataDto getDailyStockData(String stockCode) {
-        String cachedData = redisUtil.getData("dailyStockData::" + stockCode);
+        String cachedData = redisUtil.getData(RedisKey.DAILY_STOCK_DATA.format(stockCode));
         if (cachedData != null) {
             return jsonConverter.convertFromJson(cachedData, DailyStockDataDto.class);
         }
@@ -151,8 +151,8 @@ public class StockServiceImpl implements StockService {
 
         DailyStockDataDto dailyStockDataDto = getDailyStockDataDto(dailyStockData, stock52weekData);
 
-        redisUtil.setDataExpire("dailyStockData::" + stockCode,
-                jsonConverter.convertToJson(dailyStockData), CACHE_SEC);
+        redisUtil.setDataExpire(RedisKey.DAILY_STOCK_DATA.format(stockCode),
+                jsonConverter.convertToJson(dailyStockData), RedisExpireTime.STOCK_CACHE_SEC.getExpireTime());
         return dailyStockDataDto;
     }
 
@@ -181,35 +181,35 @@ public class StockServiceImpl implements StockService {
     }
 
     private List<DailyStockChartDto> getDailyStockCharts(String stockCode) {
-        String cachedData = redisUtil.getData("dailyStockCharts::" + stockCode);
+        String cachedData = redisUtil.getData(RedisKey.DAILY_STOCK_CHARTS.format(stockCode));
         if (cachedData != null) {
             return jsonConverter.convertJsonToList(cachedData, DailyStockChartDto.class);
         }
         List<DailyStockChartDto> dailyStockCharts = stockRepositoryCustom.getLatestDailyStockCharts(stockCode);
-        redisUtil.setDataExpire("dailyStockCharts::" + stockCode,
-                jsonConverter.convertListToJson(dailyStockCharts), CACHE_SEC);
+        redisUtil.setDataExpire(RedisKey.DAILY_STOCK_CHARTS.format(stockCode),
+                jsonConverter.convertListToJson(dailyStockCharts), RedisExpireTime.STOCK_CACHE_SEC.getExpireTime());
         return dailyStockCharts;
     }
 
     private List<DailyStockChartDto> getWeeklyStockCharts(String stockCode) {
-        String cachedData = redisUtil.getData("weeklyStockCharts::" + stockCode);
+        String cachedData = redisUtil.getData(RedisKey.WEEKLY_STOCK_CHARTS.format(stockCode));
         if (cachedData != null) {
             return jsonConverter.convertJsonToList(cachedData, DailyStockChartDto.class);
         }
         List<DailyStockChartDto> weeklyStockCharts = stockRepositoryCustom.getLatestWeeklyStockChart(stockCode);
-        redisUtil.setDataExpire("weeklyStockCharts::" + stockCode,
-                jsonConverter.convertListToJson(weeklyStockCharts), CACHE_SEC);
+        redisUtil.setDataExpire(RedisKey.WEEKLY_STOCK_CHARTS.format(stockCode),
+                jsonConverter.convertListToJson(weeklyStockCharts), RedisExpireTime.STOCK_CACHE_SEC.getExpireTime());
         return weeklyStockCharts;
     }
 
     private List<DailyStockChartDto> getMonthlyStockCharts(String stockCode) {
-        String cachedData = redisUtil.getData("monthlyStockCharts::" + stockCode);
+        String cachedData = redisUtil.getData(RedisKey.MONTHLY_STOCK_CHARTS.format(stockCode));
         if (cachedData != null) {
             return jsonConverter.convertJsonToList(cachedData, DailyStockChartDto.class);
         }
         List<DailyStockChartDto> monthlyStockCharts = stockRepositoryCustom.getLatestMonthlyStockChart(stockCode);
-        redisUtil.setDataExpire("monthlyStockCharts::" + stockCode,
-                jsonConverter.convertListToJson(monthlyStockCharts), CACHE_SEC);
+        redisUtil.setDataExpire(RedisKey.MONTHLY_STOCK_CHARTS.format(stockCode),
+                jsonConverter.convertListToJson(monthlyStockCharts), RedisExpireTime.STOCK_CACHE_SEC.getExpireTime());
         return monthlyStockCharts;
     }
 }
