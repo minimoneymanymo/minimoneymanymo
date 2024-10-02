@@ -1,11 +1,11 @@
 package com.beautifulyomin.mmmmbatch.batch.analysis.job;
 
-import com.beautifulyomin.mmmmbatch.batch.analysis.data.cluster.InvestorCluster;
+import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
+import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestorCluster;
 import com.beautifulyomin.mmmmbatch.batch.analysis.data.cluster.InvestorData;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.cluster.InvestorClusterProcessor;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.cluster.InvestorClusterReader;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.cluster.InvestorClusterWriter;
-import com.beautifulyomin.mmmmbatch.batch.stock.step.token.TokenRenewalTasklet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -39,7 +39,7 @@ public class InvestorClusteringJobConfig {
     @Bean
     public Step investorClusteringStep() {
         return new StepBuilder("investorClusteringStep", jobRepository)
-                .<InvestorData, InvestorCluster>chunk(1, transactionManager)
+                .<InvestmentReport, InvestorCluster>chunk(100, transactionManager)
                 .reader(investorClusterReader)
                 .processor(investorClusterProcessor)
                 .writer(investorClusterWriter)
