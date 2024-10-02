@@ -30,19 +30,19 @@ public class InvestorClusterProcessor implements ItemProcessor<InvestmentReport,
 
     @PostConstruct
     public void initializeClusterer() {
-        log.info("Initializing clusterer...");
-        LocalDate date = LocalDate.now();
-        List<InvestmentReport> allReports = investmentAnalysisRepository.findAllByDate(date);
-
-        log.info("❕❕❕통계 날짜 = {}", date);
-        List<InvestorPoint> points = allReports.stream()
-                .map(InvestorPoint::new)
-                .toList();
-
-        clusterer = new KMeansPlusPlusClusterer<>(CLUSTER_CNT, 1000);
-        clusters = clusterer.cluster(points);
-        log.info("Clusterer initialized with {} clusters", clusters.size());
-        clusterAnalysisService.visualizeClusters(clusters, CLUSTER_CNT, date);
+//        log.info("Initializing clusterer...");
+//        LocalDate date = LocalDate.now();
+//        List<InvestmentReport> allReports = investmentAnalysisRepository.findAllByDate(date);
+//
+//        log.info("❕❕❕통계 날짜 = {}", date);
+//        List<InvestorPoint> points = allReports.stream()
+//                .map(InvestorPoint::new)
+//                .toList();
+//
+//        clusterer = new KMeansPlusPlusClusterer<>(CLUSTER_CNT, 1000);
+//        clusters = clusterer.cluster(points);
+//        log.info("Clusterer initialized with {} clusters", clusters.size());
+//        clusterAnalysisService.visualizeClusters(clusters, CLUSTER_CNT, date);
     }
 
 

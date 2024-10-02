@@ -16,7 +16,7 @@ public class AnalysisJobRunner { //implements CommandLineRunner
     private final Job investmentAnalysisJob;
     private final Job investorClusteringJob;
 
-    @Scheduled(cron = "0 0 17 ? * MON-FRI")
+    @Scheduled(cron = "0 10 17 ? * MON-FRI")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis()) // JobParameters에 현재 시간 추가
