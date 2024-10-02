@@ -269,16 +269,25 @@ function MyChildMoneySetting(): JSX.Element {
               <div className="flex items-center space-x-8">
                 <span>용돈</span>
                 <div className="flex w-[350px] items-center">
-                  <input
-                    type="number"
-                    value={inputValue}
-                    min="0"
-                    onChange={(e) =>
-                      setInputValue(
-                        e.target.value ? Number(e.target.value) : ""
-                      )
-                    }
+                  <textarea
                     className="h-[30px] w-[110px] border-b border-gray-400 text-right"
+                    value={
+                      inputValue === 0 ? "" : inputValue.toLocaleString("ko-KR")
+                    } // 숫자 세 자리마다 쉼표
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                      const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
+                      setInputValue(Number(onlyNumbers)) // 상태 업데이트
+                    }}
+                    onKeyDown={(e) => {
+                      if (
+                        !/^[0-9]$/.test(e.key) && // 숫자키가 아닌 경우
+                        e.key !== "Backspace" && // 백스페이스 허용
+                        e.key !== "ArrowLeft" && // 왼쪽 화살표 허용
+                        e.key !== "ArrowRight" // 오른쪽 화살표 허용
+                      ) {
+                        e.preventDefault() // 그 외의 입력을 막음
+                      }
+                    }}
                   />
                   머니
                   <button
@@ -299,16 +308,27 @@ function MyChildMoneySetting(): JSX.Element {
                 <div className="flex items-center space-x-8">
                   <span>한 달 출금 가능 금액</span>
                   <div className="flex w-[350px] items-center">
-                    <input
-                      type="number"
-                      value={inputValue}
-                      min="0"
-                      onChange={(e) =>
-                        setInputValue(
-                          e.target.value ? Number(e.target.value) : ""
-                        )
-                      }
+                    <textarea
                       className="h-[30px] w-[110px] border-b border-gray-400 text-right"
+                      value={
+                        inputValue === 0
+                          ? ""
+                          : inputValue.toLocaleString("ko-KR")
+                      } // 숫자 세 자리마다 쉼표
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
+                        setInputValue(Number(onlyNumbers)) // 상태 업데이트
+                      }}
+                      onKeyDown={(e) => {
+                        if (
+                          !/^[0-9]$/.test(e.key) && // 숫자키가 아닌 경우
+                          e.key !== "Backspace" && // 백스페이스 허용
+                          e.key !== "ArrowLeft" && // 왼쪽 화살표 허용
+                          e.key !== "ArrowRight" // 오른쪽 화살표 허용
+                        ) {
+                          e.preventDefault() // 그 외의 입력을 막음
+                        }
+                      }}
                     />
                     머니
                     <div className="flex">
@@ -339,15 +359,27 @@ function MyChildMoneySetting(): JSX.Element {
                 <div className="flex items-center space-x-8">
                   <span>한 달 퀴즈 보상 머니</span>
                   <div className="flex w-[350px] items-center">
-                    <input
-                      type="number"
-                      value={inputValue}
-                      onChange={(e) =>
-                        setInputValue(
-                          e.target.value ? Number(e.target.value) : ""
-                        )
-                      }
+                    <textarea
                       className="h-[30px] w-[110px] border-b border-gray-400 text-right"
+                      value={
+                        inputValue === 0
+                          ? ""
+                          : inputValue.toLocaleString("ko-KR")
+                      } // 숫자 세 자리마다 쉼표
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
+                        setInputValue(Number(onlyNumbers)) // 상태 업데이트
+                      }}
+                      onKeyDown={(e) => {
+                        if (
+                          !/^[0-9]$/.test(e.key) && // 숫자키가 아닌 경우
+                          e.key !== "Backspace" && // 백스페이스 허용
+                          e.key !== "ArrowLeft" && // 왼쪽 화살표 허용
+                          e.key !== "ArrowRight" // 오른쪽 화살표 허용
+                        ) {
+                          e.preventDefault() // 그 외의 입력을 막음
+                        }
+                      }}
                     />
                     머니
                     <button
