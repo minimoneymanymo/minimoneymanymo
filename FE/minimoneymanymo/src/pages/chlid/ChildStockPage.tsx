@@ -81,10 +81,11 @@ function ChildStockPage(): JSX.Element {
       )}
 
       <Heading title="나의 거래 기록" />
-      <div className="p-3">
-        거래 내역을 클릭하면 더 많은 정보와 매매 이유를 볼 수 있어요{" "}
+      <div className="flex items-center justify-between p-3">
+        <div>거래 내역을 클릭하면 더 많은 정보와 매매 이유를 볼 수 있어요</div>{" "}
+        <YearMonthPicker onChange={handleDateChange} />
       </div>
-      <YearMonthPicker onChange={handleDateChange} />
+
       {tradeList.length === 0 ? ( // 거래 기록이 없을 때 텍스트 표시
         <div className="p-3 text-center text-gray-500">
           조회 결과가 없습니다.

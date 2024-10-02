@@ -245,7 +245,7 @@ const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
         </div>
 
         <div className="mb-4 text-center">
-          이번달
+          이번 달
           <b className="ml-2 mr-2">
             출금가능금액
             <span className="ml-3 text-xl">
