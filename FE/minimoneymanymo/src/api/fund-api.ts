@@ -37,12 +37,11 @@ const refundBalanceApi = async (
 }
 
 // 자식-출금 요청
-const requestWithdrawApi = async (param: object) => {
+const requestWithdrawApi = async (money: number) => {
   try {
-    const response = await axiosAuthInstance.post(
-      `/funds/request-withdraw`,
-      param
-    )
+    const response = await axiosAuthInstance.post(`/funds/request-withdraw`, {
+      withdrawableMoney: money,
+    })
     return response.data
   } catch (error) {
     handleApiError(error)

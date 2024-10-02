@@ -62,3 +62,7 @@ export interface RecordItemProps {
   tradeSharesCount?: number | null
   remainAmount: number
 }
+
+export interface MoneyChartProps {
+  data: string
+}
