@@ -38,11 +38,17 @@ public class FundServiceImpl implements FundService {
     public void requestWithdraw(String childrenId, Integer amount) {
         Children child = childrenRepository.findByUserId(childrenId)
                 .orElseThrow(() -> new RuntimeException("Children not found for userId: " + childrenId));
+        // 출금요청 시 머니, 출가금 잔액 감소
+        child.setMoney(child.getMoney()-amount);
+        child.setWithdrawableMoney(child.getWithdrawableMoney() - amount);
+
         TransactionRecord request = new TransactionRecord();
         request.setChildren(child);
         request.setAmount(amount);
         request.setTradeType("1");
         request.setRemainAmount(child.getMoney());
+
+        childrenRepository.save(child); // 업데이트
         transactionRepository.save(request);
     }
 
