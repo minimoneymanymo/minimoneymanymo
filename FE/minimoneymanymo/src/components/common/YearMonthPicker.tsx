@@ -37,13 +37,15 @@ const YearMonthPicker = ({ onChange }: YearMonthPickerProps) => {
   return (
     <div className="flex items-center justify-center space-x-4">
       <IconButton onClick={handlePrev} variant="text">
-        <ArrowPrev />
+        <ArrowPrev sx={{ fontSize: 15, color: "#828282" }} />{" "}
+        {/* 크기 및 색상 변경 */}
       </IconButton>
       <span className="text-lg font-medium">
         {date.year}년 {date.month.toString().padStart(2, "0")}월
       </span>
       <IconButton onClick={handleNext} variant="text">
-        <ArrowNext />
+        <ArrowNext sx={{ fontSize: 15, color: "#828282" }} />{" "}
+        {/* 크기 및 색상 변경 */}
       </IconButton>
     </div>
   )

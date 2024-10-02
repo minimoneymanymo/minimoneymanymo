@@ -55,10 +55,10 @@ function ChildStockPage(): JSX.Element {
 
   useEffect(() => {
     if (selectedDate.year && selectedDate.month) {
-      // 조건 추가
       fetchTradeList()
     }
   }, [selectedDate]) // selectedDate가 변경될 때만 호출
+
   return (
     <>
       <MoneyInfo {...child} />
@@ -68,16 +68,28 @@ function ChildStockPage(): JSX.Element {
         금액이 빨간색이면 이익, 파란색이면 손해를 의미해요!
       </div>
       <div className="grid grid-cols-2 gap-5 pb-6 pt-3">
-        {stockList.map((stock) => (
-          <StockHeldItem key={stock.stockCode} {...stock} />
-        ))}
+        {stockList.length === 0 ? (
+          <div className="p-3 text-center text-gray-500">
+            조회 결과가 없습니다.
+          </div>
+        ) : (
+          stockList.map((stock) => (
+            <StockHeldItem key={stock.stockCode} {...stock} />
+          ))
+        )}
       </div>
       <Heading title="나의 거래 기록" />
       <div className="p-3">
         거래 내역을 클릭하면 더 많은 정보와 매매 이유를 볼 수 있어요{" "}
       </div>
       <YearMonthPicker onChange={handleDateChange} />
-      <RecordForm data={tradeList} isMoneyList={false} />
+      {tradeList.length === 0 ? ( // 거래 기록이 없을 때 텍스트 표시
+        <div className="p-3 text-center text-gray-500">
+          조회 결과가 없습니다.
+        </div>
+      ) : (
+        <RecordForm data={tradeList} isMoneyList={false} />
+      )}
     </>
   )
 }

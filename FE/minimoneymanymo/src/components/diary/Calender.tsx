@@ -3,6 +3,8 @@ import moment from "moment"
 import MyInvestment from "./MyInvestment"
 import { getTradeList } from "@/api/investment-api"
 import { investmentData } from "./investmentData" // 인터페이스로 가져옴
+import ArrowPrev from "@mui/icons-material/ArrowBackIos"
+import ArrowNext from "@mui/icons-material/ArrowForwardIos"
 
 // 배경 색상 설정
 const getBackgroundColor = (tradeType: string) => {
@@ -228,16 +230,16 @@ const Calender: React.FC = () => {
         <div className="flex w-24 items-center justify-between text-3xl">
           <button
             onClick={prevMonth}
-            className="text-gray-600 hover:text-gray-800"
+            className="flex items-center justify-center text-gray-600 hover:text-gray-800"
           >
-            &lt;
+            <ArrowPrev sx={{ fontSize: 15, color: "#828282" }} />
           </button>
-          <h2 className="text-lg">{currentMonth.format("M월")}</h2>
+          <h2 className="mx-2 text-lg">{currentMonth.format("M월")}</h2>{" "}
           <button
             onClick={nextMonth}
-            className="text-gray-600 hover:text-gray-800"
+            className="flex items-center justify-center text-gray-600 hover:text-gray-800"
           >
-            &gt;
+            <ArrowNext sx={{ fontSize: 15, color: "#828282" }} />
           </button>
         </div>
       </div>
