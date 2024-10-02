@@ -34,7 +34,11 @@ public class MailSendService {
         String toMail = email;
         String title = "회원 가입 인증 이메일 입니다."; // 이메일 제목
         String content =
+<<<<<<< Updated upstream
                 "나의 APP을 방문해주셔서 감사합니다." + 	//html 형식으로 작성 !
+=======
+                "미니머니마니모에 방문해주셔서 감사합니다." +    //html 형식으로 작성 !
+>>>>>>> Stashed changes
                         "<br><br>" +
                         "인증 번호는 " + code + "입니다." +
                         "<br>" +
