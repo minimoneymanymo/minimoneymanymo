@@ -7,6 +7,9 @@ import {
   updateWithdrawableMoney,
 } from "@/api/user-api"
 import Heading from "../common/Heading"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { selectParent } from "@/store/slice/parent"
+import { setMemberInfo } from "@/utils/user-utils"
 
 function MyChildMoneySetting(): JSX.Element {
   const { child } = useChild()
@@ -15,19 +18,21 @@ function MyChildMoneySetting(): JSX.Element {
   const [withdrawableMoney, setWithdrawableMoney] = useState<number | null>(
     null
   )
-  const [maxWithdrawableMoney, setmaxWithdrawableMoney] = useState<
+  const [maxWithdrawableMoney, setMaxWithdrawableMoney] = useState<
     number | null
   >(null)
   const [quizBonusMoney, setQuizBonusMoney] = useState<number | null>(null)
   const [selectedMenu, setSelectedMenu] = useState<string>("allowance")
-  const [inputValue, setInputValue] = useState<number | "">("")
+  const [inputValue, setInputValue] = useState<number | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
+  const parent = useAppSelector(selectParent)
+  const dispatch = useAppDispatch()
 
   const getMyChildsetting = () => {
     setAllowance(child?.settingMoney || null)
     setWithdrawableMoney(child?.settingWithdrawableMoney || null)
     setQuizBonusMoney(child?.settingQuizBonusMoney || null)
-    setmaxWithdrawableMoney(100000) //부모의 잔액 balance - 다른 자식의 최대출금가능금액 뺀값
+    setMaxWithdrawableMoney(parent.balance) //부모의 잔액 balance - 다른 자식의 최대출금가능금액 뺀값
   }
 
   useEffect(() => {
@@ -35,6 +40,10 @@ function MyChildMoneySetting(): JSX.Element {
       getMyChildsetting()
     }
   }, [child])
+
+  useEffect(() => {
+    setMaxWithdrawableMoney(parent.balance)
+  }, [withdrawableMoney])
 
   if (!child) return <div>Child data not available</div>
 
@@ -60,7 +69,7 @@ function MyChildMoneySetting(): JSX.Element {
       }
       const res = await updateAllowance(child.childrenId, inputValue)
       if (res.stateCode === 201) {
-        setAllowance(inputValue === "" ? null : inputValue)
+        setAllowance(inputValue === undefined ? null : inputValue)
         console.log("용돈이 성공적으로 업데이트 되었습니다:", res)
       } else if (res.status === 403) {
         console.error("로그인이 필요합니다.", res)
@@ -72,6 +81,7 @@ function MyChildMoneySetting(): JSX.Element {
       }
     }
     //출금가능금액
+    //이거 정할때마다 balance에서 차감 되어야함.
     else if (selectedMenu === "withdrawableMoney") {
       if (maxWithdrawableMoney && value > maxWithdrawableMoney) {
         setError("입력 값이 마니모 계좌의 범위를 벗어났습니다.")
@@ -79,8 +89,9 @@ function MyChildMoneySetting(): JSX.Element {
       }
       const res = await updateWithdrawableMoney(child.childrenId, inputValue)
       if (res.stateCode === 201) {
-        setWithdrawableMoney(inputValue === "" ? null : inputValue)
+        setWithdrawableMoney(inputValue === undefined ? null : inputValue)
         console.log("withdrawableMoney 성공적으로 업데이트 되었습니다:", res)
+        setMemberInfo(dispatch, 0)
       } else if (res.status === 403) {
         console.error("로그인이 필요합니다.", res)
         // 로그인 페이지로 리다이렉트
@@ -95,7 +106,7 @@ function MyChildMoneySetting(): JSX.Element {
     else if (selectedMenu === "quizBonusMoney") {
       const res = await updateQuizBonusMoney(child.childrenId, inputValue)
       if (res.stateCode === 201) {
-        setQuizBonusMoney(inputValue === "" ? null : inputValue)
+        setQuizBonusMoney(inputValue === undefined ? null : inputValue)
 
         console.log("quizBonusMoney 성공적으로 업데이트 되었습니다:", res)
       } else if (res.status === 403) {
@@ -182,7 +193,9 @@ function MyChildMoneySetting(): JSX.Element {
                 type="number"
                 value={inputValue}
                 onChange={(e) =>
-                  setInputValue(e.target.value ? Number(e.target.value) : "")
+                  setInputValue(
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
                 }
                 className="border-b border-gray-400 text-right"
               />

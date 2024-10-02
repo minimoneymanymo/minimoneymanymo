@@ -123,7 +123,7 @@ export const getMyChild = async (childrenId: number) => {
 //머니 설정
 export const updateAllowance = async (
   childrenId: number,
-  inputValue: number | ""
+  inputValue: number | undefined
 ) => {
   try {
     const res = await axiosAuthInstance.put(
@@ -151,7 +151,7 @@ export const updateAllowance = async (
 //출금가능금액 설정
 export const updateWithdrawableMoney = async (
   childrenId: number,
-  inputValue: number | ""
+  inputValue: number | undefined
 ) => {
   try {
     const res = await axiosAuthInstance.put(
@@ -179,7 +179,7 @@ export const updateWithdrawableMoney = async (
 //퀴즈보상머니 설정
 export const updateQuizBonusMoney = async (
   childrenId: number,
-  inputValue: number | ""
+  inputValue: number | undefined
 ) => {
   try {
     const res = await axiosAuthInstance.put(`/members/mychild/setQuiz`, {
