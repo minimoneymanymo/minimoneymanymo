@@ -11,7 +11,7 @@ function MyChildrenPage(): JSX.Element {
 
   return (
     <>
-      <div className="flex w-full flex-col">
+      <div className="flex w-full flex-col space-y-8">
         <MyChildrenList refreshChildrenList={childrenListUpdated} />
         <MyChildrenWaitingList onChildApproved={refreshChildrenList} />
       </div>
