@@ -169,7 +169,7 @@ function MyChildMoneySetting(): JSX.Element {
     if (selectedMenu === "withdrawableMoney") {
       return (
         <span>
-          자녀가 다음달 출금할 수 있는 금액을 설정해주세요
+          자녀가 다음달 출금할 수 있는 금액을 설정해주세요.
           <br /> 출금가능금액은 매월1일 자녀의 지갑에 적용됩니다. <br />
           변경사항은 2024년 11월 01일 부터 적용됩니다.
           <br />
@@ -186,7 +186,7 @@ function MyChildMoneySetting(): JSX.Element {
     }
     return (
       <span>
-        자녀가 퀴즈를 풀고 받을 머니를 설정해주세요 <br /> 퀴즈의 정답을 맞히면
+        자녀가 퀴즈를 풀고 받을 머니를 설정해주세요. <br /> 퀴즈의 정답을 맞히면
         자녀에게 머니가 지급되고, 마니모계좌 잔액에서 차감됩니다.
       </span>
     )
@@ -197,8 +197,8 @@ function MyChildMoneySetting(): JSX.Element {
       <Heading title="머니 설정" />
       <div className="grid grid-cols-3 gap-8 px-8">
         <button
-          className={`col-span-1 m-2 flex flex-col items-center gap-4 rounded-xl border p-2 ${
-            selectedMenu === "allowance" ? "bg-secondary-m3" : ""
+          className={`col-span-1 m-2 flex flex-col items-center gap-4 rounded-xl p-2 shadow-md ${
+            selectedMenu === "allowance" ? "bg-secondary-m3" : "bg-white"
           }`}
           onClick={() => {
             setSelectedMenu("allowance")
@@ -208,7 +208,7 @@ function MyChildMoneySetting(): JSX.Element {
           <img src="/images/piggy-bank.svg" className="size-14" alt="용돈" />
           {allowance ? (
             <p className="">
-              지급가능머니 <b>{maxAllowance.toLocaleString()}머니</b>
+              지급 가능 머니 <b>{maxAllowance.toLocaleString()}</b> 머니
             </p>
           ) : (
             <p className="text-red-700">
@@ -217,8 +217,10 @@ function MyChildMoneySetting(): JSX.Element {
           )}
         </button>
         <button
-          className={`col-span-1 m-2 flex flex-col items-center gap-4 rounded-xl border p-2 ${
-            selectedMenu === "withdrawableMoney" ? "bg-secondary-m3" : ""
+          className={`col-span-1 m-2 flex flex-col items-center gap-4 rounded-xl p-2 shadow-md ${
+            selectedMenu === "withdrawableMoney"
+              ? "bg-secondary-m3"
+              : "bg-white"
           }`}
           onClick={() => {
             setSelectedMenu("withdrawableMoney")
@@ -233,15 +235,15 @@ function MyChildMoneySetting(): JSX.Element {
           />
           {withdrawableMoney ? (
             <p className="">
-              다음달 <b>{withdrawableMoney.toLocaleString()}</b> 머니
+              다음 달 <b>{withdrawableMoney.toLocaleString()}</b> 머니
             </p>
           ) : (
             <p className="text-red-700">설정해주세요.</p>
           )}
         </button>
         <button
-          className={`col-span-1 m-2 flex flex-col items-center gap-4 rounded-xl border p-2 ${
-            selectedMenu === "quizBonusMoney" ? "bg-secondary-m3" : ""
+          className={`col-span-1 m-2 flex flex-col items-center gap-4 rounded-xl p-2 shadow-md ${
+            selectedMenu === "quizBonusMoney" ? "bg-secondary-m3" : "bg-white"
           }`}
           onClick={() => {
             setSelectedMenu("quizBonusMoney")
@@ -265,7 +267,7 @@ function MyChildMoneySetting(): JSX.Element {
           <div>
             {selectedMenu === "allowance" && (
               <div className="flex items-center space-x-8">
-                <span>지급할 머니</span>
+                <span>용돈</span>
                 <div className="flex w-[350px] items-center">
                   <input
                     type="number"
