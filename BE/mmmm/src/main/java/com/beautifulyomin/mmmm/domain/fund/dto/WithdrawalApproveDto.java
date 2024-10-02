@@ -15,4 +15,5 @@ public class WithdrawalApproveDto {
     String createdAt;
     @NotNull
     Integer amount;
+    String userKey;
 }

@@ -4,7 +4,9 @@ import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.fund.dto.*;
 import com.beautifulyomin.mmmm.domain.fund.service.FundService;
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
+import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
 import com.beautifulyomin.mmmm.domain.member.service.ParentService;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
@@ -19,11 +21,13 @@ import java.util.List;
 @RequestMapping("/funds")
 public class FundController {
 
+    private final ChildrenService childrenService;
     private final ParentService parentService;
     private final FundService fundService;
     private final JWTUtil jwtUtil;
 
-    public FundController(ParentService parentService, FundService fundService, JWTUtil jwtUtil) {
+    public FundController(ChildrenService childrenService, ParentService parentService, FundService fundService, JWTUtil jwtUtil) {
+        this.childrenService = childrenService;
         this.parentService = parentService;
         this.fundService = fundService;
         this.jwtUtil = jwtUtil;
@@ -54,8 +58,21 @@ public class FundController {
     }
 
     @PostMapping("/request-withdraw")
-    public ResponseEntity<CommonResponseDto> requestWithdraw(@RequestHeader("Authorization") String token, @RequestBody WithdrawDto amount) {
+    public ResponseEntity<CommonResponseDto> requestWithdraw(
+            @RequestHeader("Authorization") String token, 
+            @RequestBody WithdrawDto amount
+    ) {
         String userId = jwtUtil.getUsername(token);
+
+        Children child = childrenService.findByUserId(userId);
+        if(child.getMoney() < amount.getWithdrawableMoney()){
+            throw new InvalidRequestException("요청한 금액이 머니 잔액보다 큽니다.");
+        }else if(child.getWithdrawableMoney() < amount.getWithdrawableMoney()){
+            throw new InvalidRequestException("요청한 금액이 출금 가능 금액보다 큽니다.");
+        }
+        
+        System.out.println("🎈🎈🎈🎈");
+        System.out.println(amount);
         fundService.requestWithdraw(userId, amount.getWithdrawableMoney());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponseDto.builder()
