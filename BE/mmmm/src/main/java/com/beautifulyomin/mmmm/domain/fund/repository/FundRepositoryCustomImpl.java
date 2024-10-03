@@ -126,7 +126,7 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                         transaction.amount
                 ))
                 .from(transaction)
-                .where(transaction.children.childrenId.eq(childrenId))
+                .where(transaction.children.childrenId.eq(childrenId).and(transaction.tradeType.eq("1")))
                 .orderBy(transaction.createdAt.desc())
                 .limit(5)
                 .fetch();
