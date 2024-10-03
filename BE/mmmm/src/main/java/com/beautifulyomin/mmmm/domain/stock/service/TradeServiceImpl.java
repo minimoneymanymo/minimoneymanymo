@@ -171,11 +171,9 @@ public class TradeServiceImpl implements TradeService {
         // 손익
         BigDecimal bigTotalProfit = profitPerShare.multiply(tradeDto.getTradeSharesCount()).setScale(2, RoundingMode.HALF_UP);
         log.info(" (현재가 − 평단가 ) × 매도 주식 수량 : {} ", bigTotalProfit);
-
+        // 평균단가 * 매도주수
         stocksHeld.setRemainSharesCount(stocksHeld.getRemainSharesCount().subtract(tradeDto.getTradeSharesCount())); // 보유주수
-        stocksHeld.setTotalAmount(stocksHeld.getTotalAmount() - tradeDto.getAmount()); // 총합 빼기
-
-
+        stocksHeld.setTotalAmount(stocksHeld.getTotalAmount() - bigAveragePrice.multiply(tradeDto.getTradeSharesCount()).intValue()); // 총합 빼기
 
         return bigTotalProfit;
     }

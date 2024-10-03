@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,7 +126,7 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                         transaction.amount
                 ))
                 .from(transaction)
-                .where(transaction.children.childrenId.eq(childrenId))
+                .where(transaction.children.childrenId.eq(childrenId).and(transaction.tradeType.eq("1")))
                 .orderBy(transaction.createdAt.desc())
                 .limit(5)
                 .fetch();
@@ -251,7 +252,8 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
             dto.setPriceChangeRate((closingPrice.subtract(averagePrice)).divide(averagePrice, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)));
             dto.setPriceChangeMoney(evaluateMoney.subtract(totalAmount));
         }
-
+        result.sort(Comparator.comparing(StockHeldDto::getCompanyName));
+        System.out.println(result);
         return result;
     }
 
