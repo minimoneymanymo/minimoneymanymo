@@ -1,8 +1,8 @@
-import {getMyChildren} from "@/api/user-api"
-import {useEffect, useState} from "react"
-import {Children} from "./types"
+import { getMyChildren } from "@/api/user-api"
+import { useEffect, useState } from "react"
+import { Children } from "./types"
 import MyChildItem from "./MyChildItem"
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import Heading from "../common/Heading"
 
 interface MyChildrenListProps {
@@ -26,16 +26,16 @@ function MyChildrenList({
   }, [refreshChildrenList])
   return (
     <>
-      <div className="flex h-1/2 w-full flex-col">
+      <div className="flex h-[500px] w-full flex-col">
         <Heading title="등록된 자녀" />
-        <ul className="overflow-auto">
+        <ul className="custom-scrollbar overflow-auto">
           {childrenList?.map((child) => (
             <li
               key={child.childrenId}
               className=" "
               onClick={() => {
                 navigate(`/parent/my-child/${child.childrenId}/finance`, {
-                  state: {child},
+                  state: { child },
                 })
               }}
             >
