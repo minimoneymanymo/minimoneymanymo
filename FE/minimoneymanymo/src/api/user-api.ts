@@ -100,6 +100,21 @@ export const addMyChildWaiting = async (childrenId: number) => {
     return e
   }
 }
+// 참여대기 인원거절
+export const deleteMyChildWaiting = async (childrenId: number) => {
+  try {
+    const res = await axiosAuthInstance.put(
+      "/members/mychildren/waiting/reject",
+      {
+        childrenId,
+      }
+    )
+    console.log(res.data)
+    return res.data
+  } catch (e) {
+    return e
+  }
+}
 
 //나의 자식 한명 조회
 export const getMyChild = async (childrenId: number) => {

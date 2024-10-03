@@ -95,7 +95,7 @@ const NavAction = (): JSX.Element => {
                   onError={(e) => {
                     e.currentTarget.src = "/images/profile.jpg" // 이미지 로드 실패 시 기본 이미지로 대체
                   }}
-                  className="mx-2 size-8"
+                  className="mx-2 size-8 rounded-full"
                 />
                 {name} 님{" "}
               </li>
@@ -112,7 +112,7 @@ const NavAction = (): JSX.Element => {
                   onError={(e) => {
                     e.currentTarget.src = "/images/profile.jpg" // 이미지 로드 실패 시 기본 이미지로 대체
                   }}
-                  className="mx-2 size-8"
+                  className="mx-2 size-8 rounded-full"
                 />
                 {name} 님{" "}
               </li>

@@ -68,7 +68,7 @@ function MypageNav({ menuItems, role }: MypageNavProps): JSX.Element {
             onError={(e) => {
               e.currentTarget.src = "/images/profile.jpg" // 이미지 로드 실패 시 기본 이미지로 대체
             }}
-            className="size-16"
+            className="size-16 rounded-full"
           />
           <div className="text-2xl">{name} </div>
         </div>
