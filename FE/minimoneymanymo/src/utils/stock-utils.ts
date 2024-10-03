@@ -17,3 +17,38 @@ export const formatMarketCapitalization = (value: number): string => {
   }
   return `${value.toLocaleString()} 만원`
 }
+
+//큰 숫자 포맷팅
+export function formatNumber(num: number | string) {
+  if (typeof num === "string") {
+    return
+  }
+
+  // 각 단위에 대한 변수를 계산
+  const trillion = Math.floor(num / 1e12) // 조
+  const billion = Math.floor((num % 1e12) / 1e8) // 억
+  const million = Math.floor((num % 1e8) / 1e4) // 만
+  const remainder = num % 1e4 // 만 단위 이하의 나머지 숫자
+
+  // 결과를 저장할 배열
+  const parts: string[] = []
+
+  // 각 단위를 확인하고, 존재할 경우 parts 배열에 추가
+  if (trillion > 0) {
+    parts.push(`${trillion}조`) // 조가 존재하는 경우 추가
+  }
+  if (billion > 0) {
+    parts.push(`${billion}억`) // 억이 존재하는 경우 추가
+  }
+  if (million > 0) {
+    parts.push(`${million}만`) // 만이 존재하는 경우 추가
+  }
+
+  // 만 단위 이하 숫자를 추가
+  if (remainder > 0) {
+    parts.push(`${remainder}`) // 만 단위 이하 숫자 추가
+  }
+
+  // 단위가 없는 경우 원래 숫자를 반환
+  return parts.length > 0 ? parts.join(" ") : num.toString()
+}
