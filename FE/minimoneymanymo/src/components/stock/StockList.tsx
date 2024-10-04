@@ -41,6 +41,7 @@ interface StockFilter {
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
   volumeMax: number | null // 최대 거래량
+  search: string | null
 }
 
 function StockList({ filters }: { filters: StockFilter }) {
@@ -129,6 +130,10 @@ function StockList({ filters }: { filters: StockFilter }) {
           filters.tradingValueMax !== undefined &&
           filters.tradingValueMax !== null
             ? filters.tradingValueMax.toString()
+            : "",
+        search:
+          filters.search !== undefined && filters.search !== null
+            ? filters.search.toString()
             : "",
         sort: `${sortKey},${sortOrder}`,
         page: page.toString(),

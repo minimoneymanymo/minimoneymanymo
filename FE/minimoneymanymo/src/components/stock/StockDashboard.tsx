@@ -1,5 +1,5 @@
 // MainDashboard.tsx
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import StockList from "./StockList"
 import { StockFilterModalForm } from "./StockFilterModalForm"
 import { Typography, Button } from "@material-tailwind/react"
@@ -40,10 +40,22 @@ interface StockFilter {
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
   volumeMax: number | null // 최대 거래량
+  search: string | null // elasticsearch 검색어
 }
+
+interface StockResult {
+  stock_code: string
+  company_name: string
+}
+
+////
 
 function MainDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [searchResults, setSearchResults] = useState<StockResult[]>([]) // 검색 결과 상태 추가
+  const [userInput, setUserInput] = useState("")
+  const [debouncedInput, setDebouncedInput] = useState(userInput)
+
   const [filters, setFilters] = useState<StockFilter>({
     marketType: "ALL",
     marketCapSize: "ALL",
@@ -62,7 +74,83 @@ function MainDashboard() {
     tradingValueMin: null,
     tradingValueMax: null,
     volumeMax: null,
+    search: null,
   })
+
+  // Elasticsearch 쿼리 생성 및 전송 함수
+  const fetchStockData = useCallback(
+    (
+      debouncedInput: string,
+      setSearchResults: React.Dispatch<React.SetStateAction<StockResult[]>>
+    ) => {
+      const {
+        VITE_ELASTIC_API_USERID: username,
+        VITE_ELASTIC_API_PASSWORD: password,
+      } = import.meta.env
+
+      const headers = new Headers({
+        "Content-Type": "application/json",
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`, // 사용자명과 비밀번호를 Base64로 인코딩
+      })
+
+      const query = {
+        size: 200,
+        query: {
+          bool: {
+            should: [
+              {
+                match: {
+                  company_name: {
+                    query: debouncedInput,
+                    boost: 2,
+                  },
+                },
+              },
+              {
+                wildcard: {
+                  company_name: {
+                    value: `*${debouncedInput}*`,
+                  },
+                },
+              },
+              {
+                wildcard: {
+                  stock_code: {
+                    value: `*${debouncedInput}*`,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      }
+
+      fetch("https://j11b105.p.ssafy.io/el/stocks_edge/_search", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(query),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+          return response.json()
+        })
+        .then((data) => {
+          const results = data.hits.hits.map(
+            (hit: { _source: StockResult }) => ({
+              stock_code: hit._source.stock_code,
+              company_name: hit._source.company_name,
+            })
+          )
+          setSearchResults(results.slice(0, 10)) // 결과를 10개로 제한
+        })
+        .catch((error) => {
+          console.error("Error:", error)
+        })
+    },
+    []
+  )
 
   // 모달 끄고 닫고
   const handleModalOpen = () => setIsModalOpen(!isModalOpen)
@@ -72,6 +160,24 @@ function MainDashboard() {
     console.log(newFilters)
     setFilters(newFilters)
   }
+
+  // 입력값이 변경될 때 디바운싱 처리
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedInput(userInput)
+    }, 300) // 300ms 후에 디바운스 입력 업데이트
+
+    return () => {
+      clearTimeout(handler) // 이전 타이머를 정리
+    }
+  }, [userInput])
+
+  // 디바운스된 입력값이 변경되면 API 호출
+  useEffect(() => {
+    if (debouncedInput) {
+      fetchStockData(debouncedInput, setSearchResults) // 디바운스된 입력값으로 API 호출
+    }
+  }, [debouncedInput, fetchStockData])
 
   // 솔팅 조건 (시장)
   const handleSelectMarketType = (selected: string) => {
@@ -170,7 +276,33 @@ function MainDashboard() {
         />
 
         {/* 필터 태그 표시 */}
-        <div className="flex flex-wrap gap-2">{renderFilterTags()}</div>
+        {/* 검색창 추가 */}
+        <div className="flex flex-wrap gap-2">
+          {renderFilterTags()}
+          <input
+            id="searchInput"
+            type="text"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)} // 입력값 상태 업데이트
+            className="ml-auto flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
+            placeholder="주식 검색"
+          />
+        </div>
+      </div>
+
+      {/* 검색 결과 출력 */}
+      <div className="mt-4">
+        {searchResults.length > 0 ? (
+          <ul>
+            {searchResults.map((result, index) => (
+              <li key={index} className="border-b p-2">
+                {result.stock_code} - {result.company_name}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>검색 결과가 없습니다.</p>
+        )}
       </div>
 
       {/* 주식 목록 */}
