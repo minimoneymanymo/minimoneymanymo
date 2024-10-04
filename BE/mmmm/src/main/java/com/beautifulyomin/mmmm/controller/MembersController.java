@@ -224,6 +224,29 @@ public class MembersController {
     }
 
     /**
+     * 부모 - 참여대기 인원미승인
+     */
+    @PutMapping("/mychildren/waiting/reject")
+    public ResponseEntity<CommonResponseDto> deleteMyChildWaiting(@RequestHeader("Authorization") String token, @RequestBody MyChildrenWaitingDto myChildrenWaitingDto) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if (!parentService.isExistByUserId(userId)) {
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        int result = parentService.rejectMyChildren(userId, myChildrenWaitingDto.getChildrenId());
+        // result : 0 인 경우 예외상황임
+        if (result == 0) {
+            throw new InvalidRequestException("요청 미승인 실패");
+        }
+        // result : 1이상 인 경우 요청 승인 성공
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("요청 미승인 성공")
+                        .build());
+    }
+
+    /**
      * 부모 - 용돈설정
      */
     @PutMapping("/mychild/setAllowance")
