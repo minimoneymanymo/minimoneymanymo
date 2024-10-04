@@ -224,6 +224,29 @@ public class MembersController {
     }
 
     /**
+     * 부모 - 참여대기 인원미승인
+     */
+    @PutMapping("/mychildren/waiting/reject")
+    public ResponseEntity<CommonResponseDto> deleteMyChildWaiting(@RequestHeader("Authorization") String token, @RequestBody MyChildrenWaitingDto myChildrenWaitingDto) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if (!parentService.isExistByUserId(userId)) {
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        int result = parentService.rejectMyChildren(userId, myChildrenWaitingDto.getChildrenId());
+        // result : 0 인 경우 예외상황임
+        if (result == 0) {
+            throw new InvalidRequestException("요청 미승인 실패");
+        }
+        // result : 1이상 인 경우 요청 승인 성공
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("요청 미승인 성공")
+                        .build());
+    }
+
+    /**
      * 부모 - 용돈설정
      */
     @PutMapping("/mychild/setAllowance")
@@ -317,11 +340,43 @@ public class MembersController {
         else if (result == 0) {
             throw new InvalidRequestException("예외");
         }
-        // result : 1 인 경우 머니 설정 성공
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
-                        .message("출금가능금액 설정 완료")
+                        .message("setting출금가능금액 설정 완료")
+                        .build());
+    }
+
+    /**
+     * 부모 - 출금가능금액  강제 설정
+     */
+    @PutMapping("/mychild/setWithdrawForce")
+    public ResponseEntity<CommonResponseDto> setWithdraw(@RequestHeader("Authorization") String token, @RequestBody MyChildDto requestDto) {
+        String userId = jwtUtil.getUsername(token);
+        //토큰 유저가 부모가 아닐경우 401 리턴
+        if (!parentService.isExistByUserId(userId)) {
+            throw new InvalidRoleException("부모가 아닙니다.");
+        }
+        Integer childrenId = requestDto.getChildrenId();
+        Integer settingWithdrawableMoney = requestDto.getSettingWithdrawableMoney();
+
+        int result = parentService.setMyChildWithdrawableMoneyForce(userId, childrenId, settingWithdrawableMoney);
+        // result : -1 인 경우
+        if (result == -1) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(404)
+                            .message("부모자식관계가 아닌 경우")
+                            .build());
+        }
+        // result : 0 인 경우 예외상황임
+        else if (result == 0) {
+            throw new InvalidRequestException("예외");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("출금가능금액 강제설정 완료")
                         .build());
     }
 

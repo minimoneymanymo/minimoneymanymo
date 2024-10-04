@@ -19,7 +19,9 @@ public interface ParentService {
     int setMyChildAllowance(String parentUserId, Integer childrenId, Integer settingMoney);
     int setMyChildQuizBonusMoney(String userId, Integer childrenId, Integer settingQuizBonusMoney);
     int setMyChildWithdrawableMoney(String userId, Integer childrenId, Integer settingWithdrawableMoney);
+    int setMyChildWithdrawableMoneyForce(String userId, Integer childrenId, Integer settingWithdrawableMoney);
     Parent findByUserId(String parentUserId);
     long updateBalance(String parentUserId, Integer amount);
     long updateAccount(String parentUserId, String accountNumber, String bankCode);
+    int rejectMyChildren(String userId, Integer childrenId);
 }

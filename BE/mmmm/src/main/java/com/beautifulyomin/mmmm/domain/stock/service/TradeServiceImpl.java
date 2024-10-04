@@ -41,7 +41,6 @@ public class TradeServiceImpl implements TradeService {
     private final StockRepositoryCustom stockRepositoryCustom;
     private final ParentRepository parentRepository;
     private final ParentAndChildrenRepository parentAndChildrenRepository;
-   // private final TradeRecordsRepositoryCustom tradeRecordsRepositoryCustom;
     private final ParentService parentService;
 
     @Override
@@ -60,10 +59,11 @@ public class TradeServiceImpl implements TradeService {
             throw new IllegalArgumentException("TradeDto는 null일 수 없습니다.");
         }
 
-        // stocksHeld 조회 시 매도 요청일 경우 존재하지 않으면 에러 발생
+        // 보유하고 있는 주식이 있는지 조회
         StocksHeld stocksHeld = stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(children.getChildrenId(), stock.getStockCode())
                 .orElse(null);
 
+        // stocksHeld 조회 시 매도 요청일 경우 존재하지 않으면 에러 발생
         if (stocksHeld == null && tradeDto.getTradeType().equals("5")) {
             // 매도 요청인데 stocksHeld가 없으면 에러 발생
             log.error("매도 주수 없음 에러");
@@ -78,6 +78,7 @@ public class TradeServiceImpl implements TradeService {
                     .remainSharesCount(BigDecimal.ZERO) // 초기값 설정
                     .totalAmount(0) // 총합도 초기값 설정
                     .build();
+            log.info("최초 매수");
         }
 
         BigDecimal totalProfit = null;
@@ -104,6 +105,12 @@ public class TradeServiceImpl implements TradeService {
         // StocksHeld 저장
         stocksHeldRepository.save(stocksHeld);
 
+        // 보유 주수가 0이 되면 StocksHeld 삭제
+        if (stocksHeld.getRemainSharesCount().compareTo(BigDecimal.ZERO) == 0) {
+            stocksHeldRepository.delete(stocksHeld);
+            log.info("StocksHeld 삭제됨: {}", stocksHeld);
+        }
+
         log.info("tradeRecord 생성 직전");
         // TradeRecord 엔티티 빌더 패턴 사용하여 생성
         TradeRecord tradeRecord = TradeRecord.builder()
@@ -125,8 +132,6 @@ public class TradeServiceImpl implements TradeService {
         log.info("tradeRecord 저장 했음");
     }
 
-
-
     // 매수 처리
     private void handleBuyTransaction(StocksHeld stocksHeld, TradeDto tradeDto) {
         if (stocksHeld.getRemainSharesCount() == null) {
@@ -134,16 +139,17 @@ public class TradeServiceImpl implements TradeService {
         }
         stocksHeld.setRemainSharesCount(stocksHeld.getRemainSharesCount().add(tradeDto.getTradeSharesCount())); // 보유주수 더하기
         stocksHeld.setTotalAmount(stocksHeld.getTotalAmount() + tradeDto.getAmount()); // 총합 더하기
+        log.info("매수 완료");
     }
 
     // 매도 처리
     private BigDecimal handleSellTransaction(StocksHeld stocksHeld, TradeDto tradeDto) {
         if (stocksHeld.getRemainSharesCount() == null) {
-            throw new IllegalArgumentException("보유 주식 수량이 초기화되지 않았습니다.");
+            throw new IllegalArgumentException("보유 주식이 없습니다.");
         }
 
         if (stocksHeld.getRemainSharesCount().compareTo(tradeDto.getTradeSharesCount()) < 0) {
-            log.debug("Not enough shares to sell");
+            log.info("Not enough shares to sell");
             throw new IllegalArgumentException("매도하려는 주식 수가 보유하고 있는 주식 수보다 많습니다.");
         }
 
@@ -156,16 +162,18 @@ public class TradeServiceImpl implements TradeService {
         log.info(" 평단가 : {} ", bigAveragePrice);
 
         // 매도 손익 계산 방법 : (현재가 − 평단가 ) × 매도 주식 수량
+        // 종가
         BigDecimal closingPrice = stockRepositoryCustom.getDailyStockChart(tradeDto.getStockCode()).getClosingPrice();
-        log.info(" closingPrice : {} ", closingPrice);
+        log.info(" 종가(현재가) : {} ", closingPrice);
         BigDecimal profitPerShare = closingPrice.subtract(bigAveragePrice);
         log.info(" 현재가 − 평단가 : {} ", profitPerShare);
         // 손익 계산 후 소수점 둘째 자리로 반올림
+        // 손익
         BigDecimal bigTotalProfit = profitPerShare.multiply(tradeDto.getTradeSharesCount()).setScale(2, RoundingMode.HALF_UP);
         log.info(" (현재가 − 평단가 ) × 매도 주식 수량 : {} ", bigTotalProfit);
-
+        // 평균단가 * 매도주수
         stocksHeld.setRemainSharesCount(stocksHeld.getRemainSharesCount().subtract(tradeDto.getTradeSharesCount())); // 보유주수
-        stocksHeld.setTotalAmount(stocksHeld.getTotalAmount() - tradeDto.getAmount()); // 총합 빼기
+        stocksHeld.setTotalAmount(stocksHeld.getTotalAmount() - bigAveragePrice.multiply(tradeDto.getTradeSharesCount()).intValue()); // 총합 빼기
 
         return bigTotalProfit;
     }

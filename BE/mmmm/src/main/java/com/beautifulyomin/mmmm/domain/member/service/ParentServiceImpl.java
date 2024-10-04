@@ -6,8 +6,10 @@ import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
+import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentAndChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
@@ -31,13 +33,15 @@ public class ParentServiceImpl implements ParentService {
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final FileService fileService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ChildrenRepository childrenRepository;
 
-    public ParentServiceImpl(ParentRepository parentRepository, ParentRepositoryCustom parentRepositoryCustom, ParentAndChildrenRepository parentAndChildrenRepository, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public ParentServiceImpl(ParentRepository parentRepository, ParentRepositoryCustom parentRepositoryCustom, ParentAndChildrenRepository parentAndChildrenRepository, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder, ChildrenRepository childrenRepository) {
         this.parentRepository = parentRepository;
         this.parentRepositoryCustom = parentRepositoryCustom;
         this.parentAndChildrenRepository = parentAndChildrenRepository;
         this.fileService = fileService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.childrenRepository = childrenRepository;
     }
 
     public String registerParent(JoinRequestDto joinDto) {
@@ -198,8 +202,6 @@ public class ParentServiceImpl implements ParentService {
                 .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
         Integer parentId = parent.getParentId();
 
-        log.info("Setting withdrawable money for child ID: {} with amount: {}", childrenId, settingWithdrawableMoney);
-
         Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
         Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
 
@@ -211,6 +213,33 @@ public class ParentServiceImpl implements ParentService {
         //있는 관계인경우 실행
         if(parentAndChildrenTrue.isPresent() ) {
             long result = parentRepositoryCustom.updateSettingWithdrawableMoneyById(childrenId,settingWithdrawableMoney);
+            //바뀐 요청이 1개인경우 성공.
+            if(result == 1){
+                return 1;
+            }
+        }
+        //이외의 경우 에러반환
+        return 0;
+    }
+
+  @Override
+    public int setMyChildWithdrawableMoneyForce(String parentUserId, Integer childrenId, Integer settingWithdrawableMoney) {
+
+        Parent parent = parentRepository.findByUserId(parentUserId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + parentUserId));
+        Integer parentId = parent.getParentId();
+
+        Optional<ParentAndChildren> parentAndChildrenTrue = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedTrue(parentId, childrenId);
+        Optional<ParentAndChildren> parentAndChildrenFalse = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parentId, childrenId);
+
+        // 없는 관계인 경우 -1 반환
+        if(parentAndChildrenFalse.isPresent()){
+            return -1;
+        }
+
+        //있는 관계인경우 실행
+        if(parentAndChildrenTrue.isPresent() ) {
+            long result = parentRepositoryCustom.setWithdrawableMoneyById(childrenId,settingWithdrawableMoney);
             //바뀐 요청이 1개인경우 성공.
             if(result == 1){
                 return 1;
@@ -233,5 +262,24 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public long updateAccount(String parentUserId, String accountNumber, String bankCode) {
         return parentRepositoryCustom.updateParentAccount(parentUserId, accountNumber, bankCode);
+    }
+
+    @Override
+    public int rejectMyChildren(String userId, Integer childrenId) {
+        Parent parent = parentRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + userId));
+
+        Optional<Children> children = childrenRepository.findChildrenByChildrenId(childrenId);
+        if (children.isEmpty()) {
+            return 0;
+        }
+        Optional<ParentAndChildren> existingRelation = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parent.getParentId(),children.get().getChildrenId());
+        if (existingRelation.isPresent()) {
+            parentAndChildrenRepository.delete(existingRelation.get()); //관계 삭제
+            childrenRepository.delete(children.get());  //Children 삭제
+            return 1;
+        }
+
+        return 0;
     }
 }

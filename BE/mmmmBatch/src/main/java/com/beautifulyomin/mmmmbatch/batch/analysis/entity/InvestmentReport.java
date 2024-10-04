@@ -15,10 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @IdClass(InvestmentReportId.class)
-@Table(indexes = {
-        @Index(name = "idx_investment_report_date", columnList = "date"),
-        @Index(name = "idx_investment_report_children_id", columnList = "childrenId")
-})
+@Table(name = "investment_reports")
 public class InvestmentReport {
 
     @Id
@@ -49,5 +46,7 @@ public class InvestmentReport {
     @Range(min = 0, max = 100)
     private Integer stability;
 
+    @OneToOne(mappedBy = "investmentReport", cascade = CascadeType.ALL)
+    private InvestorCluster investorCluster;
 
 }

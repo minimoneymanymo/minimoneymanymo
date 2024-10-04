@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ChildrenRepository extends JpaRepository<Children, Integer> {
     Optional<Children> findByUserId(String userId);
+    Optional<Children> findChildrenByChildrenId(Integer childrenId);
 }

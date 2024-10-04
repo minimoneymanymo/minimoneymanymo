@@ -29,11 +29,12 @@ public class QuizJobRunner  implements CommandLineRunner{ //
 //                .toJobParameters();
 //        jobLauncher.run(newsQuizJob, params); // 잡 실행
 //    }
+
     @Override
     public void run(String... args) throws Exception {
-        JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters();
-        jobLauncher.run(newsQuizJob, params); // 애플리케이션 시작 시 배치 작업 실행
+//        JobParameters params = new JobParametersBuilder()
+//                .addLong("time", System.currentTimeMillis())
+//                .toJobParameters();
+//        jobLauncher.run(newsQuizJob, params); // 애플리케이션 시작 시 배치 작업 실행
     }
 }

@@ -2,9 +2,9 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.job;
 
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
-import com.beautifulyomin.mmmmbatch.batch.analysis.step.InvestmentAnalysisProcessor;
-import com.beautifulyomin.mmmmbatch.batch.analysis.step.InvestmentAnalysisReader;
-import com.beautifulyomin.mmmmbatch.batch.analysis.step.InvestmentAnalysisWriter;
+import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisProcessor;
+import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisReader;
+import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisWriter;
 import com.beautifulyomin.mmmmbatch.listner.JobDurationListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
