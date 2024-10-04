@@ -22,6 +22,8 @@ import ChildInvestStylePage from "./pages/chlid/ChildInvestStylePage"
 import ChildWalletPage from "./pages/chlid/ChildWalletPage"
 import NewsDetail from "./pages/News/NewsDetail"
 import ChildStockPage from "./pages/chlid/ChildStockPage"
+import UnauthorizedPage from "./components/common/mypage/UnauthorizedPage"
+import ProtectedRoute from "./components/common/ProtectedRoute"
 
 function App() {
   return (
@@ -33,7 +35,12 @@ function App() {
         <Route path="/news" element={<NewsPage />} />
 
         <Route path="news/:newsId" element={<NewsDetail />} />
-        <Route path="/parent" element={<ParentPageLayout />}>
+
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route
+          path="/parent"
+          element={<ProtectedRoute requiredRole="parent" />}
+        >
           <Route path="my-wallet" element={<ParentAccountPage />} />
           <Route path="my-info" element={<ParentPage />} />
           <Route path="my-children" element={<MyChildrenPage />} />
@@ -46,7 +53,10 @@ function App() {
             <Route path="diary" element={<MyChildDiaryCheckPage />} />
           </Route>
         </Route>
-        <Route path="/my-info" element={<ChildPageLayout />}>
+        <Route
+          path="/my-info"
+          element={<ProtectedRoute requiredRole="child" />}
+        >
           <Route index element={<ChildPage />} />
           <Route path="wallet" element={<ChildWalletPage />} />
           <Route path="finance" element={<ChildStockPage />} />

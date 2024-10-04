@@ -58,6 +58,18 @@ const getWithdrawListApi = async () => {
   }
 }
 
+// 부모-자식의출금요청내역
+const getChildWithdrawListApi = async (childrenId: string) => {
+  try {
+    const response = await axiosAuthInstance.get(
+      `/funds/child-withdraw-list?childrenId=${childrenId}`
+    )
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
 // 부모-출금 요청 승인
 const approveRequestApi = async (param: object) => {
   try {
@@ -98,18 +110,6 @@ const getAllMoneyRecordsApi = async () => {
 const getMoneyApi = async () => {
   try {
     const response = await axiosAuthInstance.get(`/funds`)
-    return response.data
-  } catch (error) {
-    handleApiError(error)
-  }
-}
-
-// 부모-자식의출금요청내역
-const getChildWithdrawListApi = async (childrenId: string) => {
-  try {
-    const response = await axiosAuthInstance.get(
-      `/funds/child-withdraw-list?childrenId=${childrenId}`
-    )
     return response.data
   } catch (error) {
     handleApiError(error)
@@ -198,8 +198,6 @@ const giveAllowanceApi = async (
     }
   }
 }
-
-
 
 export {
   depositBalanceApi,
