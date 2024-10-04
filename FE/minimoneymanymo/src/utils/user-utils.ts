@@ -111,7 +111,6 @@ export const setMemberInfo = async (dispatch: AppDispatch, role: number) => {
         userKey,
         createdAt,
         accountNumber,
-        birthDay,
       } = res.data
       const payload = {
         childrenId,
@@ -124,7 +123,6 @@ export const setMemberInfo = async (dispatch: AppDispatch, role: number) => {
         userKey,
         createdAt,
         accountNumber,
-        birthDay,
       }
       dispatch(childActions.setUserInfo(payload))
     }
