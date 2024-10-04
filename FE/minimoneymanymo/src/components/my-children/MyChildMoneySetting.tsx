@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectParent } from "@/store/slice/parent"
 import { setMemberInfo } from "@/utils/user-utils"
 import InfoIcon from "@mui/icons-material/Info"
+import { Alert } from "@mui/material"
 
 function MyChildMoneySetting(): JSX.Element {
   const { child, fetchChild } = useChild()
@@ -20,9 +21,6 @@ function MyChildMoneySetting(): JSX.Element {
   const [withdrawableMoney, setWithdrawableMoney] = useState<number | null>(
     null
   )
-  const [maxWithdrawableMoney, setmaxWithdrawableMoney] = useState<
-    number | null
-  >(null)
   const [maxAllowance, setMaxAllowance] = useState<number>(0)
   const [quizBonusMoney, setQuizBonusMoney] = useState<number | null>(null)
   const [selectedMenu, setSelectedMenu] = useState<string>("allowance")
@@ -35,7 +33,6 @@ function MyChildMoneySetting(): JSX.Element {
     setAllowance(child?.settingMoney || null)
     setWithdrawableMoney(child?.settingWithdrawableMoney || null)
     setQuizBonusMoney(child?.settingQuizBonusMoney || null)
-    setmaxWithdrawableMoney(100000) //부모의 잔액 balance - 다른 자식의 최대출금가능금액 뺀값
     setMaxAllowance(parent.balance)
   }
 
@@ -46,11 +43,6 @@ function MyChildMoneySetting(): JSX.Element {
   }, [child])
 
   if (!child) return <div>Child data not available</div>
-
-  const fetchData = async () => {
-    setMemberInfo(dispatch, 0) //부모상태 업데이트
-    await fetchChild() //자녀상태 업데이트
-  }
 
   const handlegiveAllowance = async () => {
     const res = await giveAllowanceApi(child.childrenId, inputValue) // 용돈지급 api
@@ -101,68 +93,17 @@ function MyChildMoneySetting(): JSX.Element {
     }
   }
 
-  const handleSave = async () => {
-    //유효성 검증
-    const value = Number(inputValue)
-    if (isNaN(value)) {
-      setError("입력 값이 숫자가 아닙니다.")
-      return
+  const handleSettingQuiz = async () => {
+    const res = await updateQuizBonusMoney(child.childrenId, inputValue)
+    if (res.stateCode === 201) {
+      setQuizBonusMoney(inputValue === "" ? null : inputValue)
+      console.log("quizBonusMoney 성공적으로 업데이트 되었습니다:", res)
+    } else if (res.status === 403) {
+      alert("로그인이필요합니다.")
+      navigate("/login")
+    } else {
+      console.log("용돈 업데이트 실패:", res)
     }
-
-    if (value <= 0) {
-      setError("1원 이상의 값을 입력해주세요.")
-      return
-    }
-    setError(null)
-
-    //용돈 지급
-    if (selectedMenu === "allowance") {
-      const res = await giveAllowanceApi(child.childrenId, inputValue) // 용돈지급 api
-      if (res.stateCode === 201) {
-        setAllowance(inputValue === "" ? null : inputValue)
-        setMaxAllowance(parent.balance)
-        //상태 업데이트
-        setMemberInfo(dispatch, 0)
-        await fetchChild()
-
-        console.log("용돈이 성공적으로 지급되었습니다:", res)
-      } else if (res.status === 403) {
-        alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
-        navigate("/login")
-      } else {
-        console.log("용돈 업데이트 실패:", res)
-      }
-    }
-
-    //출금가능금액
-    else if (selectedMenu === "withdrawableMoney") {
-      const res = await updateWithdrawableMoney(child.childrenId, inputValue)
-      if (res.stateCode === 201) {
-        setWithdrawableMoney(inputValue === "" ? null : inputValue)
-        console.log("withdrawableMoney 성공적으로 업데이트 되었습니다:", res)
-      } else if (res.status === 403) {
-        alert("로그인이필요합니다.")
-        navigate("/login")
-      } else {
-        console.log("용돈 업데이트 실패:", res)
-      }
-    }
-
-    //퀴즈 보상 머니 설정
-    else if (selectedMenu === "quizBonusMoney") {
-      const res = await updateQuizBonusMoney(child.childrenId, inputValue)
-      if (res.stateCode === 201) {
-        setQuizBonusMoney(inputValue === "" ? null : inputValue)
-
-        console.log("quizBonusMoney 성공적으로 업데이트 되었습니다:", res)
-      } else if (res.status === 403) {
-        alert("로그인이필요합니다.")
-        navigate("/login")
-      } else {
-        console.log("용돈 업데이트 실패:", res)
-      }
-    }
-    console.log(`${selectedMenu} saved:`, inputValue) // 상태 업데이트 확인
   }
 
   const showNotice = () => {
@@ -392,7 +333,7 @@ function MyChildMoneySetting(): JSX.Element {
                     <div className="flex w-[230px] items-center justify-end">
                       <span>머니</span>
                       <button
-                        onClick={handleSave}
+                        onClick={handleSettingQuiz}
                         className="ml-4 rounded-lg bg-secondary-m2 px-6 py-2 text-sm font-normal text-white"
                       >
                         저장
@@ -410,11 +351,13 @@ function MyChildMoneySetting(): JSX.Element {
           </div>
         )}
       </div>
-      <div className="mx-10 flex items-start gap-4 rounded-lg border px-4 py-2">
-        <InfoIcon style={{ color: "black", fontSize: 20 }} className="mt-2" />
-
+      <Alert
+        className="mx-10 rounded-lg px-4 py-2"
+        severity="success"
+        icon={<InfoIcon />}
+      >
         {showNotice()}
-      </div>
+      </Alert>
     </div>
   )
 }
