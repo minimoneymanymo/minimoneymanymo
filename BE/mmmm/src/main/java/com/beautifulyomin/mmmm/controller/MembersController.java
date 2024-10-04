@@ -59,7 +59,7 @@ public class MembersController {
         boolean isEmailAvailable = !childrenService.isExistByUserId(email) && !parentService.isExistByUserId(email);
         //인증메일 발송
         if (isEmailAvailable) System.out.println("!!!!!!!!!!!" + mailSendService.joinEmail(email) + "!!!!!!!!!!!");
-        ;
+
 
         CommonResponseDto commonResponseDto = CommonResponseDto.builder()
                 .stateCode(isEmailAvailable ? 200 : 409)
