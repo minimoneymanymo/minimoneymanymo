@@ -1,6 +1,4 @@
 import * as React from "react"
-import Box from "@mui/material/Box"
-import Stack from "@mui/material/Stack"
 import NewsCard from "../components/newscard/NewsCard"
 import { getTodayNews } from "@/api/news-api"
 import { Typography } from "@material-tailwind/react"
@@ -66,13 +64,12 @@ const MainNewsLayout: React.FC = () => {
   }
 
   return (
-    <>
+    <div className="mt-10">
       <Typography variant="h5" color="blue-gray">
         오늘의 뉴스퀴즈
       </Typography>
-      <Box
-        sx={{ flexGrow: 1, padding: 2, maxWidth: "1200px", margin: "0 auto" }}
-      >
+      {/* Box 컴포넌트 -> 테일윈드 스타일로 변경 */}
+      <div className="mx-auto max-w-[1200px] flex-grow py-5">
         <Slider {...settings}>
           {newsItems.map((newsItem, index) => {
             // 상태에 따른 카드의 배경 스타일 및 아이콘 결정
@@ -119,8 +116,8 @@ const MainNewsLayout: React.FC = () => {
             )
           })}
         </Slider>
-      </Box>
-    </>
+      </div>
+    </div>
   )
 }
 

@@ -120,7 +120,7 @@ function MainDashboard() {
   }
 
   return (
-    <div className="w-full p-4">
+    <div className="mt-10 w-full">
       <Typography variant="h5" color="blue-gray">
         주식
       </Typography>
