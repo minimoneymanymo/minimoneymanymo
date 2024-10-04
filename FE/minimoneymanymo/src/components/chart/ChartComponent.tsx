@@ -33,7 +33,6 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
       </button>
     )
   }
-  
 
   const Info = (): JSX.Element => {
     return (
@@ -62,8 +61,8 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
             </span>
           </div>
         </div>
-        <div className="flex space-x-8 ">
-          <div className="flex flex-1 flex-col space-y-1">
+        <div className="flex space-x-8">
+          <div className="flex basis-3/5 flex-col space-y-1">
             {Element(
               "시가총액",
               stockData?.marketCapitalization
@@ -83,7 +82,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
                 : undefined
             )}
           </div>
-          <div className="flex w-full flex-1 flex-col space-y-1">
+          <div className="flex w-full basis-2/5 flex-col space-y-1">
             {/* {Element("", "")} */}
             {Element("거래량 회전률", `${stockData?.volumeTurnoverRatio} %`)}
             {/* {Element("액면가", stockInfo?.faceValue)} */}
@@ -101,7 +100,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
   ): JSX.Element => {
     return (
       <div className="flex w-full">
-        <span className="w-[110px]">{key}</span>
+        <span className="w-[90px]">{key}</span>
         {/* <span className="flex-1">{value ? value.toLocaleString() : "-"}</span> */}
         <span className="flex-1 text-right">{value ? value : "-"}</span>
       </div>
