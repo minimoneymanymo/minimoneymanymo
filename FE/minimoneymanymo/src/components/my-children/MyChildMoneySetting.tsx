@@ -194,7 +194,7 @@ function MyChildMoneySetting(): JSX.Element {
   }
 
   return (
-    <div className="h-[1000px] space-y-8">
+    <div className="mb-10 space-y-8">
       <Heading title="머니 설정" />
       <div className="grid grid-cols-3 gap-8 px-8">
         <button

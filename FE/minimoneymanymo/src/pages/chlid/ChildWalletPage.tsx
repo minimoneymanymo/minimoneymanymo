@@ -125,12 +125,7 @@ function ChildWalletPage(): JSX.Element {
                 </div>
               ) : (
                 withdrawList.map((item, index) => (
-                  <WithdrawablReqItem
-                    key={index}
-                    createdAt={item.createdAt}
-                    amount={item.amount}
-                    approvedAt={item.approvedAt}
-                  />
+                  <WithdrawablReqItem key={index} {...item} />
                 ))
               )}
             </div>
