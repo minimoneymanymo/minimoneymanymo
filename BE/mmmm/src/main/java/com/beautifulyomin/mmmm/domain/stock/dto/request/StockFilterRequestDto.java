@@ -9,6 +9,9 @@ import java.math.BigInteger;
 @ToString
 @Data
 public class StockFilterRequestDto {
+    // Elasticsearch를 이용한 자동완성 검색기능용
+    private String search;
+
     //시장
     private String marketType; // 시장(코스피, 코스닥)
 
