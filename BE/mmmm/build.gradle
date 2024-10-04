@@ -74,6 +74,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+
 }
 
 tasks.named('test') {

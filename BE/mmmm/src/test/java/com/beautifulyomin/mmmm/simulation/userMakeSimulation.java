@@ -11,8 +11,6 @@ import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -58,9 +56,11 @@ class userMakeSimulation {
             String phoneNumber = "010-0000-000" + (i % 10);  // 예시로 010-0000-000X 형태
             String birthDay = "2010-01-0" + (i % 9 + 1);  // 예시로 2010-01-01 ~ 2010-01-09
             String userKey = "userKey" + i;
+            Integer money = 100000; //한 달동안 거래는 10만원 내에서 진행하도록 하자.
 
             // Children 엔티티 생성
             Children child = new Children(userId, name, password, phoneNumber, birthDay, userKey);
+            child.setMoney(money);
 
             // 리스트에 추가
             childrenList.add(child);
