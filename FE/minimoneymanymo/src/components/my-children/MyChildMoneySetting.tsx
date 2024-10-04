@@ -41,6 +41,9 @@ function MyChildMoneySetting(): JSX.Element {
       getMyChildsetting()
     }
   }, [child])
+  useEffect(() => {
+    setInputValue("")
+  }, [selectedMenu])
 
   if (!child) return <div>Child data not available</div>
 
@@ -67,6 +70,8 @@ function MyChildMoneySetting(): JSX.Element {
       setMemberInfo(dispatch, 0)
       await fetchChild()
       setWithdrawableMoney(child.settingWithdrawableMoney)
+      setInputValue("")
+
       console.log("settingwithdrawableMoney  업데이트 되었습니다:", res)
     } else if (res.status === 403) {
       alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
@@ -82,6 +87,8 @@ function MyChildMoneySetting(): JSX.Element {
     if (res.stateCode === 201) {
       setMemberInfo(dispatch, 0)
       await fetchChild()
+      setInputValue("")
+
       console.log("settingwithdrawableMoney  업데이트 되었습니다:", res)
     } else if (res.status === 403) {
       alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
@@ -96,6 +103,7 @@ function MyChildMoneySetting(): JSX.Element {
     if (res.stateCode === 201) {
       setQuizBonusMoney(inputValue === "" ? null : inputValue)
       console.log("quizBonusMoney 성공적으로 업데이트 되었습니다:", res)
+      setInputValue("")
     } else if (res.status === 403) {
       alert("로그인이필요합니다.")
       navigate("/login")
@@ -145,15 +153,29 @@ function MyChildMoneySetting(): JSX.Element {
           }}
         >
           <p className="font-bold">용돈 지급</p>
-          <img src="/images/piggy-bank.svg" className="size-14" alt="용돈" />
           {allowance ? (
-            <p className="">
-              지급 가능 머니 <b>{maxAllowance.toLocaleString()}</b> 머니
-            </p>
+            <>
+              <img
+                src="/images/piggy-bank.svg"
+                className="size-14"
+                alt="용돈"
+              />
+              <p className="">
+                지급 가능 머니 <b>{maxAllowance.toLocaleString()}</b> 머니
+              </p>
+            </>
           ) : (
-            <p className="text-red-700">
-              용돈지급을 위해 마니모계좌를 충전해주세요.
-            </p>
+            <div className="flex flex-col items-center">
+              <img
+                src="/images/piggy-bank.svg"
+                className="size-14"
+                alt="용돈"
+              />
+              <p className="mt-0 text-red-700">
+                용돈지급을 위해 <br />
+                마니모계좌를 충전해주세요.
+              </p>
+            </div>
           )}
         </button>
         <button
@@ -178,7 +200,7 @@ function MyChildMoneySetting(): JSX.Element {
               다음 달 <b>{withdrawableMoney.toLocaleString()}</b> 머니
             </p>
           ) : (
-            <p className="text-red-700">설정해주세요.</p>
+            <p className="text-red-700">출금가능금액을 설정해주세요.</p>
           )}
         </button>
         <button
@@ -197,7 +219,7 @@ function MyChildMoneySetting(): JSX.Element {
               1회 <b>{quizBonusMoney.toLocaleString()}</b> 머니
             </p>
           ) : (
-            <p className="text-red-700">설정해주세요.</p>
+            <p className="text-red-700">퀴즈보상머니를 설정해주세요.</p>
           )}
         </button>
       </div>
