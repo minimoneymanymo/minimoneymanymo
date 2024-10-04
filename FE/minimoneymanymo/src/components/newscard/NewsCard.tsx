@@ -1,16 +1,5 @@
 import * as React from "react"
-
-import TaskAltIcon from "@mui/icons-material/TaskAlt"
-import CloseIcon from "@mui/icons-material/Close"
-
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Typography,
-  Button,
-} from "@material-tailwind/react"
+import { Card, CardHeader, Typography } from "@material-tailwind/react"
 
 // Props의 타입 정의
 interface NewsCardProps {
@@ -19,7 +8,7 @@ interface NewsCardProps {
   content: string
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({ image, title, content }) => {
+const NewsCard: React.FC<NewsCardProps> = ({ image, title }) => {
   return (
     <Card className={`mx-auto max-w-[300px] overflow-hidden`}>
       {/* 너비를 조정 */}
