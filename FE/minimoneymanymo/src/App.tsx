@@ -20,6 +20,7 @@ import ParentAccountPage from "./pages/parent/ParentAccountPage"
 import MyChildInvestStylePage from "./pages/parentchildren/MyChildInvestStylePage"
 import ChildInvestStylePage from "./pages/chlid/ChildInvestStylePage"
 import ChildWalletPage from "./pages/chlid/ChildWalletPage"
+import NewsDetail from "./pages/News/NewsDetail"
 import ChildStockPage from "./pages/chlid/ChildStockPage"
 import UnauthorizedPage from "./components/common/mypage/UnauthorizedPage"
 import ProtectedRoute from "./components/common/ProtectedRoute"
@@ -32,6 +33,9 @@ function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
         <Route path="/news" element={<NewsPage />} />
+
+        <Route path="news/:newsId" element={<NewsDetail />} />
+
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route
           path="/parent"
