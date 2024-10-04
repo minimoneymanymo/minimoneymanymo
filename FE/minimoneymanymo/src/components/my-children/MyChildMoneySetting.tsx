@@ -57,10 +57,8 @@ function MyChildMoneySetting(): JSX.Element {
     if (res.stateCode === 201) {
       setAllowance(inputValue === "" ? null : inputValue)
       setMaxAllowance(parent.balance)
-      //상태 업데이트
       setMemberInfo(dispatch, 0)
       await fetchChild()
-
       console.log("용돈이 성공적으로 지급되었습니다:", res)
     } else if (res.status === 403) {
       alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트

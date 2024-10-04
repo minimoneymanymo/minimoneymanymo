@@ -19,8 +19,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { inquireAccountApi, inquireBankCodesApi } from "@/api/account-api"
 import { accountActions, selectAccount } from "@/store/slice/account"
-import { useNavigate } from "react-router-dom"
-import { childActions, selectChild } from "@/store/slice/child"
+import { selectChild } from "@/store/slice/child"
 import LineChart from "./component/LineChart"
 import { setMemberInfo } from "@/utils/user-utils"
 
@@ -28,7 +27,6 @@ function ChildWalletPage(): JSX.Element {
   const child = useAppSelector(selectChild) // parent state 가져옴
   const account = useAppSelector(selectAccount)
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
 
   const [withdrawList, setWithdrawList] = useState<WithdrawableMoneyProps[]>([])
   const [recordList, setRecordList] = useState<RecordItemProps[]>([])
@@ -88,12 +86,25 @@ function ChildWalletPage(): JSX.Element {
         if (res1.stateCode == 200) {
           console.log(res1)
           setRecordList(res1.data)
-        } else console.error("머니내역 오류: ", res1)
-
+        } else {
+          console.error("머니내역 오류: ", res1)
+          if (res1.message) {
+            alert(res1.message)
+          } else {
+            alert("에러가 발생했습니다. 다시 시도해주세요")
+          }
+        }
         if (res2.stateCode == 200) {
           console.log(res2)
           setWithdrawList(res2.data)
-        } else console.error("출금요청내역 오류: ", res1)
+        } else {
+          console.error("출금요청내역 오류: ", res2)
+          if (res2.message) {
+            alert(res2.message)
+          } else {
+            alert("에러가 발생했습니다. 다시 시도해주세요")
+          }
+        }
       } catch (error) {
         console.error("오류 발생:", error)
       }
@@ -163,7 +174,6 @@ function ChildWalletPage(): JSX.Element {
 // 데이터를 날짜별로 그룹화하는 함수
 const groupByDate = (data: RecordItemProps[]) => {
   return data.reduce((acc: Record<string, RecordItemProps[]>, record) => {
-    // 날짜 부분만 추출 (yyyyMMdd 형식)
     const date = record.createdAt.slice(0, 8)
 
     // 해당 날짜가 이미 있으면 배열에 추가, 없으면 새로 생성
@@ -223,7 +233,7 @@ const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
   return (
     <div className="relative mt-5 flex flex-[3] flex-col items-center rounded-3xl bg-tertiary-50 p-6 shadow-md">
       <img
-        src="/images/gold-pig.svg" // 이미지 경로 설정
+        src="/images/gold-pig.svg"
         alt="Left Bottom Image"
         className="absolute -bottom-6 left-0 h-[140px] w-[90px] object-contain"
       />
@@ -253,8 +263,8 @@ const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
         <div className="flex items-center">
           <input
             type="text"
-            value={withdrawMoney} // 입력값을 상태에 바인딩
-            onChange={handleInputChange} // 입력값 변경 핸들러 연결
+            value={withdrawMoney}
+            onChange={handleInputChange}
             className="w-[110px] border-b border-black bg-transparent text-center focus:border-b focus:border-black focus:outline-none"
           />
           원
@@ -272,7 +282,6 @@ const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
 
 const AccountInfo: React.FC<AccountInfoProps> = (props) => {
   const { bankName, accoutNo, accountName, accountBalance } = props
-  // props 값이 없는 경우
   const hasAccountInfo = bankName || accoutNo || accountName || accountBalance
 
   return (
@@ -299,7 +308,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
         </div>
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center">
-          <AlertIcon style={{ fontSize: 40 }} /> {/* 아이콘 크기 증가 */}
+          <AlertIcon style={{ fontSize: 40 }} />
           <span className="mt-2 text-center">연결된 계좌가 없습니다.</span>
         </div>
       )}
