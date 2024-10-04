@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.beautifulyomin.mmmmbatch.batch.quiz.entity.NewsQuiz;
+
 
 @Data
 @NoArgsConstructor

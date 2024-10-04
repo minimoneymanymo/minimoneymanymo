@@ -1,5 +1,6 @@
 package com.beautifulyomin.mmmm.domain.quiz.dto;
-import com.beautifulyomin.mmmmbatch.batch.quiz.entity.NewsQuiz;
+
+import com.beautifulyomin.mmmm.domain.quiz.entity.NewsQuiz;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

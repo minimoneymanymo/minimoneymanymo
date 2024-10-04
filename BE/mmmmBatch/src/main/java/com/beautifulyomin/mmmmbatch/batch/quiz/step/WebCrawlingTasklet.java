@@ -71,29 +71,39 @@ public class WebCrawlingTasklet implements Tasklet {
         // 링크 및 언론사 찾기
         List<WebElement> linkElements = articleDiv.findElements(By.cssSelector("a.sa_thumb_link._NLOG_IMPRESSION"));
         List<WebElement> publishers = articleDiv.findElements(By.cssSelector("div.sa_text_press"));
+        List<WebElement> thumbnailElements = articleDiv.findElements(By.cssSelector("img._LAZY_LOADING")); // 썸네일 이미지 요소 찾기
+
+
 
         List<String> hrefList = new ArrayList<>();
         List<String> publisherList = new ArrayList<>();
+        List<String> thumbnailSrcList = new ArrayList<>();
 
         for (int idx = 0; idx < linkElements.size(); idx++) {
             hrefList.add(linkElements.get(idx).getAttribute("href"));
             publisherList.add(publishers.get(idx).getText());
+            if (idx < thumbnailElements.size()) {
+                thumbnailSrcList.add(thumbnailElements.get(idx).getAttribute("src"));
+            } else {
+                thumbnailSrcList.add(""); // 이미지가 없을 경우 빈 문자열 추가
+            }
         }
 
         // 각 링크에 접속하여 데이터 추출
         for (int idx = 0; idx < hrefList.size(); idx++) {
             String link = hrefList.get(idx);
+
             System.out.println("링크 href: " + link);
 
             driver.get(link);
-            NewsQuiz newsQuiz = extractArticleData(driver, publisherList.get(idx)); // 빌더 패턴 사용
+            NewsQuiz newsQuiz = extractArticleData(driver, publisherList.get(idx), thumbnailSrcList.get(idx), link); // 빌더 패턴 사용
             newsQuizList.add(newsQuiz);
         }
 
         return newsQuizList;
     }
 
-    private NewsQuiz extractArticleData(WebDriver driver, String publisher) {
+    private NewsQuiz extractArticleData(WebDriver driver, String publisher, String thumbnailSrc,String link) {
         String titleValue = getElementText(driver, By.cssSelector("#title_area"));
         String dic = getElementText(driver, By.id("dic_area"));
         String dicHtml = getElementOuterHTML(driver, By.id("dic_area"));
@@ -115,6 +125,8 @@ public class WebCrawlingTasklet implements Tasklet {
                 .author(journalistName)
                 .contentHtml(dicHtml)
                 .content(dic)
+                .imageUrl(thumbnailSrc)
+                .url(link)
                 .build();
     }
 

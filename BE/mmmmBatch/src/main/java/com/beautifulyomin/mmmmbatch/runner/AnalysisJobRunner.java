@@ -15,13 +15,13 @@ public class AnalysisJobRunner  { //implements CommandLineRunner
     private final JobLauncher jobLauncher;
     private final Job investmentAnalysisJob;
 
-    @Scheduled(cron = "0 0 16? * MON-FRI")
-    public void run() throws Exception {
-        JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis()) // JobParameters에 현재 시간 추가
-                .toJobParameters();
-        jobLauncher.run(investmentAnalysisJob, params); // 잡 실행
-    }
+//    @Scheduled(cron = "0 0 16? * MON-FRI")
+//    public void run() throws Exception {
+//        JobParameters params = new JobParametersBuilder()
+//                .addLong("time", System.currentTimeMillis()) // JobParameters에 현재 시간 추가
+//                .toJobParameters();
+//        jobLauncher.run(investmentAnalysisJob, params); // 잡 실행
+//    }
 
 //    @Override
 //    public void run(String... args) throws Exception {

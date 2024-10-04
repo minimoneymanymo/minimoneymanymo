@@ -1,13 +1,15 @@
 package com.beautifulyomin.mmmm.domain.quiz.service;
 
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.quiz.dto.NewsQuizResponseDTO;
 import com.beautifulyomin.mmmm.domain.quiz.entity.NewsAndMember;
+import com.beautifulyomin.mmmm.domain.quiz.entity.NewsQuiz;
 import com.beautifulyomin.mmmm.domain.quiz.entity.key.NewsAndMemberId;
 import com.beautifulyomin.mmmm.domain.quiz.repository.NewsAndMembersRepository;
 import com.beautifulyomin.mmmm.domain.quiz.repository.NewsQuizRepository;
 import org.springframework.stereotype.Service;
-import com.beautifulyomin.mmmmbatch.batch.quiz.entity.NewsQuiz;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,6 +69,26 @@ public class QuizService {
                 .newsQuiz(quiz)
                 .isQuizAnswered(isQuizAnswered)
                 .build();
+    }
+
+
+    public NewsQuiz getNewsQuiz(Long quizId) {
+        return newsQuizRepository.findById(quizId).orElse(null);
+    }
+
+    public Boolean solveQuiz(Children children, Long quizId, String option) {
+        NewsQuiz newsQuiz = getNewsQuiz(quizId);
+        Boolean solved = (newsQuiz.getAnswer() == Integer.parseInt(option));
+        NewsAndMember newsAndMember =
+                NewsAndMember.builder()
+                        .id(new NewsAndMemberId(children.getChildrenId(), quizId))
+                        .children(children)
+                        .newsQuiz(newsQuiz)
+                        .isQuizAnswered(solved? 0 : Integer.parseInt(option))
+                        .build();
+        newsAndMembersRepository.save(newsAndMember);
+        return solved;
+
     }
 
 

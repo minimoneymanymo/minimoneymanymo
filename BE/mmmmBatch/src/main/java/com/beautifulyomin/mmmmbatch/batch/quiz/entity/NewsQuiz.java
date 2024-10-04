@@ -28,6 +28,12 @@ public class NewsQuiz implements Serializable {
     @Column(nullable = false)
     private String title; // 제목
 
+    @Column(nullable =true)
+    private String imageUrl;
+
+    @Column
+    private String url;
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content; // 내용
 
@@ -51,6 +57,8 @@ public class NewsQuiz implements Serializable {
 
     @Column
     private Integer answer = null;
+
+
 
 
 
