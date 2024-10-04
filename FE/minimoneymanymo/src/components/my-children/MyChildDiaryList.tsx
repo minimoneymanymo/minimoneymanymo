@@ -30,8 +30,8 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
     const getMyChildDiaryList = async () => {
       try {
         const childrenId = child.userId // 실제 childrenId 값을 넣어야 함
-        const year = parseInt(child.createdAt.slice(0, 4))
-        const month = parseInt(child.createdAt.slice(5, 7))
+        const year = 2024 //parseInt(child.createdAt.slice(0, 4))
+        const month = 10 // parseInt(child.createdAt.slice(5, 7))
         console.log(childrenId, year, month)
 
         const response = await getChildTradelistApi(childrenId, year, month)

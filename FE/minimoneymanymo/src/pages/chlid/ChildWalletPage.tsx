@@ -119,14 +119,20 @@ function ChildWalletPage(): JSX.Element {
         <div className="px-8">
           <ToggleList title="출금 요청 내역">
             <div className="border-t-2 border-gray-100 p-4">
-              {withdrawList.map((item, index) => (
-                <WithdrawablReqItem
-                  key={index}
-                  createdAt={item.createdAt}
-                  amount={item.amount}
-                  approvedAt={item.approvedAt}
-                />
-              ))}
+              {withdrawList.length === 0 ? (
+                <div className="p-3 text-center text-gray-500">
+                  조회 결과가 없습니다.
+                </div>
+              ) : (
+                withdrawList.map((item, index) => (
+                  <WithdrawablReqItem
+                    key={index}
+                    createdAt={item.createdAt}
+                    amount={item.amount}
+                    approvedAt={item.approvedAt}
+                  />
+                ))
+              )}
             </div>
           </ToggleList>
           <div className="h-3" />
@@ -143,11 +149,18 @@ function ChildWalletPage(): JSX.Element {
       </div>
 
       <Heading title="나의 머니 사용 기록" />
-      <div className="m-2 bg-white">
-        <LineChart data={getRecent7Days(recordList)} />
-      </div>
-
-      <RecordForm data={recordList} />
+      {recordList.length === 0 ? (
+        <div className="p-3 text-center text-gray-500">
+          조회 결과가 없습니다.
+        </div>
+      ) : (
+        <div>
+          <div className="m-2 bg-white">
+            <LineChart data={getRecent7Days(recordList)} />
+          </div>
+          <RecordForm data={recordList} isMoneyList={true} />
+        </div>
+      )}
     </>
   )
 }
@@ -232,7 +245,7 @@ const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
         </div>
 
         <div className="mb-4 text-center">
-          이번달
+          이번 달
           <b className="ml-2 mr-2">
             출금가능금액
             <span className="ml-3 text-xl">

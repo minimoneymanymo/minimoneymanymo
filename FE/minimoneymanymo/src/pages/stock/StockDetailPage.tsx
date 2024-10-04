@@ -122,7 +122,7 @@ function StockDetailPage(): JSX.Element {
             {stockData ? (
               <div className="flex items-end gap-3 text-xl">
                 <div
-                  className={`ms-4 text-3xl font-bold ${stockData.priceChange > 0 ? "text-buy" : "text-sell"}`}
+                  className={`text-3xl font-bold ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
                 >
                   {dailyStockChart[
                     dailyStockChart.length - 1
@@ -132,7 +132,7 @@ function StockDetailPage(): JSX.Element {
                 <span className="text-base text-gray-500">
                   어제보다
                   <span
-                    className={`ms-4 ${stockData.priceChange > 0 ? "text-red-500" : "text-blue-500"}`}
+                    className={`ms-4 ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
                   >
                     {stockData.priceChange ?? 0} 머니(
                     {stockData?.priceChangeRate ?? "N/A"}%)
