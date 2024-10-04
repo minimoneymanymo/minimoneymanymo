@@ -5,12 +5,14 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 @ToString
 @Data
 public class StockFilterRequestDto {
     // Elasticsearch를 이용한 자동완성 검색기능용
     private String search;
+    private List<String> searchList;
 
     //시장
     private String marketType; // 시장(코스피, 코스닥)

@@ -141,6 +141,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         applyConditionByTrading(filterRequestDto, condition);
         //Elastic
         applyConditionBySearch(filterRequestDto,condition);
+        applyConditionBySearchList(filterRequestDto, condition);
 
         List<StockResponseDto> results = queryFactory
                 .select(Projections.constructor(StockResponseDto.class,
@@ -173,6 +174,9 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         long total = getTotal(latestDate, condition);
 
         return new PageImpl<>(stockResponses, pageable, total);
+    }
+
+    private void applyConditionBySearchList(StockFilterRequestDto filterRequestDto, BooleanBuilder condition) {
     }
 
 
