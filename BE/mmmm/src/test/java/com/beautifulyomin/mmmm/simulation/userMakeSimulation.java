@@ -16,12 +16,15 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 @TestPropertySource(locations = "classpath:application-test.properties")
 @SpringBootTest
 @Import({QueryDslConfig.class})
 class userMakeSimulation {
 
+    private static final int INVESTOR_START_IDX = 697;
+    private static final int MONEY =100000;
     private final Integer PARENT_ID = 5;
     private final EntityManager entityManager;
     private final ChildrenRepository childrenRepository;
@@ -56,7 +59,7 @@ class userMakeSimulation {
             String phoneNumber = "010-0000-000" + (i % 10);  // 예시로 010-0000-000X 형태
             String birthDay = "2010-01-0" + (i % 9 + 1);  // 예시로 2010-01-01 ~ 2010-01-09
             String userKey = "userKey" + i;
-            Integer money = 100000; //한 달동안 거래는 10만원 내에서 진행하도록 하자.
+            Integer money = MONEY; //한 달동안 거래는 10만원 내에서 진행하도록 하자.
 
             // Children 엔티티 생성
             Children child = new Children(userId, name, password, phoneNumber, birthDay, userKey);
@@ -79,5 +82,21 @@ class userMakeSimulation {
         parentAndChildrenRepository.saveAll(parentAndChildrenList);
 
         System.out.println("300명의 Children과 ParentAndChildren 관계가 성공적으로 저장되었습니다.");
+    }
+
+    @Test
+    public void updateChildrenMoney() {
+
+        List<Children> childrenList = childrenRepository.findAllById(
+                IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX+299)
+                        .boxed()
+                        .toList()
+        );
+
+        for (Children children: childrenList){
+            children.setMoney(MONEY);
+        }
+
+        childrenRepository.saveAll(childrenList);
     }
 }

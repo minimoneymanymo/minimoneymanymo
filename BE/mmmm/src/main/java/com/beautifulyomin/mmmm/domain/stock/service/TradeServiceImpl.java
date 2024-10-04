@@ -19,7 +19,6 @@ import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import org.springframework.security.access.AccessDeniedException;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -42,6 +44,79 @@ public class TradeServiceImpl implements TradeService {
     private final ParentRepository parentRepository;
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final ParentService parentService;
+
+    @Override
+    public void createTradeByDate(TradeDto tradeDto, Integer childrenId, LocalDate date) {
+        // stock 정보 조회
+        Stock stock = stockRepository.findById(tradeDto.getStockCode())
+                .orElseThrow(() -> new IllegalArgumentException("주식코드가 유효하지 않습니다."));
+
+        Children children = childrenRepository.findChildrenByChildrenId(childrenId)
+                .orElseThrow(() -> new RuntimeException("Children not found for childrenId: " + childrenId));
+
+        tradeDto.setChildrenId(childrenId);
+
+        // 보유하고 있는 주식이 있는지 조회
+        StocksHeld stocksHeld = stocksHeldRepository.findByChildren_ChildrenIdAndStock_StockCode(children.getChildrenId(), stock.getStockCode())
+                .orElse(null);
+
+        // stocksHeld 조회 시 매도 요청일 경우 존재하지 않으면 에러 발생
+        if (stocksHeld == null && tradeDto.getTradeType().equals("5")) {
+            // 매도 요청인데 stocksHeld가 없으면 에러 발생
+            throw new IllegalArgumentException("매도할 수 있는 주식이 없습니다.");
+        }
+
+        // stocksHeld가 없고 매수인 경우에만 새로운 StocksHeld 생성
+        if (stocksHeld == null && tradeDto.getTradeType().equals("4")) {
+            stocksHeld = StocksHeld.builder()
+                    .children(children)
+                    .stock(stock)
+                    .remainSharesCount(BigDecimal.ZERO) // 초기값 설정
+                    .totalAmount(0) // 총합도 초기값 설정
+                    .build();
+            log.info("최초 매수");
+        }
+
+        BigDecimal totalProfit;
+        if (tradeDto.getTradeType().equals("4")) { // 매수
+            // 매수 시 잔액 부족 여부 체크
+            if (children.getMoney() < tradeDto.getAmount()) {
+                throw new IllegalArgumentException("매수하기에 머니가 부족합니다.");
+            }
+            totalProfit = BigDecimal.ZERO;
+            handleBuyTransaction(stocksHeld, tradeDto);
+            children.setMoney(children.getMoney() - tradeDto.getAmount());
+        } else if (tradeDto.getTradeType().equals("5")) { // 매도
+            totalProfit = handleSellTransaction(stocksHeld, tradeDto);
+            children.setMoney(children.getMoney() + tradeDto.getAmount() + totalProfit.intValue());
+        } else {
+            throw new IllegalArgumentException("매매 타입이 유효하지 않습니다.");
+        }
+        stocksHeldRepository.save(stocksHeld);
+
+        // 보유 주수가 0이 되면 StocksHeld 삭제
+        if (stocksHeld.getRemainSharesCount().compareTo(BigDecimal.ZERO) == 0) {
+            stocksHeldRepository.delete(stocksHeld);
+        }
+
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        // TradeRecord 엔티티 빌더 패턴 사용하여 생성
+        TradeRecord tradeRecord = TradeRecord.builder()
+                .stock(stock)
+                .children(children)
+                .amount(tradeDto.getAmount())
+                .stockTradingGain(totalProfit) // 손익머니 - 매도 시에만 사용, BigDecimal
+                .tradeType(tradeDto.getTradeType())
+                .reason(tradeDto.getReason())
+                .tradeSharesCount(tradeDto.getTradeSharesCount()) // 매매 주수
+                .remainAmount(children.getMoney())
+                .createdAt(date.atStartOfDay().format(formatter))
+                .build();
+
+        tradeRecordsRepository.save(tradeRecord);
+    }
+
 
     @Override
     public void createTrade(TradeDto tradeDto, String userId) {
