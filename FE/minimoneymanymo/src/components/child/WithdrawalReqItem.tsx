@@ -1,4 +1,8 @@
+import { approveRequestApi } from "@/api/fund-api"
+import { useAppSelector } from "@/store/hooks"
+import { selectParent } from "@/store/slice/parent"
 import { WithdrawableMoneyProps } from "@/types/accountTypes"
+import { useChild } from "../context/ChildContext"
 
 function formatDate(dateString: string, allFlag: boolean): string {
   // 문자열을 연도, 월, 일로 분리
@@ -10,8 +14,36 @@ function formatDate(dateString: string, allFlag: boolean): string {
   return allFlag ? `${year}.${month}.${day}` : `${month}.${day}`
 }
 
-const WithdrawablReqItem: React.FC<WithdrawableMoneyProps> = (props) => {
-  let { createdAt, amount, approvedAt } = props
+interface WithdrawablReqItemProps extends WithdrawableMoneyProps {
+  onApprove?: () => void // 이벤트 핸들러 타입 정의
+}
+
+const WithdrawablReqItem: React.FC<WithdrawablReqItemProps> = (props) => {
+  let { createdAt, amount, approvedAt, isParent, onApprove } = props
+  const parent = useAppSelector(selectParent)
+  const { child } = useChild()
+
+  const approveRequest = async () => {
+    const param = {
+      childrenId: child?.userId,
+      createdAt: createdAt,
+      amount: amount,
+      userKey: parent.userKey,
+    }
+    const res = await approveRequestApi(param)
+    if (res.stateCode === 201) {
+      if (onApprove) {
+        onApprove()
+      }
+    } else {
+      if (res.message) {
+        alert(res.message)
+      } else {
+        alert("에러가 발생했습니다. 다시 시도해주세요")
+      }
+    }
+  }
+
   return (
     <div className="mb-3 flex justify-between">
       {/* 앞 */}
@@ -25,7 +57,22 @@ const WithdrawablReqItem: React.FC<WithdrawableMoneyProps> = (props) => {
       {/* 뒤 */}
       <div className="flex flex-row items-center">
         <b className="mr-16">{Number(amount).toLocaleString()}원</b>
-        {approvedAt ? (
+        {isParent ? (
+          approvedAt ? (
+            <button className="rounded-lg border border-secondary-m2 bg-secondary-m2 bg-transparent px-6 py-2 text-sm text-secondary-m2">
+              완료
+            </button>
+          ) : (
+            <div>
+              <button
+                onClick={approveRequest}
+                className="rounded-lg bg-secondary-m2 px-6 py-2 text-sm text-white"
+              >
+                지급
+              </button>
+            </div>
+          )
+        ) : approvedAt ? (
           <div>
             <span className="text-primary-m1">
               {formatDate(approvedAt, false)} 승인
