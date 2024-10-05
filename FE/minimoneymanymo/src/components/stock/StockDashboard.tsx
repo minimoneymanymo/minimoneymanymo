@@ -143,6 +143,19 @@ function MainDashboard() {
               company_name: hit._source.company_name,
             })
           )
+          console.log(results)
+
+          // stock_code들을 콤마로 구분된 문자열로 변환하여 filters.search에 저장
+          const stockCodes = results
+            .map((result: { stock_code: string }) => result.stock_code)
+            .join(",")
+          setFilters((prevFilters) => ({
+            ...prevFilters,
+            search: stockCodes, // 검색어에 stock_code들 전달
+          }))
+
+          console.log(stockCodes)
+
           setSearchResults(results.slice(0, 10)) // 결과를 10개로 제한
         })
         .catch((error) => {
@@ -172,7 +185,7 @@ function MainDashboard() {
     }
   }, [userInput])
 
-  // 디바운스된 입력값이 변경되면 API 호출
+  // 디바운스된 입력값이 변경되면 Elasticsearch API 호출
   useEffect(() => {
     if (debouncedInput) {
       fetchStockData(debouncedInput, setSearchResults) // 디바운스된 입력값으로 API 호출
