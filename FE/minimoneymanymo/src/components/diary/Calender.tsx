@@ -217,9 +217,15 @@ const Calender: React.FC = () => {
     setSelectedDate(date === selectedDate ? null : date)
   }
 
-  const prevMonth = () =>
+  const prevMonth = () => {
     setCurrentMonth(currentMonth.clone().subtract(1, "month"))
-  const nextMonth = () => setCurrentMonth(currentMonth.clone().add(1, "month"))
+    setSelectedDate(null) // 이전 달로 넘어갈 때 선택된 날짜 초기화
+  }
+
+  const nextMonth = () => {
+    setCurrentMonth(currentMonth.clone().add(1, "month"))
+    setSelectedDate(null) // 다음 달로 넘어갈 때 선택된 날짜 초기화
+  }
 
   return (
     <div className="p-6">
