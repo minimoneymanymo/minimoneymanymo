@@ -39,7 +39,7 @@ const StockHeldSmallItem: React.FC<StockHeld> = (props) => {
   return (
     <div
       onClick={movePage}
-      className="mr-4 mt-3 flex w-[250px] flex-col rounded-xl bg-white p-4 shadow-md"
+      className="mr-4 mt-3 flex min-w-[250px] flex-col rounded-xl bg-white p-4 shadow-md"
     >
       <span className="text-sm text-gray-500">
         {stockCode} {marketName}
