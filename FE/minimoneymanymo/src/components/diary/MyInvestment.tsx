@@ -18,56 +18,152 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
     return `${month}월 ${day}일` // "월"과 "일"을 포함한 문자열 반환
   }
 
+  const formatCreatedAt = (dateString: string): string => {
+    const dateParts = dateString.split("-")
+    const year = dateParts[0] // 년
+    const month = dateParts[1] // 월
+    const day = dateParts[2] // 일
+    return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일` // 포맷팅
+  }
+
   const formattedDate = formatDate(selectedDate)
 
   return (
     <div className="flex flex-col">
-      <h2 className="mb-1 text-center text-2xl font-bold">
+      <h2 className="mb-1 text-center text-3xl font-bold">
         {formattedDate}{" "}
-        <span className="text-lg font-bold" style={{ fontSize: "0.8rem" }}>
+        <span className="text-xl font-bold" style={{ fontSize: "0.8rem" }}>
           {" "}
           {/* "월", "일"의 글자 크기 조정 */}의
         </span>{" "}
-        <span className="text-lg">나의 투자</span>
+        <span className="text-xl">나의 투자</span>
       </h2>{" "}
+      <br />
       {/* 날짜와 나의 투자 문구를 한 줄에 출력 */}
       <div className="flex justify-between">
-        <div className="col-span-1 w-1/2">
-          <h3 className="font-bold">머니 변동 내역</h3>
-          <ul>
+        <div className="col-span-1 w-1/2 pr-4">
+          <div className="flex justify-between">
+            <h3 className="text-base-16 pb-2 font-bold">머니 변동 내역</h3>
+            <p className="text-red-500">
+              +
+              {filteredEvents
+                .reduce((acc, event) => {
+                  return event.tradeType === "4" ? acc + event.amount : acc // 매수는 더하기
+                }, 0)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+              머니
+            </p>
+            <p className="text-blue-500">
+              -
+              {filteredEvents
+                .reduce((acc, event) => {
+                  return event.tradeType === "5" ? acc + event.amount : acc // 매도는 더하기
+                }, 0)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+              머니
+            </p>
+          </div>
+          <ul className="max-h-[300px] overflow-y-auto">
             {filteredEvents.length > 0 ? (
               filteredEvents.map((event, index) => {
                 console.log(event) // event 값 출력
+                const isSellType = event.tradeType === "5" // tradeType이 5인지 확인
+
                 return (
-                  <li key={index}>
-                    {event.companyName} ({event.stockTradingGain} ,{" "}
-                    {event.amount})
+                  <li
+                    key={index}
+                    className="mb-2 rounded-lg bg-white p-4 shadow-md" // 흰색 배경, radius 15, 여백 추가
+                  >
+                    <div className="flex justify-between text-sm">
+                      <p>{event.companyName}</p>
+                      <p
+                        className={
+                          isSellType ? "text-red-500" : "text-blue-500"
+                        }
+                        // amount 색상 변경
+                      >
+                        {isSellType ? `+${event.amount}` : `-${event.amount}`}{" "}
+                        머니 {/* 기호 추가 */}
+                      </p>
+                    </div>
+                    <div className="flex justify-between">
+                      {/* <p>{formatCreatedAt(event.createdAt)}</p> */}
+                      <p
+                        className={`${isSellType ? "text-red-500" : "text-blue-500"} `}
+                      >
+                        {isSellType ? "매수" : "매도"}
+                      </p>
+                      <p>{event.tradeSharesCount} 주</p>
+                    </div>
                   </li>
                 )
               })
             ) : (
-              <li>No events</li>
+              <li className="mb-2 rounded-lg bg-white p-4 shadow-md">
+                No events
+              </li>
             )}
           </ul>
         </div>
+        {/* 투자 기록 출력 */}
+        {/* 투자 기록 출력 */}
+        {/* 투자 기록 출력 */}
         <div className="col-span-1 w-1/2">
-          <h3 className="font-bold">투자 기록</h3>
-          <h1 className="text-sm">
-            이 종목을 선택한 이유가 무엇인지 기억나나요? 그 때의 생각을 다시
-            떠올려봐요
+          <h3 className="text-base font-bold">투자 기록</h3>
+          <h1 className="pb-2 text-sm">
+            이 종목을 선택한 이유가 무엇인지 기억나나요?
+            <br />그 때의 생각을 다시 떠올려봐요
           </h1>
-          <ul>
+          <ul className="max-h-[300px] overflow-y-auto">
             {filteredEvents.length > 0 ? (
               filteredEvents.map((event, index) => {
                 console.log(event) // event 값 출력
+                const isSellType = event.tradeType === "5" // tradeType이 5인지 확인
+                const isBuyType = event.tradeType === "4" // tradeType이 4인지 확인
                 return (
-                  <li key={index}>
-                    {event.tradeType} ({event.reason})
+                  <li
+                    key={index}
+                    className="mb-2 rounded-lg bg-white p-4 shadow-md" // 흰 배경, radius, 여백 추가
+                  >
+                    <div className="bg-primary-50">
+                      {(isSellType || isBuyType) && (
+                        <div className="text-dark-500 mb-2 flex justify-between text-xs">
+                          <div className="flex justify-between">
+                            <p>거래유형</p>
+                            <p
+                              className={`${isSellType ? "text-red-500" : "text-blue-500"} ml-2`}
+                            >
+                              {isSellType ? "매수" : "매도"}
+                            </p>
+                          </div>
+
+                          <p>일시 {formatCreatedAt(event.createdAt)}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex justify-between">
+                      <strong className="text-xl">{event.companyName}</strong>
+                      <strong className="text-xl">
+                        {event.tradeSharesCount} 주
+                      </strong>
+                    </div>
+                    <div></div>
+                    <div className="text-right text-base">
+                      <strong> {event.amount} 머니</strong>
+                    </div>
+                    <div className="text-base">
+                      <p>{event.reason}</p>
+                    </div>
                   </li>
                 )
               })
             ) : (
-              <li>No events</li>
+              <li className="mb-2 rounded-lg bg-white p-4 shadow-md">
+                No events
+              </li>
             )}
           </ul>
         </div>
