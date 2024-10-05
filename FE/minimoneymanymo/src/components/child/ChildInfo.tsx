@@ -47,7 +47,7 @@ const ChildInfo: React.FC = () => {
       <div
         className={`mb-5 flex flex-row items-center rounded-3xl bg-tertiary-50 px-8 py-5 ${!isVisible ? "hidden" : ""}`}
       >
-        <div className="mr-3 flex flex-[1] flex-col">
+        <div className="mr-2 flex w-[280px] flex-col">
           <img
             className="mb-3 h-24 w-24 rounded-full object-cover"
             src={child.profileImgUrl || "/images/profile.jpg"}
@@ -73,7 +73,7 @@ const ChildInfo: React.FC = () => {
             </span>
           </div>
         </div>
-        <div className="relative flex w-[750px] flex-[3] flex-col">
+        <div className="relative flex w-[790px] flex-col">
           <b className="text-lg">보유주식</b>
           <div className="relative flex items-center">
             {stockList.length > 0 && (
