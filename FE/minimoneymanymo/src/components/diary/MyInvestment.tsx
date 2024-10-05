@@ -82,9 +82,10 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                         className={
                           isSellType ? "text-red-500" : "text-blue-500"
                         }
-                        // amount 색상 변경
                       >
-                        {isSellType ? `+${event.amount}` : `-${event.amount}`}{" "}
+                        {isSellType
+                          ? `+${event.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                          : `-${event.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}{" "}
                         머니 {/* 기호 추가 */}
                       </p>
                     </div>
@@ -129,7 +130,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                   >
                     <div className="bg-primary-50">
                       {(isSellType || isBuyType) && (
-                        <div className="text-dark-500 mb-2 flex justify-between text-xs">
+                        <div className="mb-2 flex justify-between text-xs text-gray-500">
                           <div className="flex justify-between">
                             <p>거래유형</p>
                             <p
@@ -152,7 +153,13 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                     </div>
                     <div></div>
                     <div className="text-right text-base">
-                      <strong> {event.amount} 머니</strong>
+                      <strong>
+                        {" "}
+                        {event.amount
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+                        머니
+                      </strong>
                     </div>
                     <div className="text-base">
                       <p>{event.reason}</p>
