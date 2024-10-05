@@ -1,7 +1,8 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { MyChildDiary } from "@/components/my-children/types"
 import { putReasonBonusMoney } from "@/api/stock-api" // 수정된 API 호출 함수 가져오기
 import { useChild } from "../context/ChildContext"
+import { useNavigate } from "react-router-dom" // react-router-dom을 사용하여 navigate 기능 추가
 
 // diary prop 타입 정의
 interface MyChildDiaryGiveMoneyProps {
@@ -16,6 +17,7 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
   const { child } = useChild()
   const [transactionCompleted, setTransactionCompleted] =
     useState<boolean>(false) // 거래 완료 상태 추가
+  const navigate = useNavigate() // navigate 훅 사용
 
   // tradeType 표시 변환
   const tradeTypeDisplay =
@@ -30,6 +32,14 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
 
     return `${year}년 ${parseInt(month, 10)}월 ${parseInt(day, 10)}일 ${hours}:${minutes}`
   }
+
+  // diary 내용 콘솔 출력
+  useEffect(() => {
+    console.log(diary)
+    if (diary.reasonBonusMoney !== null) {
+      setMessage("보너스 머니가 지급되었습니다.") // 초기 메시지 설정
+    }
+  }, [diary, diary.reasonBonusMoney]) // diary가 변경될 때마다 출력
 
   // 보너스 머니 전송 함수
   const handleSendBonusMoney = async () => {
@@ -57,6 +67,11 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
         setMessage("보너스 머니가 성공적으로 지급되었습니다.")
         setBonusMoney("") // 보너스 머니 입력 칸 비우기
         setTransactionCompleted(true)
+
+        // 3초 후에 현재 페이지 새로 고침
+        setTimeout(() => {
+          navigate(0)
+        }, 2000) // 3000ms = 3초
       } else {
         setMessage("보너스 머니 지급에 실패하였습니다.")
       }
@@ -67,7 +82,7 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
   }
 
   return (
-    <div>
+    <div className="p-4">
       <p className="text-lg">
         {tradeTypeDisplay} <br />
       </p>
@@ -118,7 +133,12 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
             </button>{" "}
           </div>
         )}
-      {message && <p>{message}</p>} {/* 처리 결과 메시지 표시 */}
+      {(transactionCompleted || diary.reasonBonusMoney !== null) && ( // 거래가 완료되었거나 reasonBonusMoney가 null이 아닐 때만 메시지 표시
+        <p className="p-2 text-center text-sm font-bold text-secondary-m2">
+          {message}
+        </p>
+      )}{" "}
+      {/* 처리 결과 메시지 표시 */}
     </div>
   )
 }

@@ -157,6 +157,8 @@ const getChildTradelistApi = async (
   month: number
 ) => {
   try {
+    console.log("API 호출 시 연도:", year) // 연도 확인
+    console.log("API 호출 시 월:", month) // 월 확인
     const res = await axiosAuthInstance.get("/funds/child-trade-list", {
       params: {
         childrenId: childrenId,
