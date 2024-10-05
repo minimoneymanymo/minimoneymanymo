@@ -7,6 +7,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.devtools.v85.domsnapshot.model.StringIndex;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -39,8 +40,11 @@ public class WebCrawlingTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         System.setProperty("webdriver.chrome.driver", DRIVER_PATH); // 드라이버 경로 설정
         List<NewsQuiz> newsQuizList = new ArrayList<>();
-
-        WebDriver driver = new ChromeDriver(); // WebDriver 객체 생성
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); 
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options); // WebDriver 객체 생성
         try {
             driver.get(URL);
             newsQuizList = crawlArticles(driver);
