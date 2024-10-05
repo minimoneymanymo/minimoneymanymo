@@ -51,6 +51,8 @@ const NavAction = (): JSX.Element => {
   const [profileImgUrl, setProfileImgUrl] = useState<string>("")
   const [name, setName] = useState<string>("")
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   useEffect(() => {
     if (getAccessTokenFromSession() !== null) {
       setIsLogin(true)
@@ -76,6 +78,7 @@ const NavAction = (): JSX.Element => {
     alert("로그아웃")
     logOutUser()
     setIsLogin(false)
+    navigate("/")
     // Redux 상태 초기화
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
