@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 @Component
@@ -41,7 +42,7 @@ public class WebCrawlingTasklet implements Tasklet {
         System.setProperty("webdriver.chrome.driver", DRIVER_PATH); // 드라이버 경로 설정
         List<NewsQuiz> newsQuizList = new ArrayList<>();
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless"); 
+        options.addArguments("--headless");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         WebDriver driver = new ChromeDriver(options); // WebDriver 객체 생성
@@ -158,7 +159,8 @@ public class WebCrawlingTasklet implements Tasklet {
     }
     //크롤링한 날짜데이터를 timstamp로 변환
     public LocalDateTime parsePublishedDate(String dateString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd. a h:mm");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd. a h:mm", Locale.KOREA);
         try {
             return LocalDateTime.parse(dateString, formatter);
         } catch (DateTimeParseException e) {
