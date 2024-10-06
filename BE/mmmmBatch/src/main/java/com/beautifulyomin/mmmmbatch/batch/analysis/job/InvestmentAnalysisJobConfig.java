@@ -3,6 +3,7 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.job;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReportV2;
+import com.beautifulyomin.mmmmbatch.batch.analysis.entity.MonthlyInvestorStatistics;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisProcessor;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisReader;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisWriter;
@@ -41,7 +42,7 @@ public class InvestmentAnalysisJobConfig {
     @Bean
     public Step tradingFrequencyStep() {
         return new StepBuilder("tradingFrequencyStep", jobRepository)
-                .<Children, InvestmentReportV2>chunk(10, transactionManager)
+                .<Children, MonthlyInvestorStatistics>chunk(10, transactionManager)
                 .reader(investmentAnalysisReader)
                 .processor(investmentAnalysisProcessor)
                 .writer(investmentAnalysisWriter)
