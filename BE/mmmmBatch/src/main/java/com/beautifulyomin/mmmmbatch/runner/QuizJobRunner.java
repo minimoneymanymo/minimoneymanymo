@@ -22,7 +22,7 @@ public class QuizJobRunner  { //
 
     }
 
-    @Scheduled(cron = "0 30 0,12 * * ?")
+    @Scheduled(cron = "0 5 1,12 * * ?")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis()) // JobParameters에 현재 시간 추가
