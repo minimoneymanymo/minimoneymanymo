@@ -179,6 +179,7 @@ function StockList({ filters }: { filters: StockFilter }) {
 
   // 필터가 변경되면 데이터 초기화 후 새로 불러옴
   useEffect(() => {
+    console.log("Current Filters:", filters)
     setPage(0)
     setStockRows([])
     fetchStockList(0, true) // reset 플래그를 통해 초기화 후 새로 로드
@@ -229,6 +230,8 @@ function StockList({ filters }: { filters: StockFilter }) {
     }
     setStockRows(newList)
   }
+
+  console.log("Current Filters:", filters)
 
   return (
     <div className="overflow-x-auto">

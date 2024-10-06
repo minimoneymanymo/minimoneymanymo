@@ -178,7 +178,7 @@ function MainDashboard() {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedInput(userInput)
-    }, 300) // 300ms 후에 디바운스 입력 업데이트
+    }, 200) // 200ms 후에 디바운스 입력 업데이트
 
     return () => {
       clearTimeout(handler) // 이전 타이머를 정리
@@ -189,6 +189,9 @@ function MainDashboard() {
   useEffect(() => {
     if (debouncedInput) {
       fetchStockData(debouncedInput, setSearchResults) // 디바운스된 입력값으로 API 호출
+    } else {
+      // 입력값이 없을 때 검색 결과를 비웁니다.
+      setSearchResults([])
     }
   }, [debouncedInput, fetchStockData])
 
@@ -289,9 +292,9 @@ function MainDashboard() {
         />
 
         {/* 필터 태그 표시 */}
+        {renderFilterTags()}
         {/* 검색창 추가 */}
-        <div className="flex flex-wrap gap-2">
-          {renderFilterTags()}
+        <div className="ml-auto">
           <input
             id="searchInput"
             type="text"
@@ -305,7 +308,7 @@ function MainDashboard() {
 
       {/* 검색 결과 출력 */}
       <div className="mt-4">
-        {searchResults.length > 0 ? (
+        {searchResults.length >= 0 ? (
           <ul>
             {searchResults.map((result, index) => (
               <li key={index} className="border-b p-2">
