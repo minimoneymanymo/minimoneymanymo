@@ -297,7 +297,7 @@ function MainDashboard() {
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)} // 입력값 상태 업데이트
-            className="ml-auto flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
+            className="ml-auto flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-gray-600 placeholder-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
             placeholder="주식 검색"
           />
         </div>
