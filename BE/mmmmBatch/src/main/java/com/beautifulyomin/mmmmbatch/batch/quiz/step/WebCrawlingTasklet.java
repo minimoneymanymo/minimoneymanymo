@@ -7,6 +7,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.devtools.v85.domsnapshot.model.StringIndex;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -23,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 @Component
@@ -39,8 +41,11 @@ public class WebCrawlingTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         System.setProperty("webdriver.chrome.driver", DRIVER_PATH); // 드라이버 경로 설정
         List<NewsQuiz> newsQuizList = new ArrayList<>();
-
-        WebDriver driver = new ChromeDriver(); // WebDriver 객체 생성
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options); // WebDriver 객체 생성
         try {
             driver.get(URL);
             newsQuizList = crawlArticles(driver);
@@ -154,7 +159,8 @@ public class WebCrawlingTasklet implements Tasklet {
     }
     //크롤링한 날짜데이터를 timstamp로 변환
     public LocalDateTime parsePublishedDate(String dateString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd. a h:mm");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd. a h:mm", Locale.KOREA);
         try {
             return LocalDateTime.parse(dateString, formatter);
         } catch (DateTimeParseException e) {
