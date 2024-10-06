@@ -62,7 +62,7 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
     <div className="w-full">
       {/* 스크롤 버전 */}
       <ul className="max-h-96 overflow-y-auto">
-      {/* <ul> */}
+        {/* <ul> */}
         {diaryList.map((diary) => {
           const diaryMonth = diary.createdAt.slice(4, 6)
           const diaryDay = diary.createdAt.slice(6, 8)
