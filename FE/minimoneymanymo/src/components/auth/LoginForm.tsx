@@ -45,7 +45,7 @@ export function LoginForm() {
         // 선택한 상태 확인
         console.log("Parent state: ", parent)
         console.log("Child state: ", child)
-        // navigate("/")
+        navigate("/")
       }
     } catch (error) {
       console.error("Login failed:", error)

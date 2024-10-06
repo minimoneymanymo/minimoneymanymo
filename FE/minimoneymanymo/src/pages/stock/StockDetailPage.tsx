@@ -11,6 +11,7 @@ import {
   StockData,
 } from "@/components/chart/ChartType"
 import ChartComponent from "@/components/chart/ChartComponent"
+import CircularProgress from "@mui/material/CircularProgress"
 
 function StockDetailPage(): JSX.Element {
   const [dailyStockChart, setDailyStockChart] = useState<StockData[]>([])
@@ -87,7 +88,6 @@ function StockDetailPage(): JSX.Element {
       volume: item.tradingVolume,
     }))
   }
-
   const StockInfo = (): JSX.Element => {
     const toggleLike = async () => {
       setIsLike((prev) => !prev)
@@ -101,6 +101,7 @@ function StockDetailPage(): JSX.Element {
         }
       }
     }
+
     return (
       <div className="m-6 mb-2 flex flex-col gap-2">
         {stockInfo ? (
@@ -122,7 +123,7 @@ function StockDetailPage(): JSX.Element {
             {stockData ? (
               <div className="flex items-end gap-3 text-xl">
                 <div
-                  className={`ms-4 text-3xl font-bold ${stockData.priceChange > 0 ? "text-buy" : "text-sell"}`}
+                  className={`text-3xl font-bold ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
                 >
                   {dailyStockChart[
                     dailyStockChart.length - 1
@@ -132,7 +133,7 @@ function StockDetailPage(): JSX.Element {
                 <span className="text-base text-gray-500">
                   어제보다
                   <span
-                    className={`ms-4 ${stockData.priceChange > 0 ? "text-red-500" : "text-blue-500"}`}
+                    className={`ms-4 ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
                   >
                     {stockData.priceChange ?? 0} 머니(
                     {stockData?.priceChangeRate ?? "N/A"}%)
@@ -144,7 +145,7 @@ function StockDetailPage(): JSX.Element {
             )}
           </>
         ) : (
-          <div>Loading stock information...</div>
+          <div>Loading...</div>
         )}
       </div>
     )
@@ -171,6 +172,13 @@ function StockDetailPage(): JSX.Element {
     )
   }
 
+  if (!stockInfo) {
+    return (
+      <div className="h-full w-[800px] flex items-center justify-center">
+        <CircularProgress color="inherit" />
+      </div>
+    )
+  }
   return (
     <div className="relative flex h-full w-[800px] flex-col">
       <div className="flex h-fit w-full items-end justify-between">

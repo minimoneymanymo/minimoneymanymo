@@ -3,6 +3,8 @@ import {
   IgrFinancialChartModule,
 } from "igniteui-react-charts"
 import { ChartData } from "./ChartType"
+import { IChartTooltipProps } from "igniteui-react-core"
+import { formatNumber } from "@/utils/stock-utils"
 
 interface ChartComponentProps {
   chartData: ChartData[]
@@ -25,8 +27,67 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
   // `
   // }
 
+  // IChartTooltipProps를 사용하는 툴팁 컴포넌트
+  const CustomTooltip: React.FC<IChartTooltipProps> = (props) => {
+    const { dataContext } = props // dataContext에서 item을 가져옴
+    const item = dataContext?.item // 실제 데이터 항목
+
+    // item이 존재하지 않거나 필요한 속성이 없는 경우 처리
+    if (!item) return null
+    return (
+      // <div className="border-none bg-white p-2">
+      // <div className="absolute z-50 rounded-md bg-white p-2 shadow-lg">
+      <div
+        className="absolute z-50 rounded-md bg-white p-2 shadow-lg"
+        style={{
+          top: "-2px",
+          left: "-2px",
+          // transform: "translate(-50%, -100%)",
+        }}
+      >
+        <div className="flex w-full flex-col space-y-1 text-left">
+          {" "}
+          {/* 각 항목 사이의 수직 간격 설정 */}
+          <div className="flex w-full">
+            <b>{item.date.toLocaleDateString("ko-KR")}</b>
+          </div>
+          <div className="flex w-full">
+            <span className="w-[70px]">시작:</span>
+            <span className="w-full text-left">
+              {item.open.toLocaleString()} 머니
+            </span>
+          </div>
+          <div className="flex w-full">
+            <span className="w-[70px]">고가:</span>
+            <span className="w-full text-left">
+              {item.high.toLocaleString()} 머니
+            </span>
+          </div>
+          <div className="flex w-full">
+            <span className="w-[70px]">저가:</span>
+            <span className="w-full text-left">
+              {item.low.toLocaleString()} 머니
+            </span>
+          </div>
+          <div className="flex w-full">
+            <span className="w-[70px]">종가:</span>
+            <span className="w-full text-left">
+              <b> {item.close.toLocaleString()} 머니</b>
+            </span>
+          </div>
+          <div className="flex w-full">
+            <span className="w-[70px]">거래량:</span>
+            <span className="w-full text-left">
+              {formatNumber(item.volume)}
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="h-full w-full">
+    <div className="z-10 h-full w-full overflow-visible">
       <IgrFinancialChart
         width="100%"
         height="100%"
@@ -39,6 +100,8 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
         // xAxisInterval={1}
         // xAxisGap={0.75}
         isToolbarVisible="false" //툴바 비활성화
+        tooltipTemplate={CustomTooltip}
+        toolTipType="item"
         chartType={"Candle"}
         // transitionInDuration={100000}
         yAxisLabelFormat="{0}"
@@ -60,12 +123,16 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
         // xAxisZoomMaximumCategoryRange={2}
         // xAxisZoomToCategoryStart={0}
         volumeOutlines={"white"}
-        toolTipType="data"
-        dataToolTipUnitsText={""}
+        // toolTipType="data"
+        // dataToolTipUnitsText={""}
         // xAxisZoomToCategoryRange={}
         windowRect={
-          chartData.length > 20 ? initialWindowRect : defaultWindowRect
+          chartData.length < 20 ? defaultWindowRect : initialWindowRect
         } // 조건부로 설정된 windowRect 20개 기준
+        // toolTipType="Data"
+        // dataToolTipIncludedColumns={["Open", "Close", "High", "Low"]}
+        // dataToolTipLabelTextColor="rgba(74, 74, 74, 1)"
+        // dataToolTipValueTextColor="rgba(0, 173, 3, 1)"
       />
     </div>
   )

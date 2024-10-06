@@ -50,8 +50,9 @@ export interface MoneyInfoProps {
 
 export interface WithdrawableMoneyProps {
   createdAt: string
-  amount: string
+  amount: number
   approvedAt?: string | null
+  isParent?: boolean
 }
 
 export interface RecordItemProps {

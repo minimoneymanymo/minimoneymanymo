@@ -13,6 +13,7 @@ interface ChildState {
   userKey: string
   createdAt: string
   accountNumber: string
+  birthDay: string
 }
 
 const initialState: ChildState = {
@@ -26,6 +27,7 @@ const initialState: ChildState = {
   userKey: "",
   createdAt: "",
   accountNumber: "",
+  birthDay: "",
 }
 
 export const childSlice = createSlice({

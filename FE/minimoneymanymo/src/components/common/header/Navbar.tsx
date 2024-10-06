@@ -51,6 +51,8 @@ const NavAction = (): JSX.Element => {
   const [profileImgUrl, setProfileImgUrl] = useState<string>("")
   const [name, setName] = useState<string>("")
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   useEffect(() => {
     if (getAccessTokenFromSession() !== null) {
       setIsLogin(true)
@@ -76,6 +78,7 @@ const NavAction = (): JSX.Element => {
     alert("로그아웃")
     logOutUser()
     setIsLogin(false)
+    navigate("/")
     // Redux 상태 초기화
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
@@ -141,22 +144,6 @@ const NavAction = (): JSX.Element => {
   )
 }
 
-const NavActionDev = (): JSX.Element => {
-  return (
-    <ul className="flex h-16 text-center">
-      <li className="mx-2.5 flex h-full cursor-pointer items-center">
-        <Link to="/parent/my-wallet">부모마이페이지</Link>
-      </li>
-      <li className="mx-2.5 flex h-full cursor-pointer items-center">
-        <Link to="/my-info/wallet">자식마이페이지</Link>
-      </li>
-      <li className="mx-2.5 flex h-full cursor-pointer items-center">
-        <Link to="/news">뉴스</Link>
-      </li>
-    </ul>
-  )
-}
-
 function Navbar(): JSX.Element {
   const navigator = useNavigate()
   return (
@@ -183,7 +170,6 @@ function Navbar(): JSX.Element {
           </div>
         </button>
         {/* <NavItemList /> */}
-        <NavActionDev />
         <NavAction />
       </div>
     </nav>
