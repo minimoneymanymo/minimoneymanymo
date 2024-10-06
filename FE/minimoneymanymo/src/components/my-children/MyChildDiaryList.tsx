@@ -59,10 +59,10 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
   }
 
   return (
-    <div>
+    <div className="w-full">
       {/* 스크롤 버전 */}
-      {/* <ul className="max-h-96 overflow-y-auto"> */}
-      <ul>
+      <ul className="max-h-96 overflow-y-auto">
+      {/* <ul> */}
         {diaryList.map((diary) => {
           const diaryMonth = diary.createdAt.slice(4, 6)
           const diaryDay = diary.createdAt.slice(6, 8)
@@ -81,7 +81,7 @@ const MyChildDiaryList: React.FC<MyChildDiaryListProps> = ({
               key={`${diary.createdAt}-${diary.remainAmount}-${diary.tradeSharesCount}-${Math.random()}`}
               className="mb-4 flex w-full p-4"
             >
-              <button onClick={() => onSelectDiary(diary)}>
+              <button className="w-full" onClick={() => onSelectDiary(diary)}>
                 <div className="flex w-full items-center justify-between">
                   <div className="flex items-center justify-between gap-0">
                     <p className="mr-2 text-xl font-bold leading-[1.2]">
