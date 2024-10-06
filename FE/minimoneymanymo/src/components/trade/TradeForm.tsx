@@ -200,14 +200,19 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   }
 
   return (
-    <div className="flex w-[340px] flex-col items-center p-2">
+    <div className="relative flex w-[340px] flex-col items-center p-2">
       {/* 매수매도 버튼 */}
       <div className="mb-4 flex h-[80px] space-x-4">
-        <Button className="bg-buy" onClick={() => setIsBuyMode(true)}>
+        <Button
+          className="left-[100px] top-[60px] h-[80px] justify-center bg-buy"
+          style={{ paddingTop: "0.1px" }}
+          onClick={() => setIsBuyMode(true)}
+        >
           매수
         </Button>
         <Button
-          className="bg-sell"
+          className="left-[70px] top-[60px] h-[80px] justify-center bg-sell"
+          style={{ paddingTop: "0.1px" }}
           onClick={() => {
             setIsBuyMode(false) // 매도 모드로 변경
             // remainSharesCount를 체크하여 조건에 맞는 경우 setProfitLoss 호출
@@ -221,7 +226,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
           매도
         </Button>
       </div>
-      <Card className="shadow-blue-gray-900/5 h-[510px] w-full border p-0 px-5 py-6">
+      <Card className="shadow-blue-gray-900/5 z-10 h-[510px] w-full border p-0 px-5 py-6">
         {/* 매수 모드 카드 */}
         {/* 매수 모드 카드 */}
         {/* 매수 모드 카드 */}
