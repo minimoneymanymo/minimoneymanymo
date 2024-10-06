@@ -58,6 +58,18 @@ const getWithdrawListApi = async () => {
   }
 }
 
+// 부모-자식의출금요청내역
+const getChildWithdrawListApi = async (childrenId: string) => {
+  try {
+    const response = await axiosAuthInstance.get(
+      `/funds/child-withdraw-list?childrenId=${childrenId}`
+    )
+    return response.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
 // 부모-출금 요청 승인
 const approveRequestApi = async (param: object) => {
   try {
@@ -104,39 +116,11 @@ const getMoneyApi = async () => {
   }
 }
 
-// 부모-자식의출금요청내역
-const getChildWithdrawListApi = async (childrenId: string) => {
-  try {
-    const response = await axiosAuthInstance.get(
-      `/funds/child-withdraw-list?childrenId=${childrenId}`
-    )
-    return response.data
-  } catch (error) {
-    handleApiError(error)
-  }
-}
-
 // 자식-거래내역
 const getTradeListApi = async (year: number, month: number) => {
   try {
     const response = await axiosAuthInstance.get(
       `/funds/trade-list?year=${year}&month=${month}`
-    )
-    return response.data
-  } catch (error) {
-    handleApiError(error)
-  }
-}
-
-// 부모-투자일기(거래내역) 조회
-const getChildTradeListApi = async (
-  childrenId: string,
-  year: number,
-  month: number
-) => {
-  try {
-    const response = await axiosAuthInstance.get(
-      `/funds/child-trade-list?childrenId=${childrenId}&year=${year}&month=${month}`
     )
     return response.data
   } catch (error) {
@@ -181,14 +165,35 @@ const getChildTradelistApi = async (
       },
     })
     return res.data
+  } catch (error) {
+    handleApiError(error)
+  }
+}
+
+//용돈지급
+const giveAllowanceApi = async (
+  childrenId: number,
+  inputValue: number | ""
+) => {
+  try {
+    const res = await axiosAuthInstance.put(
+      `/funds/giveMoney`,
+
+      {
+        childrenId,
+        amount: inputValue,
+      }
+    )
+    console.log(res.data)
+    return res.data
   } catch (e) {
     if (axios.isAxiosError(e) && e.response) {
       // Axios 에러 객체인 경우
-      console.error("getChildTradelist axios 오류 발생:", e.response)
-      return e.response
+      console.error("updateAllowance에서 오류 발생:", e.response)
+      return e.response // e.response는 { data, status, headers, config }를 포함함
     } else {
       // Axios 에러가 아닌 경우
-      console.error("getChildTradelist 서버 오류 발생:", e)
+      console.error("updateAllowance에서 오류 발생:", e)
       return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }
@@ -205,7 +210,7 @@ export {
   getMoneyApi,
   getChildWithdrawListApi,
   getTradeListApi,
-  getChildTradeListApi,
   getStockApi,
   getChildTradelistApi,
+  giveAllowanceApi,
 }

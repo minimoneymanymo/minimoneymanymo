@@ -10,4 +10,6 @@ export interface StockHeld {
   evaluateMoney: number
   priceChangeRate: number
   priceChangeMoney: number
+  priceChange: number
+  stockPriceChangeRate: number
 }

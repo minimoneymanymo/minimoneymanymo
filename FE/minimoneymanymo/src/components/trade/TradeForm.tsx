@@ -5,6 +5,8 @@ import { Card, Button } from "@material-tailwind/react"
 
 import { postTrade, getChildMoney } from "@/api/trade-api"
 import { tradeData } from "./tradeData"
+import { useAppDispatch } from "@/store/hooks"
+import { setMemberInfo } from "@/utils/user-utils"
 
 // closingPrice를 props로 받기 위해 인터페이스 정의
 interface TradeFormProps {
@@ -20,6 +22,7 @@ interface CustomError extends Error {
 function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   const { stockCode } = useParams() // useParams로 stockCode 가져오기
   const [isBuyMode, setIsBuyMode] = useState<boolean>(true)
+  const dispatch = useAppDispatch()
 
   //매수 시 사용
   const [money, setMoney] = useState<number | null>(null) // 보유머니
@@ -138,6 +141,8 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
       setReason("") // textarea 초기화
       alert("거래가 성공적으로 완료되었습니다!")
       await loadMoney()
+      await setMemberInfo(dispatch, 1)
+      console.log("🎅🤶👼🧔👲")
     } catch (error) {
       if (error instanceof Error) {
         console.error("Trade failed:", error.message) // 오류 메시지 출력
