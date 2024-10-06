@@ -12,6 +12,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
 }) => {
   // 날짜 포맷 변환: YYYY-MM-DD 형식에서 "MM월 DD일" 형식으로 변환
   const formatDate = (dateString: string): string => {
+    console.log(dateString)
     const date = new Date(dateString)
     const month = String(date.getMonth() + 1).padStart(2, "0") // 월 가져오기 (01~12)
     const day = String(date.getDate()).padStart(2, "0") // 일 가져오기 (01~31)
@@ -19,6 +20,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
   }
 
   const formatCreatedAt = (dateString: string): string => {
+    console.log(dateString)
     const dateParts = dateString.split("-")
     const year = dateParts[0] // 년
     const month = dateParts[1] // 월
@@ -128,40 +130,65 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                     key={index}
                     className="mb-2 rounded-lg bg-white p-4 shadow-md" // 흰 배경, radius, 여백 추가
                   >
-                    <div className="bg-primary-50">
+                    <div className="rounded-lg bg-primary-50">
                       {(isSellType || isBuyType) && (
                         <div className="mb-2 flex justify-between text-xs text-gray-500">
-                          <div className="flex justify-between">
-                            <p>거래유형</p>
+                          <div className="mb-1 ml-2 mt-1 flex justify-between">
+                            <p className="">거래유형</p>
                             <p
                               className={`${isSellType ? "text-red-500" : "text-blue-500"} ml-2`}
                             >
                               {isSellType ? "매수" : "매도"}
                             </p>
                           </div>
-
-                          <p>일시 {formatCreatedAt(event.createdAt)}</p>
+                          <div className="mb-1 mr-2 mt-1">
+                            <p>일시 {formatCreatedAt(event.createdAt)}</p>
+                          </div>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex justify-between">
+                    <div className="m-2 flex justify-between">
                       <strong className="text-xl">{event.companyName}</strong>
                       <strong className="text-xl">
                         {event.tradeSharesCount} 주
                       </strong>
                     </div>
                     <div></div>
-                    <div className="text-right text-base">
-                      <strong>
+                    <div className="font-base ml-2 mr-2 flex justify-between text-sm font-bold">
+                      <p>거래 머니</p>
+                      <p className="text-right">
                         {" "}
                         {event.amount
                           .toString()
                           .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
                         머니
-                      </strong>
+                      </p>
                     </div>
-                    <div className="text-base">
+                    <div className="font-base ml-2 mr-2 flex justify-between text-sm font-bold">
+                      <p className="text-primary-800">손익 머니</p>
+                      <p
+                        className={`text-right ${
+                          event.stockTradingGain !== null &&
+                          event.stockTradingGain !== undefined
+                            ? event.stockTradingGain > 0
+                              ? "text-buy" // 양수일 때 색상
+                              : event.stockTradingGain < 0
+                                ? "text-sell" // 음수일 때 색상
+                                : "text-black" // 0일 때 색상
+                            : "text-black" // null 또는 undefined일 때 기본 검정색
+                        }`}
+                      >
+                        {event.stockTradingGain !== null &&
+                        event.stockTradingGain !== undefined
+                          ? event.stockTradingGain
+                              .toString()
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                          : "0"}{" "}
+                        머니
+                      </p>
+                    </div>
+                    <div className="m-2 text-base">
                       <p>{event.reason}</p>
                     </div>
                   </li>
