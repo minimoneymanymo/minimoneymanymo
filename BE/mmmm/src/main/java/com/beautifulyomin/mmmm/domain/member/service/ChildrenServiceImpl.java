@@ -111,6 +111,16 @@ public class ChildrenServiceImpl implements ChildrenService {
         }
     }
 
+    @Override
+    public int solveQuiz(Children children){
+        int bonusMoney =  children.getSettingQuizBonusMoney();
+        int resultMoney = children.getMoney()+bonusMoney;
+        children.setMoney(resultMoney);
+        childrenRepository.save(children);
+        return bonusMoney;
+
+    }
+
         @Override
     public long updateAccount(String childUserId, String accountNumber, String bankCode) {
         return parentRepositoryCustom.updateChildAccount(childUserId, accountNumber, bankCode);
