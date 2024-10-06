@@ -232,7 +232,7 @@ function StockList({ filters }: { filters: StockFilter }) {
           <tr>
             {TABLE_HEAD.map(({ label, key }) => (
               <th
-                key={label}
+                key={`${label}-${Math.random()}`}
                 className="border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50 cursor-pointer border-y p-4 text-right transition-colors"
                 onClick={() => key && handleSort(key)}
                 style={{ width: "5%" }}
@@ -254,9 +254,11 @@ function StockList({ filters }: { filters: StockFilter }) {
             const { color, sign } = getPriceChangeColorAndSign(
               stock.priceChange
             )
+            const key = stock.stockCode ? stock.stockCode : `stock-${index}` // Ensure unique key
+
             return (
               <tr
-                key={stock.stockCode}
+                key={`${index}-${Math.random()}`}
                 onClick={() => handleRowClick(stock.stockCode)}
                 className="cursor-pointer hover:bg-gray-50"
                 ref={
