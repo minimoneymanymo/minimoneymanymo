@@ -199,19 +199,24 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
     }
   }
 
+  // isBuyMode가 변경될 때마다 값 출력
+  useEffect(() => {
+    console.log(`Buy mode activated: ${isBuyMode}`)
+  }, [isBuyMode])
+
   return (
-    <div className="relative flex w-[340px] flex-col items-center p-2">
+    <div className="relative flex h-full w-[340px] flex-col p-2">
       {/* 매수매도 버튼 */}
-      <div className="mb-4 flex h-[80px] space-x-4">
+      <div className="absolute mt-14 flex h-[80px] w-[310px] justify-end space-x-4">
         <Button
-          className="left-[100px] top-[60px] h-[80px] justify-center bg-buy"
-          style={{ paddingTop: "0.1px" }}
+          className="z-10 h-16 bg-buy pb-6"
           onClick={() => setIsBuyMode(true)}
+          style={{ paddingTop: "0.1px" }}
         >
           매수
         </Button>
         <Button
-          className="left-[70px] top-[60px] h-[80px] justify-center bg-sell"
+          className="z-10 h-16 bg-sell pb-6 pt-4"
           style={{ paddingTop: "0.1px" }}
           onClick={() => {
             setIsBuyMode(false) // 매도 모드로 변경
@@ -226,175 +231,182 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
           매도
         </Button>
       </div>
-      <Card className="shadow-blue-gray-900/5 z-10 h-[510px] w-full border p-0 px-5 py-6">
-        {/* 매수 모드 카드 */}
-        {/* 매수 모드 카드 */}
-        {/* 매수 모드 카드 */}
-        {isBuyMode ? (
-          <>
-            <div className="flex w-full items-end justify-between">
-              <p className="text-base-16 text-left">현재가</p>
-              <p className="ml-2 text-right text-lg">
-                {closingPrice !== null
-                  ? closingPrice.toLocaleString()
-                  : "현재가를 불러올 수 없습니다"}{" "}
-                머니
+      {/* 매매 카드 */}
+      {/* 매매 카드 */}
+      {/* 매매 카드 */}
+      <div className="absolute">
+        <Card className="shadow-blue-gray-900/5 z-20 mt-24 h-[520px] w-[330px] max-w-md border p-0 px-5 py-6">
+          {/* 매수 모드 카드 */}
+          {/* 매수 모드 카드 */}
+          {/* 매수 모드 카드 */}
+          {isBuyMode ? (
+            <>
+              <div className="flex w-full items-end justify-between">
+                <p className="text-base-16 text-left">현재가</p>
+                <p className="ml-2 text-right text-lg">
+                  {closingPrice !== null
+                    ? closingPrice.toLocaleString()
+                    : "현재가를 불러올 수 없습니다"}{" "}
+                  머니
+                </p>
+              </div>
+              <div className="flex w-full items-end justify-between">
+                <p className="text-base-16 text-left">보유 머니</p>
+                <p className="text-right text-lg">
+                  {money !== null && money !== undefined
+                    ? money.toLocaleString()
+                    : "로딩 중..."}{" "}
+                  머니
+                </p>
+              </div>
+              <p className="availablePurchaseShares mb-1 text-right text-sm text-gray-300">
+                최대 {maxShares.toFixed(6)} 주 매수 가능
               </p>
-            </div>
-            <div className="flex w-full items-end justify-between">
-              <p className="text-base-16 text-left">보유 머니</p>
-              <p className="text-right text-lg">
-                {money !== null && money !== undefined
-                  ? money.toLocaleString()
-                  : "로딩 중..."}{" "}
-                머니
-              </p>
-            </div>
-            <p className="availablePurchaseShares mb-1 text-right text-sm text-gray-300">
-              최대 {maxShares.toFixed(6)} 주 매수 가능
-            </p>
-            {/* <br /> */}
-            <div className="flex items-center">
+              {/* <br /> */}
+              <div className="flex items-center">
+                <input
+                  type="tel"
+                  className="w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                  value={
+                    inputMoney === 0 ? "" : inputMoney.toLocaleString("ko-KR")
+                  } // 숫자 세 자리마다 쉼표
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
+                    setInputMoney(Number(onlyNumbers)) // 상태 업데이트
+                  }}
+                  onKeyDown={(e) => {
+                    if (
+                      !/^[0-9]$/.test(e.key) && // 숫자키가 아닌 경우
+                      e.key !== "Backspace" && // 백스페이스 허용
+                      e.key !== "ArrowLeft" && // 왼쪽 화살표 허용
+                      e.key !== "ArrowRight" // 오른쪽 화살표 허용
+                    ) {
+                      e.preventDefault() // 그 외의 입력을 막음
+                    }
+                  }}
+                  placeholder="매수할 머니"
+                  style={{
+                    height: "36px",
+                    maxHeight: "35px",
+                    overflow: "hidden",
+                  }} // 높이 35px로 설정
+                />
+              </div>
+              <div className="flex w-full items-end justify-end text-right">
+                <p className="text-right underline">
+                  {tradeShares.toFixed(6)}{" "}
+                </p>
+                <p className="ml-1 mt-1">주</p>
+              </div>
+              <div className="mb-2 flex w-full items-end justify-between">
+                <p className="text-left text-base">매수 후 잔액</p>
+                {/* 이 부분 */}
+                <p className="text-right text-base">
+                  {remainingMoney !== null && remainingMoney !== undefined
+                    ? remainingMoney.toLocaleString()
+                    : "로딩 중..."}{" "}
+                  머니
+                </p>
+              </div>
+
               <input
                 type="tel"
-                className="w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
-                value={
-                  inputMoney === 0 ? "" : inputMoney.toLocaleString("ko-KR")
-                } // 숫자 세 자리마다 쉼표
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const onlyNumbers = e.target.value.replace(/\D/g, "") // 숫자 이외의 값 제거
-                  setInputMoney(Number(onlyNumbers)) // 상태 업데이트
-                }}
-                onKeyDown={(e) => {
-                  if (
-                    !/^[0-9]$/.test(e.key) && // 숫자키가 아닌 경우
-                    e.key !== "Backspace" && // 백스페이스 허용
-                    e.key !== "ArrowLeft" && // 왼쪽 화살표 허용
-                    e.key !== "ArrowRight" // 오른쪽 화살표 허용
-                  ) {
-                    e.preventDefault() // 그 외의 입력을 막음
-                  }
-                }}
-                placeholder="매수할 머니"
-                style={{
-                  height: "36px",
-                  maxHeight: "35px",
-                  overflow: "hidden",
-                }} // 높이 35px로 설정
+                className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
+                value={reason}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setReason(e.target.value)
+                }
+                placeholder="매수를 생각하게 된 이유를 적어주세요!"
               />
-            </div>
-            <div className="flex w-full items-end justify-end text-right">
-              <p className="text-right underline">{tradeShares.toFixed(6)} </p>
-              <p className="ml-1 mt-1">주</p>
-            </div>
-            <div className="mb-2 flex w-full items-end justify-between">
-              <p className="text-left text-base">매수 후 잔액</p>
-              {/* 이 부분 */}
-              <p className="text-right text-base">
-                {remainingMoney !== null && remainingMoney !== undefined
-                  ? remainingMoney.toLocaleString()
-                  : "로딩 중..."}{" "}
-                머니
+            </>
+          ) : (
+            <>
+              {/********** 매도 모드일 때 ***********/}
+              {/********** 매도 모드일 때 ***********/}
+              <div className="flex w-full items-end justify-between">
+                <p className="text-base-16 text-left">현재가</p>
+                <p className="ml-2 text-right text-lg">
+                  {closingPrice !== null
+                    ? closingPrice.toLocaleString()
+                    : "현재가를 불러올 수 없습니다"}{" "}
+                  머니
+                </p>
+              </div>
+              <div className="flex w-full items-end justify-between">
+                <p className="text-base-16 text-left">보유 주식</p>
+                <p className="text-right text-lg">
+                  {remainSharesCount.toFixed(6)} 주
+                </p>
+              </div>
+              <p className="availablePurchaseShares mb-1 text-right text-sm text-gray-300">
+                최대 {remainSharesCount.toFixed(6)} 주 매도 가능
               </p>
-            </div>
+              <div className="flex items-center">
+                <input
+                  type="tel"
+                  className="sellSharesInputBox w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                  value={sellShares} // 기존의 sellShares 값 사용
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const value = e.target.value
 
-            <input
-              type="tel"
-              className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
-              value={reason}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setReason(e.target.value)
-              }
-              placeholder="매수를 생각하게 된 이유를 적어주세요!"
-            />
-          </>
-        ) : (
-          <>
-            {/********** 매도 모드일 때 ***********/}
-            {/********** 매도 모드일 때 ***********/}
-            <div className="flex w-full items-end justify-between">
-              <p className="text-base-16 text-left">현재가</p>
-              <p className="ml-2 text-right text-lg">
-                {closingPrice !== null
-                  ? closingPrice.toLocaleString()
-                  : "현재가를 불러올 수 없습니다"}{" "}
-                머니
-              </p>
-            </div>
-            <div className="flex w-full items-end justify-between">
-              <p className="text-base-16 text-left">보유 주식</p>
-              <p className="text-right text-lg">
-                {remainSharesCount.toFixed(6)} 주
-              </p>
-            </div>
-            <p className="availablePurchaseShares mb-1 text-right text-sm text-gray-300">
-              최대 {remainSharesCount.toFixed(6)} 주 매도 가능
-            </p>
-            <div className="flex items-center">
+                    // 유효한 숫자 형식(정수 또는 소수점 포함)을 확인하고, 소수점 뒤 최대 6자리 허용
+                    if (/^\d*\.?\d{0,6}$/.test(value) || value === "") {
+                      setSellShares(value) // 입력값이 유효하면 상태에 저장
+                    }
+                    // sellShares가 빈 문자열이 되면 예상 손익과 매도 금액 초기화
+                    if (value === "") {
+                      setSellMoney(0) // 매도 금액 초기화
+                      setProfitLoss("매도할 주수를 입력해주세요") // 예상 손익 초기 메시지로 설정
+                    }
+                  }}
+                  placeholder="매도할 주 수"
+                  style={{
+                    height: "36px",
+                    maxHeight: "35px",
+                    overflow: "hidden",
+                  }} // 높이 35px로 설정
+                />
+              </div>
+              <div className="flex w-full items-end justify-end">
+                <p className="sellMoney text-right underline">
+                  {sellMoney.toLocaleString()}
+                </p>
+                <p className="ml-1 mt-1">머니</p>
+              </div>
+              <div className="mb-2 flex w-full items-end justify-between">
+                <p className="text-left text-base">예상손익머니</p>
+                <p
+                  className={`text-right text-base ${Number(profitLoss) >= 0 ? "buy" : "sell"}`}
+                >
+                  {Number(profitLoss) >= 0
+                    ? `+${profitLoss.toLocaleString()}`
+                    : `${profitLoss.toLocaleString()}`}
+                </p>
+              </div>
+
               <input
                 type="tel"
-                className="sellSharesInputBox w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
-                value={sellShares} // 기존의 sellShares 값 사용
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = e.target.value
-
-                  // 유효한 숫자 형식(정수 또는 소수점 포함)을 확인하고, 소수점 뒤 최대 6자리 허용
-                  if (/^\d*\.?\d{0,6}$/.test(value) || value === "") {
-                    setSellShares(value) // 입력값이 유효하면 상태에 저장
-                  }
-                  // sellShares가 빈 문자열이 되면 예상 손익과 매도 금액 초기화
-                  if (value === "") {
-                    setSellMoney(0) // 매도 금액 초기화
-                    setProfitLoss("매도할 주수를 입력해주세요") // 예상 손익 초기 메시지로 설정
-                  }
-                }}
-                placeholder="매도할 주 수"
-                style={{
-                  height: "36px",
-                  maxHeight: "35px",
-                  overflow: "hidden",
-                }} // 높이 35px로 설정
+                className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
+                value={reason}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setReason(e.target.value)
+                }
+                placeholder="매도를 생각하게 된 이유를 적어주세요!"
               />
-            </div>
-            <div className="flex w-full items-end justify-end">
-              <p className="sellMoney text-right underline">
-                {sellMoney.toLocaleString()}
-              </p>
-              <p className="ml-1 mt-1">머니</p>
-            </div>
-            <div className="mb-2 flex w-full items-end justify-between">
-              <p className="text-left text-base">예상손익머니</p>
-              <p
-                className={`text-right text-base ${Number(profitLoss) >= 0 ? "buy" : "sell"}`}
-              >
-                {Number(profitLoss) >= 0
-                  ? `+${profitLoss.toLocaleString()}`
-                  : `${profitLoss.toLocaleString()}`}
-              </p>
-            </div>
-
-            <input
-              type="tel"
-              className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
-              value={reason}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setReason(e.target.value)
-              }
-              placeholder="매도를 생각하게 된 이유를 적어주세요!"
-            />
-          </>
-        )}
-        <p className="warning mb-1 mb-2 mt-0.5 p-2 text-right text-xs text-red-500">
-          투자의 책임은 본인에게 있습니다.
-        </p>
-        <Button
-          className={isBuyMode ? "bg-buy" : "bg-sell"}
-          text-white="true"
-          onClick={() => handleTrade()}
-        >
-          {isBuyMode ? "매수하겠습니다" : "매도하겠습니다"}
-        </Button>
-      </Card>
+            </>
+          )}
+          <p className="warning mb-1 mb-2 mt-0.5 p-2 text-right text-xs text-red-500">
+            투자의 책임은 본인에게 있습니다.
+          </p>
+          <Button
+            className={isBuyMode ? "bg-buy" : "bg-sell"}
+            text-white="true"
+            onClick={() => handleTrade()}
+          >
+            {isBuyMode ? "매수하겠습니다" : "매도하겠습니다"}
+          </Button>
+        </Card>
+      </div>
     </div>
   )
 }
