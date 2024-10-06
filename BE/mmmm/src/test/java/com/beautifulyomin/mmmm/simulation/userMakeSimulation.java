@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 class userMakeSimulation {
 
     private static final int INVESTOR_START_IDX = 697;
-    private static final int MONEY =100000;
+    private static final int MONEY = 100000;
     private final Integer PARENT_ID = 5;
     private final EntityManager entityManager;
     private final ChildrenRepository childrenRepository;
@@ -52,7 +52,7 @@ class userMakeSimulation {
         List<Children> childrenList = new ArrayList<>();
         List<ParentAndChildren> parentAndChildrenList = new ArrayList<>();
 
-        for (int i = 1; i <= 300; i++) {
+        for (int i = 301; i <= 1000; i++) {
             String userId = "user" + i;
             String name = "Child" + i;
             String password = "password" + i;
@@ -88,12 +88,12 @@ class userMakeSimulation {
     public void updateChildrenMoney() {
 
         List<Children> childrenList = childrenRepository.findAllById(
-                IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX+299)
+                IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX + 999)
                         .boxed()
                         .toList()
         );
 
-        for (Children children: childrenList){
+        for (Children children : childrenList) {
             children.setMoney(MONEY);
         }
 

@@ -10,10 +10,7 @@ public class DiversificationData {
         if (stockHeldCount == 0) { //분석 대상 x
             return 0;
         }
-        if (this.stockHeldCount * 10 > 100) {
-            return 100;
-        }
-        return this.stockHeldCount * 10;
+        return Math.min(stockHeldCount * 5, 100);
     }
 
 }

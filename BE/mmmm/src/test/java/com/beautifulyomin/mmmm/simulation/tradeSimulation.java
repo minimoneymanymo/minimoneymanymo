@@ -1,6 +1,5 @@
 package com.beautifulyomin.mmmm.simulation;
 
-import com.amazonaws.services.kms.model.NotFoundException;
 import com.beautifulyomin.mmmm.config.QueryDslConfig;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.DailyStockChart;
@@ -19,7 +18,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -31,7 +29,29 @@ public class tradeSimulation {
     private static final LocalDate END_DATE = LocalDate.of(2024, 9, 30);
     private static final int INITIAL_MONEY = 100000;
     private static final int INVESTOR_START_IDX = 697;
-    private static final int INVESTOR_COUNT = 300;
+    private static final int INVESTOR_COUNT = 1000;
+
+    // 기본 수익 임계값: 이 비율 이상의 수익 시 매도를 고려
+    private static final double BASE_PROFIT_THRESHOLD = 0.05;  // 5%
+
+    // 기본 손실 임계값: 이 비율 이상의 손실 시 매도를 고려
+    private static final double BASE_LOSS_THRESHOLD = -0.03;   // -3%
+
+    // 시장 타이밍 고려 임계값: 이 값 이상일 때 시장 동향을 거래 결정에 반영
+    private static final double MARKET_TIMING_THRESHOLD = 0.5;
+
+    // 시장 영향 계수: 시장 동향이 매도 결정에 미치는 영향의 강도
+    private static final double MARKET_IMPACT_FACTOR = 0.5;
+
+    // 최대 보유 기간: 이 기간을 초과하면 매도를 고려 (일 단위)
+    private static final int MAX_HOLDING_PERIOD = 30;
+
+    // 최대 포트폴리오 크기: 보유 가능한 최대 주식 종류 수
+    private static final int MAX_PORTFOLIO_SIZE = 5;
+
+    // 시장 변화 기준점: 이 값을 기준으로 시장 상승/하락 판단
+    // 0.0은 변화 없음을 의미, 양수는 상승, 음수는 하락을 나타냄
+    private static final double MARKET_CHANGE_THRESHOLD = 0.0;
 
     private final TradeServiceImpl tradeService;
     private final DailyStockChartRepository dailyStockChartRepository;
@@ -39,16 +59,10 @@ public class tradeSimulation {
     private List<SimulationInvestor> investors;
     private List<SimulationStock> simulationStocks;
 
-
     @Autowired
     public tradeSimulation(TradeServiceImpl tradeService, DailyStockChartRepository dailyStockChartRepository) {
         this.tradeService = tradeService;
         this.dailyStockChartRepository = dailyStockChartRepository;
-    }
-
-    @Test
-    public void test() {
-        System.out.println(Math.random()); //0~1 값
     }
 
     @Test
@@ -78,7 +92,7 @@ public class tradeSimulation {
     private List<SimulationInvestor> initializeInvestors() {
         return IntStream.range(INVESTOR_START_IDX, INVESTOR_START_IDX + INVESTOR_COUNT)
                 .mapToObj(i -> new SimulationInvestor(i, INITIAL_MONEY, generateCharacteristics()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
@@ -111,24 +125,106 @@ public class tradeSimulation {
 
     private void makeTradingDecisions(SimulationInvestor investor, LocalDate date) {
         if (!isValidTradingDay(date)) {
-            System.out.println("이 날짜는 주말 또는 공휴일이기 때문에, 거래가 되지 않았습니다: " + date);
             return;
         }
 
-        for (SimulationStock simulationStock : simulationStocks) { //그 날짜에, 전체 주식에 대해 살지 말지를 본다.
-            if (shouldTrade(investor, simulationStock, date)) {
-                TradeDto tradeDto = createTradeDto(investor, simulationStock, date);
-                if (tradeDto == null) { //거래가 이루어지지 않음
-                    continue;
-                }
-                try {
-                    tradeService.createTradeByDate(tradeDto, investor.getId(), date);
-                    updateInvestorAfterTrade(investor, tradeDto);
-                } catch (IllegalArgumentException e) {
-                    // 거래 실패 처리
-                    e.printStackTrace();
-                }
+        // 매도 결정
+        for (Map.Entry<String, Integer> holding : new HashMap<>(investor.getStockHoldings()).entrySet()) {
+            String stockCode = holding.getKey();
+            SimulationStock stock = getStockByCode(stockCode);
+            if (shouldSell(investor, stock, date)) {
+                executeTrade(investor, stock, false, date);
             }
+        }
+
+        // 매수 결정
+        for (SimulationStock stock : simulationStocks) {
+            if (shouldBuy(investor, stock, date)) {
+                executeTrade(investor, stock, true, date);
+            }
+        }
+    }
+
+    private boolean shouldSell(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
+        Map<String, Double> characteristics = investor.getCharacteristics();
+        double profitRate = calculateProfitRate(investor, stock, date);
+        int holdingPeriod = calculateHoldingPeriod(investor, stock, date);
+
+        // 위험 회피 성향과 시장 타이밍 감도 계산
+        double riskAversion = 1 - characteristics.get("marketTimingPreference");
+        double marketTimingSensitivity = characteristics.get("marketTimingPreference");
+
+        // 기본 수익/손실 기준 설정
+        double profitThreshold = BASE_PROFIT_THRESHOLD * (2 - riskAversion);
+        double lossThreshold = BASE_LOSS_THRESHOLD * riskAversion;
+
+        // 시장 타이밍 감도가 높은 경우 시장 동향 반영
+        if (marketTimingSensitivity > MARKET_TIMING_THRESHOLD) {
+            double marketTrend = analyzeMarketTrend(stock.getMarket(), date);
+            double marketImpact = MARKET_IMPACT_FACTOR * marketTimingSensitivity;
+            profitThreshold += marketTrend * marketImpact;
+            lossThreshold += marketTrend * marketImpact;
+        }
+
+        // 수익률에 따른 매도 결정
+        if ((profitRate > profitThreshold && Math.random() < riskAversion) ||
+                (profitRate < lossThreshold && Math.random() < (2 - riskAversion))) {
+            return true;
+        }
+
+        // 보유 기간에 따른 매도 결정
+        double holdingPeriodPreference = characteristics.get("holdingPeriod");
+        if (holdingPeriod > MAX_HOLDING_PERIOD && Math.random() > holdingPeriodPreference) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private int calculateHoldingPeriod(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
+        return investor.calculateHoldingPeriod(stock.getStockCode(), date);
+    }
+
+    private double analyzeMarketTrend(String market, LocalDate date) {
+        // 해당 시장의 모든 주식의 평균 변동률 계산
+        return simulationStocks.stream()
+                .filter(s -> s.getMarket().equals(market))
+                .mapToDouble(s -> s.getDailyChangeRates().getOrDefault(date, 0.0))
+                .average()
+                .orElse(0.0);
+    }
+
+    private double calculateProfitRate(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
+        Integer boughtShares = investor.getStockHoldings().get(stock.getStockCode());
+        if (boughtShares == null || boughtShares == 0) {
+            return 0.0;
+        }
+
+        double currentPrice = stock.getDailyClosingPrices().get(date);
+        double averageBuyPrice = investor.getAverageBuyPrice(stock.getStockCode());
+
+        return (currentPrice - averageBuyPrice) / averageBuyPrice;
+    }
+
+    private void executeTrade(SimulationInvestor investor, SimulationStock stock, boolean isBuy, LocalDate date) {
+        TradeDto tradeDto = isBuy ? createBuyTradeDto(investor, stock, date) : createSellTradeDto(investor, stock, date);
+
+        if (tradeDto == null) {
+            System.out.println("Trade not executed for " + (isBuy ? "buy" : "sell") + " on " + date + " for stock " + stock.getStockCode());
+            return;
+        }
+
+        try {
+            tradeService.createTradeByDate(tradeDto, investor.getId(), date);
+            updateInvestorAfterTrade(investor, tradeDto);
+
+            // 거래 기록 추가
+            double pricePerShare = (double) tradeDto.getAmount() / tradeDto.getTradeSharesCount().doubleValue();
+            investor.addTransaction(tradeDto.getStockCode(), isBuy, tradeDto.getTradeSharesCount().intValue(), pricePerShare, date);
+
+            System.out.println("Trade executed: " + (isBuy ? "Buy" : "Sell") + " " + tradeDto.getTradeSharesCount() + " shares of " + tradeDto.getStockCode());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Failed to execute trade: " + e.getMessage());
         }
     }
 
@@ -136,7 +232,7 @@ public class tradeSimulation {
         return simulationStocks.get(0).getDailyClosingPrices().containsKey(date);
     }
 
-    private boolean shouldTrade(SimulationInvestor investor, SimulationStock simulationStock, LocalDate date) {
+    private boolean shouldBuy(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
         Map<String, Double> characteristics = investor.getCharacteristics();
 
         // 거래 빈도
@@ -146,7 +242,7 @@ public class tradeSimulation {
         }
 
         // 주식 보유 기간
-        if (investor.getStockHoldings().containsKey(simulationStock.getStockCode())) {
+        if (investor.getStockHoldings().containsKey(stock.getStockCode())) {
             double holdingPeriodPreference = characteristics.get("holdingPeriod");
             if (Math.random() < holdingPeriodPreference) {
                 return false;  // 보유 선호도가 높으면 거래하지 않을 확률이 높아짐
@@ -155,7 +251,7 @@ public class tradeSimulation {
 
         // 대형주/소형주 선호도
         double largeCapPreference = characteristics.get("largeCapPreference");
-        boolean isLargeCap = isLargeCapStock(simulationStock);
+        boolean isLargeCap = isLargeCapStock(stock);
         if ((isLargeCap && Math.random() > largeCapPreference) || (!isLargeCap && Math.random() < largeCapPreference)) {
             return false;
         }
@@ -163,79 +259,86 @@ public class tradeSimulation {
         // 포트폴리오 다양성
         double diversityPreference = characteristics.get("portfolioDiversity");
         int currentStockTypes = investor.getStockHoldings().size();
-        if (currentStockTypes > 5 && Math.random() > diversityPreference) {
+        if (currentStockTypes > MAX_PORTFOLIO_SIZE && Math.random() > diversityPreference) {
             return false;  // 이미 다양한 주식을 보유 중이고, 다양성 선호도가 낮으면 새로운 거래를 하지 않을 확률이 높아짐
         }
 
         // 시장 타이밍
         double marketTimingPreference = characteristics.get("marketTimingPreference");
-        double currentChangeRate = simulationStock.getDailyChangeRates().getOrDefault(date, 0d);
-        if ((currentChangeRate > 0 && Math.random() > marketTimingPreference) ||
-                (currentChangeRate < 0 && Math.random() < marketTimingPreference)) {
+        double currentChangeRate = stock.getDailyChangeRates().getOrDefault(date, 0.0);
+        boolean isMarketUp = currentChangeRate > MARKET_CHANGE_THRESHOLD;
+        if ((isMarketUp && Math.random() > marketTimingPreference) ||
+                (!isMarketUp && Math.random() < marketTimingPreference)) {
             return false;
         }
 
         return true;
     }
 
-    private TradeDto createTradeDto(SimulationInvestor investor, SimulationStock simulationStock, LocalDate date) {
-        boolean isBuy = decideBuyOrSell(investor, simulationStock, date);
-        if (!isBuy && !investor.getStockHoldings().containsKey(simulationStock.getStockCode())) {
-            return null;
-        }
-
-        BigDecimal amount = calculateTradeAmount(investor, simulationStock, isBuy, date);
+    private TradeDto createBuyTradeDto(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
+        BigDecimal amount = calculateTradeAmount(investor, stock, true, date);
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             return null;
         }
 
-        if (isBuy && amount.compareTo(BigDecimal.valueOf(investor.getMoney())) > 0) {
-            amount = BigDecimal.valueOf(investor.getMoney());
-        }
-
-        BigDecimal shareCount = calculateShareCount(amount, simulationStock, date);
-
-        // 매도의 경우, 보유 주식 수를 초과하지 않도록 조정
-        if (!isBuy) {
-            BigDecimal currentHoldings = BigDecimal.valueOf(investor.getStockHoldings().getOrDefault(simulationStock.getStockCode(), 0));
-            if (shareCount.compareTo(currentHoldings) > 0) {
-                shareCount = currentHoldings;
-                amount = shareCount.multiply(BigDecimal.valueOf(simulationStock.getDailyClosingPrices().get(date)));
-            }
+        BigDecimal shareCount = calculateShareCount(amount, stock, date);
+        if (shareCount.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
         }
 
         return TradeDto.builder()
-                .stockCode(simulationStock.getStockCode())
+                .stockCode(stock.getStockCode())
                 .amount(amount.intValue())
                 .tradeSharesCount(shareCount)
-                .reason("Simulation Trade")
-                .tradeType(isBuy ? "4" : "5") // 4: 매수, 5: 매도
+                .reason("Simulation Buy")
+                .tradeType("4") // 4: 매수
                 .build();
     }
 
-    private BigDecimal calculateTradeAmount(SimulationInvestor investor, SimulationStock simulationStock, boolean isBuy, LocalDate date) {
-        double investmentSizeRatio = investor.getCharacteristics().get("investmentSizeRatio");
-        double cashHoldingRatio = investor.getCharacteristics().get("cashHoldingRatio");
-
-        BigDecimal totalAssets = BigDecimal.valueOf(investor.getMoney()).add(new BigDecimal(calculateTotalStockValue(investor, date)));
-        BigDecimal currentCashRatio = BigDecimal.valueOf(investor.getMoney()).divide(totalAssets, 4, RoundingMode.HALF_UP);
-
-        if (isBuy) {
-            // 매수: 현금 비율이 목표 현금 보유 비율보다 높을 때만 매수
-            if (currentCashRatio.compareTo(BigDecimal.valueOf(cashHoldingRatio)) > 0) {
-                BigDecimal excessCash = totalAssets.multiply(currentCashRatio.subtract(BigDecimal.valueOf(cashHoldingRatio)));
-                BigDecimal maxBuyAmount = BigDecimal.valueOf(investor.getMoney()).multiply(BigDecimal.valueOf(investmentSizeRatio));
-                return excessCash.min(maxBuyAmount);
-            }
-        } else {
-            // 매도: 현금 비율이 목표 현금 보유 비율보다 낮을 때만 매도
-            if (currentCashRatio.compareTo(BigDecimal.valueOf(cashHoldingRatio)) < 0) {
-                BigDecimal cashNeeded = totalAssets.multiply(BigDecimal.valueOf(cashHoldingRatio).subtract(currentCashRatio));
-                return cashNeeded.multiply(BigDecimal.valueOf(investmentSizeRatio));
-            }
+    private TradeDto createSellTradeDto(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
+        int currentHoldings = investor.getStockHoldings().getOrDefault(stock.getStockCode(), 0);
+        if (currentHoldings == 0) {
+            return null;
         }
 
-        return BigDecimal.ZERO;
+        BigDecimal currentPrice = BigDecimal.valueOf(stock.getDailyClosingPrices().get(date));
+        int sharesToSell = (Math.random() < 0.3) ? currentHoldings : currentHoldings / 2;
+        if (sharesToSell == 0) {
+            return null;
+        }
+
+        BigDecimal amount = currentPrice.multiply(BigDecimal.valueOf(sharesToSell));
+
+        return TradeDto.builder()
+                .stockCode(stock.getStockCode())
+                .amount(amount.intValue())
+                .tradeSharesCount(BigDecimal.valueOf(sharesToSell))
+                .reason("Simulation Sell")
+                .tradeType("5") // 5: 매도
+                .build();
+    }
+
+    private SimulationStock getStockByCode(String stockCode) {
+        return simulationStocks.stream()
+                .filter(s -> s.getStockCode().equals(stockCode))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Stock not found: " + stockCode));
+    }
+
+
+    private BigDecimal calculateTradeAmount(SimulationInvestor investor, SimulationStock stock, boolean isBuy, LocalDate date) {
+        BigDecimal investmentSizeRatio = BigDecimal.valueOf(investor.getCharacteristics().get("investmentSizeRatio"));
+        BigDecimal cash = BigDecimal.valueOf(investor.getMoney());
+        BigDecimal stockValue = BigDecimal.valueOf(calculateTotalStockValue(investor, date));
+        BigDecimal totalAssets = cash.add(stockValue);
+
+        BigDecimal baseTradeAmount = totalAssets.multiply(investmentSizeRatio);
+
+        if (isBuy) {
+            return baseTradeAmount.min(cash); // 매수: 현재 보유 현금을 초과하지 않도록 함
+        } else {
+            return baseTradeAmount.min(stockValue); // 매도: 현재 보유 주식 가치를 초과하지 않도록 함
+        }
     }
 
 
@@ -290,7 +393,7 @@ public class tradeSimulation {
     }
 
     private boolean isLargeCapStock(SimulationStock simulationStock) {
-        return simulationStock.getMarket().equals("KOSPI200") || simulationStock.getMarket().equals("KOSPI");
+        return simulationStock.getMarket().contains("KOSPI200") || simulationStock.getMarket().equals("KOSPI");
     }
 
     //daily_stock_data에는 데이터가 부족해서 차트데이터로 하나하나 등락률 계산
@@ -312,7 +415,6 @@ public class tradeSimulation {
                         .multiply(BigDecimal.valueOf(100))
                         .doubleValue();
             }
-
             simulationStock.addDailyData(currentDate, closingPrice, changeRate);
         }
     }
