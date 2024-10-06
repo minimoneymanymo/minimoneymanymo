@@ -152,7 +152,7 @@ function Navbar(): JSX.Element {
     console.log("After toggle:", !isTooltipEnabled) // 상태를 반대로 출력
   }
   return (
-    <nav className="flex h-20 flex-col items-center justify-center border-b pl-10">
+    <nav className="flex h-20 flex-col items-center justify-center border-secondary-m2 bg-secondary-m3 pl-10">
       <div className="container mx-auto flex items-center justify-between">
         <button
           onClick={() => {
@@ -186,7 +186,7 @@ function Navbar(): JSX.Element {
             }
             ripple={true}
             checked={isTooltipEnabled} // 툴팁 상태에 따라 스위치 상태 제어
-            onClick={handleTooltipToggle} // 클릭 시 상태 전환
+            onChange={handleTooltipToggle} // 클릭 시 상태 전환
             className="h-full w-full border checked:border-[#478D81] checked:bg-[#478D81]"
             containerProps={{
               className: "w-7 h-4 ",
