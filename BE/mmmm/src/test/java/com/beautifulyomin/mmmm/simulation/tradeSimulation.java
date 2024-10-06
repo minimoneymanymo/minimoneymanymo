@@ -28,8 +28,8 @@ public class tradeSimulation {
     private static final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
     private static final LocalDate END_DATE = LocalDate.of(2024, 9, 30);
     private static final int INITIAL_MONEY = 100000;
-    private static final int INVESTOR_START_IDX = 697;
-    private static final int INVESTOR_COUNT = 1000;
+    private static final int INVESTOR_START_IDX = 1697;
+    private static final int INVESTOR_COUNT = 11397 - 1697 + 1;
 
     // 기본 수익 임계값: 이 비율 이상의 수익 시 매도를 고려
     private static final double BASE_PROFIT_THRESHOLD = 0.05;  // 5%

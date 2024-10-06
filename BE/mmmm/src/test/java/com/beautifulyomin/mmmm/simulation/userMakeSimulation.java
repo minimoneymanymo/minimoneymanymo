@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 @Import({QueryDslConfig.class})
 class userMakeSimulation {
 
-    private static final int INVESTOR_START_IDX = 697;
+    private static final int INVESTOR_START_IDX = 1698;
     private static final int MONEY = 100000;
     private final Integer PARENT_ID = 5;
     private final EntityManager entityManager;
@@ -88,7 +88,7 @@ class userMakeSimulation {
     public void updateChildrenMoney() {
 
         List<Children> childrenList = childrenRepository.findAllById(
-                IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX + 999)
+                IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX + 10000)
                         .boxed()
                         .toList()
         );
