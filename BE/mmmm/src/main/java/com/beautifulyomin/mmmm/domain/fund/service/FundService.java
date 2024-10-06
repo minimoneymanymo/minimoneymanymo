@@ -27,8 +27,8 @@ public interface FundService {
     // 보유 주식 조회
     List<StockHeldDto> findAllStockHeld(String childrenId);
 
-    // 매월 1일 용돈 지급
-    long updateAllowanceMonthly();
+    // 매월 1일 출금가능금액 초기화
+    long updatewmMonthly();
 
     List<AllowancePaymentDto> findAllUnpaid(String userId);
 
