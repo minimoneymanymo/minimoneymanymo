@@ -64,9 +64,14 @@ const NewsListPage: React.FC = () => {
   return (
     <div className="w-full">
       <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: 2 }}>
-        <Typography variant="h5" color="blue-gray">
+        <div className="mb-2 text-2xl font-bold" color="blue-gray">
           뉴스 퀴즈 목록
-        </Typography>
+        </div>
+        <div className="mb-8">
+          최신 뉴스 정보를 얻고, 퀴즈에 도전하여 보상 머니를 획득하세요! <br />
+          지식을 쌓는 즐거움을 느낄 수 있을 거예요!
+        </div>
+
         <div className="flex flex-wrap">
           {newsItems.map((newsItem) => (
             <div key={newsItem.id} className="w-full p-2 sm:w-1/2 lg:w-1/3">
