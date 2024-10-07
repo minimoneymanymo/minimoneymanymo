@@ -11,10 +11,6 @@ import {
   Legend,
 } from "chart.js"
 
-interface RadarChartProps {
-  data: AnalysisData
-}
-
 // Chart.js 요소 및 스케일 등록
 ChartJS.register(
   RadialLinearScale,
@@ -24,6 +20,10 @@ ChartJS.register(
   Tooltip,
   Legend
 )
+
+interface RadarChartProps {
+  data: AnalysisData
+}
 
 const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
   console.log(data)
@@ -68,35 +68,36 @@ const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
       legend: {
         labels: {
           font: {
-            size: 16, // 범례의 글자 크기를 16으로 설정
+            size: 14,
           },
         },
       },
     },
-    scales: {
-      r: {
-        angleLines: {
-          display: true,
-        },
-        suggestedMin: 0,
-        suggestedMax: 100,
-        ticks: {
-          stepSize: 20, // 축의 단위를 20으로 설정
-          font: {
-            size: 16, // 각 축의 값 폰트 크기를 16으로 설정
-          },
-        },
-        pointLabels: {
-          font: {
-            size: 16, // 각 축의 라벨(현금비중, 매매횟수 등) 폰트 크기를 18로 설정
-            weight: "bold", // 라벨을 굵게 설정
-          },
-        },
-        grid: {
-          lineWidth: 2, // 그리드 라인 두께 조정 (선택사항)
-        },
-      },
-    },
+    // scales: {
+    //   r: {
+    //     type: "radialLinear" as const, // type을 'radialLinear'로 명시
+    //     angleLines: {
+    //       display: true,
+    //     },
+    //     suggestedMin: 0,
+    //     suggestedMax: 100,
+    //     ticks: {
+    //       stepSize: 20,
+    //       font: {
+    //         size: 12, // Font size for ticks
+    //       },
+    //     },
+    //     pointLabels: {
+    //       font: {
+    //         size: 14, // Font size for point labels
+    //         weight: "bold", // Type Safety
+    //       },
+    //     },
+    //     grid: {
+    //       lineWidth: 1,
+    //     },
+    //   },
+    // },
   }
 
   return (
