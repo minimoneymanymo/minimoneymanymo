@@ -70,8 +70,15 @@ const MainNewsLayout: React.FC = () => {
       <Typography variant="h5" color="blue-gray">
         오늘의 뉴스퀴즈
       </Typography>
+
       <Box
-        sx={{ flexGrow: 1, padding: 2, maxWidth: "1200px", margin: "0 auto" }}
+        sx={{
+          flexGrow: 1,
+          padding: 2,
+          maxWidth: "1200px",
+          margin: "0 auto",
+          position: "relative", // Box에 relative 추가
+        }}
       >
         <Slider {...settings}>
           {newsItems.map((newsItem, index) => {
@@ -82,21 +89,42 @@ const MainNewsLayout: React.FC = () => {
             if (newsItem.isQuizAnswered == "0") {
               // 퀴즈를 풀었을 때: 초록 체크 아이콘
               icon = (
-                <TaskAltIcon
-                  className="absolute right-10 top-2 text-green-500"
-                  style={{ fontSize: 32 }}
-                />
+                <div
+                  className="absolute right-7 top-2 flex items-center justify-center"
+                  style={{
+                    backgroundColor: "white", // 흰색 배경
+                    borderRadius: "50%", // 둥글게 만들기
+                    width: "30px", // 배경의 너비 (수정된 크기)
+                    height: "30px", // 배경의 높이 (수정된 크기)
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)", // 그림자 추가 (선택 사항)
+                  }}
+                >
+                  <TaskAltIcon
+                    className="text-green-500"
+                    style={{ fontSize: 20 }} // 아이콘 크기 조정
+                  />
+                </div>
               )
             } else if (newsItem.isQuizAnswered >= "1") {
               // 퀴즈를 틀렸을 때: 빨간 X 아이콘
               icon = (
-                <CloseIcon
-                  className="absolute right-10 top-2 text-red-500"
-                  style={{ fontSize: 32 }}
-                />
+                <div
+                  className="absolute right-7 top-2 flex items-center justify-center"
+                  style={{
+                    backgroundColor: "white", // 흰색 배경
+                    borderRadius: "50%", // 둥글게 만들기
+                    width: "30px", // 배경의 너비 (수정된 크기)
+                    height: "30px", // 배경의 높이 (수정된 크기)
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)", // 그림자 추가 (선택 사항)
+                  }}
+                >
+                  <CloseIcon
+                    className="text-red-500"
+                    style={{ fontSize: 20 }} // 아이콘 크기 조정
+                  />
+                </div>
               )
             }
-
             return (
               <div
                 key={index}
@@ -119,6 +147,22 @@ const MainNewsLayout: React.FC = () => {
             )
           })}
         </Slider>
+        {/* "더 보기" 텍스트 */}
+        <Typography
+          variant="body2"
+          color="blue-gray"
+          onClick={() => navigate("/newslist")} // 더 보기 클릭 시 이동할 경로
+          sx={{
+            position: "absolute",
+            top: "10px",
+            right: "0px",
+            cursor: "pointer",
+            textDecoration: "underline",
+            fontSize: "0.8rem",
+          }}
+        >
+          더 보기
+        </Typography>
       </Box>
     </>
   )

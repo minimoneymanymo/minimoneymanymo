@@ -7,7 +7,7 @@ export const getTodayNews = async () => {
     console.log(res.data)
     return res.data.data // 성공적인 응답 반환
   } catch (e) {
-    throw new Error()
+    throw e
   }
 }
 
@@ -18,7 +18,7 @@ export const getNewsDetail = async (newsId: string) => {
     return res.data.data
   } catch (e: any) {
     console.log(e.message)
-    throw new Error()
+    throw e
   }
 }
 
@@ -29,6 +29,17 @@ export const solveQuiz = async (option: string, id: string) => {
     return res.data
   } catch (e: any) {
     console.log(e.message)
-    throw new Error()
+    throw e
+  }
+}
+
+export const getNewsQuizzes = async (page: number, size: number = 6) => {
+  try {
+    const res = await axiosAuthInstance.get(`/quiz?page=${page}&number=${size}`)
+    console.log(res.data)
+    return res.data.data
+  } catch (e: any) {
+    console.log(e.message)
+    throw e
   }
 }
