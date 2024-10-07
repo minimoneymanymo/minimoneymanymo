@@ -48,8 +48,6 @@ interface StockResult {
   company_name: string
 }
 
-////
-
 function MainDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchResults, setSearchResults] = useState<StockResult[]>([]) // 검색 결과 상태 추가
@@ -243,19 +241,19 @@ function MainDashboard() {
 
   return (
     <div className="mt-10 w-full">
-      <Typography variant="h5" color="blue-gray">
+      <div className="text-2xl font-bold" color="blue-gray">
         주식
-      </Typography>
+      </div>
 
       {/* 필터 모달 버튼 */}
       <div className="mb-4 mt-4 flex items-center gap-x-4">
-        <Button
-          className="flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
+        <button
+          className="flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-sm font-bold text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
           onClick={handleModalOpen}
         >
           <Tune className="h-5 w-5 text-gray-600" /> {/* 아이콘 */}
           필터 추가
-        </Button>
+        </button>
 
         {/* 필터 모달 */}
         <StockFilterModalForm

@@ -64,10 +64,10 @@ const MainNewsLayout: React.FC = () => {
   }
 
   return (
-    <div className="mt-10">
-      <Typography variant="h5" color="blue-gray">
+    <div className="mt-10 w-[1140px]">
+      <div className="text-2xl font-bold" color="blue-gray">
         오늘의 뉴스퀴즈
-      </Typography>
+      </div>
       {/* Box 컴포넌트 -> 테일윈드 스타일로 변경 */}
       <div className="mx-auto max-w-[1200px] flex-grow py-5">
         <Slider {...settings}>
