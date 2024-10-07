@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.domain.member.service;
 
 import com.beautifulyomin.mmmm.domain.member.dto.ChildInfoDto;
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
+import com.beautifulyomin.mmmm.domain.member.dto.PasswordDto;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,4 +16,6 @@ public interface ChildrenService {
     long updateAccount(String childUserId, String accountNumber, String bankCode);
     Children findByUserId(String childUserId);
     int solveQuiz(Children children);
+
+    String updateChildPassword(PasswordDto passwordDto);
 }
