@@ -1,4 +1,5 @@
 import * as React from "react"
+import Box from "@mui/material/Box"
 import NewsCard from "../components/newscard/NewsCard"
 import { getTodayNews } from "@/api/news-api"
 import { Typography } from "@material-tailwind/react"
@@ -64,95 +65,106 @@ const MainNewsLayout: React.FC = () => {
   }
 
   return (
-    <div className="mt-10">
+    <>
       <Typography variant="h5" color="blue-gray">
         오늘의 뉴스퀴즈
       </Typography>
-      <Slider {...settings}>
-        {newsItems.map((newsItem, index) => {
-          // 상태에 따른 카드의 배경 스타일 및 아이콘 결정
-          let cardOverlayStyle = ""
-          let icon = null
 
-          if (newsItem.isQuizAnswered == "0") {
-            // 퀴즈를 풀었을 때: 초록 체크 아이콘
-            icon = (
-              <div
-                className="absolute right-7 top-2 flex items-center justify-center"
-                style={{
-                  backgroundColor: "white", // 흰색 배경
-                  borderRadius: "50%", // 둥글게 만들기
-                  width: "30px", // 배경의 너비 (수정된 크기)
-                  height: "30px", // 배경의 높이 (수정된 크기)
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)", // 그림자 추가 (선택 사항)
-                }}
-              >
-                <TaskAltIcon
-                  className="text-green-500"
-                  style={{ fontSize: 20 }} // 아이콘 크기 조정
-                />
-              </div>
-            )
-          } else if (newsItem.isQuizAnswered >= "1") {
-            // 퀴즈를 틀렸을 때: 빨간 X 아이콘
-            icon = (
-              <div
-                className="absolute right-7 top-2 flex items-center justify-center"
-                style={{
-                  backgroundColor: "white", // 흰색 배경
-                  borderRadius: "50%", // 둥글게 만들기
-                  width: "30px", // 배경의 너비 (수정된 크기)
-                  height: "30px", // 배경의 높이 (수정된 크기)
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)", // 그림자 추가 (선택 사항)
-                }}
-              >
-                <CloseIcon
-                  className="text-red-500"
-                  style={{ fontSize: 20 }} // 아이콘 크기 조정
-                />
-              </div>
-            )
-          }
-          return (
-            <div
-              key={index}
-              className="relative px-5"
-              onClick={() => handleSelectNews(newsItem)}
-            >
-              <NewsCard
-                image={newsItem.image}
-                title={newsItem.title}
-                content={newsItem.content}
-              />
-              {/* 상태에 따라 어둡게 처리된 오버레이 */}
-              <div
-                className={`absolute inset-0 ${cardOverlayStyle}`}
-                style={{ zIndex: 1 }}
-              ></div>
-              {/* 상태에 따른 아이콘 */}
-              {icon && <div style={{ zIndex: 2 }}>{icon}</div>}
-            </div>
-          )
-        })}
-      </Slider>
-
-      {/* "더 보기" 텍스트 */}
-      <Typography
-        variant="body2"
-        color="blue-gray"
-        onClick={() => navigate("/newslist")} // 더 보기 클릭 시 이동할 경로
+      <Box
         sx={{
-          position: "absolute",
-          top: "10px",
-          right: "0px",
-          cursor: "pointer",
-          textDecoration: "underline",
-          fontSize: "0.8rem",
+          flexGrow: 1,
+          padding: 2,
+          maxWidth: "1200px",
+          margin: "0 auto",
+          position: "relative", // Box에 relative 추가
         }}
       >
-        더 보기
-      </Typography>
-    </div>
+        <Slider {...settings}>
+          {newsItems.map((newsItem, index) => {
+            // 상태에 따른 카드의 배경 스타일 및 아이콘 결정
+            let cardOverlayStyle = ""
+            let icon = null
+
+            if (newsItem.isQuizAnswered == "0") {
+              // 퀴즈를 풀었을 때: 초록 체크 아이콘
+              icon = (
+                <div
+                  className="absolute right-7 top-2 flex items-center justify-center"
+                  style={{
+                    backgroundColor: "white", // 흰색 배경
+                    borderRadius: "50%", // 둥글게 만들기
+                    width: "30px", // 배경의 너비 (수정된 크기)
+                    height: "30px", // 배경의 높이 (수정된 크기)
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)", // 그림자 추가 (선택 사항)
+                  }}
+                >
+                  <TaskAltIcon
+                    className="text-green-500"
+                    style={{ fontSize: 20 }} // 아이콘 크기 조정
+                  />
+                </div>
+              )
+            } else if (newsItem.isQuizAnswered >= "1") {
+              // 퀴즈를 틀렸을 때: 빨간 X 아이콘
+              icon = (
+                <div
+                  className="absolute right-7 top-2 flex items-center justify-center"
+                  style={{
+                    backgroundColor: "white", // 흰색 배경
+                    borderRadius: "50%", // 둥글게 만들기
+                    width: "30px", // 배경의 너비 (수정된 크기)
+                    height: "30px", // 배경의 높이 (수정된 크기)
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)", // 그림자 추가 (선택 사항)
+                  }}
+                >
+                  <CloseIcon
+                    className="text-red-500"
+                    style={{ fontSize: 20 }} // 아이콘 크기 조정
+                  />
+                </div>
+              )
+            }
+
+            return (
+              <div
+                key={index}
+                className="relative px-5"
+                onClick={() => handleSelectNews(newsItem)}
+              >
+                <NewsCard
+                  image={newsItem.image}
+                  title={newsItem.title}
+                  content={newsItem.content}
+                />
+                {/* 상태에 따라 어둡게 처리된 오버레이 */}
+                <div
+                  className={`absolute inset-0 ${cardOverlayStyle}`}
+                  style={{ zIndex: 1 }}
+                ></div>
+                {/* 상태에 따른 아이콘 */}
+                {icon && <div style={{ zIndex: 2 }}>{icon}</div>}
+              </div>
+            )
+          })}
+        </Slider>
+        {/* "더 보기" 텍스트 */}
+        <Typography
+          variant="body2"
+          color="blue-gray"
+          onClick={() => navigate("/newslist")} // 더 보기 클릭 시 이동할 경로
+          sx={{
+            position: "absolute",
+            top: "10px",
+            right: "0px",
+            cursor: "pointer",
+            textDecoration: "underline",
+            fontSize: "0.8rem",
+          }}
+        >
+          더 보기
+        </Typography>
+      </Box>
+    </>
   )
 }
 
