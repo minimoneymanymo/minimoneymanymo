@@ -3,11 +3,13 @@ import {
   getAccessTokenFromSession,
   logOutUser,
 } from "../../../utils/user-utils"
-import { useAppSelector } from "@/store/hooks"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { parentActions, selectParent } from "@/store/slice/parent"
 import { childActions, selectChild } from "@/store/slice/child"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
+import { selectTooltip, tooltipActions } from "@/store/slice/tooltip"
+import { Switch } from "@material-tailwind/react"
 
 const NavItemList = (): JSX.Element => {
   let itemId = 0
@@ -51,6 +53,8 @@ const NavAction = (): JSX.Element => {
   const [profileImgUrl, setProfileImgUrl] = useState<string>("")
   const [name, setName] = useState<string>("")
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   useEffect(() => {
     if (getAccessTokenFromSession() !== null) {
       setIsLogin(true)
@@ -76,6 +80,7 @@ const NavAction = (): JSX.Element => {
     alert("로그아웃")
     logOutUser()
     setIsLogin(false)
+    navigate("/")
     // Redux 상태 초기화
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
@@ -121,11 +126,9 @@ const NavAction = (): JSX.Element => {
               </li>
             </>
           )}
-          <>
-            <li className="mx-2.5 flex h-full cursor-pointer truncate">
-              <button onClick={handleLogOut}>로그아웃</button>
-            </li>
-          </>
+          <li className="mx-2.5 flex h-full cursor-pointer truncate">
+            <button onClick={handleLogOut}>로그아웃</button>
+          </li>
         </div>
       ) : (
         <>
@@ -140,11 +143,19 @@ const NavAction = (): JSX.Element => {
     </ul>
   )
 }
-
+import TipsAndUpdatesOutlinedIcon from "@mui/icons-material/TipsAndUpdatesOutlined"
 function Navbar(): JSX.Element {
   const navigator = useNavigate()
+  const dispatch = useAppDispatch()
+  const isTooltipEnabled = useAppSelector(selectTooltip)
+
+  const handleTooltipToggle = () => {
+    console.log("Before toggle:", isTooltipEnabled)
+    dispatch(tooltipActions.toggleTooltip()) // 상태 토글 액션 실행
+    console.log("After toggle:", !isTooltipEnabled) // 상태를 반대로 출력
+  }
   return (
-    <nav className="flex h-20 flex-col items-center justify-center border-b px-10">
+    <nav className="flex h-20 flex-col items-center justify-center border-secondary-m2 bg-secondary-m3 pl-10">
       <div className="container mx-auto flex items-center justify-between">
         <button
           onClick={() => {
@@ -167,7 +178,27 @@ function Navbar(): JSX.Element {
           </div>
         </button>
         {/* <NavItemList /> */}
-        <NavAction />
+        <div className="flex gap-4">
+          <NavAction />
+          <Switch
+            label={
+              <>
+                <TipsAndUpdatesOutlinedIcon />
+                설명
+              </>
+            }
+            ripple={true}
+            checked={isTooltipEnabled} // 툴팁 상태에 따라 스위치 상태 제어
+            onChange={handleTooltipToggle} // 클릭 시 상태 전환
+            className="h-full w-full border checked:border-[#478D81] checked:bg-[#478D81]"
+            containerProps={{
+              className: "w-7 h-4 ",
+            }}
+            circleProps={{
+              className: "before:hidden border-none left-0.5 h-3 w-3",
+            }}
+          />
+        </div>
       </div>
     </nav>
   )

@@ -41,6 +41,7 @@ interface StockFilter {
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
   volumeMax: number | null // 최대 거래량
+  search: string | null
 }
 
 function StockList({ filters }: { filters: StockFilter }) {
@@ -130,6 +131,10 @@ function StockList({ filters }: { filters: StockFilter }) {
           filters.tradingValueMax !== null
             ? filters.tradingValueMax.toString()
             : "",
+        search:
+          filters.search !== undefined && filters.search !== null
+            ? filters.search.toString()
+            : "",
         sort: `${sortKey},${sortOrder}`,
         page: page.toString(),
       }).toString()
@@ -174,6 +179,7 @@ function StockList({ filters }: { filters: StockFilter }) {
 
   // 필터가 변경되면 데이터 초기화 후 새로 불러옴
   useEffect(() => {
+    console.log("Current Filters:", filters)
     setPage(0)
     setStockRows([])
     fetchStockList(0, true) // reset 플래그를 통해 초기화 후 새로 로드
@@ -225,6 +231,8 @@ function StockList({ filters }: { filters: StockFilter }) {
     setStockRows(newList)
   }
 
+  console.log("Current Filters:", filters)
+
   return (
     <div className="overflow-x-auto">
       <table className="mt-4 w-full min-w-max table-auto text-left">
@@ -232,7 +240,7 @@ function StockList({ filters }: { filters: StockFilter }) {
           <tr>
             {TABLE_HEAD.map(({ label, key }) => (
               <th
-                key={label}
+                key={`${label}-${Math.random()}`}
                 className="border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50 cursor-pointer border-y p-4 text-right transition-colors"
                 onClick={() => key && handleSort(key)}
                 style={{ width: "5%" }}
@@ -254,9 +262,11 @@ function StockList({ filters }: { filters: StockFilter }) {
             const { color, sign } = getPriceChangeColorAndSign(
               stock.priceChange
             )
+            const key = stock.stockCode ? stock.stockCode : `stock-${index}` // Ensure unique key
+
             return (
               <tr
-                key={stock.stockCode}
+                key={`${index}-${Math.random()}`}
                 onClick={() => handleRowClick(stock.stockCode)}
                 className="cursor-pointer hover:bg-gray-50"
                 ref={

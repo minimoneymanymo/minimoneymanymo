@@ -17,6 +17,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/el": {
+        target: "https://j11b105.p.ssafy.io",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/el/, "/el"),
+      },
     },
   },
   build: {

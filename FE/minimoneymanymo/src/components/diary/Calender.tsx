@@ -27,7 +27,7 @@ const getBackgroundColor = (tradeType: string) => {
 }
 
 // 달력에 출력 멘트 설정
-const getTradeTypeLabel = (tradeType: string) => {
+const getTradeTypeLabel = (tradeType: string, companyName: string) => {
   switch (tradeType) {
     case "0":
       return "용돈"
@@ -38,9 +38,9 @@ const getTradeTypeLabel = (tradeType: string) => {
     case "3":
       return "이유"
     case "4":
-      return "매수"
+      return `${companyName} 매수` // 회사명 + 매수
     case "5":
-      return "매도"
+      return `${companyName} 매도` // 회사명 + 매도
     default:
       return "알 수 없음" // 기본값
   }
@@ -126,7 +126,7 @@ const Calender: React.FC = () => {
 
     return (
       <div
-        className="mt-4 grid h-[450px] grid-cols-2 rounded border border-blue-300 bg-blue-100 p-4"
+        className="mt-4 h-[450px] rounded bg-secondary-50 p-4"
         ref={eventSectionRef}
       >
         <MyInvestment
@@ -182,7 +182,7 @@ const Calender: React.FC = () => {
                       key={index}
                       className={`m-1 w-fit overflow-hidden text-ellipsis rounded p-1 text-start ${getBackgroundColor(event.tradeType)}`}
                     >
-                      {getTradeTypeLabel(event.tradeType)}{" "}
+                      {getTradeTypeLabel(event.tradeType, event.companyName)}{" "}
                       {/* tradeType에 따른 문자열 출력 */}
                     </div>
                   ))}
@@ -217,9 +217,15 @@ const Calender: React.FC = () => {
     setSelectedDate(date === selectedDate ? null : date)
   }
 
-  const prevMonth = () =>
+  const prevMonth = () => {
     setCurrentMonth(currentMonth.clone().subtract(1, "month"))
-  const nextMonth = () => setCurrentMonth(currentMonth.clone().add(1, "month"))
+    setSelectedDate(null) // 이전 달로 넘어갈 때 선택된 날짜 초기화
+  }
+
+  const nextMonth = () => {
+    setCurrentMonth(currentMonth.clone().add(1, "month"))
+    setSelectedDate(null) // 다음 달로 넘어갈 때 선택된 날짜 초기화
+  }
 
   return (
     <div className="p-6">
