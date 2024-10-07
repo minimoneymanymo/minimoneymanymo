@@ -12,6 +12,8 @@ import {
 } from "@/components/chart/ChartType"
 import ChartComponent from "@/components/chart/ChartComponent"
 import CircularProgress from "@mui/material/CircularProgress"
+import { useAppSelector } from "@/store/hooks"
+import { selectChild } from "@/store/slice/child"
 
 function StockDetailPage(): JSX.Element {
   const [dailyStockChart, setDailyStockChart] = useState<StockData[]>([])
@@ -89,7 +91,12 @@ function StockDetailPage(): JSX.Element {
     }))
   }
   const StockInfo = (): JSX.Element => {
+    const child = useAppSelector(selectChild) // 자식 상태 선택
     const toggleLike = async () => {
+      if (child.userId === null || child.userId === "") {
+        alert("관심종목 기능은 자녀로 로그인시에만 사용할 수 있습니다.")
+        return
+      }
       setIsLike((prev) => !prev)
       const res = await toggleFavoriteStock(stockCode!)
 
@@ -131,7 +138,18 @@ function StockDetailPage(): JSX.Element {
                   머니
                 </div>
                 <span className="text-base text-gray-500">
-                  어제보다
+                  {
+                    dailyStockChart[dailyStockChart.length - 2].date.split(
+                      "-"
+                    )[1]
+                  }
+                  월{" "}
+                  {
+                    dailyStockChart[dailyStockChart.length - 2].date.split(
+                      "-"
+                    )[0]
+                  }
+                  일 보다
                   <span
                     className={`ms-4 ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
                   >
@@ -174,7 +192,7 @@ function StockDetailPage(): JSX.Element {
 
   if (!stockInfo) {
     return (
-      <div className="h-full w-[800px] flex items-center justify-center">
+      <div className="flex h-full w-[800px] items-center justify-center">
         <CircularProgress color="inherit" />
       </div>
     )
@@ -198,7 +216,7 @@ function StockDetailPage(): JSX.Element {
         <button
           className={`h-16 w-24 rounded-t-lg pb-6 ${
             selectedTab === "chart"
-              ? "bg-gray-100  font-bold"
+              ? "bg-gray-100 font-bold"
               : "translate-y-3 bg-gray-100 text-gray-800"
           }`}
           onClick={() => setSelectedTab("chart")}
