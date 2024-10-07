@@ -12,18 +12,20 @@ import storageSession from "redux-persist/lib/storage/session"
 import parentReducer from "./slice/parent"
 import accountReducer from "./slice/account"
 import childReducer from "./slice/child"
+import tooltipReducer from "./slice/tooltip"
 
 // reducer를 여기에 추가하시면 됩니다
 const rootReducer = combineReducers({
   parent: parentReducer,
   account: accountReducer,
   child: childReducer,
+  tooltip: tooltipReducer,
 })
 
 const persistConfig = {
   key: "root",
   storage: storageSession,
-  whitelist: ["parent", "account", "child"], // 세션에 저장할 리듀서만 추가
+  whitelist: ["parent", "account", "child", "tooltip"], // 세션에 저장할 리듀서만 추가
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
