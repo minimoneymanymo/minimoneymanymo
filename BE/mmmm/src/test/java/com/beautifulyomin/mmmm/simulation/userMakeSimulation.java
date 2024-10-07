@@ -22,10 +22,10 @@ import java.util.stream.IntStream;
 @Import({QueryDslConfig.class})
 class userMakeSimulation {
 
-    private static final int INVESTOR_START_IDX = 1697;
-    private static final int MAKE_COUNT = 9000;
+    private static final int INVESTOR_START_IDX = 1700;
+    private static final int MAKE_COUNT = 2000;
     private static final int MONEY = 100000;
-    private final Integer PARENT_ID = 5;
+    private final Integer PARENT_ID = 7;
     private final EntityManager entityManager;
     private final ChildrenRepository childrenRepository;
     private final ParentRepository parentRepository;
@@ -42,8 +42,8 @@ class userMakeSimulation {
     @Test
     public void createChildrenAndParentBatch() {
         // 1. 부모 생성 (ID는 5로 통일)
-        Parent parent = parentRepository.findById(5).orElseGet(() -> {
-            Parent newParent = new Parent("parent5", "부모님", "password123", "010-1234-5678", "userKey5");
+        Parent parent = parentRepository.findById(8).orElseGet(() -> {
+            Parent newParent = new Parent("김부모", "김부모", "1234", "010-1234-5678", "77777");
             return parentRepository.save(newParent);
         });
 
@@ -52,9 +52,9 @@ class userMakeSimulation {
         List<ParentAndChildren> parentAndChildrenList = new ArrayList<>();
 
         for (int i = INVESTOR_START_IDX; i <= INVESTOR_START_IDX + MAKE_COUNT; i++) {
-            String userId = "user" + i;
-            String name = "Child" + i;
-            String password = "password" + i;
+            String userId = "김자식" + i;
+            String name = "김자식" + i;
+            String password = "1234";
             String phoneNumber = "010-0000-000" + (i % 10);  // 예시로 010-0000-000X 형태
             String birthDay = "2010-01-0" + (i % 9 + 1);  // 예시로 2010-01-01 ~ 2010-01-09
             String userKey = "userKey" + i;

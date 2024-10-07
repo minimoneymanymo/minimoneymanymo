@@ -21,8 +21,7 @@ public class StockJobRunner {
         this.mainJob = mainJob;
     }
 
-    @Scheduled(cron = "0 40 16 ? * MON-FRI")
-//    @Scheduled(cron = "0 39 20 ? * *")
+    @Scheduled(cron = "0 30 15 ? * MON-FRI")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())

@@ -1,11 +1,12 @@
 package com.beautifulyomin.mmmmbatch.batch.analysis.step.report;
 
-import com.beautifulyomin.mmmmbatch.batch.analysis.constant.InvestmentType;
 import com.beautifulyomin.mmmmbatch.batch.analysis.data.report.*;
+import com.beautifulyomin.mmmmbatch.batch.analysis.entity.RowReportValue;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.TradeRecord;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.AnalysisRepositoryCustom;
+import com.beautifulyomin.mmmmbatch.batch.analysis.repository.RowReportValueRepository;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.StocksHeldRepository;
 import com.beautifulyomin.mmmmbatch.batch.analysis.service.InvestmentTypeCalculator;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +32,17 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
     private static final LocalDate START_DATE = INV_DATE.withDayOfMonth(1);
     private static final LocalDate END_DATE = INV_DATE;
     private final StocksHeldRepository stocksHeldRepository;
+    private RowReportValueRepository rowReportValueRepository;
 
     private String START_DATE_STR;
     private String END_DATE_STR;
 
+
     @Autowired
-    public InvestmentAnalysisProcessor(AnalysisRepositoryCustom analysisRepositoryCustom, StocksHeldRepository stocksHeldRepository) {
+    public InvestmentAnalysisProcessor(AnalysisRepositoryCustom analysisRepositoryCustom, StocksHeldRepository stocksHeldRepository, RowReportValueRepository rowReportValueRepository) {
         this.analysisRepositoryCustom = analysisRepositoryCustom;
         this.stocksHeldRepository = stocksHeldRepository;
+        this.rowReportValueRepository = rowReportValueRepository;
     }
 
     @Override
@@ -51,20 +55,21 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
         List<TradeRecord> tradeRecordList = getTradeRecords(children);
         int winTradeCount = getWinTradeCount(tradeRecordList);
 
-        BigDecimal cashRatio = calculateCashRatio(children);
+        int cashAmount = getTotalAmountSumByChildrenId(children);
         BigDecimal realizedGains = getRealizedGains(tradeRecordList);
         BigDecimal realizedLosses = getRealizedLosses(tradeRecordList);
         BigDecimal stockValue = getStockValue(children);
-        long tradeCount = calculateTradingFrequency(children);
+        int tradeCount = calculateTradingFrequency(children);
         Integer monthlyStartMoney = getMonthlyStartMoney(children, START_DATE_STR); //월간 시작 시드 머니
 
-        InvestmentTypeCalculator investmentTypeCalculator = new InvestmentTypeCalculator(tradeCount, cashRatio, stockValue, realizedGains, realizedLosses, monthlyStartMoney);
-        System.out.println("🟢🟢🟢 investmentTypeCalculator = " + investmentTypeCalculator);
+        RowReportValue rowReportValue = new RowReportValue(children.getChildrenId(), END_DATE, tradeCount, cashAmount, stockValue, realizedGains, realizedLosses);
+        InvestmentTypeCalculator investmentTypeCalculator = new InvestmentTypeCalculator(tradeCount, cashAmount, stockValue, realizedGains, realizedLosses, monthlyStartMoney);
+        rowReportValueRepository.save(rowReportValue);
 
         InvestmentReport report = InvestmentReport.builder()
                 .childrenId(children.getChildrenId())
                 .date(INV_DATE)
-                .cashRatio(calculateCashRatio(children))
+                .cashRatio(calculateCashRatio(children, cashAmount))
                 .diversification(calculateDiversification(children))
                 .stability(calculateStability(children))
                 .tradingFrequency(calculateTradingFrequency(children))
@@ -113,10 +118,13 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
     /**
      * @return 월말 기준 보유하고 있는 현금 -> 현금 비율 (애매하면 빼자)
      */
-    private BigDecimal calculateCashRatio(Children children) {
-        int totalHoldingMarketAmount = analysisRepositoryCustom.getTotalAmountSumByChildrenId(children.getChildrenId());
-        CashData cashData = new CashData(children.getMoney(), totalHoldingMarketAmount);
+    private BigDecimal calculateCashRatio(Children children, int cashAmount) {
+        CashData cashData = new CashData(children.getMoney(), cashAmount);
         return BigDecimal.valueOf(cashData.calculateCashRatio()).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private int getTotalAmountSumByChildrenId(Children children) {
+        return analysisRepositoryCustom.getTotalAmountSumByChildrenId(children.getChildrenId());
     }
 
 

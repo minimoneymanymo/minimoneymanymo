@@ -18,43 +18,34 @@ import java.math.RoundingMode;
 public class InvestmentTypeCalculator {
 
     //모델 학습에 사용된 5개 지표
-    private Long tradeCount;  // 월간 거래 횟수
-    private BigDecimal cashAmount;  // 월말 현금 보유량
+    private int tradeCount;  // 월간 거래 횟수
+    private int cashAmount;  // 월말 현금 보유량
     private BigDecimal stockValue;  // 월간 주식 보유 가치
     private BigDecimal realizedGains;  // 월간 실현 이익
     private BigDecimal realizedLosses;  // 월간 실현 손실
     private Integer monthlyStartMoney; //월간 시작 시드 머니
 
     public InvestmentType calculate() {
-        if(monthlyStartMoney.equals(0)){
+        if (monthlyStartMoney.equals(0)) {
             return InvestmentType.NONE;
         }
 
-        double logCashAmount = getLogScaledValue(scaleValueToSeedMoney(cashAmount, monthlyStartMoney));
+        double logCashAmount = getLogScaledValue(scaleValueToSeedMoney(BigDecimal.valueOf(cashAmount), monthlyStartMoney));
         double logStockValue = getLogScaledValue(scaleValueToSeedMoney(stockValue, monthlyStartMoney));
         double logRealizedGains = getLogScaledValue(scaleValueToSeedMoney(realizedGains, monthlyStartMoney));
         double logRealizedLosses = getLogScaledValue(scaleValueToSeedMoney(realizedLosses, monthlyStartMoney));
 
-        if (logRealizedGains <= 1.343) {
-            if (logRealizedLosses <= 4.361) {
-                if (logStockValue <= 11.513) {
-                    return InvestmentType.TURTLE;
-                }
-                return InvestmentType.SPROUT;
+        if (logRealizedGains <= 1.193) {
+            if (logRealizedLosses <= 2.746) {
+                return InvestmentType.SPROUT; //4
             } else {
-                if (logCashAmount <= 3.238) {
-                    return InvestmentType.LION;
-                }
-                return InvestmentType.TURTLE;
+                return InvestmentType.TURTLE; //2
             }
         } else {
-            if (logRealizedLosses <= 4.295) {
-                return InvestmentType.TURTLE;
+            if (logRealizedLosses <= 1.983) {
+                return InvestmentType.LION;//3
             } else {
-                if (logCashAmount <= 0.5) {
-                    return InvestmentType.PHONEIX;
-                }
-                return InvestmentType.TURTLE;
+                return InvestmentType.PHONEIX; //1
             }
         }
     }
