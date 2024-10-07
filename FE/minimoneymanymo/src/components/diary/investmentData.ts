@@ -8,4 +8,5 @@ export interface investmentData {
   createdAt: string
   reasonBonusMoney: number | null
   companyName: string
+  createdTime: string
 }
