@@ -68,7 +68,6 @@ const MainNewsLayout: React.FC = () => {
       <Typography variant="h5" color="blue-gray">
         오늘의 뉴스퀴즈
       </Typography>
-
       <Slider {...settings}>
         {newsItems.map((newsItem, index) => {
           // 상태에 따른 카드의 배경 스타일 및 아이콘 결정

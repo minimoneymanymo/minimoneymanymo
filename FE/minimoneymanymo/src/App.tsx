@@ -26,9 +26,12 @@ import UnauthorizedPage from "./components/common/mypage/UnauthorizedPage"
 import ProtectedRoute from "./components/common/ProtectedRoute"
 import NewsListPage from "./pages/News/NewsListPage"
 
+import IntroPage from "./pages/main/IntroPage"
+
 function App() {
   return (
     <Routes>
+      <Route path="/intro" element={<IntroPage />} />
       <Route path="/" element={<MainPageLayout />}>
         <Route index element={<MainPage />} />
         <Route path="login" element={<LoginPage />} />
