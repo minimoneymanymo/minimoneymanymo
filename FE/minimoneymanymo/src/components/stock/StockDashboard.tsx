@@ -307,7 +307,7 @@ function MainDashboard() {
       </div>
 
       {/* 검색 결과 출력 */}
-      <div className="mt-4">
+      {/* <div className="mt-4">
         {searchResults.length >= 0 ? (
           <ul>
             {searchResults.map((result, index) => (
@@ -319,7 +319,7 @@ function MainDashboard() {
         ) : (
           <p>검색 결과가 없습니다.</p>
         )}
-      </div>
+      </div> */}
 
       {/* 주식 목록 */}
       <StockList filters={filters} />
