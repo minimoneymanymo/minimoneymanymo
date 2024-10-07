@@ -26,8 +26,7 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
 
     private final AnalysisRepositoryCustom analysisRepositoryCustom;
 
-    //    private static final LocalDate INV_DATE = LocalDate.now();
-    private static final LocalDate INV_DATE = LocalDate.of(2024, 9, 30);
+    private static final LocalDate INV_DATE = LocalDate.now();
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private static final LocalDate START_DATE = INV_DATE.withDayOfMonth(1);
     private static final LocalDate END_DATE = INV_DATE;
