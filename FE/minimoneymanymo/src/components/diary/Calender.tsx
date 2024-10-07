@@ -10,9 +10,9 @@ import ArrowNext from "@mui/icons-material/ArrowForwardIos"
 const getBackgroundColor = (tradeType: string) => {
   switch (tradeType) {
     case "4":
-      return "bg-red-100" // type 4: 빨간색 매수
+      return "bg-red-100 text-red-600" // type 4: 빨간색 매수
     case "5":
-      return "bg-blue-100" // type 5: 파란색 매도
+      return "bg-blue-100 text-blue-600" // type 5: 파란색 매도
     case "0":
       return "bg-yellow-100" // type 0: 용돈
     case "1":
@@ -127,7 +127,7 @@ const Calender: React.FC = () => {
 
     return (
       <div
-        className="mt-4 h-[450px] rounded bg-white p-4"
+        className="mt-4 h-[450px] rounded border bg-white p-4"
         ref={eventSectionRef}
       >
         <MyInvestment
@@ -166,7 +166,7 @@ const Calender: React.FC = () => {
         weekDays.push(
           <div
             key={currentDay.format("YYYY-MM-DD")}
-            className={`relative border text-center ${dayEvents.length > 0 ? "cursor-pointer" : "cursor-default opacity-50"}`}
+            className={`relative border text-center ${selectedDate === currentDay.format("YYYY-MM-DD") ? "bg-gray-200" : ""} ${dayEvents.length > 0 ? "cursor-pointer" : "cursor-default opacity-50"}`}
             onClick={() =>
               dayEvents.length > 0 &&
               handleDayClick(currentDay.format("YYYY-MM-DD"))
@@ -178,10 +178,17 @@ const Calender: React.FC = () => {
             {dayEvents.length > 0 && (
               <div className="custom-scrollbar mt-[30px] h-[100px] overflow-auto">
                 <div className="flex flex-col-reverse text-xs">
-                  {dayEvents.map((event, index) => (
+                  {[
+                    ...new Map(
+                      dayEvents.map((event) => [
+                        `${event.tradeType}-${event.companyName}`,
+                        event,
+                      ])
+                    ).values(),
+                  ].map((event, index) => (
                     <div
                       key={index}
-                      className={`m-1 w-fit overflow-hidden text-ellipsis rounded p-1 text-start ${getBackgroundColor(event.tradeType)}`}
+                      className={`m-1 w-fit overflow-hidden text-ellipsis whitespace-nowrap rounded p-1 text-start ${getBackgroundColor(event.tradeType)}`}
                     >
                       {getTradeTypeLabel(event.tradeType, event.companyName)}{" "}
                       {/* tradeType에 따른 문자열 출력 */}
