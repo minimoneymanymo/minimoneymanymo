@@ -22,7 +22,7 @@ const MyChildInvestStylePage = () => {
   return (
     <>
       <MyInvestmentStyle analysisData={analysisData} />
-      <InvestmentMBTI />
+      <InvestmentMBTI analysisData={analysisData} />
     </>
   )
 }

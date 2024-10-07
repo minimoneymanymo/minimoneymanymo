@@ -4,6 +4,7 @@ export interface Analysis {
   winLossRatio: number
   diversification: number
   stability: number
+  investmentType: string
 }
 
 export interface AnalysisData {

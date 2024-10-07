@@ -50,7 +50,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
         borderWidth: 1,
       },
       {
-        label: "친구들",
+        label: "전체 이용자",
         data: [
           data.overallStatistics.cashRatio,
           data.overallStatistics.tradingFrequency,
