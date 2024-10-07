@@ -30,6 +30,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   const dispatch = useAppDispatch()
 
   const isParent = useAppSelector(selectParent)
+  console.log(isParent)
 
   //매수 시 사용
   const [money, setMoney] = useState<number | null>(null) // 보유머니
@@ -226,7 +227,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
             </p>
           </Card>
         </div>
-      ) : isParent ? (
+      ) : isParent.userId != "" ? (
         <div className="relative flex h-full w-[340px] flex-col p-2">
           <Card className="shadow-blue-gray-900/5 z-20 mt-24 h-[520px] w-[330px] max-w-md border p-0 px-5 py-6">
             <p className="mt-[150px] text-center" style={{ fontSize: "50px" }}>
