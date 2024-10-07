@@ -82,6 +82,7 @@ const getTradeListData = async (
         ),
         reasonBonusMoney: item.reasonBonusMoney,
         companyName: item.companyName,
+        createdTime: moment(item.createdAt, "YYYYMMDDHHmmss").format("HH:mm"),
       })
     )
 
@@ -126,7 +127,7 @@ const Calender: React.FC = () => {
 
     return (
       <div
-        className="mt-4 h-[450px] rounded bg-secondary-50 p-4"
+        className="mt-4 h-[450px] rounded bg-white p-4"
         ref={eventSectionRef}
       >
         <MyInvestment

@@ -67,7 +67,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
               머니
             </p>
           </div>
-          <ul className="max-h-[300px] overflow-y-auto">
+          <ul className="hidden-scrollbar max-h-[300px] overflow-y-auto p-2">
             {filteredEvents.length > 0 ? (
               filteredEvents.map((event, index) => {
                 console.log(event) // event 값 출력
@@ -92,10 +92,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                       </p>
                     </div>
                     <div className="flex justify-between">
-                      {/* <p>{formatCreatedAt(event.createdAt)}</p> */}
-                      <p
-                        className={`${isSellType ? "text-red-500" : "text-blue-500"} `}
-                      >
+                      <p className="text-dark-500">
                         {isSellType ? "매수" : "매도"}
                       </p>
                       <p>{event.tradeSharesCount} 주</p>
@@ -119,7 +116,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
             이 종목을 선택한 이유가 무엇인지 기억나나요?
             <br />그 때의 생각을 다시 떠올려봐요
           </h1>
-          <ul className="max-h-[300px] overflow-y-auto">
+          <ul className="custom-scrollbar max-h-[300px] overflow-y-auto">
             {filteredEvents.length > 0 ? (
               filteredEvents.map((event, index) => {
                 console.log(event) // event 값 출력
@@ -130,25 +127,28 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                     key={index}
                     className="mb-2 rounded-lg bg-white p-4 shadow-md" // 흰 배경, radius, 여백 추가
                   >
-                    <div className="rounded-lg bg-primary-50">
+                    <div className="">
                       {(isSellType || isBuyType) && (
-                        <div className="mb-2 flex justify-between text-xs text-gray-500">
-                          <div className="mb-1 ml-2 mt-1 flex justify-between">
+                        <div className="mb-0.5 flex justify-between text-xs text-gray-500">
+                          <div className="ml-2 mt-1 flex justify-between">
                             <p className="">거래유형</p>
                             <p
-                              className={`${isSellType ? "text-red-500" : "text-blue-500"} ml-2`}
+                              className={`${isSellType ? "text-buy" : "text-sell"} ml-2`}
                             >
                               {isSellType ? "매수" : "매도"}
                             </p>
                           </div>
-                          <div className="mb-1 mr-2 mt-1">
-                            <p>일시 {formatCreatedAt(event.createdAt)}</p>
+                          <div className="mr-2 mt-1">
+                            <p>
+                              일시 {formatCreatedAt(event.createdAt)}{" "}
+                              {event.createdTime}
+                            </p>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    <div className="m-2 flex justify-between">
+                    <div className="m-2 mt-0.5 flex justify-between">
                       <strong className="text-xl">{event.companyName}</strong>
                       <strong className="text-xl">
                         {event.tradeSharesCount} 주
@@ -166,7 +166,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                       </p>
                     </div>
                     <div className="font-base ml-2 mr-2 flex justify-between text-sm font-bold">
-                      <p className="text-primary-800">손익 머니</p>
+                      <p className="text-black">손익 머니</p>
                       <p
                         className={`text-right ${
                           event.stockTradingGain !== null &&
@@ -188,8 +188,8 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                         머니
                       </p>
                     </div>
-                    <div className="m-2 text-base">
-                      <p>{event.reason}</p>
+                    <div className="m-2 rounded-lg bg-primary-50 text-base">
+                      <p className="ml-2 mr-2 p-2">{event.reason}</p>
                     </div>
                   </li>
                 )
