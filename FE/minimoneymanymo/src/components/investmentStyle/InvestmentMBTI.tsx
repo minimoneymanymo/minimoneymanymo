@@ -72,7 +72,7 @@ const InvestmentMBTI: React.FC<InvestmentStyleProps> = ({ analysisData }) => {
   return (
     <div className="flex h-96 w-full flex-col items-center justify-center text-center">
       <div className="flex flex-col items-center">
-        <img src={image} alt={investmentType} className="mb-4 h-64 w-64" />
+        <img src={image} alt={investmentType} className="mb-4 w-64" />
         <p className="text-lg font-semibold">{title}</p>
         <p
           className="text p-4"
