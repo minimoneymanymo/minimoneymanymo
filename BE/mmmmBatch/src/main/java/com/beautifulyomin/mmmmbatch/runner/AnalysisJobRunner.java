@@ -23,6 +23,7 @@ public class AnalysisJobRunner { //implements CommandLineRunner
         jobLauncher.run(investmentAnalysisJob, params);
     }
 
+
 //    @Override
 //    public void run(String... args) throws Exception {
 //        JobParameters params = new JobParametersBuilder()

@@ -139,6 +139,8 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         applyConditionByEnterpriseValue(filterRequestDto, condition);
         applyConditionByPriceChange(filterRequestDto, condition);
         applyConditionByTrading(filterRequestDto, condition);
+        //Elastic
+        applyConditionBySearch(filterRequestDto, condition);
 
         List<StockResponseDto> results = queryFactory
                 .select(Projections.constructor(StockResponseDto.class,
@@ -173,6 +175,8 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
         return new PageImpl<>(stockResponses, pageable, total);
     }
 
+
+
     @Override
     public boolean toggleFavoriteStock(String userId, String stockCode) {
         Children children = childrenRepository.findByUserId(userId)
@@ -201,6 +205,18 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
                 .from(stockLikes)
                 .where(stockLikes.children.userId.eq(userId))
                 .fetch());
+    }
+
+    /* 검색어 기준 필터링 */
+    // 기업이름 혹은 주식코드 검색
+    private void applyConditionBySearch(StockFilterRequestDto filterRequestDto, BooleanBuilder condition) {
+        log.info("검색 시 발동하는 applyConditionBySearch 진입");
+        List<String> searchList = filterRequestDto.getSearchList();
+        if (searchList != null && !searchList.isEmpty()) {
+            // 검색 조건 추가: stockCode나 companyName이 검색어를 포함할 때
+            condition.and(stock.stockCode.in(searchList));
+        }
+        log.info("Updated condition: {}", condition);
     }
 
     /**

@@ -19,6 +19,7 @@ import com.beautifulyomin.mmmm.exception.InvalidRoleException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,7 +126,34 @@ public class FundServiceImpl implements FundService {
         return fundRepositoryCustom.updateAllowance(request.getAmount(),parentId,childrenId);
     }
 
+    //매달 출금가능금액 초기화
     @Override
+    public long updatewmMonthly() {
+        List<Children> children = childrenRepository.findAll();
+        List<Children> updatedChildren = new ArrayList<>(); // 업데이트할 리스트
+
+        for(Children child : children){
+            Integer settingWithdrawableMoney = child.getSettingWithdrawableMoney();
+
+            // 출금가능 금액 설정값이 null이거나 0인 경우 건너뜀
+            if(settingWithdrawableMoney == null || settingWithdrawableMoney == 0) {
+                continue;
+            }
+
+            // 출금가능 금액을 설정값으로 초기화
+            child.setWithdrawableMoney(settingWithdrawableMoney);
+            updatedChildren.add(child); // 업데이트된 엔티티를 리스트에 추가
+        }
+
+        // 변경된 엔티티를 한 번에 저장
+        if (!updatedChildren.isEmpty()) {
+            childrenRepository.saveAll(updatedChildren);
+        }
+
+        // 업데이트된 레코드 수를 반환
+        return updatedChildren.size();
+    }
+
     public long updateAllowanceMonthly() {
         List<ParentWithBalanceDto> parentList = parentRepositoryCustom.getParentIdAndBalanceList();
         for(ParentWithBalanceDto parent : parentList){

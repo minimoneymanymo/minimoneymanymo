@@ -1,52 +1,31 @@
 # JDK 17
-FROM openjdk:17-alpine
+FROM openjdk:17-jdk-buster
 
 # 타임존 설정
-RUN apk add --no-cache tzdata && \
-    cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-    echo "Asia/Seoul" > /etc/timezone
+RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && echo Asia/Seoul > /etc/timezone
 
-# 크롬과 크롬 드라이버 설치
-# 크롬 브라우저와 드라이버 버전
-ENV CHROME_VERSION=129.0.6668.70
-ENV CHROMEDRIVER_VERSION=129.0.6668.70
-
-# 필수 패키지 설치
-RUN apk add --no-cache \
+# 기본 패키지 및 Chrome 의존성 설치
+RUN apt-get update && apt-get install -y \
     wget \
-    unzip \
-    libxi \
-    nss \
-    freetype \
-    alsa-lib \
-    libstdc++ \
-    libgcc \
-    libx11 \
-    libxcomposite \
-    libxrandr \
-    libxtst \
-    libxi \
-    libxcb \
-    gdk-pixbuf \
-    glib \
-    pango
+    gnupg \
+    libnss3 \
+    libgconf-2-4 \
+    libxss1 \
+    libasound2 \
+    fonts-liberation \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    libdrm2 \
+    libgbm1 \
+    libvulkan1 \
+    xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
 
-# 크롬 설치
-RUN wget https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip && \
-    unzip chrome-linux64.zip && \
-    mv chrome-linux64/chrome /usr/bin/google-chrome && \
-    rm -r chrome-linux64 && \
-    rm chrome-linux64.zip
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb
 
-# 크롬 드라이버 설치
-RUN wget https://storage.googleapis.com/chrome-for-testing-public/129.0.6668.70/linux64/chromedriver-linux64.zip && \
-    unzip chromedriver-linux64.zip && \
-    ls -l chromedriver-linux64 && \  
-    mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \ 
-    chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver-linux64.zip
 
-# JAR 파일을 /app 디렉터리에 복사
 COPY build/libs/mmmmBatch-0.0.1-SNAPSHOT.jar /app/mmmm.jar
 
 # 애플리케이션 실행

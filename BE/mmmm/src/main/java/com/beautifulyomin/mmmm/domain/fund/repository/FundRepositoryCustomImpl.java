@@ -6,6 +6,7 @@ import com.beautifulyomin.mmmm.domain.member.dto.ParentWithBalanceDto;
 import com.beautifulyomin.mmmm.domain.member.entity.*;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockChart;
+import com.beautifulyomin.mmmm.domain.stock.entity.QDailyStockData;
 import com.beautifulyomin.mmmm.domain.stock.entity.QStock;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,7 +127,7 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                         transaction.amount
                 ))
                 .from(transaction)
-                .where(transaction.children.childrenId.eq(childrenId))
+                .where(transaction.children.childrenId.eq(childrenId).and(transaction.tradeType.eq("1")))
                 .orderBy(transaction.createdAt.desc())
                 .limit(5)
                 .fetch();
@@ -211,6 +213,7 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
         QStocksHeld stocksheld = QStocksHeld.stocksHeld;
         QStock stock = QStock.stock;
         QDailyStockChart dailyStockChart = QDailyStockChart.dailyStockChart;
+        QDailyStockData dailyStockData = QDailyStockData.dailyStockData;
 
         List<StockHeldDto> result = jpaQueryFactory.select(Projections.constructor(StockHeldDto.class,
                         stocksheld.children.childrenId,
@@ -227,11 +230,18 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
             StockHeldDto extra = jpaQueryFactory.select(Projections.constructor(StockHeldDto.class,
                             stock.companyName,
                             stock.marketName,
-                            dailyStockChart.closingPrice))
+                            dailyStockChart.closingPrice,
+                            dailyStockData.priceChangeSign,
+                            dailyStockData.priceChange,
+                            dailyStockData.priceChangeRate
+                            ))
                     .from(stock)
                     .join(dailyStockChart)
                     .on(stock.stockCode.eq(dailyStockChart.stockCode)
                             .and(dailyStockChart.date.eq(latestDate)))
+                    .join(dailyStockData)
+                    .on(stock.stockCode.eq(dailyStockData.stockCode)
+                            .and(dailyStockData.date.eq(latestDate)))
                     .where(stock.stockCode.eq(stockCode))  // 여기서 stockCode로 필터링
                     .fetchFirst();
 
@@ -250,8 +260,12 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
             dto.setEvaluateMoney(evaluateMoney);
             dto.setPriceChangeRate((closingPrice.subtract(averagePrice)).divide(averagePrice, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)));
             dto.setPriceChangeMoney(evaluateMoney.subtract(totalAmount));
+            dto.setPriceChangeSign(extra.getPriceChangeSign());
+            dto.setPriceChange(extra.getPriceChange());
+            dto.setStockPriceChangeRate(extra.getStockPriceChangeRate());
         }
-
+        result.sort(Comparator.comparing(StockHeldDto::getCompanyName));
+        System.out.println(result);
         return result;
     }
 

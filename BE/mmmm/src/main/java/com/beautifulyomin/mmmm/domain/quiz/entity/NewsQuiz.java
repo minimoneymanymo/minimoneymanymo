@@ -1,5 +1,4 @@
-package com.beautifulyomin.mmmmbatch.batch.quiz.entity;
-
+package com.beautifulyomin.mmmm.domain.quiz.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,8 +14,8 @@ import java.time.format.DateTimeParseException;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor // 모든 필드를 매개변수로 받는 생성자 추가
-@Builder // 빌더 패턴을 사용할 수 있도록 추가
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "news_quizzes")
 public class NewsQuiz implements Serializable {

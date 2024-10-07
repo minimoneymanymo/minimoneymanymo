@@ -6,8 +6,10 @@ import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
+import com.beautifulyomin.mmmm.domain.member.repository.ChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentAndChildrenRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepository;
 import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
@@ -31,13 +33,15 @@ public class ParentServiceImpl implements ParentService {
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final FileService fileService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ChildrenRepository childrenRepository;
 
-    public ParentServiceImpl(ParentRepository parentRepository, ParentRepositoryCustom parentRepositoryCustom, ParentAndChildrenRepository parentAndChildrenRepository, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public ParentServiceImpl(ParentRepository parentRepository, ParentRepositoryCustom parentRepositoryCustom, ParentAndChildrenRepository parentAndChildrenRepository, FileService fileService, BCryptPasswordEncoder bCryptPasswordEncoder, ChildrenRepository childrenRepository) {
         this.parentRepository = parentRepository;
         this.parentRepositoryCustom = parentRepositoryCustom;
         this.parentAndChildrenRepository = parentAndChildrenRepository;
         this.fileService = fileService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.childrenRepository = childrenRepository;
     }
 
     public String registerParent(JoinRequestDto joinDto) {
@@ -258,5 +262,24 @@ public class ParentServiceImpl implements ParentService {
     @Override
     public long updateAccount(String parentUserId, String accountNumber, String bankCode) {
         return parentRepositoryCustom.updateParentAccount(parentUserId, accountNumber, bankCode);
+    }
+
+    @Override
+    public int rejectMyChildren(String userId, Integer childrenId) {
+        Parent parent = parentRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("부모 아이디 없음" + userId));
+
+        Optional<Children> children = childrenRepository.findChildrenByChildrenId(childrenId);
+        if (children.isEmpty()) {
+            return 0;
+        }
+        Optional<ParentAndChildren> existingRelation = parentAndChildrenRepository.findByParent_ParentIdAndChild_ChildrenIdAndIsApprovedFalse(parent.getParentId(),children.get().getChildrenId());
+        if (existingRelation.isPresent()) {
+            parentAndChildrenRepository.delete(existingRelation.get()); //관계 삭제
+            childrenRepository.delete(children.get());  //Children 삭제
+            return 1;
+        }
+
+        return 0;
     }
 }
