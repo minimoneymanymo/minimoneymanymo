@@ -64,7 +64,7 @@ const MainNewsLayout: React.FC = () => {
   }
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 w-[1140px]">
       <Typography variant="h5" color="blue-gray">
         오늘의 뉴스퀴즈
       </Typography>
