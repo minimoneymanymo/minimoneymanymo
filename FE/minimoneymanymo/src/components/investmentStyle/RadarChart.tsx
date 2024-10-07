@@ -15,7 +15,7 @@ import {
 } from "chart.js"
 
 interface RadarChartProps {
-  data: AnalysisData
+  data: AnalysisData | null
 }
 
 // Chart.js 요소 및 스케일 등록
@@ -29,11 +29,12 @@ ChartJS.register(
 )
 
 const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
-  const parent = useAppSelector(selectParent) // 부모 상태 확인
-  const child = useAppSelector(selectChild) // 자녀 상태 확인
+  if (!data || !data.myStatistics || !data.overallStatistics) {
+    return <div>Loading...</div> // Provide loading or error state
+  }
 
   // 부모나 자식의 이름 조회
-  const userName = parent.userId ? parent.name : child.name
+  const userName = data.myStatistics.name
 
   if (!data || !data.myStatistics || !data.overallStatistics) {
     return <div>Loading...</div> // Provide loading or error state

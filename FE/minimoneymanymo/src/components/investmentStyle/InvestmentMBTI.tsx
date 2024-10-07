@@ -65,8 +65,7 @@ const InvestmentMBTI: React.FC<InvestmentStyleProps> = ({ analysisData }) => {
   const investmentType =
     (analysisData.myStatistics.investmentType as InvestmentTypeKeys) || "없음"
 
-  // 부모일 경우 자녀 이름, 자녀일 경우 "당신" 사용
-  const name = parent.userId ? child.name : "당신"
+  const name = analysisData.myStatistics.name
   const { image, title, description } = investmentTypeDetails[investmentType]
 
   return (

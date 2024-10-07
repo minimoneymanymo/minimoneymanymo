@@ -1,4 +1,5 @@
 export interface Analysis {
+  name: string
   tradingFrequency: number
   cashRatio: number
   winLossRatio: number
