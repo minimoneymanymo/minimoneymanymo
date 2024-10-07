@@ -1,7 +1,5 @@
 import { axiosAuthInstance, axiosPublicInstance } from "@/api/httpcommons"
 import axios from "axios"
-const NAVER_CLIENT_ID = "a7SGtIuPLizfgl5IVvmW" // 네이버 API 클라이언트 ID
-const NAVER_CLIENT_SECRET = "4qXbkXAEYF" // 네이버 API 클라이언트 Secret
 
 export const getTodayNews = async () => {
   try {
