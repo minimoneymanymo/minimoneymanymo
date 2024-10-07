@@ -232,7 +232,12 @@ public class tradeSimulation {
         return simulationStocks.get(0).getDailyClosingPrices().containsKey(date);
     }
 
+<<<<<<< HEAD
     private boolean shouldBuy(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
+=======
+    //가중치에 따라 거래를 결정하는 메서드
+    private boolean shouldTrade(SimulationInvestor investor, SimulationStock simulationStock, LocalDate date) {
+>>>>>>> 30cd5fb (feat: 원시 값으로 통계 내역 저장하는 버전)
         Map<String, Double> characteristics = investor.getCharacteristics();
 
         // 거래 빈도
