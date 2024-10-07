@@ -25,11 +25,13 @@ export const FinancialInfo: React.FC<{
         PopperProps={{
           sx: {
             "& .MuiTooltip-tooltip": {
-              bgcolor: "", // 원하는 색으로 변경
-              color: "white", // 텍스트 색상 변경
-              borderRadius: "4px", // 테두리
-              padding: "8px", // 패딩 조정
-              maxWidth: 500,
+              backgroundColor: "rgba(255, 255, 255, 0.7)", // 배경색을 설정
+              color: "black", // 텍스트 색상 변경
+              borderRadius: "0.25rem", // 테두리 둥글게
+              padding: "0.5rem", // 패딩 조정
+              maxWidth: "500px", // 최대 너비 설정
+              backdropFilter: "blur(8px)", // 블러 효과 추가
+              boxShadow: "0 0 5px rgba(0, 0, 0, 0.5)", // 그림자 추가 (선택 사항)
             },
           },
         }}
@@ -119,11 +121,13 @@ const Element = (
         PopperProps={{
           sx: {
             "& .MuiTooltip-tooltip": {
-              bgcolor: "", // 원하는 색으로 변경
-              color: "white", // 텍스트 색상 변경
-              borderRadius: "4px", // 테두리 둥글게
-              padding: "8px", // 패딩 조정
-              maxWidth: 500,
+              backgroundColor: "rgba(255, 255, 255, 0.7)", // 배경색을 설정
+              color: "black", // 텍스트 색상 변경
+              borderRadius: "0.25rem", // 테두리 둥글게
+              padding: "0.5rem", // 패딩 조정
+              maxWidth: "500px", // 최대 너비 설정
+              backdropFilter: "blur(8px)", // 블러 효과 추가
+              boxShadow: "0 0 5px rgba(0, 0, 0, 0.5)", // 그림자 추가 (선택 사항)
             },
           },
         }}

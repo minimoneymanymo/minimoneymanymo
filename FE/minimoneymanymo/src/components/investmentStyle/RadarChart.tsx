@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js"
+
 interface RadarChartProps {
   data: AnalysisData
 }
@@ -25,14 +26,11 @@ ChartJS.register(
 )
 
 const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
-  //   const myStatistics = data.myStatistics
-  //   const overallStatistics = data.overallStatistics
-  //   console.log(myStatistics)
-  //   console.log(overallStatistics)
   console.log(data)
   if (!data || !data.myStatistics || !data.overallStatistics) {
     return <div>Loading...</div> // Provide loading or error state
   }
+
   const chartData = {
     labels: ["현금비중", "매매횟수", "손익비율", "분산투자비율", "안정성"],
     datasets: [
@@ -64,7 +62,17 @@ const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
       },
     ],
   }
+
   const options = {
+    plugins: {
+      legend: {
+        labels: {
+          font: {
+            size: 16, // 범례의 글자 크기를 16으로 설정
+          },
+        },
+      },
+    },
     scales: {
       r: {
         angleLines: {
@@ -72,6 +80,21 @@ const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
         },
         suggestedMin: 0,
         suggestedMax: 100,
+        ticks: {
+          stepSize: 20, // 축의 단위를 20으로 설정
+          font: {
+            size: 16, // 각 축의 값 폰트 크기를 16으로 설정
+          },
+        },
+        pointLabels: {
+          font: {
+            size: 16, // 각 축의 라벨(현금비중, 매매횟수 등) 폰트 크기를 18로 설정
+            weight: "bold", // 라벨을 굵게 설정
+          },
+        },
+        grid: {
+          lineWidth: 2, // 그리드 라인 두께 조정 (선택사항)
+        },
       },
     },
   }
