@@ -1,17 +1,18 @@
 package com.beautifulyomin.mmmmbatch.batch.analysis.step.report;
 
+import com.beautifulyomin.mmmmbatch.batch.analysis.constant.InvestmentType;
 import com.beautifulyomin.mmmmbatch.batch.analysis.data.report.*;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.TradeRecord;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.AnalysisRepositoryCustom;
-import lombok.RequiredArgsConstructor;
+import com.beautifulyomin.mmmmbatch.batch.analysis.repository.StocksHeldRepository;
+import com.beautifulyomin.mmmmbatch.batch.analysis.service.InvestmentTypeCalculator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,18 +25,20 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
 
     private final AnalysisRepositoryCustom analysisRepositoryCustom;
 
-    private static final LocalDate INV_DATE = LocalDate.now();
-    //    private static final LocalDate INV_DATE = LocalDate.of(2024, 9, 30);
+    //    private static final LocalDate INV_DATE = LocalDate.now();
+    private static final LocalDate INV_DATE = LocalDate.of(2024, 9, 30);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private static final LocalDate START_DATE = INV_DATE.withDayOfMonth(1);
     private static final LocalDate END_DATE = INV_DATE;
+    private final StocksHeldRepository stocksHeldRepository;
 
     private String START_DATE_STR;
     private String END_DATE_STR;
 
     @Autowired
-    public InvestmentAnalysisProcessor(AnalysisRepositoryCustom analysisRepositoryCustom) {
+    public InvestmentAnalysisProcessor(AnalysisRepositoryCustom analysisRepositoryCustom, StocksHeldRepository stocksHeldRepository) {
         this.analysisRepositoryCustom = analysisRepositoryCustom;
+        this.stocksHeldRepository = stocksHeldRepository;
     }
 
     @Override
@@ -44,6 +47,20 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
         END_DATE_STR = END_DATE.atStartOfDay().format(FORMATTER);
 
         log.debug("🔥🔥🔥InvestmentAnalysisProcessor");
+
+        List<TradeRecord> tradeRecordList = getTradeRecords(children);
+        int winTradeCount = getWinTradeCount(tradeRecordList);
+
+        BigDecimal cashRatio = calculateCashRatio(children);
+        BigDecimal realizedGains = getRealizedGains(tradeRecordList);
+        BigDecimal realizedLosses = getRealizedLosses(tradeRecordList);
+        BigDecimal stockValue = getStockValue(children);
+        long tradeCount = calculateTradingFrequency(children);
+        Integer monthlyStartMoney = getMonthlyStartMoney(children, START_DATE_STR); //월간 시작 시드 머니
+
+        InvestmentTypeCalculator investmentTypeCalculator = new InvestmentTypeCalculator(tradeCount, cashRatio, stockValue, realizedGains, realizedLosses, monthlyStartMoney);
+        System.out.println("🟢🟢🟢 investmentTypeCalculator = " + investmentTypeCalculator);
+
         InvestmentReport report = InvestmentReport.builder()
                 .childrenId(children.getChildrenId())
                 .date(INV_DATE)
@@ -51,11 +68,15 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
                 .diversification(calculateDiversification(children))
                 .stability(calculateStability(children))
                 .tradingFrequency(calculateTradingFrequency(children))
-                .winLossRatio(calculateWinLossRatio(children))
+                .winLossRatio(calculateWinLossRatio(tradeRecordList, winTradeCount))
+                .investmentType(investmentTypeCalculator.calculate().getLabel())
                 .build();
 
-        log.info("🌠🌠🌠report={}", report);
         return report;
+    }
+
+    private Integer getMonthlyStartMoney(Children children, String startDateStr) {
+        return analysisRepositoryCustom.getMonthlyStartMoney(children.getChildrenId(), startDateStr);
     }
 
     /**
@@ -79,33 +100,13 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
     /**
      * @return 월별 손익 비율
      */
-    private BigDecimal calculateWinLossRatio(Children children) {
-        //기간별 거래 내역 불러오기
-        List<TradeRecord> tradeRecordList = analysisRepositoryCustom
-                .getTradeRecordsByDateRange(children.getChildrenId(), START_DATE_STR, END_DATE_STR);
-
-        //수익낸 거래수
-        int winTradeCount = (int) tradeRecordList.stream()
-                .filter(tradeRecord -> tradeRecord.getStockTradingGain().compareTo(BigDecimal.ZERO) > 0)
-                .count();
-
-        //전체 거래수
+    private BigDecimal calculateWinLossRatio(List<TradeRecord> tradeRecordList, int winTradeCount) {
         int totalTradeCount = tradeRecordList.size();
+        BigDecimal realizedGains = getRealizedGains(tradeRecordList);
+        BigDecimal realizedLosses = getRealizedLosses(tradeRecordList);
 
-        //실현된 이익 (TradingRecord의 손익 머니가 양수)
-        BigDecimal realizedGains = tradeRecordList.stream()
-                .map(TradeRecord::getStockTradingGain)
-                .filter(stockTradingGain -> stockTradingGain.compareTo(BigDecimal.ZERO) > 0)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        //실현된 손실 (TradingRecord의 손익 머니가 음수)
-        BigDecimal realizedLosses = tradeRecordList.stream()
-                .map(TradeRecord::getStockTradingGain)
-                .filter(stockTradingGain -> stockTradingGain.compareTo(BigDecimal.ZERO) < 0)
-                .map(BigDecimal::negate) //음수 값들을 양수로 변환
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        WinLossData winLossData = new WinLossData(winTradeCount, totalTradeCount, realizedGains, realizedLosses);
+        WinLossData
+                winLossData = new WinLossData(winTradeCount, totalTradeCount, realizedGains, realizedLosses);
         return winLossData.calculateFinalScore();
     }
 
@@ -127,5 +128,37 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
                 .countTradesByChildrenIdAndDateRange(children.getChildrenId(), START_DATE_STR, END_DATE_STR))
                 .calculateScore();
     }
+
+
+    private BigDecimal getRealizedGains(List<TradeRecord> tradeRecordList) {
+        return tradeRecordList.stream()
+                .map(TradeRecord::getStockTradingGain)
+                .filter(stockTradingGain -> stockTradingGain.compareTo(BigDecimal.ZERO) > 0)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal getRealizedLosses(List<TradeRecord> tradeRecordList) {
+        return tradeRecordList.stream()
+                .map(TradeRecord::getStockTradingGain)
+                .filter(stockTradingGain -> stockTradingGain.compareTo(BigDecimal.ZERO) < 0)
+                .map(BigDecimal::negate) //음수 값들을 양수로 변환
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal getStockValue(Children children) {
+        return analysisRepositoryCustom.getRemainSharesCountSum(children.getChildrenId());
+    }
+
+    private List<TradeRecord> getTradeRecords(Children children) {
+        return analysisRepositoryCustom
+                .getTradeRecordsByDateRange(children.getChildrenId(), START_DATE_STR, END_DATE_STR);
+    }
+
+    private static int getWinTradeCount(List<TradeRecord> tradeRecordList) {
+        return (int) tradeRecordList.stream()
+                .filter(tradeRecord -> tradeRecord.getStockTradingGain().compareTo(BigDecimal.ZERO) > 0)
+                .count();
+    }
+
 
 }

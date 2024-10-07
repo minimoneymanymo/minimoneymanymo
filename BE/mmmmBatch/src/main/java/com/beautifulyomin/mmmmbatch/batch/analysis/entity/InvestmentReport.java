@@ -46,7 +46,7 @@ public class InvestmentReport {
     @Range(min = 0, max = 100)
     private Integer stability;
 
-    @OneToOne(mappedBy = "investmentReport", cascade = CascadeType.ALL)
-    private InvestorCluster investorCluster;
+    @Column(nullable = false)
+    private String investmentType;
 
 }

@@ -2,8 +2,6 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.job;
 
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
-import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReportV2;
-import com.beautifulyomin.mmmmbatch.batch.analysis.entity.MonthlyInvestorStatistics;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisProcessor;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisReader;
 import com.beautifulyomin.mmmmbatch.batch.analysis.step.report.InvestmentAnalysisWriter;

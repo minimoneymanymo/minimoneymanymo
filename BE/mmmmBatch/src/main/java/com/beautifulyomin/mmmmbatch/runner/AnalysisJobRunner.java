@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 public class AnalysisJobRunner implements CommandLineRunner { //implements CommandLineRunner
     private final JobLauncher jobLauncher;
     private final Job investmentAnalysisJob;
-    private final Job investorClusteringJob;
 
 //    @Scheduled(cron = "0 10 17 ? * MON-FRI")
 //    public void run() throws Exception {

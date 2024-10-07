@@ -2,26 +2,21 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.repository;
 
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.QStocksHeld;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.QTradeRecord;
-import com.beautifulyomin.mmmmbatch.batch.analysis.entity.StocksHeld;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.TradeRecord;
 import com.beautifulyomin.mmmmbatch.batch.stock.entity.QStock;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -176,7 +171,7 @@ public class AnalysisRepositoryCustom {
                 .fetchOne();
     }
 
-    //일별 포트폴리오의 가치
+    //월별 포트폴리오의 가치
     public List<Tuple> getDailyPortfolioValues(Integer childrenId, String startDate, String endDate) {
         return queryFactory
                 .select(Expressions.stringTemplate("TO_DATE({0}, 'YYYYMMDDHH24MISS')", tradeRecord.createdAt),
@@ -197,4 +192,25 @@ public class AnalysisRepositoryCustom {
                 .fetch()
                 .size();
     }
+
+    public BigDecimal getRemainSharesCountSum(Integer childrenId) {
+        BigDecimal result = queryFactory.select(stocksHeld.remainSharesCount.sum())
+                .from(stocksHeld)
+                .where(stocksHeld.children.childrenId.eq(childrenId))
+                .fetchOne();
+        return result != null ? result : BigDecimal.ZERO;
+    }
+
+    public Integer getMonthlyStartMoney(Integer childrenId, String startDateStr) {
+        Integer result = queryFactory.select(tradeRecord.remainAmount.add(tradeRecord.amount))
+                .from(tradeRecord)
+                .where(tradeRecord.createdAt.goe(startDateStr)
+                        .and(tradeRecord.children.childrenId.eq(childrenId)))
+                .orderBy(tradeRecord.createdAt.asc())
+                .fetchFirst();
+
+        // null 처리: 값이 없으면 기본값 0을 반환
+        return result != null ? result : 0;
+    }
+
 }
