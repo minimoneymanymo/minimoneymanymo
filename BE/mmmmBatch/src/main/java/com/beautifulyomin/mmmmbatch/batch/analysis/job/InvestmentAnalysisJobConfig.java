@@ -42,7 +42,7 @@ public class InvestmentAnalysisJobConfig {
     @Bean
     public Step tradingFrequencyStep() {
         return new StepBuilder("tradingFrequencyStep", jobRepository)
-                .<Children, MonthlyInvestorStatistics>chunk(10, transactionManager)
+                .<Children, InvestmentReport>chunk(10, transactionManager)
                 .reader(investmentAnalysisReader)
                 .processor(investmentAnalysisProcessor)
                 .writer(investmentAnalysisWriter)

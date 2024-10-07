@@ -2,39 +2,47 @@ package com.beautifulyomin.mmmmbatch.batch.analysis.step.report;
 
 import com.beautifulyomin.mmmmbatch.batch.analysis.data.report.*;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.TradeRecord;
-import com.beautifulyomin.mmmmbatch.batch.analysis.repository.ChildrenRepository;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.Children;
 import com.beautifulyomin.mmmmbatch.batch.analysis.entity.InvestmentReport;
 import com.beautifulyomin.mmmmbatch.batch.analysis.repository.AnalysisRepositoryCustom;
-import com.beautifulyomin.mmmmbatch.batch.analysis.repository.StocksHeldRepository;
-import com.beautifulyomin.mmmmbatch.batch.analysis.repository.TradeRecordRepository;
-import com.beautifulyomin.mmmmbatch.batch.stock.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class InvestmentAnalysisProcessor implements ItemProcessor<Children, InvestmentReport> {
+
     private final AnalysisRepositoryCustom analysisRepositoryCustom;
 
-    //    private static final LocalDate INV_DATE = LocalDate.now();
-    private static final LocalDate INV_DATE = LocalDate.of(2024, 9, 30);
+    private static final LocalDate INV_DATE = LocalDate.now();
+    //    private static final LocalDate INV_DATE = LocalDate.of(2024, 9, 30);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private static final LocalDate START_DATE = INV_DATE.withDayOfMonth(1);
     private static final LocalDate END_DATE = INV_DATE;
+
+    private String START_DATE_STR;
+    private String END_DATE_STR;
+
+    @Autowired
+    public InvestmentAnalysisProcessor(AnalysisRepositoryCustom analysisRepositoryCustom) {
+        this.analysisRepositoryCustom = analysisRepositoryCustom;
+    }
+
     @Override
     public InvestmentReport process(Children children) {
+        START_DATE_STR = START_DATE.atStartOfDay().format(FORMATTER);
+        END_DATE_STR = END_DATE.atStartOfDay().format(FORMATTER);
+
         log.debug("🔥🔥🔥InvestmentAnalysisProcessor");
         InvestmentReport report = InvestmentReport.builder()
                 .childrenId(children.getChildrenId())
@@ -54,8 +62,8 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
      * @return 월말 기준 보유 종목의 안정성 점수 (코스피, 코스닥 등 시장 유형 기반)
      */
     private Integer calculateStability(Children children) {
-        List<String> marketTypesOfHeldStock = analysisRepositoryCustom.findAllMarketTypeByChildrenId(
-                children.getChildrenId());
+        List<String> marketTypesOfHeldStock = analysisRepositoryCustom
+                .findAllMarketTypeByChildrenId(children.getChildrenId(), START_DATE_STR, END_DATE_STR);
         return new StabilityData(marketTypesOfHeldStock).calculateScore();
     }
 
@@ -63,8 +71,8 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
      * @return 월말 기준 보유 종목 수에 따른 분산 투자 점수
      */
     private Integer calculateDiversification(Children children) {
-        List<String> uniqueStocksHeld = analysisRepositoryCustom.findAllMarketTypeByChildrenId(
-                children.getChildrenId());
+        List<String> uniqueStocksHeld = analysisRepositoryCustom
+                .findAllMarketTypeByChildrenId(children.getChildrenId(), START_DATE_STR, END_DATE_STR);
         return new DiversificationData(uniqueStocksHeld.size()).calculateScore();
     }
 
@@ -72,11 +80,9 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
      * @return 월별 손익 비율
      */
     private BigDecimal calculateWinLossRatio(Children children) {
-        String startDate = START_DATE.atStartOfDay().format(FORMATTER);
-        String endDate = END_DATE.atStartOfDay().format(FORMATTER);
-
         //기간별 거래 내역 불러오기
-        List<TradeRecord> tradeRecordList = analysisRepositoryCustom.getTradeRecordsByDateRange(children.getChildrenId(), startDate, endDate);
+        List<TradeRecord> tradeRecordList = analysisRepositoryCustom
+                .getTradeRecordsByDateRange(children.getChildrenId(), START_DATE_STR, END_DATE_STR);
 
         //수익낸 거래수
         int winTradeCount = (int) tradeRecordList.stream()
@@ -117,12 +123,9 @@ public class InvestmentAnalysisProcessor implements ItemProcessor<Children, Inve
      * @return 월별 매매 횟수(유동성)
      */
     private int calculateTradingFrequency(Children children) {
-        String startDate = START_DATE.atStartOfDay().format(FORMATTER);
-        String endDate = END_DATE.atStartOfDay().format(FORMATTER);
-        TradingFrequencyData tradingFrequencyData = new TradingFrequencyData(
-                analysisRepositoryCustom.countTradesByChildrenIdAndDateRange(children.getChildrenId(), startDate, endDate)
-        );
-        return tradingFrequencyData.calculateScore();
+        return new TradingFrequencyData(analysisRepositoryCustom
+                .countTradesByChildrenIdAndDateRange(children.getChildrenId(), START_DATE_STR, END_DATE_STR))
+                .calculateScore();
     }
 
 }

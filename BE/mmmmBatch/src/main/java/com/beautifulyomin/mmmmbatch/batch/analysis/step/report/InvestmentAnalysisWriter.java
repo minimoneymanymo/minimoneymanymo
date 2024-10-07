@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class InvestmentAnalysisWriter implements ItemWriter<MonthlyInvestorStatistics> {
+public class InvestmentAnalysisWriter implements ItemWriter<InvestmentReport> {
 
-    private final MonthlyInvestorRepository monthlyInvestorRepository;
+    private final InvestmentAnalysisRepository investmentAnalysisRepository;
 
     @Override
-    public void write(Chunk<? extends MonthlyInvestorStatistics> item) {
+    public void write(Chunk<? extends InvestmentReport> item) {
         log.info("🔥🔥🔥InvestmentAnalysisWriter");
-        monthlyInvestorRepository.saveAll(item);
+        investmentAnalysisRepository.saveAll(item);
     }
 }

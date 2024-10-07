@@ -1,6 +1,5 @@
 package com.beautifulyomin.mmmm.simulation;
 
-
 import com.beautifulyomin.mmmm.config.QueryDslConfig;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
@@ -23,12 +22,8 @@ import java.util.stream.IntStream;
 @Import({QueryDslConfig.class})
 class userMakeSimulation {
 
-<<<<<<< HEAD
-    private static final int INVESTOR_START_IDX = 1698;
-=======
     private static final int INVESTOR_START_IDX = 1697;
     private static final int MAKE_COUNT = 9000;
->>>>>>> 31e8c97 (test: 각종 원시 저장하는 로직 구현)
     private static final int MONEY = 100000;
     private final Integer PARENT_ID = 5;
     private final EntityManager entityManager;
@@ -44,7 +39,6 @@ class userMakeSimulation {
         this.parentAndChildrenRepository = parentAndChildrenRepository;
     }
 
-
     @Test
     public void createChildrenAndParentBatch() {
         // 1. 부모 생성 (ID는 5로 통일)
@@ -57,11 +51,7 @@ class userMakeSimulation {
         List<Children> childrenList = new ArrayList<>();
         List<ParentAndChildren> parentAndChildrenList = new ArrayList<>();
 
-<<<<<<< HEAD
-        for (int i = 301; i <= 1000; i++) {
-=======
         for (int i = INVESTOR_START_IDX; i <= INVESTOR_START_IDX + MAKE_COUNT; i++) {
->>>>>>> 31e8c97 (test: 각종 원시 저장하는 로직 구현)
             String userId = "user" + i;
             String name = "Child" + i;
             String password = "password" + i;
@@ -97,11 +87,7 @@ class userMakeSimulation {
     public void updateChildrenMoney() {
 
         List<Children> childrenList = childrenRepository.findAllById(
-<<<<<<< HEAD
-                IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX + 10000)
-=======
                 IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX + MAKE_COUNT)
->>>>>>> 31e8c97 (test: 각종 원시 저장하는 로직 구현)
                         .boxed()
                         .toList()
         );

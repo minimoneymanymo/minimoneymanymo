@@ -232,12 +232,7 @@ public class tradeSimulation {
         return simulationStocks.get(0).getDailyClosingPrices().containsKey(date);
     }
 
-<<<<<<< HEAD
     private boolean shouldBuy(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
-=======
-    //가중치에 따라 거래를 결정하는 메서드
-    private boolean shouldTrade(SimulationInvestor investor, SimulationStock simulationStock, LocalDate date) {
->>>>>>> 30cd5fb (feat: 원시 값으로 통계 내역 저장하는 버전)
         Map<String, Double> characteristics = investor.getCharacteristics();
 
         // 거래 빈도
@@ -345,7 +340,6 @@ public class tradeSimulation {
             return baseTradeAmount.min(stockValue); // 매도: 현재 보유 주식 가치를 초과하지 않도록 함
         }
     }
-
 
     //주어진 금액으로 구매할 수 있는 주식의 수량 구하기
     private BigDecimal calculateShareCount(BigDecimal amount, SimulationStock simulationStock, LocalDate date) {
