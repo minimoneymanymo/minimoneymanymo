@@ -10,9 +10,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js"
-interface RadarChartProps {
-  data: AnalysisData
-}
 
 // Chart.js 요소 및 스케일 등록
 ChartJS.register(
@@ -24,15 +21,16 @@ ChartJS.register(
   Legend
 )
 
+interface RadarChartProps {
+  data: AnalysisData
+}
+
 const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
-  //   const myStatistics = data.myStatistics
-  //   const overallStatistics = data.overallStatistics
-  //   console.log(myStatistics)
-  //   console.log(overallStatistics)
   console.log(data)
   if (!data || !data.myStatistics || !data.overallStatistics) {
     return <div>Loading...</div> // Provide loading or error state
   }
+
   const chartData = {
     labels: ["현금비중", "매매횟수", "손익비율", "분산투자비율", "안정성"],
     datasets: [
@@ -64,16 +62,42 @@ const RadarChart: React.FC<RadarChartProps> = ({ data }) => {
       },
     ],
   }
+
   const options = {
-    scales: {
-      r: {
-        angleLines: {
-          display: true,
+    plugins: {
+      legend: {
+        labels: {
+          font: {
+            size: 14,
+          },
         },
-        suggestedMin: 0,
-        suggestedMax: 100,
       },
     },
+    // scales: {
+    //   r: {
+    //     type: "radialLinear" as const, // type을 'radialLinear'로 명시
+    //     angleLines: {
+    //       display: true,
+    //     },
+    //     suggestedMin: 0,
+    //     suggestedMax: 100,
+    //     ticks: {
+    //       stepSize: 20,
+    //       font: {
+    //         size: 12, // Font size for ticks
+    //       },
+    //     },
+    //     pointLabels: {
+    //       font: {
+    //         size: 14, // Font size for point labels
+    //         weight: "bold", // Type Safety
+    //       },
+    //     },
+    //     grid: {
+    //       lineWidth: 1,
+    //     },
+    //   },
+    // },
   }
 
   return (

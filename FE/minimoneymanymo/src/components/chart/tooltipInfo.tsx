@@ -64,7 +64,7 @@ export const tooltipInfo: { [key: string]: React.ReactNode } = {
       <b>PER은 주가수익비율로,</b> 주가를 주당순이익(EPS)으로 나눈 수치예요.
       <p className="mt-4">
         <span className="inline-block text-center align-middle">
-          <span className="block border-b border-white">주가</span>
+          <span className="block border-b border-black">주가</span>
           <span className="block">주당순이익</span>
         </span>
       </p>

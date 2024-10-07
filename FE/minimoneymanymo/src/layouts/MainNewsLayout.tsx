@@ -65,16 +65,16 @@ const MainNewsLayout: React.FC = () => {
   }
 
   return (
-    <>
-      <Typography variant="h5" color="blue-gray">
+    <div className="mt-10 w-[1140px]">
+      <div className="text-2xl font-bold" color="blue-gray">
         오늘의 뉴스퀴즈
-      </Typography>
+      </div>
 
       <Box
         sx={{
           flexGrow: 1,
           padding: 2,
-          maxWidth: "1200px",
+          maxWidth: "1140px",
           margin: "0 auto",
           position: "relative", // Box에 relative 추가
         }}
@@ -148,23 +148,14 @@ const MainNewsLayout: React.FC = () => {
           })}
         </Slider>
         {/* "더 보기" 텍스트 */}
-        <Typography
-          variant="body2"
-          color="blue-gray"
+        <button
+          className="flex w-full justify-end p-5 pt-2 text-gray-700"
           onClick={() => navigate("/newslist")} // 더 보기 클릭 시 이동할 경로
-          sx={{
-            position: "absolute",
-            top: "10px",
-            right: "0px",
-            cursor: "pointer",
-            textDecoration: "underline",
-            fontSize: "0.8rem",
-          }}
         >
-          더 보기
-        </Typography>
+          더보기
+        </button>
       </Box>
-    </>
+    </div>
   )
 }
 

@@ -243,7 +243,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         <>
           <div className="relative flex h-full w-[340px] flex-col p-2">
             {/* 매수매도 버튼 */}
-            <div className="absolute mt-14 flex h-[80px] w-[310px] justify-end space-x-4">
+            <div className="absolute mt-14 flex h-[80px] w-[310px] justify-end space-x-2">
               <Button
                 className="z-10 h-16 bg-buy pb-6"
                 onClick={() => setIsBuyMode(true)}
@@ -302,7 +302,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                     <div className="flex items-center">
                       <input
                         type="tel"
-                        className="w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                        className="my-2 h-[35px] w-full appearance-none overflow-hidden rounded-xl border border-gray-300 px-3 py-5 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                         value={
                           inputMoney === 0
                             ? ""
@@ -323,11 +323,6 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                           }
                         }}
                         placeholder="매수할 머니"
-                        style={{
-                          height: "36px",
-                          maxHeight: "35px",
-                          overflow: "hidden",
-                        }} // 높이 35px로 설정
                       />
                     </div>
                     <div className="flex w-full items-end justify-end text-right">
@@ -336,7 +331,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                       </p>
                       <p className="ml-1 mt-1">주</p>
                     </div>
-                    <div className="mb-2 flex w-full items-end justify-between">
+                    <div className="mb-2 flex w-full items-end justify-between pt-2">
                       <p className="text-left text-base">매수 후 잔액</p>
                       {/* 이 부분 */}
                       <p className="text-right text-base">
@@ -347,13 +342,12 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                       </p>
                     </div>
 
-                    <input
-                      type="tel"
-                      className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
+                    <textarea
+                      className="h-[200px] w-full rounded-xl bg-gray-100 p-4 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                       value={reason}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setReason(e.target.value)
-                      }
+                      onChange={(
+                        e: React.ChangeEvent<HTMLTextAreaElement> // 타입을 HTMLTextAreaElement로 변경
+                      ) => setReason(e.target.value)}
                       placeholder="매수를 생각하게 된 이유를 적어주세요!"
                     />
                   </>
@@ -382,7 +376,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                     <div className="flex items-center">
                       <input
                         type="tel"
-                        className="sellSharesInputBox w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                        className="my-2 h-[35px] w-full appearance-none overflow-hidden rounded-xl border border-gray-300 px-3 py-5 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                         value={sellShares} // 기존의 sellShares 값 사용
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const value = e.target.value
@@ -398,11 +392,6 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                           }
                         }}
                         placeholder="매도할 주 수"
-                        style={{
-                          height: "36px",
-                          maxHeight: "35px",
-                          overflow: "hidden",
-                        }} // 높이 35px로 설정
                       />
                     </div>
                     <div className="flex w-full items-end justify-end">
@@ -411,7 +400,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                       </p>
                       <p className="ml-1 mt-1">머니</p>
                     </div>
-                    <div className="mb-2 flex w-full items-end justify-between">
+                    <div className="mb-2 flex w-full items-end justify-between pt-2">
                       <p className="text-left text-base">예상손익머니</p>
                       <p
                         className={`text-right text-base ${Number(profitLoss) >= 0 ? "buy" : "sell"}`}
@@ -422,11 +411,10 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                       </p>
                     </div>
 
-                    <input
-                      type="tel"
-                      className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
+                    <textarea
+                      className="h-[200px] w-full rounded-xl bg-gray-100 p-4 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                       value={reason}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         setReason(e.target.value)
                       }
                       placeholder="매도를 생각하게 된 이유를 적어주세요!"
