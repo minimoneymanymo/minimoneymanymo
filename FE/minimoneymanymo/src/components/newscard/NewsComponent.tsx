@@ -14,6 +14,8 @@ import {
   DialogFooter,
 } from "@material-tailwind/react"
 import Swal from "sweetalert2"
+import { setMemberInfo } from "@/utils/user-utils"
+import { useDispatch } from "react-redux"
 
 interface NewsModalProps {
   id: string
@@ -86,8 +88,10 @@ const NewsComponent: React.FC<NewsModalProps> = ({
   const [open, setOpen] = useState(false) // 모달 상태 관리
   const parsedOptions = JSON.parse(options) // JSON 문자열을 객체로 변환
   const [selectedOption, setSelectedOption] = useState<number | null>(null) // 선택된 옵션 번호 상태 관리
-  const navigate = useNavigate() // useNavigate 훅 사용
   const [displayBonus, setDisplayBonus] = useState(0) // displayBonus 상태 추가
+
+  const navigate = useNavigate() // useNavigate 훅 사용
+  const dispatch = useDispatch()
 
   const handleOpen = () => setOpen(!open) // 모달 여닫기 함수
 
@@ -109,10 +113,11 @@ const NewsComponent: React.FC<NewsModalProps> = ({
 
           Swal.fire({
             title: "정답입니다!",
-            text: `+ ${bonusMoney}머니!`,
+            text: `+ ${bonusMoney.toLocaleString()}머니!`,
             icon: "success",
             confirmButtonText: "확인",
           }).then(() => {
+            setMemberInfo(dispatch, 1)
             handleOpen()
             navigate("/newslist") // 정답일 경우 /news 페이지로 이동
           })
