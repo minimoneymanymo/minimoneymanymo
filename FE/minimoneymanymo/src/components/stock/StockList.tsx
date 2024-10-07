@@ -211,7 +211,7 @@ function StockList({ filters }: { filters: StockFilter }) {
     { label: "", key: "" }, //종목 이름
     { label: "현재가", key: "" },
     { label: "등락률", key: "" },
-    { label: "시가총액", key: "MC" }, // 시가총액 기준 정렬
+    { label: "시가총액(머니)", key: "MC" }, // 시가총액 기준 정렬
     { label: "거래량", key: "TV" }, // 거래량 기준 정렬
   ]
 
@@ -318,7 +318,7 @@ function StockList({ filters }: { filters: StockFilter }) {
                   style={{ width: "15%" }}
                 >
                   <div color="blue-gray" className="font-normal">
-                    {stock.closingPrice.toLocaleString()}원
+                    {stock.closingPrice.toLocaleString()} 머니
                   </div>
                 </td>
                 <td
@@ -326,7 +326,7 @@ function StockList({ filters }: { filters: StockFilter }) {
                   style={{ width: "20%" }}
                 >
                   <div color={color} className={`font-normal ${color}`}>
-                    {sign} {stock.priceChange.toLocaleString()}원 ({sign}
+                    {sign} {stock.priceChange.toLocaleString()} 머니 ({sign}
                     {stock.priceChangeRate.toFixed(2)}%)
                   </div>
                 </td>
@@ -343,7 +343,7 @@ function StockList({ filters }: { filters: StockFilter }) {
                   style={{ width: "20%" }}
                 >
                   <div color="blue-gray" className="font-normal">
-                    {stock.tradingVolume.toLocaleString()}주
+                    {stock.tradingVolume.toLocaleString()} 주
                   </div>
                 </td>
               </tr>

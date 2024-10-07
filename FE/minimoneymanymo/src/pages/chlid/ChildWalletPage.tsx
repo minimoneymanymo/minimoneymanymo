@@ -185,7 +185,15 @@ function ChildWalletPage(): JSX.Element {
           <div className="m-2 bg-white">
             <LineChart data={getRecent7Days(recordList)} />
           </div>
-          <RecordForm data={recordList} isMoneyList={true} />
+          <div
+            className={`${
+              recordList.length >= 5
+                ? "hidden-scrollbar max-h-[400px] overflow-y-auto"
+                : ""
+            }`}
+          >
+            <RecordForm data={recordList} isMoneyList={true} />
+          </div>
         </div>
       )}
     </>

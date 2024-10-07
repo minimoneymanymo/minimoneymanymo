@@ -163,7 +163,7 @@ function Navbar(): JSX.Element {
     console.log("After toggle:", !isTooltipEnabled) // 상태를 반대로 출력
   }
   return (
-    <nav className="flex h-20 flex-col items-center justify-center border-secondary-m2 bg-secondary-m3 pl-10">
+    <nav className="flex h-20 flex-col items-center justify-center border-b border-gray-200 pl-10">
       <div className="container mx-auto flex items-center justify-between">
         <button
           onClick={() => {
@@ -171,7 +171,7 @@ function Navbar(): JSX.Element {
           }}
           className="flex items-center gap-3 text-xl text-primary-600"
         >
-          <div className="py-auto flex size-16 items-center justify-center rounded-full border">
+          {/* <div className="py-auto flex size-16 items-center justify-center rounded-full border">
             <span>로고</span>
           </div>
           <div
@@ -183,7 +183,8 @@ function Navbar(): JSX.Element {
             money
             <br />
             manymo
-          </div>
+          </div> */}
+          <img src="/images/logo00.png" alt="로고" className="h-[55px]" />
         </button>
         {/* <NavItemList /> */}
         <div className="flex gap-4">

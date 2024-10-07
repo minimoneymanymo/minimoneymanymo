@@ -14,6 +14,8 @@ import {
   DialogFooter,
 } from "@material-tailwind/react"
 import Swal from "sweetalert2"
+import { setMemberInfo } from "@/utils/user-utils"
+import { useDispatch } from "react-redux"
 
 interface NewsModalProps {
   id: string
@@ -86,8 +88,10 @@ const NewsComponent: React.FC<NewsModalProps> = ({
   const [open, setOpen] = useState(false) // 모달 상태 관리
   const parsedOptions = JSON.parse(options) // JSON 문자열을 객체로 변환
   const [selectedOption, setSelectedOption] = useState<number | null>(null) // 선택된 옵션 번호 상태 관리
-  const navigate = useNavigate() // useNavigate 훅 사용
   const [displayBonus, setDisplayBonus] = useState(0) // displayBonus 상태 추가
+
+  const navigate = useNavigate() // useNavigate 훅 사용
+  const dispatch = useDispatch()
 
   const handleOpen = () => setOpen(!open) // 모달 여닫기 함수
 
@@ -109,10 +113,11 @@ const NewsComponent: React.FC<NewsModalProps> = ({
 
           Swal.fire({
             title: "정답입니다!",
-            text: `+ ${bonusMoney}머니!`,
+            text: `+ ${bonusMoney.toLocaleString()}머니!`,
             icon: "success",
             confirmButtonText: "확인",
           }).then(() => {
+            setMemberInfo(dispatch, 1)
             handleOpen()
             navigate("/newslist") // 정답일 경우 /news 페이지로 이동
           })
@@ -175,10 +180,13 @@ const NewsComponent: React.FC<NewsModalProps> = ({
             __html: content.replace(/<img/g, '<img class="mx-auto"'), // 이미지 가운데 정렬
           }}
         />
-        <div className="mt-4">
-          <Button color="blue" onClick={handleOpen}>
+        <div className="mt-4 flex justify-center">
+          <button
+            onClick={handleOpen} // 저장 버튼 클릭 시 handleSave 호출
+            className="rounded-xl bg-secondary-m2 px-4 py-2 text-white"
+          >
             퀴즈 풀기
-          </Button>
+          </button>
         </div>
       </Card>
 
@@ -197,8 +205,9 @@ const NewsComponent: React.FC<NewsModalProps> = ({
           <Typography variant="h6" color="blue-gray" className="mb-4">
             {question}
           </Typography>
+
           {parsedOptions.map((option: { text: string }, index: number) => (
-            <div key={index} className="mb-2 flex items-center">
+            <div key={index} className="mb-2 flex items-center px-3">
               <input
                 type="radio"
                 id={`option-${index + 1}`}
@@ -212,6 +221,7 @@ const NewsComponent: React.FC<NewsModalProps> = ({
               </label>
             </div>
           ))}
+
           <div className="mt-4 flex justify-end">
             <Button color="green" onClick={handleSubmit}>
               제출하기
