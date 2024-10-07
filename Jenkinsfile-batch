@@ -23,7 +23,7 @@ pipeline {
                         sh 'ls -l build/libs/'
 
                         // Docker 이미지 빌드
-                        docker.build('mmmm-batch-image', '-f Dockerfile .')
+                        docker.build('mmmm-batch-image', '--no-cache -f Dockerfile .')
                     }
                 }
             }
