@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectParent, parentActions } from "@/store/slice/parent"
 import { accountActions, selectAccount } from "@/store/slice/account"
 import { AccountInfoProps, MAccountInfoProps } from "@/types/accountTypes"
+import Swal from "sweetalert2"
 
 const ParentAccountPage = () => {
   const parent = useAppSelector(selectParent) // parent state 가져옴
@@ -107,8 +108,14 @@ const ParentAccountPage = () => {
           }
         } else if (res.status === 403) {
           console.error("로그인이 필요합니다.", res)
-          alert("로그인이 필요합니다.")
-          navigate("/login")
+          //alert("로그인이 필요합니다.")
+          Swal.fire({
+            title: "로그인이필요합니다.",
+            icon: "warning",
+            confirmButtonText: "로그인",
+          }).then(() => {
+            navigate("/login")
+          })
         } else {
           console.log("사용자 정보 조회 실패:", res)
         }
@@ -138,13 +145,26 @@ const ParentAccountPage = () => {
             accountBalance: Number(account.accountBalance) - amount,
           })
         )
-        alert("마니모 계좌에 머니가 충전되었습니다.") // 성공
+        //alert("마니모 계좌에 머니가 충전되었습니다.") // 성공
+        Swal.fire({
+          title: "마니모 계좌에 머니가 충전되었습니다.",
+          icon: "success",
+        })
       } else {
-        alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
+        //alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
+        Swal.fire({
+          title: "충전에 실패했습니다. 다시 시도해주세요.",
+          icon: "warning",
+        })
       }
     } catch (err) {
       console.log(err)
-      alert("충전에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+      //alert("충전에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+      Swal.fire({
+        title: "충전에 실패했습니다. 다시 시도해주세요.",
+        text: `${err}`,
+        icon: "error",
+      })
     } finally {
       closeChargeModal() // 모달 닫기
     }
@@ -161,7 +181,11 @@ const ParentAccountPage = () => {
       )
       if (res.stateCode === 201) {
         console.log(res)
-        alert("마니모 계좌의 머니가 환불되었습니다.") // 성공
+        //alert("마니모 계좌의 머니가 환불되었습니다.") // 성공
+        Swal.fire({
+          title: "마니모 계좌의 머니가 환불되었습니다.",
+          icon: "success",
+        })
         dispatch(
           parentActions.setUserInfo({ balance: parent.balance - amount })
         )
@@ -171,11 +195,20 @@ const ParentAccountPage = () => {
           })
         )
       } else {
-        alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
+        //alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
+        Swal.fire({
+          title: "환불에 실패했습니다. 다시 시도해주세요.",
+          icon: "error",
+        })
       }
     } catch (err) {
       console.log(err)
-      alert("환불에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+      //alert("환불에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+      Swal.fire({
+        title: "환불에 실패했습니다. 다시 시도해주세요.",
+        icon: "error",
+        text: `${err}`,
+      })
     } finally {
       closeRefundModal()
     }

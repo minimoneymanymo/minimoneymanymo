@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react"
 import NewsCard from "@/components/newscard/NewsCard" // NewsComponent로 변경
 import { getNewsQuizzes } from "@/api/news-api" // 뉴스 퀴즈 API 호출 함수
 import { Box, Typography } from "@mui/material"
+import { useNavigate } from "react-router-dom" // useNavigate 사용
+import TaskAltIcon from "@mui/icons-material/TaskAlt"
+import CloseIcon from "@mui/icons-material/Close"
 
 const NewsListPage: React.FC = () => {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]) // 뉴스 아이템 상태
   const [loading, setLoading] = useState<boolean>(false) // 로딩 상태
   const [page, setPage] = useState<number>(0) // 현재 페이지 번호
   const [hasMore, setHasMore] = useState<boolean>(true) // 더 많은 뉴스가 있는지 여부
+  const navigate = useNavigate()
 
   interface NewsItem {
     id: string
@@ -24,17 +28,20 @@ const NewsListPage: React.FC = () => {
     try {
       const response = await getNewsQuizzes(page) // 페이지에 해당하는 뉴스 퀴즈 가져오기
       console.log(response)
+      if (response.length == 0 || response == null) {
+        setHasMore(false)
+      } else {
+        const formattedNews = response.map((item: any) => ({
+          id: item.newsQuiz.id,
+          image: item.newsQuiz.imageUrl,
+          title: item.newsQuiz.title,
+          content: item.newsQuiz.content,
+          isQuizAnswered: item.isQuizAnswered,
+        }))
 
-      const formattedNews = response.map((item: any) => ({
-        id: item.newsQuiz.id,
-        image: item.newsQuiz.imageUrl,
-        title: item.newsQuiz.title,
-        content: item.newsQuiz.content,
-        isQuizAnswered: item.isQuizAnswered,
-      }))
-
-      setNewsItems((prev) => [...prev, ...formattedNews]) // 이전 뉴스 아이템에 추가
-      setHasMore(response.data.length > 0) // 더 많은 뉴스가 있는지 확인
+        setNewsItems((prev) => [...prev, ...formattedNews]) // 이전 뉴스 아이템에 추가
+        setHasMore(response.data.length > 0) // 더 많은 뉴스가 있는지 확인
+      }
     } catch (error) {
       console.error("뉴스 데이터를 가져오는 데 실패했습니다.", error)
     } finally {
@@ -61,6 +68,10 @@ const NewsListPage: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll) // 컴포넌트 언마운트 시 이벤트 핸들러 제거
   }, [])
 
+  const handleSelectNews = (newsItem: NewsItem) => {
+    navigate(`/news/${newsItem.id}`) // 뉴스의 id를 경로로 설정하여 이동
+  }
+
   return (
     <div className="w-full">
       <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: 2 }}>
@@ -68,16 +79,68 @@ const NewsListPage: React.FC = () => {
           뉴스 퀴즈 목록
         </Typography>
         <div className="flex flex-wrap">
-          {newsItems.map((newsItem) => (
-            <div key={newsItem.id} className="w-full p-2 sm:w-1/2 lg:w-1/3">
-              <NewsCard
-                image={newsItem.image}
-                title={newsItem.title}
-                content={newsItem.content}
-                // isQuizAnswered={newsItem.isQuizAnswered}
-              />
-            </div>
-          ))}
+          {newsItems.map((newsItem, index) => {
+            let icon = null
+
+            // 퀴즈를 풀었을 때: 초록 체크 아이콘
+            if (newsItem.isQuizAnswered == "0") {
+              icon = (
+                <div
+                  className="absolute right-10 top-3 flex items-center justify-center"
+                  style={{
+                    backgroundColor: "white", // 흰색 배경
+                    borderRadius: "50%", // 둥글게 만들기
+                    width: "30px", // 배경의 너비 (수정된 크기)
+                    height: "30px", // 배경의 높이 (수정된 크기)
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.4)", // 그림자 추가 (선택 사항)
+                    zIndex: 2, // 아이콘이 다른 요소 위에 렌더링되도록 설정
+                  }}
+                >
+                  <TaskAltIcon
+                    className="text-green-500"
+                    style={{ fontSize: 20 }} // 아이콘 크기 조정
+                  />
+                </div>
+              )
+            }
+            // 퀴즈를 틀렸을 때: 빨간 X 아이콘
+            else if (newsItem.isQuizAnswered == "1") {
+              icon = (
+                <div
+                  className="absolute right-10 top-3 flex items-center justify-center"
+                  style={{
+                    backgroundColor: "white", // 흰색 배경
+                    borderRadius: "50%", // 둥글게 만들기
+                    width: "30px", // 배경의 너비 (수정된 크기)
+                    height: "30px", // 배경의 높이 (수정된 크기)
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.4)", // 그림자 추가 (선택 사항)
+                    zIndex: 2, // 아이콘이 다른 요소 위에 렌더링되도록 설정
+                  }}
+                >
+                  <CloseIcon
+                    className="text-red-500"
+                    style={{ fontSize: 20 }} // 아이콘 크기 조정
+                  />
+                </div>
+              )
+            }
+
+            return (
+              <div
+                key={index}
+                className="relative w-full p-2 sm:w-1/2 lg:w-1/3" // 부모 요소에 relative 추가
+                onClick={() => handleSelectNews(newsItem)}
+              >
+                <NewsCard
+                  image={newsItem.image}
+                  title={newsItem.title}
+                  content={newsItem.content}
+                />
+                {/* 상태에 따른 아이콘 */}
+                {icon && <div style={{ zIndex: 2 }}>{icon}</div>}
+              </div>
+            )
+          })}
         </div>
         {loading && <div>로딩 중...</div>}
       </Box>

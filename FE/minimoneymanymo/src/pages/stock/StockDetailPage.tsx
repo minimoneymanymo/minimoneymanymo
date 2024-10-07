@@ -12,6 +12,7 @@ import {
 } from "@/components/chart/ChartType"
 import ChartComponent from "@/components/chart/ChartComponent"
 import CircularProgress from "@mui/material/CircularProgress"
+import NaverNews from "@/components/newscard/NaverNews"
 
 function StockDetailPage(): JSX.Element {
   const [dailyStockChart, setDailyStockChart] = useState<StockData[]>([])
@@ -162,19 +163,12 @@ function StockDetailPage(): JSX.Element {
           stockInfo={stockInfo}
         />
       )
-    else return <NewsComponent />
-  }
-
-  //뉴스 자리
-  const NewsComponent = (): JSX.Element => {
-    return (
-      <div className="z-10 bg-white p-4">여기에 기업 뉴스가 표시됩니다.</div>
-    )
+    else return <NaverNews companyName={stockInfo?.companyName} />
   }
 
   if (!stockInfo) {
     return (
-      <div className="h-full w-[800px] flex items-center justify-center">
+      <div className="flex h-full w-[800px] items-center justify-center">
         <CircularProgress color="inherit" />
       </div>
     )
@@ -198,7 +192,7 @@ function StockDetailPage(): JSX.Element {
         <button
           className={`h-16 w-24 rounded-t-lg pb-6 ${
             selectedTab === "chart"
-              ? "bg-gray-100  font-bold"
+              ? "bg-gray-100 font-bold"
               : "translate-y-3 bg-gray-100 text-gray-800"
           }`}
           onClick={() => setSelectedTab("chart")}

@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from "react"
 import { StockHeld } from "@/types/stockTypes"
 import ArrowPrev from "@mui/icons-material/ArrowBackIos"
 import ArrowNext from "@mui/icons-material/ArrowForwardIos"
+import Swal from "sweetalert2"
 
 const ChildInfo: React.FC = () => {
   const child = useAppSelector(selectChild)
@@ -20,10 +21,20 @@ const ChildInfo: React.FC = () => {
         if (res.stateCode === 200) {
           setStockList(res.data)
         } else {
-          alert(res.message || "오류가 발생했습니다. 다시 시도해주세요.")
+          //alert(res.message || "오류가 발생했습니다. 다시 시도해주세요.")
+          Swal.fire({
+            icon: "error",
+            title: `오류가 발생했습니다. 다시 시도해주세요 : ${res.message}`,
+            text: "Something went wrong!",
+          })
         }
       } catch (error) {
-        console.error("API 호출 중 오류 발생:", error)
+        //console.error("API 호출 중 오류 발생:", error)
+        Swal.fire({
+          icon: "error",
+          title: `API 호출 중 오류 발생 : ${error}`,
+          text: "Something went wrong!",
+        })
       }
     }
 

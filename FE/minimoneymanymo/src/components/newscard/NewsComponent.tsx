@@ -2,7 +2,7 @@ import { useState, useRef } from "react"
 import React from "react"
 import { useNavigate } from "react-router-dom"
 import confetti from "canvas-confetti"
-
+import Modal from "react-modal"
 import { solveQuiz } from "@/api/news-api"
 import {
   Button,
@@ -119,9 +119,11 @@ const NewsComponent: React.FC<NewsModalProps> = ({
         } else {
           Swal.fire({
             title: "틀렸습니다!",
-            text: "다시 시도해보세요.",
             icon: "error",
             confirmButtonText: "확인",
+          }).then(() => {
+            handleOpen()
+            navigate("/newslist")
           })
         }
       } catch (error) {
@@ -180,20 +182,28 @@ const NewsComponent: React.FC<NewsModalProps> = ({
         </div>
       </Card>
 
-      {/* 모달 */}
-      <Dialog open={open} handler={handleOpen} size="md">
-        <DialogHeader>퀴즈! 경제한입</DialogHeader>
-        <DialogBody divider>
-          <Typography variant="h5" color="blue-gray" className="mb-4">
+      {/* Modal 사용 */}
+      <Modal
+        isOpen={open}
+        onRequestClose={handleOpen}
+        contentLabel="퀴즈! 경제한입"
+        className="relative mx-auto mt-10 w-[90%] max-w-md rounded-lg bg-white shadow-lg"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+      >
+        <div className="p-6">
+          <Typography variant="h4" className="mb-4">
+            🔎퀴즈! 경제한입
+          </Typography>
+          <Typography variant="h6" color="blue-gray" className="mb-4">
             {question}
           </Typography>
           {parsedOptions.map((option: { text: string }, index: number) => (
             <div key={index} className="mb-2 flex items-center">
               <input
                 type="radio"
-                id={`option-${index + 1}`} // 1부터 시작하도록 조정
+                id={`option-${index + 1}`}
                 name="options"
-                value={index + 1} // 선택된 번호를 value로 설정
+                value={index + 1}
                 onChange={handleOptionChange}
                 className="mr-2"
               />
@@ -202,13 +212,13 @@ const NewsComponent: React.FC<NewsModalProps> = ({
               </label>
             </div>
           ))}
-        </DialogBody>
-        <DialogFooter>
-          <Button color="green" onClick={handleSubmit}>
-            제출하기
-          </Button>
-        </DialogFooter>
-      </Dialog>
+          <div className="mt-4 flex justify-end">
+            <Button color="green" onClick={handleSubmit}>
+              제출하기
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }
