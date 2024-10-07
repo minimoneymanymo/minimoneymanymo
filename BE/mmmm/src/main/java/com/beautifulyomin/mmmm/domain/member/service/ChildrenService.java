@@ -14,4 +14,5 @@ public interface ChildrenService {
     ChildInfoDto childInfoByUserId(String userId, String stockCode );
     long updateAccount(String childUserId, String accountNumber, String bankCode);
     Children findByUserId(String childUserId);
+    int solveQuiz(Children children);
 }

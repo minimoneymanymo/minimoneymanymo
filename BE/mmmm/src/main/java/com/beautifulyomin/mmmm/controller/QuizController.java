@@ -4,9 +4,11 @@ import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.service.ChildrenService;
+import com.beautifulyomin.mmmm.domain.quiz.dto.ResultResponseDTO;
 import com.beautifulyomin.mmmm.domain.quiz.entity.NewsQuiz;
 import com.beautifulyomin.mmmm.domain.quiz.service.QuizService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +37,7 @@ public class QuizController {
     @GetMapping("/today")
     public ResponseEntity<CommonResponseDto> getTodayQuizList(@RequestHeader(value = "Authorization", required = false) String token) {
         Integer childrenId = (token != null && !token.isEmpty())
-                ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId(): -1;
+                ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId() : -1;
 
         List<NewsQuiz> newsQuizList = quizService.findAllByPublishedDateTodayNewsQuizzes();
         return ResponseEntity.ok(
@@ -50,10 +52,10 @@ public class QuizController {
     @GetMapping("/detail")
     public ResponseEntity<CommonResponseDto> getNewsDetail(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @RequestParam String number){
-        NewsQuiz newsQuiz =  quizService.getNewsQuiz(Long.parseLong(number));
+            @RequestParam String number) {
+        NewsQuiz newsQuiz = quizService.getNewsQuiz(Long.parseLong(number));
         Integer childrenId = (token != null && !token.isEmpty())
-                ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId(): -1;
+                ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId() : -1;
         return ResponseEntity.ok(
                 CommonResponseDto.builder()
                         .stateCode(200)
@@ -62,23 +64,44 @@ public class QuizController {
                         .build()
         );
     }
+
     @PostMapping("/solve")
     public ResponseEntity<CommonResponseDto> solveQuize(
             @RequestHeader(value = "Authorization") String token
-            , @RequestBody Map<String, String> requestBody){
+            , @RequestBody Map<String, String> requestBody) {
         String option = requestBody.get("option");
         String id = requestBody.get("id");
-        System.out.println(option);
-        System.out.println(id);
-        Children children =  childrenService.findByUserId(jwtUtil.getUsername(token));
+        Children children = childrenService.findByUserId(jwtUtil.getUsername(token));
+        boolean result = quizService.solveQuiz(children, Long.parseLong(id), option);
         return ResponseEntity.ok(
                 CommonResponseDto.builder()
                         .stateCode(200)
                         .message("퀴즈 결과!")
-                        .data(quizService.solveQuiz(children,Long.parseLong(id),option))
+                        .data(ResultResponseDTO.builder()
+                                .result(result)
+                                .bonusMoney(result ? childrenService.solveQuiz(children) : 0)
+                                .build())
                         .build()
         );
     }
 
+    @GetMapping
+    public ResponseEntity<CommonResponseDto> getNewsQuizzes(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
+        Integer childrenId = (token != null && !token.isEmpty())
+                ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId() : -1;
+        Page<NewsQuiz> newsQuizzesPage = quizService.getPaginatedNewsQuizzes(page, size);
+        List<NewsQuiz> newsQuizList = newsQuizzesPage.getContent();
+
+        CommonResponseDto response = CommonResponseDto.builder()
+                .stateCode(200)
+                .message("뉴스 퀴즈 페이지네이션")
+                .data(quizService.changeNewsQuizToResponseDTO(childrenId, newsQuizList))
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 }
