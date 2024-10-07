@@ -5,13 +5,20 @@ import {
 import { ChartData } from "./ChartType"
 import { IChartTooltipProps } from "igniteui-react-core"
 import { formatNumber } from "@/utils/stock-utils"
+import TooltipComponent from "./TooltipComponent"
 
 interface ChartComponentProps {
   chartData: ChartData[]
+  trendLinePeriod: number | null
+  isVisibletrendLine: boolean
 }
 IgrFinancialChartModule.register()
 
-const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
+const Chart: React.FC<ChartComponentProps> = ({
+  chartData,
+  trendLinePeriod,
+  isVisibletrendLine,
+}) => {
   const initialWindowRect = { left: 1, top: 0, width: 0.5, height: 1 } // 초기 확대 범위
   const defaultWindowRect = { left: 1, top: 0, width: 0.8, height: 1 } // 초기 확대 범위
 
@@ -52,19 +59,19 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
             <b>{item.date.toLocaleDateString("ko-KR")}</b>
           </div>
           <div className="flex w-full">
-            <span className="w-[70px]">시작:</span>
+            <span className="w-[70px]">시작가:</span>
             <span className="w-full text-left">
               {item.open.toLocaleString()} 머니
             </span>
           </div>
           <div className="flex w-full">
-            <span className="w-[70px]">고가:</span>
+            <span className="w-[70px]">최고가:</span>
             <span className="w-full text-left">
               {item.high.toLocaleString()} 머니
             </span>
           </div>
           <div className="flex w-full">
-            <span className="w-[70px]">저가:</span>
+            <span className="w-[70px]">최저가:</span>
             <span className="w-full text-left">
               {item.low.toLocaleString()} 머니
             </span>
@@ -87,7 +94,7 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
   }
 
   return (
-    <div className="z-10 h-full w-full overflow-visible">
+    <div className="flex h-full w-full flex-col items-center justify-center">
       <IgrFinancialChart
         width="100%"
         height="100%"
@@ -97,6 +104,7 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
         // zoomSliderType="column"
         brushes={["#3182F6"]}
         outlines={["#3182F6"]}
+        calloutsVisible={true}
         // xAxisInterval={1}
         // xAxisGap={0.75}
         isToolbarVisible="false" //툴바 비활성화
@@ -110,11 +118,10 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
         // volumeThickness={0.11}
         volumeType="column"
         volumeThickness="0.8"
-        xAxisTitle={"거래량"}
-        xAxisLabel={"거래량"}
         volumeBrushes={"#478D81"}
         trendLineBrushes={["#FF5733", "#33FF57", "#3357FF", "#3182F6"]}
-        trendLineType="simpleAverage" //이동평균 SMA
+        trendLineType={isVisibletrendLine ? "simpleAverage" : "none"} //이동평균 SMA
+        trendLinePeriod={trendLinePeriod ?? 0}
         // trendLineType="exponentialAverage" //지수이동평균 EMA
         // trendLineType="linearFit" //선형추세선
         // trendLineType="linearFit" //선형추세선
@@ -134,6 +141,7 @@ const Chart: React.FC<ChartComponentProps> = ({ chartData }) => {
         // dataToolTipLabelTextColor="rgba(74, 74, 74, 1)"
         // dataToolTipValueTextColor="rgba(0, 173, 3, 1)"
       />
+      <TooltipComponent label={"거래량"} />
     </div>
   )
 }
