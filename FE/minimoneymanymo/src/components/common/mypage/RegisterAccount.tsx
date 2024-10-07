@@ -1,17 +1,25 @@
-import { authAccountApi, checkAuthCodeApi } from "@/api/account-api"
+import {
+  authAccountApi,
+  checkAuthCodeApi,
+  inquireAccountApi,
+} from "@/api/account-api"
 import { linkAccountApi } from "@/api/fund-api"
-import { useAppSelector } from "@/store/hooks"
-import { selectParent } from "@/store/slice/parent"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { accountActions, selectAccount } from "@/store/slice/account"
 import { Bank } from "@/types/accountTypes"
 import React, { useState } from "react"
 
 // 은행 리스트 받아오기
-const RegisterAccount: React.FC<{ banks: Bank[] }> = ({ banks }) => {
-  const parent = useAppSelector(selectParent)
+const RegisterAccount: React.FC<{ banks: Bank[]; userKey: string }> = ({
+  banks,
+  userKey,
+}) => {
+  const account = useAppSelector(selectAccount)
   const [checkAuth, setCheckAuth] = useState(false)
   const [accountNumber, setAccountNumber] = useState("") // 계좌번호
   const [selectedBank, setSelectedBank] = useState("") // 선택한 은행
   const [authCode, setAuthCode] = useState("") // 인증 번호
+  const dispatch = useAppDispatch()
 
   const handleAuthClick = async () => {
     if (!accountNumber || !selectedBank) {
@@ -20,7 +28,7 @@ const RegisterAccount: React.FC<{ banks: Bank[] }> = ({ banks }) => {
     }
 
     // 1원 인증
-    const res = await authAccountApi(accountNumber, "ssafy", parent.userKey)
+    const res = await authAccountApi(accountNumber, "ssafy", userKey)
     if (res != null) {
       setCheckAuth(true)
     }
@@ -31,16 +39,30 @@ const RegisterAccount: React.FC<{ banks: Bank[] }> = ({ banks }) => {
       accountNumber,
       "ssafy",
       authCode,
-      parent.userKey
+      userKey
     )
     if (res != null) {
-      alert("계좌가 연결되었습니다.")
-      const res = await linkAccountApi(accountNumber)
-      if (res.stateCode == 201) {
-        // 새로고침!
-        window.location.reload()
+      const res1 = await inquireAccountApi(accountNumber, userKey)
+      console.log(res1)
+      if (res1 != null) {
+        const { bankName, accountNo, accountName, accountBalance } = res1.REC
+
+        const accountPayload = {
+          bankName,
+          accountNo,
+          accountName,
+          accountBalance,
+        }
+        dispatch(accountActions.setAccount(accountPayload))
+      }
+      const res2 = await linkAccountApi(accountNumber)
+      console.log(res2)
+      if (res2.stateCode == 201) {
+        alert("계좌가 연결되었습니다.")
+        console.log(account)
+        // window.location.reload()
       } else {
-        alert("인증번호가 일치하지 않습니다. 다시 입력해주세요.")
+        alert("에러가 발생했습니다. 다시 시도해주세요.")
       }
     } else {
       alert("인증번호가 일치하지 않습니다. 다시 입력해주세요.")
@@ -48,7 +70,7 @@ const RegisterAccount: React.FC<{ banks: Bank[] }> = ({ banks }) => {
   }
 
   return (
-    <div>
+    <div className="bg-gray-100 p-4">
       <div className="flex w-full">
         <div className="flex flex-1 flex-col space-y-4 pr-2">
           {/* 계좌번호 입력란 */}

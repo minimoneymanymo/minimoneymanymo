@@ -28,3 +28,47 @@ export interface Bank {
   bankCode: string
   bankName: string
 }
+
+export interface MAccountInfoProps {
+  name: string
+  balance: number
+  modalOnClick?: () => void
+}
+
+export interface AccountInfoProps {
+  bankName?: string
+  accoutNo?: string
+  accountName?: string
+  accountBalance?: string
+  modalOnClick?: () => void
+}
+
+export interface MoneyInfoProps {
+  money: number
+  withdrawableMoney: number
+}
+
+export interface WithdrawableMoneyProps {
+  createdAt: string
+  amount: number
+  approvedAt?: string | null
+  isParent?: boolean
+}
+
+export interface RecordItemProps {
+  createdAt: string
+  tradeType: string
+  amount: number
+  remainAmount: number
+  // 매매에만 있는 속성
+  companyName?: string | null
+  tradeSharesCount?: number | null
+  reason?: string | null
+  stockTradingGain?: number | null
+  reasonBonusMoney?: number | null
+  stockCode?: string | null
+}
+
+export interface MoneyChartProps {
+  data: string
+}

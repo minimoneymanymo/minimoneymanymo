@@ -74,13 +74,13 @@ const PriceModal: React.FC<ModalComponentProps> = (props) => {
       <div className="mt-4 flex w-full justify-center">
         <button
           onClick={onRequestClose} // 취소 버튼 클릭 시 모달 닫기
-          className="rounded border border-primary-m1 bg-transparent px-4 py-2 text-primary-m1 hover:bg-primary-m1 hover:text-white"
+          className="rounded-xl border border-primary-m1 bg-transparent px-4 py-2 text-primary-m1 hover:bg-primary-m1 hover:text-white"
         >
           취소
         </button>
         <button
           onClick={handleSave} // 저장 버튼 클릭 시 handleSave 호출
-          className="ml-6 rounded bg-primary-m1 px-4 py-2 text-white"
+          className="ml-6 rounded-xl bg-primary-m1 px-4 py-2 text-white"
         >
           저장
         </button>

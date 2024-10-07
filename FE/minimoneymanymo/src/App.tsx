@@ -17,6 +17,13 @@ import StockDetailPage from "./pages/stock/StockDetailPage"
 import ChildDairyPage from "./pages/chlid/ChildDairyPage"
 import MyChildDiaryCheckPage from "./pages/parentchildren/MyChildDiaryCheckPage"
 import ParentAccountPage from "./pages/parent/ParentAccountPage"
+import MyChildInvestStylePage from "./pages/parentchildren/MyChildInvestStylePage"
+import ChildInvestStylePage from "./pages/chlid/ChildInvestStylePage"
+import ChildWalletPage from "./pages/chlid/ChildWalletPage"
+import NewsDetail from "./pages/News/NewsDetail"
+import ChildStockPage from "./pages/chlid/ChildStockPage"
+import UnauthorizedPage from "./components/common/mypage/UnauthorizedPage"
+import ProtectedRoute from "./components/common/ProtectedRoute"
 
 function App() {
   return (
@@ -25,10 +32,15 @@ function App() {
         <Route index element={<MainPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
-        <Route path="/stocks" element={<StockPageLayout />} />
-
         <Route path="/news" element={<NewsPage />} />
-        <Route path="/parent" element={<ParentPageLayout />}>
+
+        <Route path="news/:newsId" element={<NewsDetail />} />
+
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route
+          path="/parent"
+          element={<ProtectedRoute requiredRole="parent" />}
+        >
           <Route path="my-wallet" element={<ParentAccountPage />} />
           <Route path="my-info" element={<ParentPage />} />
           <Route path="my-children" element={<MyChildrenPage />} />
@@ -37,19 +49,22 @@ function App() {
             element={<ParentChildrenPageLayout />}
           >
             <Route path="finance" element={<MyChildFinancePage />} />
-            <Route path="invest-style" element={<Temp />} />
+            <Route path="invest-style" element={<MyChildInvestStylePage />} />
             <Route path="diary" element={<MyChildDiaryCheckPage />} />
           </Route>
         </Route>
-        <Route path="/my-info" element={<ChildPageLayout />}>
+        <Route
+          path="/my-info"
+          element={<ProtectedRoute requiredRole="child" />}
+        >
           <Route index element={<ChildPage />} />
-          <Route path="wallet" element={<Temp />} />
-          <Route path="finance" element={<Temp />} />
-          <Route path="invest-style" element={<Temp />} />
+          <Route path="wallet" element={<ChildWalletPage />} />
+          <Route path="finance" element={<ChildStockPage />} />
+          <Route path="invest-style" element={<ChildInvestStylePage />} />
           <Route path="diary" element={<ChildDairyPage />} />
         </Route>
         <Route path="/stock" element={<StockPageLayout />}>
-          <Route path=":stockCode" element={<StockDetailPage />} />{" "}
+          <Route path=":stockCode" element={<StockDetailPage />} />
         </Route>
       </Route>
     </Routes>
