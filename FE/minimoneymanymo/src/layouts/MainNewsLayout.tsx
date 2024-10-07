@@ -65,10 +65,10 @@ const MainNewsLayout: React.FC = () => {
   }
 
   return (
-    <>
-      <Typography variant="h5" color="blue-gray">
+    <div className="mt-10 w-[1140px]">
+      <div className="text-2xl font-bold" color="blue-gray">
         오늘의 뉴스퀴즈
-      </Typography>
+      </div>
 
       <Box
         sx={{
@@ -164,7 +164,7 @@ const MainNewsLayout: React.FC = () => {
           더 보기
         </Typography>
       </Box>
-    </>
+    </div>
   )
 }
 

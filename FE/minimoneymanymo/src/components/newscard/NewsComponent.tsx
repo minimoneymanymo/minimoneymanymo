@@ -173,22 +173,25 @@ const NewsComponent: React.FC<NewsModalProps> = ({
             __html: content.replace(/<img/g, '<img class="mx-auto"'), // 이미지 가운데 정렬
           }}
         />
-        <div className="mt-4">
-          <Button color="blue" onClick={handleOpen}>
+        <div className="mt-4 flex justify-center">
+          <button
+            onClick={handleOpen} // 저장 버튼 클릭 시 handleSave 호출
+            className="rounded-xl bg-secondary-m2 px-4 py-2 text-white"
+          >
             퀴즈 풀기
-          </Button>
+          </button>
         </div>
       </Card>
 
       {/* 모달 */}
-      <Dialog open={open} handler={handleOpen} size="md">
-        <DialogHeader>퀴즈! 경제한입</DialogHeader>
+      <Dialog open={open} handler={handleOpen} size="sm">
+        <DialogHeader>
+          <div>🔍 퀴즈! 경제 한 입</div>
+        </DialogHeader>
         <DialogBody divider>
-          <Typography variant="h5" color="blue-gray" className="mb-4">
-            {question}
-          </Typography>
+          <div className="mb-4 p-3 text-xl font-bold">{question}</div>
           {parsedOptions.map((option: { text: string }, index: number) => (
-            <div key={index} className="mb-2 flex items-center">
+            <div key={index} className="mb-2 flex items-center px-3">
               <input
                 type="radio"
                 id={`option-${index + 1}`} // 1부터 시작하도록 조정
@@ -204,9 +207,12 @@ const NewsComponent: React.FC<NewsModalProps> = ({
           ))}
         </DialogBody>
         <DialogFooter>
-          <Button color="green" onClick={handleSubmit}>
+          <button
+            onClick={handleSubmit} // 저장 버튼 클릭 시 handleSave 호출
+            className="rounded-xl bg-secondary-m2 px-4 py-2 text-white"
+          >
             제출하기
-          </Button>
+          </button>
         </DialogFooter>
       </Dialog>
     </>

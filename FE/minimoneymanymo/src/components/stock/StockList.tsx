@@ -318,7 +318,7 @@ function StockList({ filters }: { filters: StockFilter }) {
                   style={{ width: "15%" }}
                 >
                   <div color="blue-gray" className="font-normal">
-                    {stock.closingPrice.toLocaleString()}원
+                    {stock.closingPrice.toLocaleString()} 머니
                   </div>
                 </td>
                 <td
@@ -326,7 +326,7 @@ function StockList({ filters }: { filters: StockFilter }) {
                   style={{ width: "20%" }}
                 >
                   <div color={color} className={`font-normal ${color}`}>
-                    {sign} {stock.priceChange.toLocaleString()}원 ({sign}
+                    {sign} {stock.priceChange.toLocaleString()} 머니 ({sign}
                     {stock.priceChangeRate.toFixed(2)}%)
                   </div>
                 </td>

@@ -8,7 +8,7 @@ function MainPage(): JSX.Element {
       <ChildInfo />
 
       {/* 뉴스 레이아웃 */}
-      {/* <MainNewsLayout /> */}
+      <MainNewsLayout />
 
       {/* 주식 대시보드 */}
       <StockDashboard />
