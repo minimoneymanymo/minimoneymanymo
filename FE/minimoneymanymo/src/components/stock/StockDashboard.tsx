@@ -48,8 +48,6 @@ interface StockResult {
   company_name: string
 }
 
-////
-
 function MainDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchResults, setSearchResults] = useState<StockResult[]>([]) // 검색 결과 상태 추가
