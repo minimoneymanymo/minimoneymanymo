@@ -24,16 +24,20 @@ import NewsDetail from "./pages/News/NewsDetail"
 import ChildStockPage from "./pages/chlid/ChildStockPage"
 import UnauthorizedPage from "./components/common/mypage/UnauthorizedPage"
 import ProtectedRoute from "./components/common/ProtectedRoute"
+import NewsListPage from "./pages/News/NewsListPage"
+
+import IntroPage from "./pages/main/IntroPage"
 
 function App() {
   return (
     <Routes>
+      <Route path="/intro" element={<IntroPage />} />
       <Route path="/" element={<MainPageLayout />}>
         <Route index element={<MainPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
         <Route path="/news" element={<NewsPage />} />
-
+        <Route path="/newslist" element={<NewsListPage />} />
         <Route path="news/:newsId" element={<NewsDetail />} />
 
         <Route path="/unauthorized" element={<UnauthorizedPage />} />

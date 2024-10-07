@@ -1,11 +1,11 @@
 // 증감 색깔 지정 함수
 export const getPriceChangeColorAndSign = (value: number) => {
   if (value > 0) {
-    return { color: "red", sign: "+" }
+    return { color: "text-buy", sign: "+" }
   } else if (value < 0) {
-    return { color: "blue", sign: "" }
+    return { color: "text-sell", sign: "" }
   }
-  return { color: "gray", sign: "" } // 0인 경우 기본 색상
+  return { color: "text-black", sign: "" } // 0인 경우 기본 색상
 }
 
 // 시가총액 형식 변환 함수

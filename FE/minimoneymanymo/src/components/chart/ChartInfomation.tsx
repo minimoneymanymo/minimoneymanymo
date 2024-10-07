@@ -61,7 +61,7 @@ export const CompanyInfo: React.FC<{
         </span>
         <div className="flex w-full flex-col">
           <span className="text-sm">
-            <TooltipComponent label={stockInfo?.marketName} />
+            <TooltipComponent label={stockInfo?.marketName} width={600} />
           </span>
           <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-sm">
             {stockInfo?.industry}
