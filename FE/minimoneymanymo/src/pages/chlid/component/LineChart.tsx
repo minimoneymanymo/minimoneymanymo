@@ -54,7 +54,7 @@ const LineChart: React.FC<{ data: GroupedRecordData }> = ({ data }) => {
         label: "내역 상세보기", // 데이터 라벨 추가
         data: chartData,
         fill: false,
-        borderColor: "rgba(140, 140, 140, 1)",
+        borderColor: "rgba(163, 163, 163, 1)",
         tension: 0.4, // 선의 굽은 정도 (0이면 직선)
         backgroundColor: "rgba(140, 140, 140, 0.2)", // 배경색 추가
         pointBackgroundColor: "rgba(255, 249, 226, 1)", // 포인트 배경색

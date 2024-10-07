@@ -243,7 +243,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         <>
           <div className="relative flex h-full w-[340px] flex-col p-2">
             {/* 매수매도 버튼 */}
-            <div className="absolute mt-14 flex h-[80px] w-[310px] justify-end space-x-4">
+            <div className="absolute mt-14 flex h-[80px] w-[310px] justify-end space-x-2">
               <Button
                 className="z-10 h-16 bg-buy pb-6"
                 onClick={() => setIsBuyMode(true)}
