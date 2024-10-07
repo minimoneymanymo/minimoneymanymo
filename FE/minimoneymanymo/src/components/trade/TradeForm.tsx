@@ -414,7 +414,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                     <textarea
                       className="h-[200px] w-full rounded-xl bg-gray-100 p-4 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                       value={reason}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         setReason(e.target.value)
                       }
                       placeholder="매도를 생각하게 된 이유를 적어주세요!"
