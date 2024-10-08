@@ -16,6 +16,7 @@ import { setMemberInfo } from "@/utils/user-utils"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectChild } from "@/store/slice/child"
 import { selectParent } from "@/store/slice/parent"
+import Swal from "sweetalert2"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -40,7 +41,15 @@ export function LoginForm() {
       const response = await userLogin(formData)
       console.log(response)
       if (response.stateCode == 200) {
-        alert("로그인 성공")
+        //alert("로그인 성공")
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "로그인 성공!",
+          showConfirmButton: false,
+          timer: 1500,
+        })
+
         await setMemberInfo(dispatch, role)
         // 선택한 상태 확인
         console.log("Parent state: ", parent)

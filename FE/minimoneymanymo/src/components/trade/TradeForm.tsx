@@ -13,6 +13,8 @@ import { setMemberInfo } from "@/utils/user-utils"
 
 import { getAccessTokenFromSession } from "@/utils/user-utils"
 
+import Swal from "sweetalert2"
+
 // closingPrice를 props로 받기 위해 인터페이스 정의
 interface TradeFormProps {
   closingPrice: number | null // closingPrice가 null일 수도 있으므로 타입 지정
@@ -106,7 +108,12 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         console.error("Failed to load money:", error)
         // 타입 단언 사용
         const customError = error as CustomError
-        alert(customError.data?.message || "알 수 없는 오류가 발생했습니다.")
+        //alert(customError.data?.message || "알 수 없는 오류가 발생했습니다.")
+        Swal.fire({
+          title: "오류가 발생했습니다. 다시 시도해주세요.",
+          text: `${error}`,
+          icon: "error",
+        })
       } else {
         console.error("Trade failed:", error)
       }
@@ -154,19 +161,31 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
     // 유효성 검사 추가
     if (isBuyMode) {
       if (inputMoney <= 0 || tradeShares <= 0) {
-        alert("0 이상의 매수 금액과 주 수를 입력하세요.")
+        //alert("0 이상의 매수 금액과 주 수를 입력하세요.")
+        Swal.fire({
+          title: "0 이상의 매수 금액과 주 수를 입력하세요..",
+          icon: "warning",
+        })
         return
       }
     } else {
       if (sellShares === "" || Number(sellShares) <= 0) {
-        alert("0 이상의 매도 주 수를 입력하세요.")
+        //alert("0 이상의 매도 주 수를 입력하세요.")
+        Swal.fire({
+          title: "0 이상의 매도 주 수를 입력하세요.",
+          icon: "warning",
+        })
         return
       }
     }
 
     // reason 유효성 검사 추가
     if (reason.trim() === "") {
-      alert("거래 이유를 입력해 주세요.")
+      //alert("거래 이유를 입력해 주세요.")
+      Swal.fire({
+        title: "거래 이유를 입력해 주세요.",
+        icon: "warning",
+      })
       return
     }
 
@@ -193,17 +212,31 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         setSellShares("") // 매도 주수 입력창 초기화
       }
 
-      alert("거래가 성공적으로 완료되었습니다!")
+      //alert("거래가 성공적으로 완료되었습니다!")
+      Swal.fire({
+        title: "거래가 성공적으로 완료되었습니다!",
+        icon: "success",
+      })
       await loadMoney()
       await setMemberInfo(dispatch, 1)
       console.log("🎅🤶👼🧔👲")
     } catch (error) {
       if (error instanceof Error) {
         console.error("Trade failed:", error.message) // 오류 메시지 출력
-        alert("거래에 실패했습니다: " + error.message) // 사용자에게 오류 메시지 표시
+        //alert("거래에 실패했습니다: " + error.message) // 사용자에게 오류 메시지 표시
+        Swal.fire({
+          title: "오류가 발생했습니다. 다시 시도해주세요.",
+          text: `${error.message}`,
+          icon: "error",
+        })
       } else {
         console.error("Trade failed: 알 수 없는 오류 발생", error) // 알 수 없는 오류 처리
-        alert("거래에 실패했습니다: 알 수 없는 오류 발생") // 사용자에게 알 수 없는 오류 메시지 표시
+        //alert("거래에 실패했습니다: 알 수 없는 오류 발생") // 사용자에게 알 수 없는 오류 메시지 표시
+        Swal.fire({
+          title: "오류가 발생했습니다. 다시 시도해주세요.",
+          text: `${error}`,
+          icon: "error",
+        })
       }
     }
   }

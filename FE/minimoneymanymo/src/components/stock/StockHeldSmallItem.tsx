@@ -28,7 +28,9 @@ const StockHeldSmallItem: React.FC<StockHeld> = (props) => {
     } else if (value < 0) {
       return `▼ ${Math.abs(value).toLocaleString()}` // 음수일 때 절대값으로 변환
     } else {
-      return `${value.toLocaleString()}`
+      return value !== undefined && value !== null
+        ? value.toLocaleString()
+        : "0"
     }
   }
 

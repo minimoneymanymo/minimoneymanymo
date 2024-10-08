@@ -3,7 +3,7 @@ import { useAppSelector } from "@/store/hooks"
 import { selectParent } from "@/store/slice/parent"
 import { WithdrawableMoneyProps } from "@/types/accountTypes"
 import { useChild } from "../context/ChildContext"
-
+import Swal from "sweetalert2"
 function formatDate(dateString: string, allFlag: boolean): string {
   // 문자열을 연도, 월, 일로 분리
   const year = dateString.substring(0, 4)
@@ -36,7 +36,12 @@ const WithdrawablReqItem: React.FC<WithdrawablReqItemProps> = (props) => {
         onApprove()
       }
     } else {
-      alert(res.message || "오류가 발생했습니다. 다시 시도해주세요.")
+      //alert(res.message || "오류가 발생했습니다. 다시 시도해주세요.")
+      Swal.fire({
+        icon: "error",
+        title: `오류가 발생했습니다. 다시 시도해주세요 : ${res.message}`,
+        text: "Something went wrong!",
+      })
     }
   }
 

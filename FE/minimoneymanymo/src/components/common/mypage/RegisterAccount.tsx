@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { accountActions, selectAccount } from "@/store/slice/account"
 import { Bank } from "@/types/accountTypes"
 import React, { useState } from "react"
+import Swal from "sweetalert2"
 
 // 은행 리스트 받아오기
 const RegisterAccount: React.FC<{ banks: Bank[]; userKey: string }> = ({
@@ -23,7 +24,11 @@ const RegisterAccount: React.FC<{ banks: Bank[]; userKey: string }> = ({
 
   const handleAuthClick = async () => {
     if (!accountNumber || !selectedBank) {
-      alert("계좌번호와 은행을 입력해주세요.")
+      //alert("계좌번호와 은행을 입력해주세요.")
+      Swal.fire({
+        text: "계좌번호와 은행을 입력해주세요.",
+        icon: "warning",
+      })
       return
     }
 
@@ -58,14 +63,29 @@ const RegisterAccount: React.FC<{ banks: Bank[]; userKey: string }> = ({
       const res2 = await linkAccountApi(accountNumber)
       console.log(res2)
       if (res2.stateCode == 201) {
-        alert("계좌가 연결되었습니다.")
+        //alert("계좌가 연결되었습니다.")
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "계좌가 연결되었습니다.",
+          showConfirmButton: false,
+          timer: 1000,
+        })
         console.log(account)
         // window.location.reload()
       } else {
-        alert("에러가 발생했습니다. 다시 시도해주세요.")
+        //alert("에러가 발생했습니다. 다시 시도해주세요.")
+        Swal.fire({
+          icon: "error",
+          text: "에러가 발생했습니다. 다시 시도해주세요.",
+        })
       }
     } else {
-      alert("인증번호가 일치하지 않습니다. 다시 입력해주세요.")
+      //alert("인증번호가 일치하지 않습니다. 다시 입력해주세요.")
+      Swal.fire({
+        title: "인증번호가 일치하지 않습니다. 다시 입력해주세요.",
+        icon: "warning",
+      })
     }
   }
 
