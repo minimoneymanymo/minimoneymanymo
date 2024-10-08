@@ -12,7 +12,7 @@ import { Visibility, VisibilityOff, Check } from "@mui/icons-material"
 import { IconButton, InputAdornment, TextField } from "@mui/material"
 import { getIsDuplicatedId, signUp, checkAuthCode } from "@/api/user-api"
 import { useNavigate } from "react-router-dom"
-import { registerMemberApi } from "@/api/account-api"
+import { registerMemberApi, searchMemberApi } from "@/api/account-api"
 import { useAppDispatch } from "@/store/hooks"
 import { parentActions } from "@/store/slice/parent"
 import Swal from "sweetalert2"
@@ -119,47 +119,86 @@ export function SimpleRegistrationForm() {
   const handleAuthNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAuthNum(e.target.value)
   }
-
+  const validatePhoneNumber = (phone: string) => {
+    const phoneRegex = /^010-\d{4}-\d{4}$/ // 한국형 전화번호 형식 검사 (010-0000-0000)
+    return phoneRegex.test(phone)
+  }
   const handleSignUp = async () => {
-    const userKey = await registerMemberApi(id)
-    if (userKey != null) {
-      const result = await signUp(
-        id,
-        password,
-        userName,
-        role,
-        userKey,
-        phoneNumber,
-        birthDay,
-        parentsNumber
-      ) // 이메일과 인증 코드 전달
-      console.log(result)
-      if (result.stateCode === 201) {
-        console.log("회원가입 성공")
-        dispatch(parentActions.setUserKey(userKey))
-        navigate("/") // main으로 navigate
-      } else {
-        console.log("회원가입 실패")
-      }
+    if (phoneNumber && !validatePhoneNumber(phoneNumber)) {
+      Swal.fire({
+        title: "전화번호 형식이 맞지 않습니다.",
+        icon: "warning",
+      })
+      return
     }
-    // userKey 제외한 회원가입 테스트 시 위 코드 주석처리하고 하단 코드 주석 풀어서 테스트하시면 돼요!
-    // const result = await signUp(
-    //   id,
-    //   password,
-    //   userName,
-    //   role,
-    //   "userKey",
-    //   phoneNumber,
-    //   birthDay,
-    //   parentsNumber
-    // ) // 이메일과 인증 코드 전달
-    // console.log(result)
-    // if (result.stateCode === 201) {
-    //   console.log("회원가입 성공")
-    //   navigate("/") // main으로 navigate
-    // } else {
-    //   console.log("회원가입 실패")
-    // }
+    if (role === "1" && birthDay.length != 6) {
+      Swal.fire({
+        title: "생일 형식이 맞지 않습니다.",
+        icon: "warning",
+      })
+      return
+    }
+    if (role == "1" && parentsNumber && !validatePhoneNumber(parentsNumber)) {
+      Swal.fire({
+        title: "부모 전화번호 형식이 맞지 않습니다.",
+        icon: "warning",
+      })
+      return
+    }
+
+    var userKey = await registerMemberApi(id) //금융 api
+    if (userKey == null) {
+      userKey = await searchMemberApi(id)
+    }
+    if (userKey != null) {
+      try {
+        const result = await signUp(
+          id,
+          password,
+          userName,
+          role,
+          userKey,
+          phoneNumber,
+          birthDay,
+          parentsNumber
+        )
+        console.log(result)
+        if (result.stateCode === 201) {
+          console.log("회원가입 성공")
+          dispatch(parentActions.setUserKey(userKey))
+          navigate("/") // main으로 navigate
+        } else if (result.stateCode === 400) {
+          Swal.fire({
+            title: `번호가 일치하는 부모가 없습니다`,
+            icon: "warning",
+          })
+        }
+      } catch (e: any) {
+        Swal.fire({
+          title: `${e.message}`,
+          icon: "error",
+        })
+      }
+
+      // userKey 제외한 회원가입 테스트 시 위 코드 주석처리하고 하단 코드 주석 풀어서 테스트하시면 돼요!
+      // const result = await signUp(
+      //   id,
+      //   password,
+      //   userName,
+      //   role,
+      //   "userKey",
+      //   phoneNumber,
+      //   birthDay,
+      //   parentsNumber
+      // ) // 이메일과 인증 코드 전달
+      // console.log(result)
+      // if (result.stateCode === 201) {
+      //   console.log("회원가입 성공")
+      //   navigate("/") // main으로 navigate
+      // } else {
+      //   console.log("회원가입 실패")
+      // }
+    }
   }
 
   return (
@@ -457,7 +496,7 @@ export function SimpleRegistrationForm() {
               <TextField
                 fullWidth
                 variant="outlined"
-                placeholder="YYYY-MM-DD"
+                placeholder="YYMMDD"
                 size="small"
                 className="!border-t-blue-gray-200 focus:!border-t-blue-gray-900"
                 value={birthDay} // birthDay 상태 변수로 설정
@@ -480,10 +519,6 @@ export function SimpleRegistrationForm() {
         >
           미니마니모를 향한 여정을 시작해보아요!
         </Button>
-
-        <Typography color="gray" className="mt-4 text-center font-normal">
-          Already have an account?{" "}
-        </Typography>
       </form>
     </Card>
   )

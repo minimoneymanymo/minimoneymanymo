@@ -47,6 +47,11 @@ export function LoginForm() {
         console.log("Parent state: ", parent)
         console.log("Child state: ", child)
         navigate("/")
+      } else if (response.stateCode == 401) {
+        Swal.fire({
+          icon: "warning",
+          text: "아이디와 비밀번호를 확인해주세요",
+        })
       }
     } catch (error: unknown) {
       // error가 AxiosError 타입인지 확인
@@ -102,10 +107,10 @@ export function LoginForm() {
       className="rounded-lg border border-gray-300 p-6"
     >
       <Card color="transparent" shadow={false}>
-        <div className="text-blue-gray-700 text-xl -mb-1 font-semibold tracking-wider">
+        <div className="text-blue-gray-700 -mb-1 text-xl font-semibold tracking-wider">
           환영해요!
         </div>
-        <div className="tracking-wide text-secondary-m2 mt-1 text-3xl font-bold">
+        <div className="mt-1 text-3xl font-bold tracking-wide text-secondary-m2">
           minimoneymanymo
         </div>
         <div className="mt-6 flex">

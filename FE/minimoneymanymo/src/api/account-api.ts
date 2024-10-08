@@ -16,8 +16,27 @@ const registerMemberApi = async (userId: string) => {
     console.log(response)
     if (response.status === 200) return response.data.userKey
     else return null
-  } catch (e) {
-    return handleApiError(e)
+  } catch (e: any) {
+    if (e.status === 500) {
+      return null
+    }
+  }
+}
+const searchMemberApi = async (userId: string) => {
+  try {
+    const response = await axiosAuthInstance.post(
+      `/fin/member/search?userId=${userId}`
+    )
+    console.log(response)
+    if (response.status === 200) return response.data.userKey
+    else return null
+  } catch (e: any) {
+    console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+    if (e.status === 500) {
+      return null
+    } else {
+      return handleApiError(e)
+    }
   }
 }
 
@@ -136,4 +155,5 @@ export {
   authAccountApi,
   checkAuthCodeApi,
   registerMemberApi,
+  searchMemberApi,
 }
