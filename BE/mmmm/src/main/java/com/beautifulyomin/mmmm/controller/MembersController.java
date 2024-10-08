@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
@@ -117,6 +116,23 @@ public class MembersController {
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
                         .message("회원가입 성공")
+                        .data(savedUsername)
+                        .build());
+    }
+
+    //너무 귀찮아서 대충 만들었어요ㅠㅠ
+    @PutMapping("/password")
+    public ResponseEntity<CommonResponseDto> updatePassword(@RequestBody @NotNull PasswordDto passwordDto) {
+        String savedUsername = null;
+        if (passwordDto.getRole().equals("0")) {
+            savedUsername = parentService.updateParentPassword(passwordDto);
+        } else if (passwordDto.getRole().equals("1")) {
+            savedUsername = childrenService.updateChildPassword(passwordDto);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("비번 수정 성공")
                         .data(savedUsername)
                         .build());
     }
