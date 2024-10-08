@@ -9,7 +9,7 @@ function MainPage(): JSX.Element {
 
   return (
     <div>
-      {child.userId ?? <ChildInfo />}
+      {child.userId && <ChildInfo />}
 
       {/* 뉴스 레이아웃 */}
       <MainNewsLayout />
