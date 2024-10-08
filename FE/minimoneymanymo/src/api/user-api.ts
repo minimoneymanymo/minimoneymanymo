@@ -42,15 +42,15 @@ export const signUp = async (
       userId,
       password,
       name,
-      userKey,
       phoneNumber,
       parentsNumber,
       role,
+      userKey,
       birthDay,
     })
     return res.data // 서버로부터 받은 응답 반환
   } catch (e) {
-    return e // 오류 발생 시, 오류 객체 반환
+    throw e // 오류 발생 시, 오류 객체 반환
   }
 }
 

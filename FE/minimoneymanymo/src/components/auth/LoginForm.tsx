@@ -55,9 +55,18 @@ export function LoginForm() {
         console.log("Parent state: ", parent)
         console.log("Child state: ", child)
         navigate("/")
+      } else if (response.stateCode == 401) {
+        Swal.fire({
+          icon: "warning",
+          text: "아이디와 비밀번호를 확인해주세요",
+        })
       }
     } catch (error) {
-      console.error("Login failed:", error)
+      //console.error("Login failed:", error)
+      Swal.fire({
+        icon: "error",
+        text: "서버에러 발생",
+      })
     }
   }
 
