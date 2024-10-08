@@ -153,7 +153,6 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   // 매매 함수
   const handleTrade = async () => {
     if (!stockCode) {
-      reason
       // stockCode가 없으면 처리하지 않음
       console.error("stockCode is missing")
       return
