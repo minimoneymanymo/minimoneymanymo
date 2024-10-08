@@ -12,15 +12,15 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StocksHeld { // 주식보유내역
+public class StocksHeld {
 
-    @ManyToOne(fetch = FetchType.LAZY) // 자식1 : 내역n
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "children_id", nullable = false)
-    private Children children; // 비식별 관계 설정을 위한 참조 필드
+    private Children children;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 종목1 : 내역n
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_code", nullable = false)
-    private Stock stock; // 비식별 관계 설정을 위한 참조 필드
+    private Stock stock;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
