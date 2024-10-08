@@ -8,7 +8,9 @@ import { Button, Card } from "@material-tailwind/react"
 import Swal from "sweetalert2"
 import { setMemberInfo } from "@/utils/user-utils"
 import { useDispatch } from "react-redux"
-
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { parentActions, selectParent } from "@/store/slice/parent"
+import { childActions, selectChild } from "@/store/slice/child"
 interface NewsModalProps {
   id: string
   title: string
@@ -81,11 +83,31 @@ const NewsComponent: React.FC<NewsModalProps> = ({
   const parsedOptions = JSON.parse(options) // JSON 문자열을 객체로 변환
   const [selectedOption, setSelectedOption] = useState<number | null>(null) // 선택된 옵션 번호 상태 관리
   const [displayBonus, setDisplayBonus] = useState(0) // displayBonus 상태 추가
-
+  const parent = useAppSelector(selectParent) // 부모 상태 선택
+  const child = useAppSelector(selectChild) // 자식 상태 선택
   const navigate = useNavigate() // useNavigate 훅 사용
   const dispatch = useDispatch()
 
-  const handleOpen = () => setOpen(!open) // 모달 여닫기 함수
+  const handleOpen = () => {
+    if (child.userId) {
+      console.log(child.userId)
+      setOpen(!open)
+    } else {
+      if (parent.userId) {
+        Swal.fire({
+          icon: "warning",
+          text: "자녀만 풀 수 있습니다",
+        })
+      } else {
+        Swal.fire({
+          icon: "warning",
+          text: "로그인이 필요합니다",
+        }).then(() => {
+          navigate("/login")
+        })
+      }
+    }
+  }
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(parseInt(event.target.value)) // 선택된 옵션 번호 상태 업데이트
@@ -101,8 +123,6 @@ const NewsComponent: React.FC<NewsModalProps> = ({
           firework()
 
           const bonusMoney = response.data.bonusMoney
-          countUp(0, bonusMoney, 60000) // 0부터 bonusMoney까지 2초 동안 증가
-
           Swal.fire({
             title: "정답입니다!",
             text: `+ ${bonusMoney.toLocaleString()}머니!`,
@@ -140,21 +160,6 @@ const NewsComponent: React.FC<NewsModalProps> = ({
       })
     }
   }
-  const countUp = (start: number, end: number, duration: number) => {
-    const range = end - start // 범위 계산
-    const increment = range / (duration / 1000) // 매초 증가할 값 계산
-    let current = start
-
-    const timer = setInterval(() => {
-      current += increment
-      setDisplayBonus(Math.floor(current)) // UI 업데이트
-
-      if (current >= end) {
-        clearInterval(timer)
-        setDisplayBonus(end) // 최종 값 설정
-      }
-    }, 1000) // 1초마다 증가
-  }
 
   return (
     <>
@@ -174,8 +179,8 @@ const NewsComponent: React.FC<NewsModalProps> = ({
         />
         <div className="mt-4 flex justify-center">
           <button
-            onClick={handleOpen} // 저장 버튼 클릭 시 handleSave 호출
-            className="rounded-xl bg-secondary-m2 px-4 py-2 text-white"
+            onClick={handleOpen}
+            className={`rounded-xl bg-secondary-m2 px-4 py-2 text-white`} // child.id가 없으면 버튼을 회색으로 비활성화
           >
             퀴즈 풀기
           </button>
