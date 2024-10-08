@@ -6,6 +6,7 @@ import { Typography, Button } from "@material-tailwind/react"
 import StockFilterMenu from "./StockFilterMenu"
 import { Tune } from "@mui/icons-material"
 import StockFilterTag from "./StockFilterTag"
+import { Search } from "@mui/icons-material"
 
 // Label과 value의 매핑 객체 정의
 const marketCapSizeMapping: Record<string, string> = {
@@ -359,7 +360,7 @@ function MainDashboard() {
       </div>
 
       {/* 필터 모달 버튼 */}
-      <div className="mb-4 mt-4 flex items-center gap-x-4">
+      <div className="mb-4 mt-4 flex flex-wrap items-center gap-x-4">
         <button
           className="flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-sm font-bold text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
           onClick={handleModalOpen}
@@ -401,20 +402,21 @@ function MainDashboard() {
           selected={filters.marketCapSize}
           onSelect={handleSelectMarketCapSize}
         />
-
-        {/* 필터 태그 표시 */}
-        {renderFilterTags()}
-
-        {/* 검색창 */}
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-gray-600 shadow-none hover:bg-gray-200">
+          <Search className="text-gray-500" />{" "}
           <input
             id="searchInput"
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)} // 입력값 상태 업데이트
-            className="ml-auto flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-gray-600 placeholder-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
+            className="flex-1 border-none bg-transparent text-left text-gray-600 placeholder-gray-600 focus:outline-none"
             placeholder="주식 검색"
           />
+        </div>
+
+        {/* 필터 태그 표시 */}
+        <div className="mt-2 flex w-full flex-wrap gap-2">
+          {renderFilterTags()}
         </div>
       </div>
 
