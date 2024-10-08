@@ -73,82 +73,80 @@ const NewsListPage: React.FC = () => {
   }
 
   return (
-    <div className="w-full">
-      <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: 2 }}>
-        <div className="mb-2 text-2xl font-bold" color="blue-gray">
-          뉴스 퀴즈 목록
-        </div>
-        <div className="mb-8">
-          최신 뉴스 정보를 얻고, 퀴즈에 도전하여 보상 머니를 획득하세요! <br />
-          지식을 쌓는 즐거움을 느낄 수 있을 거예요!
-        </div>
+    <div className="w-full p-4">
+      <div className="mb-2 text-2xl font-bold" color="blue-gray">
+        뉴스 퀴즈 목록
+      </div>
+      <div className="mb-8">
+        최신 뉴스 정보를 얻고, 퀴즈에 도전하여 보상 머니를 획득하세요! <br />
+        지식을 쌓는 즐거움을 느낄 수 있을 거예요!
+      </div>
 
-        <div className="flex flex-wrap">
-          {newsItems.map((newsItem, index) => {
-            let icon = null
+      <div className="flex w-full flex-wrap justify-between">
+        {newsItems.map((newsItem, index) => {
+          let icon = null
 
-            // 퀴즈를 풀었을 때: 초록 체크 아이콘
-            if (newsItem.isQuizAnswered == "0") {
-              icon = (
-                <div
-                  className="absolute right-10 top-3 flex items-center justify-center"
-                  style={{
-                    backgroundColor: "white", // 흰색 배경
-                    borderRadius: "50%", // 둥글게 만들기
-                    width: "30px", // 배경의 너비 (수정된 크기)
-                    height: "30px", // 배경의 높이 (수정된 크기)
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.4)", // 그림자 추가 (선택 사항)
-                    zIndex: 2, // 아이콘이 다른 요소 위에 렌더링되도록 설정
-                  }}
-                >
-                  <TaskAltIcon
-                    className="text-green-500"
-                    style={{ fontSize: 20 }} // 아이콘 크기 조정
-                  />
-                </div>
-              )
-            }
-            // 퀴즈를 틀렸을 때: 빨간 X 아이콘
-            else if (newsItem.isQuizAnswered == "1") {
-              icon = (
-                <div
-                  className="absolute right-10 top-3 flex items-center justify-center"
-                  style={{
-                    backgroundColor: "white", // 흰색 배경
-                    borderRadius: "50%", // 둥글게 만들기
-                    width: "30px", // 배경의 너비 (수정된 크기)
-                    height: "30px", // 배경의 높이 (수정된 크기)
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.4)", // 그림자 추가 (선택 사항)
-                    zIndex: 2, // 아이콘이 다른 요소 위에 렌더링되도록 설정
-                  }}
-                >
-                  <CloseIcon
-                    className="text-red-500"
-                    style={{ fontSize: 20 }} // 아이콘 크기 조정
-                  />
-                </div>
-              )
-            }
-
-            return (
+          // 퀴즈를 풀었을 때: 초록 체크 아이콘
+          if (newsItem.isQuizAnswered == "0") {
+            icon = (
               <div
-                key={index}
-                className="relative w-full p-2 sm:w-1/2 lg:w-1/3" // 부모 요소에 relative 추가
-                onClick={() => handleSelectNews(newsItem)}
+                className="absolute right-10 top-3 flex items-center justify-center"
+                style={{
+                  backgroundColor: "white", // 흰색 배경
+                  borderRadius: "50%", // 둥글게 만들기
+                  width: "30px", // 배경의 너비 (수정된 크기)
+                  height: "30px", // 배경의 높이 (수정된 크기)
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.4)", // 그림자 추가 (선택 사항)
+                  zIndex: 2, // 아이콘이 다른 요소 위에 렌더링되도록 설정
+                }}
               >
-                <NewsCard
-                  image={newsItem.image}
-                  title={newsItem.title}
-                  content={newsItem.content}
+                <TaskAltIcon
+                  className="text-green-500"
+                  style={{ fontSize: 20 }} // 아이콘 크기 조정
                 />
-                {/* 상태에 따른 아이콘 */}
-                {icon && <div style={{ zIndex: 2 }}>{icon}</div>}
               </div>
             )
-          })}
-        </div>
-        {loading && <div>로딩 중...</div>}
-      </Box>
+          }
+          // 퀴즈를 틀렸을 때: 빨간 X 아이콘
+          else if (newsItem.isQuizAnswered == "1") {
+            icon = (
+              <div
+                className="absolute right-10 top-3 flex items-center justify-center"
+                style={{
+                  backgroundColor: "white", // 흰색 배경
+                  borderRadius: "50%", // 둥글게 만들기
+                  width: "30px", // 배경의 너비 (수정된 크기)
+                  height: "30px", // 배경의 높이 (수정된 크기)
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.4)", // 그림자 추가 (선택 사항)
+                  zIndex: 2, // 아이콘이 다른 요소 위에 렌더링되도록 설정
+                }}
+              >
+                <CloseIcon
+                  className="text-red-500"
+                  style={{ fontSize: 20 }} // 아이콘 크기 조정
+                />
+              </div>
+            )
+          }
+
+          return (
+            <div
+              key={index}
+              className="relative w-[360px] p-2" // 부모 요소에 relative 추가
+              onClick={() => handleSelectNews(newsItem)}
+            >
+              <NewsCard
+                image={newsItem.image}
+                title={newsItem.title}
+                content={newsItem.content}
+              />
+              {/* 상태에 따른 아이콘 */}
+              {icon && <div style={{ zIndex: 2 }}>{icon}</div>}
+            </div>
+          )
+        })}
+      </div>
+      {loading && <div>로딩 중...</div>}
     </div>
   )
 }
