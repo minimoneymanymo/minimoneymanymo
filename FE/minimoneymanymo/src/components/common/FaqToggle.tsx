@@ -20,11 +20,10 @@ const FaqToggle: React.FC<ToggleListProps> = ({ title, children }) => {
         onClick={handleToggle}
         className="flex w-full items-center justify-between"
       >
-        <span className="p-2">{title}</span>
+        <span className={`p-2 ${isOpen ? "font-bold" : ""}`}>{title}</span>
         <span>{isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}</span>
       </button>
 
-      {/* 들여쓰기 및 배경색 추가 */}
       {isOpen && <div>{children}</div>}
     </div>
   )
