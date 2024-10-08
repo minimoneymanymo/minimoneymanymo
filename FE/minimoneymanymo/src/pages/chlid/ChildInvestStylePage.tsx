@@ -20,17 +20,20 @@ const ChildInvestStylePage = () => {
   }, [])
 
   return (
-    // <div className="w-full rounded-lg p-6">
     <div className="mb-24 flex w-full flex-col space-y-4">
       <Heading title="투자성향" />
       <div className="mt-4">
-        <div className="mt-6">
+        <div className="rounded-2xl bg-white p-6">
+          {" "}
+          {/* 흰색 배경, 라운드, 그림자 추가 */}
           <InvestmentMBTI analysisData={analysisData} />
         </div>
       </div>
       <Heading title="투자분석" />
-      <div>
-        <div className="mt-6">
+      <div className="mt-4">
+        <div className="rounded-2xl bg-white p-6">
+          {" "}
+          {/* 흰색 배경, 라운드, 그림자 추가 */}
           <InvestmentStyle analysisData={analysisData} />
         </div>
       </div>
