@@ -5,7 +5,11 @@ import { useAppSelector } from "@/store/hooks" // Redux 훅 사용
 import { selectParent } from "@/store/slice/parent"
 import { selectChild } from "@/store/slice/child" // 자녀 상태 가져오기
 
-// InvestmentTypeKeys 타입 정의
+const getLastMonthEnd = () => {
+  const now = new Date()
+  return new Date(now.getFullYear(), now.getMonth(), 0)
+}
+
 type InvestmentTypeKeys =
   | "느긋한 거북이"
   | "화끈한 불사조"
@@ -13,7 +17,6 @@ type InvestmentTypeKeys =
   | "성장하는 새싹"
   | "없음"
 
-// 이미지 경로와 설명을 investmentType에 따라 설정
 const investmentTypeDetails: Record<
   InvestmentTypeKeys,
   { image: string; title: string; description: (name: string) => string }
@@ -68,8 +71,17 @@ const InvestmentMBTI: React.FC<InvestmentStyleProps> = ({ analysisData }) => {
   const name = analysisData.myStatistics.name
   const { image, title, description } = investmentTypeDetails[investmentType]
 
+  // 저번 달 말일 계산
+  const lastMonthEndDate = getLastMonthEnd()
+  const formattedDate = `${lastMonthEndDate.getFullYear()}년 ${lastMonthEndDate.getMonth() + 1}월 ${lastMonthEndDate.getDate()}일`
+
   return (
-    <div className="flex h-96 w-full flex-col items-center justify-center text-center">
+    <div className="relative flex h-96 w-full flex-col justify-center text-center">
+      {/* 날짜를 우측 상단에 고정 */}
+      <div className="absolute right-0 top-0 mb-4 text-sm text-gray-500">
+        <p>{formattedDate} 기준 통계</p>
+      </div>
+
       <div className="flex flex-col items-center">
         <img src={image} alt={investmentType} className="mb-4 w-64" />
         <p className="text-lg font-semibold">{title}</p>
