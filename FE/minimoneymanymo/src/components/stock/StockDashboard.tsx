@@ -84,6 +84,7 @@ function MainDashboard() {
       const {
         VITE_ELASTIC_API_USERID: username,
         VITE_ELASTIC_API_PASSWORD: password,
+        VITE_ELASTIC_API_SEARCH: searchUrl,
       } = import.meta.env
 
       const headers = new Headers({
@@ -123,7 +124,7 @@ function MainDashboard() {
         },
       }
 
-      fetch("https://j11b105.p.ssafy.io/el/stocks_edge/_search", {
+      fetch(`${searchUrl}`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(query),
