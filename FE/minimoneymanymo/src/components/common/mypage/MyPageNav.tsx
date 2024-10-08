@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useAppSelector } from "@/store/hooks"
 import { selectChild } from "@/store/slice/child"
 import { selectParent } from "@/store/slice/parent"
+import Swal from "sweetalert2"
 
 interface MenuItem {
   label: string
@@ -28,11 +29,23 @@ function MypageNav({ menuItems, role }: MypageNavProps): JSX.Element {
 
   useEffect(() => {
     if (role === 0) {
-      if (parentMyInfo === null) alert("로그인안됨")
+      if (parentMyInfo === null) {
+        //alert("로그인안됨")
+        Swal.fire({
+          title: "로그인이 필요합니다",
+          icon: "warning",
+        })
+      }
       setName(parentMyInfo.name)
       setProfileImgUrl(parentMyInfo.profileImgUrl)
     } else {
-      if (childMyInfo === null) alert("로그인안됨")
+      if (childMyInfo === null) {
+        //alert("로그인안됨")
+        Swal.fire({
+          title: "로그인이 필요합니다",
+          icon: "warning",
+        })
+      }
       setName(childMyInfo.name)
       setProfileImgUrl(childMyInfo.profileImgUrl)
     }

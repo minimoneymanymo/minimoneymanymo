@@ -5,7 +5,7 @@ const {
   VITE_API_CONTEXT_PATH: contextPath = process.env.VITE_API_CONTEXT_PATH,
   VITE_API_VERSION: version = process.env.VITE_API_VERSION,
 } = import.meta.env
-
+import Swal from "sweetalert2"
 const BASE_API_URL = `${endpoint}/${contextPath}/api/${version}`
 
 import {
@@ -120,7 +120,11 @@ axiosAuthInstance.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       //로그아웃 처리
       logOutUser()
-      alert("엑세스토큰 만료  로그아웃")
+      // alert("엑세스토큰 만료  로그아웃")
+      Swal.fire({
+        icon: "error",
+        text: "Something went wrong!",
+      })
     }
 
     console.log("인터셉터 에러", error)
@@ -156,7 +160,11 @@ axiosPublicInstance.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       //로그아웃 처리
       logOutUser()
-      alert("엑세스토큰 만료  로그아웃")
+      //alert("엑세스토큰 만료  로그아웃")
+      Swal.fire({
+        icon: "error",
+        text: "엑세스토큰 만료  로그아웃",
+      })
     }
 
     console.log("인터셉터 에러", error)
