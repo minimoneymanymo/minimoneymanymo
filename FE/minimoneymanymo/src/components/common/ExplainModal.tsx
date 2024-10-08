@@ -268,9 +268,9 @@ const ChildContent = () => {
         </li>
         <li className="mb-4">
           <div className="font-bold">매매 기능</div>
-          실제 주식 데이터를 통해 주식 투자 경험을 쌓아보세요! <br />
-          주식 투자를 통해 이익을 볼 수도, 손해를 볼 수도 있습니다. <br />더
-          많은 용돈을 받을 수 있도록 해보세요! (여기 바꿀래)
+          투자를 통해 용돈을 더 많이 받아보세요. <br />
+          실제 주식 데이터를 통해 거래할 수 있습니다. <br />잘 모르는 용어에
+          마우스를 올리면 설명을 확인할 수 있어요!
         </li>
         <li className="mb-4">
           <div className="font-bold">뉴스 퀴즈</div>
