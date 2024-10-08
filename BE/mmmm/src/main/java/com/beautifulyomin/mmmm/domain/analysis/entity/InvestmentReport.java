@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @IdClass(InvestmentReportId.class)
-@Table(name="investment_reports", indexes = {
+@Table(name = "investment_reports", indexes = {
         @Index(name = "idx_investment_report_date", columnList = "date"),
         @Index(name = "idx_investment_report_children_id", columnList = "childrenId")
 })
@@ -51,5 +51,7 @@ public class InvestmentReport {
     @Range(min = 0, max = 100)
     private Integer stability;
 
+    @Column(nullable = false)
+    private String investmentType;
 
 }

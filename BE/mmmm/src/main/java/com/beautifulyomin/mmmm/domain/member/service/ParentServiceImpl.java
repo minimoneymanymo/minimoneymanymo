@@ -2,10 +2,7 @@ package com.beautifulyomin.mmmm.domain.member.service;
 
 import com.beautifulyomin.mmmm.common.dto.ImageDto;
 import com.beautifulyomin.mmmm.common.service.FileService;
-import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenDto;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildrenWaitingDto;
+import com.beautifulyomin.mmmm.domain.member.dto.*;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
@@ -281,5 +278,15 @@ public class ParentServiceImpl implements ParentService {
         }
 
         return 0;
+    }
+
+    @Override
+    public String updateParentPassword(PasswordDto passwordDto) {
+        Parent parent = parentRepository.findByUserId(passwordDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        String encodedPass = bCryptPasswordEncoder.encode(passwordDto.getPassword());
+        parent.setPassword(encodedPass);
+        Parent updatedParent = parentRepository.save(parent);
+        return updatedParent.getName();
     }
 }

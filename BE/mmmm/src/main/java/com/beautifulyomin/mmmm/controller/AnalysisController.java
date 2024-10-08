@@ -24,7 +24,7 @@ public class AnalysisController {
     private final JWTUtil jwtUtil;
 
     @GetMapping("/report")
-    public ResponseEntity<CommonResponseDto> getStockDetail(
+    public ResponseEntity<CommonResponseDto> getInvestmentReport(
             @RequestHeader(value = "Authorization", required = false) String token) {
         String userId = jwtUtil.getUsername(token);
         return ResponseEntity.ok(CommonResponseDto.builder()
