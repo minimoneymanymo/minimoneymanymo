@@ -4,15 +4,7 @@ import { useNavigate } from "react-router-dom"
 import confetti from "canvas-confetti"
 import Modal from "react-modal"
 import { solveQuiz } from "@/api/news-api"
-import {
-  Button,
-  Typography,
-  Card,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react"
+import { Button, Card } from "@material-tailwind/react"
 import Swal from "sweetalert2"
 import { setMemberInfo } from "@/utils/user-utils"
 import { useDispatch } from "react-redux"
@@ -172,12 +164,12 @@ const NewsComponent: React.FC<NewsModalProps> = ({
   return (
     <>
       <Card className="mx-auto max-w-[800px] p-4">
-        <Typography variant="h3" color="blue-gray" className="mb-2 font-bold">
+        <div color="blue-gray" className="mb-2 font-bold">
           {title}
-        </Typography>
-        <Typography variant="small" color="gray" className="mb-4 ml-2 text-sm">
+        </div>
+        <div color="gray" className="mb-4 ml-2 text-sm">
           {author} | {publisher} | {publishedDate}
-        </Typography>
+        </div>
 
         <div
           className="content mb-4"
@@ -200,32 +192,60 @@ const NewsComponent: React.FC<NewsModalProps> = ({
         isOpen={open}
         onRequestClose={handleOpen}
         contentLabel="퀴즈! 경제한입"
-        className="relative mx-auto mt-10 w-[90%] max-w-md rounded-lg bg-white shadow-lg"
+        style={{
+          overlay: {
+            position: "fixed",
+            inset: "0 0 0 0",
+            zIndex: 100,
+            backgroundColor: "rgba(26, 26, 26, 0.75)",
+            backdropFilter: `blur(2px)`,
+          },
+          content: {
+            position: "absolute",
+            top: "auto",
+            left: "30%",
+            right: "30%",
+            bottom: "auto",
+            // transform: "translate(-50%, -50%)",
+            minWidth: 360, // for mobile
+            background: "#fff",
+            overflow: "auto",
+            outline: "none",
+            padding: 0,
+            border: "none",
+            borderRadius: 4,
+            WebkitOverflowScrolling: "touch",
+          },
+        }}
+        // className="relative mx-auto mt-10 max-w-md rounded-lg bg-white shadow-lg"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
       >
         <div className="p-6">
-          <Typography variant="h4" className="mb-4">
-            🔎 퀴즈! 경제한입
-          </Typography>
-          <Typography variant="h6" color="blue-gray" className="mb-4">
+          <div className="mb-6 text-2xl font-bold">🔎 퀴즈! 경제한입</div>
+          <div className="m-2 mb-4 font-bold" color="blue-gray">
             {question}
-          </Typography>
+          </div>
 
-          {parsedOptions.map((option: { text: string }, index: number) => (
-            <div key={index} className="mb-2 flex items-center px-3">
-              <input
-                type="radio"
-                id={`option-${index + 1}`}
-                name="options"
-                value={index + 1}
-                onChange={handleOptionChange}
-                className="mr-2"
-              />
-              <label htmlFor={`option-${index + 1}`} className="text-gray-800">
-                {option.text}
-              </label>
-            </div>
-          ))}
+          <div className="mb-2 flex flex-col items-start gap-2 px-3">
+            {parsedOptions.map((option: { text: string }, index: number) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  type="radio"
+                  id={`option-${index + 1}`}
+                  name="options"
+                  value={index + 1}
+                  onChange={handleOptionChange}
+                  className="mr-2"
+                />
+                <label
+                  htmlFor={`option-${index + 1}`}
+                  className="text-gray-800"
+                >
+                  {option.text}
+                </label>
+              </div>
+            ))}
+          </div>
 
           <div className="mt-4 flex justify-end">
             <Button color="green" onClick={handleSubmit}>

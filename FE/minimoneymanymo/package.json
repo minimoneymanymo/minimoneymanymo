@@ -26,6 +26,7 @@
     "axios": "^1.7.7",
     "chart.js": "^4.4.4",
     "date-fns": "^4.1.0",
+    "framer-motion": "^11.11.1",
     "igniteui-react": "^18.7.0",
     "igniteui-react-charts": "^18.7.0",
     "igniteui-react-core": "^18.7.0",

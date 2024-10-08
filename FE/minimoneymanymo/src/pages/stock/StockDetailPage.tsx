@@ -112,6 +112,22 @@ function StockDetailPage(): JSX.Element {
       }
     }
 
+    // 날짜 비교를 위한 함수
+    const isYesterday = (dateString: string) => {
+      const date = new Date(dateString)
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+
+      // 날짜를 비교하여 어제 날짜인지 확인
+      return (
+        date.getFullYear() === yesterday.getFullYear() &&
+        date.getMonth() === yesterday.getMonth() &&
+        date.getDate() === yesterday.getDate()
+      )
+    }
+    const lastStockDate = dailyStockChart[dailyStockChart.length - 2].date // 마지막 날짜
+    const formattedDate = `${lastStockDate.split("-")[1]}월 ${lastStockDate.split("-")[2]}일`
+
     return (
       <div className="m-6 mb-2 flex flex-col gap-2">
         {stockInfo ? (
@@ -141,18 +157,9 @@ function StockDetailPage(): JSX.Element {
                   머니
                 </div>
                 <span className="text-base text-gray-500">
-                  {
-                    dailyStockChart[dailyStockChart.length - 2].date.split(
-                      "-"
-                    )[1]
-                  }
-                  월{" "}
-                  {
-                    dailyStockChart[dailyStockChart.length - 2].date.split(
-                      "-"
-                    )[0]
-                  }
-                  일 보다
+                  {isYesterday(lastStockDate)
+                    ? "어제보다"
+                    : `${formattedDate} 보다`}
                   <span
                     className={`ms-4 ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
                   >

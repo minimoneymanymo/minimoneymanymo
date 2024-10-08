@@ -77,15 +77,6 @@ const NavAction = (): JSX.Element => {
   }, [parent, child.profileImgUrl, isLogin])
 
   const handleLogOut = () => {
-    //alert("로그아웃")
-    Swal.fire({
-      position: "top-end",
-      icon: "success",
-      title: "로그아웃",
-      showConfirmButton: false,
-      timer: 1000,
-    })
-
     logOutUser()
     setIsLogin(false)
     navigate("/")

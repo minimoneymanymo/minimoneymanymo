@@ -31,7 +31,7 @@ function MyChildMoneySetting(): JSX.Element {
   const dispatch = useAppDispatch()
 
   const getMyChildsetting = () => {
-    setAllowance(child?.settingMoney || null)
+    setAllowance(parent?.balance || null)
     setWithdrawableMoney(child?.settingWithdrawableMoney || null)
     setQuizBonusMoney(child?.settingQuizBonusMoney || null)
     setMaxAllowance(parent.balance)

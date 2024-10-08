@@ -58,12 +58,12 @@ export const userLogin = async (formData: FormData) => {
   for (const [key, value] of formData.entries()) {
     console.log(`${key}: ${value}`)
   }
-  try {
-    const res = await axiosPublicInstance.post("/members/login", formData)
-    return res.data
-  } catch (e) {
-    return e
-  }
+  // try {
+  const res = await axiosPublicInstance.post("/members/login", formData)
+  return res.data
+  // } catch (e) {
+  //   return e
+  // }
 }
 
 // 나의 자식 목록 조회
