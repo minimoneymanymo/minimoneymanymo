@@ -11,7 +11,7 @@ const IndicatorDescriptions: React.FC = () => {
           <p>월말 기준, 보유한 현금의 비중을 나타내요.</p>
         </li>
         <li>
-          <h3 className="text-lg font-semibold">매매 횟수 (유동성)</h3>
+          <h3 className="text-lg font-semibold">매매 횟수</h3>
           <p>
             한 달 동안 몇 번 거래했는지를 나타내요. 거래가 많을수록 유동성이
             높아져요.
@@ -20,8 +20,8 @@ const IndicatorDescriptions: React.FC = () => {
         <li>
           <h3 className="text-lg font-semibold">손익 비율</h3>
           <p>
-            수익을 낸 거래 수와 전체 거래 수를 비교해 승률을 계산해요. 또, 내가
-            낸 수익 또는 손실을 종합해 점수가 매겨져요.
+            수익을 낸 거래 수와 전체 거래 수를 비교해 승률을 계산해요. 수익 및
+            손실이 종합되어 점수가 매겨져요.
           </p>
         </li>
         <li>

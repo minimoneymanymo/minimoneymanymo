@@ -2,7 +2,6 @@ import * as React from "react"
 import Box from "@mui/material/Box"
 import NewsCard from "../components/newscard/NewsCard"
 import { getTodayNews } from "@/api/news-api"
-import { Typography } from "@material-tailwind/react"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import Slider from "react-slick" // react-slick 라이브러리 추가

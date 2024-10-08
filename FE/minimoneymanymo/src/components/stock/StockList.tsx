@@ -42,6 +42,7 @@ interface StockFilter {
   tradingValueMax: number | null // 최대 거래대금
   volumeMax: number | null // 최대 거래량
   search: string | null
+  interestStocks: false
 }
 
 function StockList({ filters }: { filters: StockFilter }) {
@@ -135,17 +136,24 @@ function StockList({ filters }: { filters: StockFilter }) {
           filters.search !== undefined && filters.search !== null
             ? filters.search.toString()
             : "",
+        interestStocks: filters.interestStocks ? "true" : "", // 관심 종목 필터 적용
         sort: `${sortKey},${sortOrder}`,
         page: page.toString(),
       }).toString()
 
       const res = await getStockList(queryParams)
+      let stockData = res.data.content
+
+      //관심 종목이 선택되었을 때는 favorite이 true인 것만 들고있기
+      if (filters.interestStocks) {
+        stockData = stockData.filter((stock: StockData) => stock.favorite)
+      }
       if (reset) {
         // 필터가 변경되었을 때 초기화 후 데이터 로드
-        setStockRows(res.data.content)
+        setStockRows(stockData)
       } else {
         // 무한스크롤 또는 정렬 시 기존 데이터에 붙이기
-        setStockRows((prevRows) => [...prevRows, ...res.data.content])
+        setStockRows((prevRows) => [...prevRows, ...stockData])
       }
       setHasMore(!res.data.last)
       setLoading(false)
@@ -207,12 +215,12 @@ function StockList({ filters }: { filters: StockFilter }) {
   }
 
   const TABLE_HEAD = [
-    { label: "", key: "" }, //종목 번호
-    { label: "", key: "" }, //종목 이름
-    { label: "현재가", key: "" },
-    { label: "등락률", key: "" },
-    { label: "시가총액(머니)", key: "MC" }, // 시가총액 기준 정렬
-    { label: "거래량", key: "TV" }, // 거래량 기준 정렬
+    { width: "w-[110px]", label: "", key: "" }, //종목 번호
+    { width: "w-[230px]", label: "", key: "" }, //종목 이름
+    { width: "w-[170px] pr-8", label: "현재가", key: "" },
+    { width: "w-[260px] pr-16", label: "등락률", key: "" },
+    { width: "w-[170px] pr-0", label: "시가총액(머니)", key: "MC" }, // 시가총액 기준 정렬
+    { width: "w-[170px]", label: "거래량", key: "TV" }, // 거래량 기준 정렬
   ]
 
   const toggleLike = async (stockCode: string, index: number) => {
@@ -238,20 +246,14 @@ function StockList({ filters }: { filters: StockFilter }) {
       <table className="mt-4 w-full min-w-max table-auto text-left">
         <thead>
           <tr>
-            {TABLE_HEAD.map(({ label, key }) => (
+            {TABLE_HEAD.map(({ width, label, key }) => (
               <th
                 key={`${label}-${Math.random()}`}
-                className="border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50 cursor-pointer border-y p-4 text-right transition-colors"
+                className={`${width} border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50 cursor-pointer border-y p-4 text-right font-normal transition-colors`}
                 onClick={() => key && handleSort(key)}
-                style={{ width: "5%" }}
               >
-                <div
-                  color="blue-gray"
-                  className="flex items-center justify-end gap-2 font-normal leading-none opacity-70"
-                >
-                  {label}
-                  {key && getSortIcon(key)}
-                </div>
+                {label}
+                {key && getSortIcon(key)}
               </th>
             ))}
           </tr>
@@ -267,15 +269,12 @@ function StockList({ filters }: { filters: StockFilter }) {
               <tr
                 key={`${index}-${Math.random()}`}
                 onClick={() => handleRowClick(stock.stockCode)}
-                className="cursor-pointer hover:bg-gray-50"
+                className="w-full cursor-pointer hover:bg-gray-50"
                 ref={
                   index === stockRows.length - 1 ? lastStockElementRef : null
                 }
               >
-                <td
-                  className="border-blue-gray-50 border-b p-6"
-                  style={{ width: "10%" }}
-                >
+                <td className="border-blue-gray-50 w-[110px] border-b p-6">
                   <div className="flex gap-6">
                     <button
                       onClick={(e) => {
@@ -297,10 +296,7 @@ function StockList({ filters }: { filters: StockFilter }) {
                     </div>
                   </div>
                 </td>
-                <td
-                  className="border-blue-gray-50 border-b p-4 text-left"
-                  style={{ width: "20%" }}
-                >
+                <td className="border-blue-gray-50 w-[230px] border-b p-4 text-left">
                   <div
                     color="blue-gray"
                     className="truncate font-normal"
@@ -313,35 +309,23 @@ function StockList({ filters }: { filters: StockFilter }) {
                     {stock.companyName}
                   </div>
                 </td>
-                <td
-                  className="border-blue-gray-50 border-b p-4 text-right"
-                  style={{ width: "15%" }}
-                >
+                <td className="border-blue-gray-50 w-[170px] border-b p-4 text-right">
                   <div color="blue-gray" className="font-normal">
                     {stock.closingPrice.toLocaleString()} 머니
                   </div>
                 </td>
-                <td
-                  className="border-blue-gray-50 border-b p-4 text-right"
-                  style={{ width: "20%" }}
-                >
+                <td className="border-blue-gray-50 w-[260px] border-b p-4 text-right">
                   <div color={color} className={`font-normal ${color}`}>
                     {sign} {stock.priceChange.toLocaleString()} 머니 ({sign}
                     {stock.priceChangeRate.toFixed(2)}%)
                   </div>
                 </td>
-                <td
-                  className="border-blue-gray-50 border-b p-4 text-right"
-                  style={{ width: "20%" }}
-                >
+                <td className="border-blue-gray-50 w-[170px] border-b p-4 text-right">
                   <div color="blue-gray" className="font-normal">
                     {formatMarketCapitalization(stock.marketCapitalization)}
                   </div>
                 </td>
-                <td
-                  className="border-blue-gray-50 border-b p-4 text-right"
-                  style={{ width: "20%" }}
-                >
+                <td className="border-blue-gray-50 w-[170px] border-b p-4 text-right">
                   <div color="blue-gray" className="font-normal">
                     {stock.tradingVolume.toLocaleString()} 주
                   </div>

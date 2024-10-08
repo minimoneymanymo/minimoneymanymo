@@ -1,16 +1,15 @@
-import { useState, useRef } from "react"
-import React from "react"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import confetti from "canvas-confetti"
 import Modal from "react-modal"
 import { solveQuiz } from "@/api/news-api"
-import { Button, Card } from "@material-tailwind/react"
+import { Card } from "@material-tailwind/react"
 import Swal from "sweetalert2"
 import { setMemberInfo } from "@/utils/user-utils"
 import { useDispatch } from "react-redux"
-import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { parentActions, selectParent } from "@/store/slice/parent"
-import { childActions, selectChild } from "@/store/slice/child"
+import { useAppSelector } from "@/store/hooks"
+import { selectParent } from "@/store/slice/parent"
+import { selectChild } from "@/store/slice/child"
 interface NewsModalProps {
   id: string
   title: string
@@ -164,7 +163,7 @@ const NewsComponent: React.FC<NewsModalProps> = ({
   return (
     <>
       <Card className="mx-auto max-w-[800px] p-4">
-        <div color="blue-gray" className="mb-2 text-2xl font-bold">
+        <div color="blue-gray" className="mb-3 text-3xl font-bold">
           {title}
         </div>
         <div color="gray" className="mb-4 ml-2 text-sm">

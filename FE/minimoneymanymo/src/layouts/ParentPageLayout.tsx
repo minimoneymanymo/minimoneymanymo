@@ -11,7 +11,6 @@ const ParentPageLayout: React.FC = () => {
     {
       label: "나의 자녀 관리",
       path: "/parent/my-children",
-      chip: 5,
     },
     {
       label: "내 프로필",
