@@ -74,6 +74,7 @@ function MainDashboard() {
     tradingValueMax: null,
     volumeMax: null,
     search: null,
+    interestStocks: false,
   })
 
   // Elasticsearch 쿼리 생성 및 전송 함수
@@ -168,12 +169,16 @@ function MainDashboard() {
   // 모달 끄고 닫고
   const handleModalOpen = () => setIsModalOpen(!isModalOpen)
 
-  // 필터 업데이트
-  const updateFilters = (newFilters: StockFilter) => {
-    console.log(newFilters)
-    setFilters(newFilters)
+  // 필터가 이전 상태와 다를 때만 업데이트
+  const updateFilters = (newFilters: Partial<StockFilter>) => {
+    setFilters((prevFilters) => {
+      const updatedFilters = { ...prevFilters, ...newFilters }
+      if (JSON.stringify(prevFilters) !== JSON.stringify(updatedFilters)) {
+        return updatedFilters
+      }
+      return prevFilters
+    })
   }
-
   // 입력값이 변경될 때 디바운싱 처리
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -242,37 +247,42 @@ function MainDashboard() {
       tags.push(<StockFilterTag key="pbr" label={`PBR · ${pbrRange}`} />)
     }
 
-    // TODO: 다른 필터 추가
     return tags
   }
 
   const handleTabSelect = (tab: string) => {
     setSelectedTab(tab)
-
-    // 탭에 따른 필터 업데이트
     if (tab === "interest") {
-      setFilters({ ...filters, interestStocks: true }) // 관심 종목 필터 활성화
+      updateFilters({ interestStocks: true }) // 관심 종목 필터 활성화
     } else {
-      setFilters({ ...filters, interestStocks: false }) // 관심 종목 필터 비활성화
+      updateFilters({ interestStocks: false }) // 관심 종목 필터 비활성화
     }
   }
 
   return (
     <div className="w-full">
       <div className="text-2xl font-bold" color="blue-gray">
-        주식
+        주식 골라보기
       </div>
 
       {/* 탭 버튼 */}
-      <div className="mb-4 mt-8 flex justify-start">
+      <div className="mt-4 flex border-b">
         <button
-          className={`mr-2 px-1 py-2 ${selectedTab === "domestic" ? "font-bold text-secondary-m2" : ""}`}
+          className={`mr-4 pb-2 ${
+            selectedTab === "domestic"
+              ? "border-b-2 border-secondary-m2 font-bold" // 활성화된 탭에 밑줄과 굵은 폰트 적용
+              : ""
+          }`}
           onClick={() => handleTabSelect("domestic")}
         >
           국내
         </button>
         <button
-          className={`px-4 py-2 ${selectedTab === "interest" ? "font-bold text-secondary-m2" : ""}`}
+          className={`pb-2 ${
+            selectedTab === "interest"
+              ? "border-b-2 border-secondary-m2 font-bold" // 활성화된 탭에 밑줄과 굵은 폰트 적용
+              : ""
+          }`}
           onClick={() => handleTabSelect("interest")}
         >
           관심 종목
