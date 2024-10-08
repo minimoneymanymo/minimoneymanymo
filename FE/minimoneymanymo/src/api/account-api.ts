@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { fintechInstance, axiosAuthInstance } from "@/api/httpcommons"
+import { alertBasic } from "@/utils/alert-util"
 import axios from "axios"
 
 const { VITE_SSAFY_API_KEY: apiKey } = import.meta.env
@@ -82,6 +83,9 @@ const authAccountApi = async (
     if (response.status === 200) return response.data
     else return null
   } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      alertBasic("cry.svg", "유효한 계좌번호가 아닙니다.")
+    }
     return handleApiError(error)
   }
 }
@@ -143,7 +147,9 @@ const handleApiError = (error: any) => {
     throw error.response
   } else {
     console.error("API 호출 시 오류 발생:", error)
+    
     throw { status: 500, message: "서버 오류" }
+    
   }
 }
 
