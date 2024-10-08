@@ -53,6 +53,7 @@ function MainDashboard() {
   const [searchResults, setSearchResults] = useState<StockResult[]>([]) // 검색 결과 상태 추가
   const [userInput, setUserInput] = useState("")
   const [debouncedInput, setDebouncedInput] = useState(userInput)
+  const [selectedTab, setSelectedTab] = useState("domestic") // 탭 상태 추가
 
   const [filters, setFilters] = useState<StockFilter>({
     marketType: "ALL",
@@ -245,10 +246,37 @@ function MainDashboard() {
     return tags
   }
 
+  const handleTabSelect = (tab: string) => {
+    setSelectedTab(tab)
+
+    // 탭에 따른 필터 업데이트
+    if (tab === "interest") {
+      setFilters({ ...filters, interestStocks: true }) // 관심 종목 필터 활성화
+    } else {
+      setFilters({ ...filters, interestStocks: false }) // 관심 종목 필터 비활성화
+    }
+  }
+
   return (
     <div className="mt-10 w-full">
       <div className="text-2xl font-bold" color="blue-gray">
         주식
+      </div>
+
+      {/* 탭 버튼 */}
+      <div className="mb-4 mt-8 flex justify-start">
+        <button
+          className={`mr-2 px-1 py-2 ${selectedTab === "domestic" ? "font-bold text-secondary-m2" : ""}`}
+          onClick={() => handleTabSelect("domestic")}
+        >
+          국내
+        </button>
+        <button
+          className={`px-4 py-2 ${selectedTab === "interest" ? "font-bold text-secondary-m2" : ""}`}
+          onClick={() => handleTabSelect("interest")}
+        >
+          관심 종목
+        </button>
       </div>
 
       {/* 필터 모달 버튼 */}
@@ -257,7 +285,7 @@ function MainDashboard() {
           className="flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-sm font-bold text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
           onClick={handleModalOpen}
         >
-          <Tune className="h-5 w-5 text-gray-600" /> {/* 아이콘 */}
+          <Tune className="h-5 w-5 text-gray-600" />
           필터 추가
         </button>
 
@@ -297,6 +325,7 @@ function MainDashboard() {
 
         {/* 필터 태그 표시 */}
         {renderFilterTags()}
+
         {/* 검색창 */}
         <div className="ml-auto">
           <input
@@ -309,21 +338,6 @@ function MainDashboard() {
           />
         </div>
       </div>
-
-      {/* 검색 결과 출력 */}
-      {/* <div className="mt-4">
-        {searchResults.length >= 0 ? (
-          <ul>
-            {searchResults.map((result, index) => (
-              <li key={index} className="border-b p-2">
-                {result.stock_code} - {result.company_name}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>검색 결과가 없습니다.</p>
-        )}
-      </div> */}
 
       {/* 주식 목록 */}
       <StockList filters={filters} />
