@@ -24,4 +24,5 @@ public interface ParentService {
     long updateBalance(String parentUserId, Integer amount);
     long updateAccount(String parentUserId, String accountNumber, String bankCode);
     int rejectMyChildren(String userId, Integer childrenId);
+    String updateParentPassword(PasswordDto passwordDto);
 }

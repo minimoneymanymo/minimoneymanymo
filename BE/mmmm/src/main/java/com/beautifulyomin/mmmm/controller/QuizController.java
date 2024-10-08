@@ -50,7 +50,7 @@ public class QuizController {
 
     @GetMapping("/today")
     public ResponseEntity<CommonResponseDto> getTodayQuizList(@RequestHeader(value = "Authorization", required = false) String token) {
-        Integer childrenId = (token != null && !token.isEmpty())
+        Integer childrenId = (token != null && !token.isEmpty() && jwtUtil.getRole(token).equals("1"))
                 ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId() : -1;
 
         List<NewsQuiz> newsQuizList = quizService.findAllByPublishedDateTodayNewsQuizzes();

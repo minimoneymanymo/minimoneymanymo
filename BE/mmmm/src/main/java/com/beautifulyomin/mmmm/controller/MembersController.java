@@ -5,6 +5,7 @@ import com.beautifulyomin.mmmm.common.dto.CommonResponseDto;
 
 import com.beautifulyomin.mmmm.common.jwt.JWTUtil;
 import com.beautifulyomin.mmmm.domain.fund.dto.UserKeyDto;
+import com.beautifulyomin.mmmm.domain.fund.service.FundService;
 import com.beautifulyomin.mmmm.domain.member.dto.*;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.service.MailSendService;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,14 +40,16 @@ public class MembersController {
     private final JWTUtil jwtUtil;
     private final MailSendService mailSendService;
     private final JsonRequestUtil jsonRequestUtil;
+    private final FundService fundService;
     private final WebClient webClient;
 
-    public MembersController(ParentService parentService, ChildrenService childrenService, JWTUtil jwtUtil, MailSendService mailSendService, JsonRequestUtil jsonRequestUtil, WebClient webClient) {
+    public MembersController(ParentService parentService, ChildrenService childrenService, JWTUtil jwtUtil, MailSendService mailSendService, JsonRequestUtil jsonRequestUtil, FundService fundService, WebClient webClient) {
         this.parentService = parentService;
         this.childrenService = childrenService;
         this.jwtUtil = jwtUtil;
         this.mailSendService = mailSendService;
         this.jsonRequestUtil = jsonRequestUtil;
+        this.fundService = fundService;
         this.webClient = webClient;
     }
 
@@ -94,19 +96,43 @@ public class MembersController {
 
     @PostMapping("/join")
     public ResponseEntity<CommonResponseDto> registerUser(@RequestBody @NotNull JoinRequestDto joinDto) {
-        //Exception 직접 설정 가능 예시코드
-//        Optional.ofNullable(joinDto).orElseThrow(() -> new IllegalArgumentException("joinDto cannot be null"));
 
         String savedUsername = null;
-        if (joinDto.getRole().equals("0")) {
-            savedUsername = parentService.registerParent(joinDto);
-        } else if (joinDto.getRole().equals("1")) {
-            savedUsername = childrenService.registerChildren(joinDto);
+        try{
+            if (joinDto.getRole().equals("0")) {
+                savedUsername = parentService.registerParent(joinDto);
+            } else if (joinDto.getRole().equals("1")) {
+                savedUsername = childrenService.registerChildren(joinDto);
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(201)
+                    .body(CommonResponseDto.builder()
+                            .stateCode(400)
+                            .message(e.getMessage())
+                            .build());
         }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponseDto.builder()
                         .stateCode(201)
                         .message("회원가입 성공")
+                        .data(savedUsername)
+                        .build());
+    }
+
+    //너무 귀찮아서 대충 만들었어요ㅠㅠ
+    @PutMapping("/password")
+    public ResponseEntity<CommonResponseDto> updatePassword(@RequestBody @NotNull PasswordDto passwordDto) {
+        String savedUsername = null;
+        if (passwordDto.getRole().equals("0")) {
+            savedUsername = parentService.updateParentPassword(passwordDto);
+        } else if (passwordDto.getRole().equals("1")) {
+            savedUsername = childrenService.updateChildPassword(passwordDto);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(CommonResponseDto.builder()
+                        .stateCode(201)
+                        .message("비번 수정 성공")
                         .data(savedUsername)
                         .build());
     }

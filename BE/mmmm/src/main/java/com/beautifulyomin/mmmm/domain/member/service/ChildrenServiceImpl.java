@@ -8,6 +8,7 @@ import com.beautifulyomin.mmmm.domain.fund.repository.StocksHeldRepository;
 import com.beautifulyomin.mmmm.domain.member.dto.ChildInfoDto;
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
+import com.beautifulyomin.mmmm.domain.member.dto.PasswordDto;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
@@ -46,14 +47,13 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
 
-
     @Override
     public String registerChildren(JoinRequestDto joinDto) {
-        if(isExistByUserId(joinDto.getUserId())) {
+        if (isExistByUserId(joinDto.getUserId())) {
             throw new IllegalArgumentException("이미 사용중인 아이디 입니다");
         }
-        Parent parent= parentRepository.findByPhoneNumber(joinDto.getParentsNumber())
-                 .orElseThrow(() -> new IllegalArgumentException("해당 번호로 등록된 부모가 없습니다."));
+        Parent parent = parentRepository.findByPhoneNumber(joinDto.getParentsNumber())
+                .orElseThrow(() -> new IllegalArgumentException("해당 번호로 등록된 부모가 없습니다."));
         String encodedPass = bCryptPasswordEncoder.encode(joinDto.getPassword());
         Children children = new Children(
                 joinDto.getUserId(),
@@ -80,7 +80,7 @@ public class ChildrenServiceImpl implements ChildrenService {
     @Override
     public boolean isExistByUserId(String userId) {
         Optional<Children> children = childrenRepository.findByUserId(userId);
-        if(children.isPresent())return true;
+        if (children.isPresent()) return true;
         else return false;
 
     }
@@ -112,16 +112,26 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
     @Override
-    public int solveQuiz(Children children){
-        int bonusMoney =  children.getSettingQuizBonusMoney();
-        int resultMoney = children.getMoney()+bonusMoney;
+    public int solveQuiz(Children children) {
+        int bonusMoney = children.getSettingQuizBonusMoney();
+        int resultMoney = children.getMoney() + bonusMoney;
         children.setMoney(resultMoney);
         childrenRepository.save(children);
         return bonusMoney;
 
     }
 
-        @Override
+    @Override
+    public String updateChildPassword(PasswordDto passwordDto) {
+        Children children = childrenRepository.findByUserId(passwordDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        String encodedPass = bCryptPasswordEncoder.encode(passwordDto.getPassword());
+        children.setPassword(encodedPass);
+        Children updatedChildren = childrenRepository.save(children);
+        return updatedChildren.getName();
+    }
+
+    @Override
     public long updateAccount(String childUserId, String accountNumber, String bankCode) {
         return parentRepositoryCustom.updateChildAccount(childUserId, accountNumber, bankCode);
     }
