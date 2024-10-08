@@ -14,6 +14,7 @@ import { setMemberInfo } from "@/utils/user-utils"
 import InfoIcon from "@mui/icons-material/Info"
 import { Alert } from "@mui/material"
 import Swal from "sweetalert2"
+import { alertBasic } from "@/utils/alert-util"
 
 function MyChildMoneySetting(): JSX.Element {
   const { child, fetchChild } = useChild()
@@ -55,7 +56,11 @@ function MyChildMoneySetting(): JSX.Element {
       setMaxAllowance(parent.balance)
       setMemberInfo(dispatch, 0)
       await fetchChild()
-      console.log("용돈이 성공적으로 지급되었습니다:", res)
+      // Swal.fire({
+      //   title: "용돈이 성공적으로 지급되었습니다",
+      //   icon: "success",
+      // })
+      alertBasic("piggy-bank.svg", "용돈이 지급되었습니다")
     } else if (res.status === 403) {
       //alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
       Swal.fire({
@@ -80,6 +85,7 @@ function MyChildMoneySetting(): JSX.Element {
       setInputValue("")
 
       console.log("settingwithdrawableMoney  업데이트 되었습니다:", res)
+      alertBasic("smartphone.svg", "다음달 출금가능금액이 설정되었습니다")
     } else if (res.status === 403) {
       //alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
       Swal.fire({
@@ -90,6 +96,7 @@ function MyChildMoneySetting(): JSX.Element {
         navigate("/login")
       })
     } else {
+      alertBasic("smartphone.svg", "다음달 출금가능금액이 설정되었습니다")
       console.log("용돈 업데이트 실패:", res)
     }
   }
@@ -102,7 +109,7 @@ function MyChildMoneySetting(): JSX.Element {
       await fetchChild()
       setInputValue("")
 
-      console.log("settingwithdrawableMoney  업데이트 되었습니다:", res)
+      alertBasic("smartphone.svg", "출금가능금액이 변경되었습니다")
     } else if (res.status === 403) {
       //alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
       Swal.fire({
@@ -113,6 +120,8 @@ function MyChildMoneySetting(): JSX.Element {
         navigate("/login")
       })
     } else {
+      alertBasic("smartphone.svg", "출금가능금액 변경을 실패하였습니다")
+
       console.log("용돈 업데이트 실패:", res)
     }
   }
@@ -122,6 +131,7 @@ function MyChildMoneySetting(): JSX.Element {
     if (res.stateCode === 201) {
       setQuizBonusMoney(inputValue === "" ? null : inputValue)
       console.log("quizBonusMoney 성공적으로 업데이트 되었습니다:", res)
+      alertBasic("quiz.svg", "퀴즈보상가능머니가 변경되었습니다")
       setInputValue("")
     } else if (res.status === 403) {
       //alert("로그인이필요합니다.")
@@ -133,6 +143,7 @@ function MyChildMoneySetting(): JSX.Element {
         navigate("/login")
       })
     } else {
+      alertBasic("quiz.svg", "퀴즈보상머니 변경을 실패하였습니다")
       console.log("용돈 업데이트 실패:", res)
     }
   }
