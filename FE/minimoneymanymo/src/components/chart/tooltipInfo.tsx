@@ -64,7 +64,7 @@ export const tooltipInfo: { [key: string]: React.ReactNode } = {
       <b>PER은 주가수익비율로,</b> 주가를 주당순이익(EPS)으로 나눈 수치예요.
       <p className="mt-4">
         <span className="inline-block text-center align-middle">
-          <span className="block border-b border-black">주가</span>
+          <span className="block border-b border-white">주가</span>
           <span className="block">주당순이익</span>
         </span>
       </p>
@@ -292,26 +292,6 @@ export const tooltipInfo: { [key: string]: React.ReactNode } = {
       높은 변동성을 가지고 있습니다. 중소기업의 특성상 성장 가능성이나 경영
       성과에 따라 주가가 급변할 수 있습니다. <br />
       이런 특성 때문에 고위험 고수익의 특성을 가지고 있어요.
-    </>
-  ),
-  // 매매 컴포넌트 부분
-  // 매수
-  매수: (
-    <>
-      매수란 주식을 사는 것으로, 주식을 사면 그 회사의 지분을 가진 사람이 되고
-      나중에 주식의 가격이 오르면 팔아서 이익을 얻을 수 있어요.
-    </>
-  ),
-  현재가: <>주식을 구매하는 기준점이 되는 머니금액이예요.</>,
-  매수할머니: <>매수할 머니를 입력하면 (매수할 머니 / 현재가)</>,
-  최대매수가능주수: <>내가 가진 머니로 매수할 수 있는 최대 주 수를 알려줘요.</>,
-  반환주수: <></>,
-  매도: (
-    <>
-      매도란 가지고 있던 주식을 파는 것으로 <br /> 매도 시 현재가에 따라
-      이익이나 손실을 볼 수 있어요. <br />
-      이전에 구매한 매수 가격보다 현재가가 올랐다면 이익을 볼 수 있고 <br />그
-      반대라면 손실을 봅니다.
     </>
   ),
 }
