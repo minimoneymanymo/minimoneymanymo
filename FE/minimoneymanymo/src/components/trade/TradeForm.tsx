@@ -153,6 +153,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   // 매매 함수
   const handleTrade = async () => {
     if (!stockCode) {
+      reason
       // stockCode가 없으면 처리하지 않음
       console.error("stockCode is missing")
       return
@@ -244,6 +245,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   // isBuyMode가 변경될 때마다 값 출력
   useEffect(() => {
     console.log(`Buy mode activated: ${isBuyMode}`)
+    setReason("")
   }, [isBuyMode])
 
   return (

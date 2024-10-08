@@ -136,6 +136,10 @@ function ChildWalletPage(): JSX.Element {
     fetchAccountInfo()
   }, [])
 
+  const deleteAccount = () => {
+    dispatch(accountActions.clearAccount())
+  }
+
   return (
     <>
       <Heading title="나의 지갑" />
@@ -165,7 +169,15 @@ function ChildWalletPage(): JSX.Element {
           <div className="h-3" />
           {child.accountNumber ? (
             <ToggleList title="계좌 연동 해지">
-              <div>계좌 연결을 해지하시겠습니까?</div>
+              <div className="flex flex-row items-center justify-between p-4">
+                <span>계좌 연결을 해지하시겠습니까?</span>
+                <button
+                  onClick={deleteAccount}
+                  className="ml-4 rounded-xl bg-secondary-m2 px-4 py-2 text-white"
+                >
+                  계좌 해지
+                </button>
+              </div>
             </ToggleList>
           ) : (
             <ToggleList title="계좌 연동하기">

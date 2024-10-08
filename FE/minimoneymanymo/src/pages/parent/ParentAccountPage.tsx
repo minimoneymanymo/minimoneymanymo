@@ -236,7 +236,7 @@ const ParentAccountPage = () => {
       <Heading title="계좌 관리" />
       {parent.accountNumber ? (
         <ToggleList title="계좌 연동 해지">
-          <div>계좌 연결을 해지하시겠습니까?</div>
+          <div className="p-4">계좌 연결을 해지하시겠습니까?</div>
         </ToggleList>
       ) : (
         <ToggleList title="계좌 연동하기">
