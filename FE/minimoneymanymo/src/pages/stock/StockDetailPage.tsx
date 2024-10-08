@@ -202,7 +202,7 @@ function StockDetailPage(): JSX.Element {
     )
   }
   return (
-    <div className="relative flex h-full w-[800px] flex-col">
+    <div className="relative flex h-full pb-8 w-[800px] flex-col">
       <div className="flex h-fit w-full items-end justify-between">
         <StockInfo />
       </div>
