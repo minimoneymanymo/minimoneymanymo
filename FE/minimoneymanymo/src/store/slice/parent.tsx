@@ -11,6 +11,7 @@ interface ParentState {
   balance: number
   profileImgUrl: string
   userKey: string
+  createdAt: string
 }
 
 const initialState: ParentState = {
@@ -21,6 +22,7 @@ const initialState: ParentState = {
   balance: 0,
   profileImgUrl: "",
   userKey: "",
+  createdAt: "",
 }
 
 export const parentSlice = createSlice({

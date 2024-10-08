@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom"
 import { registerMemberApi } from "@/api/account-api"
 import { useAppDispatch } from "@/store/hooks"
 import { parentActions } from "@/store/slice/parent"
+import Swal from "sweetalert2"
 
 export function SimpleRegistrationForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -83,9 +84,19 @@ export function SimpleRegistrationForm() {
     } else if (result.stateCode === 409) {
       setIsIdValid(false) // ID is not available
       setIsDuple(true)
-      alert(result.message) // 이미 사용 중인 이메일 메시지 표시
+      //alert(result.message) // 이미 사용 중인 이메일 메시지 표시
+      Swal.fire({
+        title: "사용중인 이메일입니다",
+        text: "다른 이메일을 사용해 주세요",
+        icon: "warning",
+      })
     } else {
-      alert("서버 오류 발생: " + result.message) // 기타 오류 메시지 표시
+      //alert("서버 오류 발생: " + result.message) // 기타 오류 메시지 표시
+      Swal.fire({
+        icon: "error",
+        title: `서버 오류 발생 : ${result.message}`,
+        text: "Something went wrong!",
+      })
     }
   }
   const handleCheckAuthCode = async () => {
@@ -96,7 +107,12 @@ export function SimpleRegistrationForm() {
     } else if (result.stateCode === 400) {
       console.log("인증 코드가 잘못되었습니다.") // 인증 실패 메시지
     } else {
-      alert("서버 오류 발생: " + result.message) // 오류 메시지 표시
+      //alert("서버 오류 발생: " + result.message) // 오류 메시지 표시
+      Swal.fire({
+        icon: "error",
+        title: `서버 오류 발생 : ${result.message}`,
+        text: "Something went wrong!",
+      })
     }
   }
 

@@ -3,12 +3,14 @@ import {
   getAccessTokenFromSession,
   logOutUser,
 } from "../../../utils/user-utils"
-import { useAppSelector } from "@/store/hooks"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { parentActions, selectParent } from "@/store/slice/parent"
 import { childActions, selectChild } from "@/store/slice/child"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-
+import { selectTooltip, tooltipActions } from "@/store/slice/tooltip"
+import { Switch } from "@material-tailwind/react"
+import Swal from "sweetalert2"
 const NavItemList = (): JSX.Element => {
   let itemId = 0
   const navItems = [
@@ -47,29 +49,37 @@ const NavItemList = (): JSX.Element => {
 const NavAction = (): JSX.Element => {
   const parent = useAppSelector(selectParent) // 부모 상태 선택
   const child = useAppSelector(selectChild) // 자식 상태 선택
-  const [isLogin, setIsLogin] = useState<string | null>()
+  const [isLogin, setIsLogin] = useState<boolean>()
   const [profileImgUrl, setProfileImgUrl] = useState<string>("")
   const [name, setName] = useState<string>("")
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   useEffect(() => {
-    setIsLogin(getAccessTokenFromSession())
-    if (parent.userId) {
-      setProfileImgUrl(parent.profileImgUrl)
-      setName(parent.name)
-    } else if (child.userId) {
-      setProfileImgUrl(child.profileImgUrl)
-      setName(child.name)
+    if (getAccessTokenFromSession() !== null) {
+      setIsLogin(true)
+      if (parent.userId) {
+        setProfileImgUrl(parent.profileImgUrl)
+        setName(parent.name)
+      } else if (child.userId) {
+        setProfileImgUrl(child.profileImgUrl)
+        setName(child.name)
+      } else {
+        setIsLogin(false)
+      }
     } else {
-      setIsLogin("")
+      setIsLogin(false)
     }
+
+    console.log("logintoken", getAccessTokenFromSession())
     console.log(parent)
     console.log(child)
   }, [parent, child.profileImgUrl, isLogin])
 
   const handleLogOut = () => {
-    alert("로그아웃")
     logOutUser()
-    setIsLogin(getAccessTokenFromSession())
+    setIsLogin(false)
+    navigate("/")
     // Redux 상태 초기화
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
@@ -89,7 +99,7 @@ const NavAction = (): JSX.Element => {
                   onError={(e) => {
                     e.currentTarget.src = "/images/profile.jpg" // 이미지 로드 실패 시 기본 이미지로 대체
                   }}
-                  className="mx-2 size-8"
+                  className="mx-2 size-8 rounded-full"
                 />
                 {name} 님{" "}
               </li>
@@ -106,7 +116,7 @@ const NavAction = (): JSX.Element => {
                   onError={(e) => {
                     e.currentTarget.src = "/images/profile.jpg" // 이미지 로드 실패 시 기본 이미지로 대체
                   }}
-                  className="mx-2 size-8"
+                  className="mx-2 size-8 rounded-full"
                 />
                 {name} 님{" "}
               </li>
@@ -115,11 +125,9 @@ const NavAction = (): JSX.Element => {
               </li>
             </>
           )}
-          <>
-            <li className="mx-2.5 flex h-full cursor-pointer truncate">
-              <button onClick={handleLogOut}>로그아웃</button>
-            </li>
-          </>
+          <li className="mx-2.5 flex h-full cursor-pointer truncate">
+            <button onClick={handleLogOut}>로그아웃</button>
+          </li>
         </div>
       ) : (
         <>
@@ -134,27 +142,19 @@ const NavAction = (): JSX.Element => {
     </ul>
   )
 }
-
-const NavActionDev = (): JSX.Element => {
-  return (
-    <ul className="flex h-16 text-center">
-      <li className="mx-2.5 flex h-full cursor-pointer items-center">
-        <Link to="/parent/my-wallet">부모마이페이지</Link>
-      </li>
-      <li className="mx-2.5 flex h-full cursor-pointer items-center">
-        <Link to="/my-info/wallet">자식마이페이지</Link>
-      </li>
-      <li className="mx-2.5 flex h-full cursor-pointer items-center">
-        <Link to="/news">뉴스</Link>
-      </li>
-    </ul>
-  )
-}
-
+import TipsAndUpdatesOutlinedIcon from "@mui/icons-material/TipsAndUpdatesOutlined"
 function Navbar(): JSX.Element {
   const navigator = useNavigate()
+  const dispatch = useAppDispatch()
+  const isTooltipEnabled = useAppSelector(selectTooltip)
+
+  const handleTooltipToggle = () => {
+    console.log("Before toggle:", isTooltipEnabled)
+    dispatch(tooltipActions.toggleTooltip()) // 상태 토글 액션 실행
+    console.log("After toggle:", !isTooltipEnabled) // 상태를 반대로 출력
+  }
   return (
-    <nav className="flex h-20 flex-col items-center justify-center border-b px-10">
+    <nav className="flex h-20 flex-col items-center justify-center border-b border-gray-200 pl-10">
       <div className="container mx-auto flex items-center justify-between">
         <button
           onClick={() => {
@@ -162,7 +162,7 @@ function Navbar(): JSX.Element {
           }}
           className="flex items-center gap-3 text-xl text-primary-600"
         >
-          <div className="py-auto flex size-16 items-center justify-center rounded-full border">
+          {/* <div className="py-auto flex size-16 items-center justify-center rounded-full border">
             <span>로고</span>
           </div>
           <div
@@ -174,11 +174,31 @@ function Navbar(): JSX.Element {
             money
             <br />
             manymo
-          </div>
+          </div> */}
+          <img src="/images/logo00.png" alt="로고" className="h-[55px]" />
         </button>
         {/* <NavItemList /> */}
-        <NavActionDev />
-        <NavAction />
+        <div className="flex gap-4">
+          <NavAction />
+          <Switch
+            label={
+              <>
+                <TipsAndUpdatesOutlinedIcon />
+                설명
+              </>
+            }
+            ripple={true}
+            checked={isTooltipEnabled} // 툴팁 상태에 따라 스위치 상태 제어
+            onChange={handleTooltipToggle} // 클릭 시 상태 전환
+            className="h-full w-full border checked:border-[#478D81] checked:bg-[#478D81]"
+            containerProps={{
+              className: "w-7 h-4 ",
+            }}
+            circleProps={{
+              className: "before:hidden border-none left-0.5 h-3 w-3",
+            }}
+          />
+        </div>
       </div>
     </nav>
   )

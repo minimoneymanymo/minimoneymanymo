@@ -28,7 +28,7 @@ const ChildPageLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <main className="mx-auto flex h-full w-[1140px] space-x-7 border">
+      <main className="mx-auto flex h-full w-[1140px] space-x-7 bg-background">
         <div className="h-full w-[240px]">
           <MypageNav menuItems={menuItems} role={1}></MypageNav>
         </div>

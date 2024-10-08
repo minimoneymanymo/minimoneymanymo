@@ -8,7 +8,7 @@ interface StockFilterTagProps {
 
 const StockFilterTag: React.FC<StockFilterTagProps> = ({ label }) => {
   return (
-    <span className="bg-primary-50 flex items-center rounded-full px-3 py-2">
+    <span className="flex items-center rounded-full bg-primary-50 px-3 py-2.5">
       <Typography variant="small">{label}</Typography>
     </span>
   )

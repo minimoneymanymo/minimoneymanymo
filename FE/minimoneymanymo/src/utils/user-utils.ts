@@ -66,7 +66,7 @@ export const setUserInfosAtSession = (
 
 // 로그아웃
 export const logOutUser = (): void => {
-  sessionStorage.removeItem("accessToken")
+  sessionStorage.clear()
 }
 
 // 액세스 토큰 삭제
@@ -111,6 +111,7 @@ export const setMemberInfo = async (dispatch: AppDispatch, role: number) => {
         userKey,
         createdAt,
         accountNumber,
+        birthDay,
       } = res.data
       const payload = {
         childrenId,
@@ -123,6 +124,7 @@ export const setMemberInfo = async (dispatch: AppDispatch, role: number) => {
         userKey,
         createdAt,
         accountNumber,
+        birthDay,
       }
       dispatch(childActions.setUserInfo(payload))
     }

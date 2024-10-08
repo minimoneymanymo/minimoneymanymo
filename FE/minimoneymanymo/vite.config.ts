@@ -17,6 +17,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/el": {
+        target: "https://j11b105.p.ssafy.io",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/el/, "/el"),
+      },
     },
   },
   build: {
@@ -28,14 +33,7 @@ export default defineConfig({
       //     "ignite-vendors": ["igniteui-react", "igniteui-react-charts"],
       //   },
       // },
-      external: [
-        "react",
-        "react-dom",
-        "igniteui-react",
-        "igniteui-react-charts",
-        "@mui/material",
-        "@mui/icons-material",
-      ],
+      external: [],
     },
   },
 })

@@ -11,6 +11,12 @@ import {
   StockData,
 } from "@/components/chart/ChartType"
 import ChartComponent from "@/components/chart/ChartComponent"
+import CircularProgress from "@mui/material/CircularProgress"
+
+import NaverNews from "@/components/newscard/NaverNews"
+
+import { useAppSelector } from "@/store/hooks"
+import { selectChild } from "@/store/slice/child"
 
 function StockDetailPage(): JSX.Element {
   const [dailyStockChart, setDailyStockChart] = useState<StockData[]>([])
@@ -43,8 +49,11 @@ function StockDetailPage(): JSX.Element {
         setStockData(res.data.dailyStockData)
         setIsLike(res.data.stock.favorite)
         // 첫 번째 항목의 closingPrice를 setClosingPrice에 전달
+        // dailyStockChart가 비어있지 않은 경우에만 마지막 항목의 closingPrice를 setClosingPrice에 전달
         if (res.data.dailyStockChart && res.data.dailyStockChart.length > 0) {
-          setClosingPrice(res.data.dailyStockChart[0].closingPrice)
+          const lastDailyStock =
+            res.data.dailyStockChart[res.data.dailyStockChart.length - 1]
+          setClosingPrice(lastDailyStock.closingPrice)
           setSelectedChartData(
             mapStockDataToChartData(res.data.dailyStockChart)
           )
@@ -84,9 +93,13 @@ function StockDetailPage(): JSX.Element {
       volume: item.tradingVolume,
     }))
   }
-
   const StockInfo = (): JSX.Element => {
+    const child = useAppSelector(selectChild) // 자식 상태 선택
     const toggleLike = async () => {
+      if (child.userId === null || child.userId === "") {
+        alert("관심종목 기능은 자녀로 로그인시에만 사용할 수 있습니다.")
+        return
+      }
       setIsLike((prev) => !prev)
       const res = await toggleFavoriteStock(stockCode!)
 
@@ -98,6 +111,23 @@ function StockDetailPage(): JSX.Element {
         }
       }
     }
+
+    // 날짜 비교를 위한 함수
+    const isYesterday = (dateString: string) => {
+      const date = new Date(dateString)
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+
+      // 날짜를 비교하여 어제 날짜인지 확인
+      return (
+        date.getFullYear() === yesterday.getFullYear() &&
+        date.getMonth() === yesterday.getMonth() &&
+        date.getDate() === yesterday.getDate()
+      )
+    }
+    const lastStockDate = dailyStockChart[dailyStockChart.length - 2].date // 마지막 날짜
+    const formattedDate = `${lastStockDate.split("-")[1]}월 ${lastStockDate.split("-")[2]}일`
+
     return (
       <div className="m-6 mb-2 flex flex-col gap-2">
         {stockInfo ? (
@@ -116,30 +146,34 @@ function StockDetailPage(): JSX.Element {
                 />
               </button>
             </div>
-            <div className="flex items-end gap-3 text-xl">
-              <div className="text-3xl font-bold">
-                {dailyStockChart[0]?.closingPrice.toLocaleString() ??
-                  "Loading..."}{" "}
-                머니
-              </div>
-              <span className="text-base text-gray-500">
-                어제보다
-                {stockData ? (
+            {stockData ? (
+              <div className="flex items-end gap-3 text-xl">
+                <div
+                  className={`text-3xl font-bold ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
+                >
+                  {dailyStockChart[
+                    dailyStockChart.length - 1
+                  ]?.closingPrice.toLocaleString() ?? "Loading..."}{" "}
+                  머니
+                </div>
+                <span className="text-base text-gray-500">
+                  {isYesterday(lastStockDate)
+                    ? "어제보다"
+                    : `${formattedDate} 보다`}
                   <span
-                    className={`ms-4 ${stockData.priceChange > 0 ? "text-red-500" : "text-blue-500"}`}
+                    className={`ms-4 ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
                   >
-                    {stockData.priceChange > 0 ? "+" : "-"}
                     {stockData.priceChange ?? 0} 머니(
                     {stockData?.priceChangeRate ?? "N/A"}%)
                   </span>
-                ) : (
-                  <span>Loading...</span>
-                )}
-              </span>
-            </div>
+                </span>
+              </div>
+            ) : (
+              <span>Loading...</span>
+            )}
           </>
         ) : (
-          <div>Loading stock information...</div>
+          <div>Loading...</div>
         )}
       </div>
     )
@@ -156,16 +190,16 @@ function StockDetailPage(): JSX.Element {
           stockInfo={stockInfo}
         />
       )
-    else return <NewsComponent />
+    else return <NaverNews companyName={stockInfo?.companyName} />
   }
 
-  //뉴스 자리
-  const NewsComponent = (): JSX.Element => {
+  if (!stockInfo) {
     return (
-      <div className="z-10 bg-white p-4">여기에 기업 뉴스가 표시됩니다.</div>
+      <div className="flex h-full w-[800px] items-center justify-center">
+        <CircularProgress color="inherit" />
+      </div>
     )
   }
-
   return (
     <div className="relative flex h-full w-[800px] flex-col">
       <div className="flex h-fit w-full items-end justify-between">
@@ -176,7 +210,7 @@ function StockDetailPage(): JSX.Element {
           className={`h-16 w-24 rounded-t-lg pb-6 ${
             selectedTab === "news"
               ? "bg-gray-100 font-bold"
-              : "translate-y-3 bg-gray-300 text-gray-800"
+              : "translate-y-3 bg-gray-100 text-gray-800"
           }`}
           onClick={() => setSelectedTab("news")}
         >
@@ -186,7 +220,7 @@ function StockDetailPage(): JSX.Element {
           className={`h-16 w-24 rounded-t-lg pb-6 ${
             selectedTab === "chart"
               ? "bg-gray-100 font-bold"
-              : "translate-y-3 bg-gray-300 text-gray-800"
+              : "translate-y-3 bg-gray-100 text-gray-800"
           }`}
           onClick={() => setSelectedTab("chart")}
         >

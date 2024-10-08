@@ -33,8 +33,8 @@ const StockFilterMenu: React.FC<MenuComponentProps> = ({
       }}
     >
       <MenuHandler>
-        <Button
-          className="flex items-center gap-2 rounded-full border-none bg-gray-100 text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
+        <button
+          className="py- flex h-[40px] items-center gap-2 rounded-full border-none bg-gray-100 px-5 text-sm font-bold text-gray-600 shadow-none hover:bg-gray-200 hover:shadow-none"
           onClick={() => setOpenMenu(!openMenu)}
         >
           {label}
@@ -44,7 +44,7 @@ const StockFilterMenu: React.FC<MenuComponentProps> = ({
               openMenu ? "rotate-180" : ""
             }`}
           />
-        </Button>
+        </button>
       </MenuHandler>
       <MenuList>
         {items.map((item, index) => (

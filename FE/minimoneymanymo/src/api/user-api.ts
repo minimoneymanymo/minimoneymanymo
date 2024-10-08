@@ -58,12 +58,12 @@ export const userLogin = async (formData: FormData) => {
   for (const [key, value] of formData.entries()) {
     console.log(`${key}: ${value}`)
   }
-  try {
-    const res = await axiosPublicInstance.post("/members/login", formData)
-    return res.data
-  } catch (e) {
-    return e
-  }
+  // try {
+  const res = await axiosPublicInstance.post("/members/login", formData)
+  return res.data
+  // } catch (e) {
+  //   return e
+  // }
 }
 
 // 나의 자식 목록 조회
@@ -94,6 +94,21 @@ export const addMyChildWaiting = async (childrenId: number) => {
     const res = await axiosAuthInstance.put("/members/mychildren/waiting", {
       childrenId,
     })
+    console.log(res.data)
+    return res.data
+  } catch (e) {
+    return e
+  }
+}
+// 참여대기 인원거절
+export const deleteMyChildWaiting = async (childrenId: number) => {
+  try {
+    const res = await axiosAuthInstance.put(
+      "/members/mychildren/waiting/reject",
+      {
+        childrenId,
+      }
+    )
     console.log(res.data)
     return res.data
   } catch (e) {
@@ -172,6 +187,35 @@ export const updateWithdrawableMoney = async (
     } else {
       // Axios 에러가 아닌 경우
       console.error("updateAllowance에서 오류 발생:", e)
+      return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
+    }
+  }
+}
+
+//출금가능금액 강제 설정
+export const setWithdrawableMoneyForce = async (
+  childrenId: number,
+  inputValue: number | ""
+) => {
+  try {
+    const res = await axiosAuthInstance.put(
+      `/members/mychild/setWithdrawForce`,
+
+      {
+        childrenId,
+        settingWithdrawableMoney: inputValue,
+      }
+    )
+    console.log(res.data)
+    return res.data
+  } catch (e) {
+    if (axios.isAxiosError(e) && e.response) {
+      // Axios 에러 객체인 경우
+      console.error("setWithdrawableMoney 오류 발생:", e.response)
+      return e.response // e.response는 { data, status, headers, config }를 포함함
+    } else {
+      // Axios 에러가 아닌 경우
+      console.error("setWithdrawableMoney 오류 발생:", e)
       return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }

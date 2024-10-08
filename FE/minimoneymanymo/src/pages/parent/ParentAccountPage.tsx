@@ -11,21 +11,8 @@ import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectParent, parentActions } from "@/store/slice/parent"
 import { accountActions, selectAccount } from "@/store/slice/account"
-import { AccountBalance } from "@mui/icons-material"
-
-interface MAccountInfoProps {
-  name: string
-  balance: number
-  modalOnClick?: () => void
-}
-
-interface AccountInfoProps {
-  bankName?: string
-  accoutNo?: string
-  accountName?: string
-  accountBalance?: string
-  modalOnClick?: () => void
-}
+import { AccountInfoProps, MAccountInfoProps } from "@/types/accountTypes"
+import Swal from "sweetalert2"
 
 const ParentAccountPage = () => {
   const parent = useAppSelector(selectParent) // parent state 가져옴
@@ -121,8 +108,14 @@ const ParentAccountPage = () => {
           }
         } else if (res.status === 403) {
           console.error("로그인이 필요합니다.", res)
-          alert("로그인이 필요합니다.")
-          navigate("/login")
+          //alert("로그인이 필요합니다.")
+          Swal.fire({
+            title: "로그인이필요합니다.",
+            icon: "warning",
+            confirmButtonText: "로그인",
+          }).then(() => {
+            navigate("/login")
+          })
         } else {
           console.log("사용자 정보 조회 실패:", res)
         }
@@ -152,13 +145,26 @@ const ParentAccountPage = () => {
             accountBalance: Number(account.accountBalance) - amount,
           })
         )
-        alert("마니모 계좌에 머니가 충전되었습니다.") // 성공
+        //alert("마니모 계좌에 머니가 충전되었습니다.") // 성공
+        Swal.fire({
+          title: "마니모 계좌에 머니가 충전되었습니다.",
+          icon: "success",
+        })
       } else {
-        alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
+        //alert("충전에 실패했습니다. 다시 시도해주세요.") // 실패
+        Swal.fire({
+          title: "충전에 실패했습니다. 다시 시도해주세요.",
+          icon: "warning",
+        })
       }
     } catch (err) {
       console.log(err)
-      alert("충전에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+      //alert("충전에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+      Swal.fire({
+        title: "충전에 실패했습니다. 다시 시도해주세요.",
+        text: `${err}`,
+        icon: "error",
+      })
     } finally {
       closeChargeModal() // 모달 닫기
     }
@@ -175,7 +181,11 @@ const ParentAccountPage = () => {
       )
       if (res.stateCode === 201) {
         console.log(res)
-        alert("마니모 계좌의 머니가 환불되었습니다.") // 성공
+        //alert("마니모 계좌의 머니가 환불되었습니다.") // 성공
+        Swal.fire({
+          title: "마니모 계좌의 머니가 환불되었습니다.",
+          icon: "success",
+        })
         dispatch(
           parentActions.setUserInfo({ balance: parent.balance - amount })
         )
@@ -185,11 +195,20 @@ const ParentAccountPage = () => {
           })
         )
       } else {
-        alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
+        //alert("환불에 실패했습니다. 다시 시도해주세요.") // 실패
+        Swal.fire({
+          title: "환불에 실패했습니다. 다시 시도해주세요.",
+          icon: "error",
+        })
       }
     } catch (err) {
       console.log(err)
-      alert("환불에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+      //alert("환불에 실패했습니다. 다시 시도해주세요.") // 예외 처리
+      Swal.fire({
+        title: "환불에 실패했습니다. 다시 시도해주세요.",
+        icon: "error",
+        text: `${err}`,
+      })
     } finally {
       closeRefundModal()
     }
@@ -221,7 +240,7 @@ const ParentAccountPage = () => {
         </ToggleList>
       ) : (
         <ToggleList title="계좌 연동하기">
-          <RegisterAccount banks={banks} />
+          <RegisterAccount banks={banks} userKey={parent.userKey} />
         </ToggleList>
       )}
 
@@ -275,7 +294,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
             </span>
             <button
               onClick={modalOnClick}
-              className="mt-2 rounded bg-primary-m1 px-4 py-2 text-white"
+              className="mt-2 rounded-xl bg-primary-m1 px-4 py-2 text-white"
             >
               충전 ₩
             </button>
@@ -309,7 +328,7 @@ const MAccountInfo: React.FC<MAccountInfoProps> = (props) => {
         </span>
         <button
           onClick={modalOnClick}
-          className="mt-2 rounded bg-secondary-600-m2 px-4 py-2 text-white"
+          className="mt-2 rounded-xl bg-secondary-600-m2 px-4 py-2 text-white"
         >
           환불 ↻
         </button>

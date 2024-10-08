@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/CloseOutlined"
 import { selectAccount } from "@/store/slice/account"
 import { selectParent } from "@/store/slice/parent"
 import { useAppSelector } from "@/store/hooks"
-
+import Swal from "sweetalert2"
 Modal.setAppElement("#root")
 
 interface ModalComponentProps {
@@ -33,10 +33,19 @@ const PriceModal: React.FC<ModalComponentProps> = (props) => {
     const amount = parseFloat(inputValue)
     if (!isNaN(amount)) {
       // TODO: 잔액보다 크면 안되게 하기
-      if (amount > balance) alert("요청금액이 잔액보다 큽니다.")
-      else onSave(amount)
+      if (amount > balance) {
+        //alert("요청금액이 잔액보다 큽니다.")
+        Swal.fire({
+          title: "요청금액이 잔액보다 큽니다.",
+          icon: "warning",
+        })
+      } else onSave(amount)
     } else {
-      alert("유효한 금액을 입력해주세요.")
+      //alert("유효한 금액을 입력해주세요.")
+      Swal.fire({
+        title: "유효한 금액을 입력해주세요.",
+        icon: "warning",
+      })
     }
     setInputValue("")
   }
@@ -74,13 +83,13 @@ const PriceModal: React.FC<ModalComponentProps> = (props) => {
       <div className="mt-4 flex w-full justify-center">
         <button
           onClick={onRequestClose} // 취소 버튼 클릭 시 모달 닫기
-          className="rounded border border-primary-m1 bg-transparent px-4 py-2 text-primary-m1 hover:bg-primary-m1 hover:text-white"
+          className="rounded-xl border border-primary-m1 bg-transparent px-4 py-2 text-primary-m1 hover:bg-primary-m1 hover:text-white"
         >
           취소
         </button>
         <button
           onClick={handleSave} // 저장 버튼 클릭 시 handleSave 호출
-          className="ml-6 rounded bg-primary-m1 px-4 py-2 text-white"
+          className="ml-6 rounded-xl bg-primary-m1 px-4 py-2 text-white"
         >
           저장
         </button>

@@ -3,14 +3,16 @@ import moment from "moment"
 import MyInvestment from "./MyInvestment"
 import { getTradeList } from "@/api/investment-api"
 import { investmentData } from "./investmentData" // 인터페이스로 가져옴
+import ArrowPrev from "@mui/icons-material/ArrowBackIos"
+import ArrowNext from "@mui/icons-material/ArrowForwardIos"
 
 // 배경 색상 설정
 const getBackgroundColor = (tradeType: string) => {
   switch (tradeType) {
     case "4":
-      return "bg-red-100" // type 4: 빨간색 매수
+      return "bg-red-100 text-red-600" // type 4: 빨간색 매수
     case "5":
-      return "bg-blue-100" // type 5: 파란색 매도
+      return "bg-blue-100 text-blue-600" // type 5: 파란색 매도
     case "0":
       return "bg-yellow-100" // type 0: 용돈
     case "1":
@@ -25,7 +27,7 @@ const getBackgroundColor = (tradeType: string) => {
 }
 
 // 달력에 출력 멘트 설정
-const getTradeTypeLabel = (tradeType: string) => {
+const getTradeTypeLabel = (tradeType: string, companyName: string) => {
   switch (tradeType) {
     case "0":
       return "용돈"
@@ -36,9 +38,9 @@ const getTradeTypeLabel = (tradeType: string) => {
     case "3":
       return "이유"
     case "4":
-      return "매수"
+      return `${companyName} 매수` // 회사명 + 매수
     case "5":
-      return "매도"
+      return `${companyName} 매도` // 회사명 + 매도
     default:
       return "알 수 없음" // 기본값
   }
@@ -80,6 +82,7 @@ const getTradeListData = async (
         ),
         reasonBonusMoney: item.reasonBonusMoney,
         companyName: item.companyName,
+        createdTime: moment(item.createdAt, "YYYYMMDDHHmmss").format("HH:mm"),
       })
     )
 
@@ -124,7 +127,7 @@ const Calender: React.FC = () => {
 
     return (
       <div
-        className="mt-4 grid h-[450px] grid-cols-2 rounded border border-blue-300 bg-blue-100 p-4"
+        className="mt-4 h-[450px] rounded border bg-white p-4"
         ref={eventSectionRef}
       >
         <MyInvestment
@@ -163,7 +166,7 @@ const Calender: React.FC = () => {
         weekDays.push(
           <div
             key={currentDay.format("YYYY-MM-DD")}
-            className={`relative border text-center ${dayEvents.length > 0 ? "cursor-pointer" : "cursor-default opacity-50"}`}
+            className={`relative border text-center ${selectedDate === currentDay.format("YYYY-MM-DD") ? "bg-gray-200" : ""} ${dayEvents.length > 0 ? "cursor-pointer" : "cursor-default opacity-50"}`}
             onClick={() =>
               dayEvents.length > 0 &&
               handleDayClick(currentDay.format("YYYY-MM-DD"))
@@ -175,12 +178,19 @@ const Calender: React.FC = () => {
             {dayEvents.length > 0 && (
               <div className="custom-scrollbar mt-[30px] h-[100px] overflow-auto">
                 <div className="flex flex-col-reverse text-xs">
-                  {dayEvents.map((event, index) => (
+                  {[
+                    ...new Map(
+                      dayEvents.map((event) => [
+                        `${event.tradeType}-${event.companyName}`,
+                        event,
+                      ])
+                    ).values(),
+                  ].map((event, index) => (
                     <div
                       key={index}
-                      className={`m-1 w-fit overflow-hidden text-ellipsis rounded p-1 text-start ${getBackgroundColor(event.tradeType)}`}
+                      className={`m-1 w-fit overflow-hidden text-ellipsis whitespace-nowrap rounded p-1 text-start ${getBackgroundColor(event.tradeType)}`}
                     >
-                      {getTradeTypeLabel(event.tradeType)}{" "}
+                      {getTradeTypeLabel(event.tradeType, event.companyName)}{" "}
                       {/* tradeType에 따른 문자열 출력 */}
                     </div>
                   ))}
@@ -215,9 +225,15 @@ const Calender: React.FC = () => {
     setSelectedDate(date === selectedDate ? null : date)
   }
 
-  const prevMonth = () =>
+  const prevMonth = () => {
     setCurrentMonth(currentMonth.clone().subtract(1, "month"))
-  const nextMonth = () => setCurrentMonth(currentMonth.clone().add(1, "month"))
+    setSelectedDate(null) // 이전 달로 넘어갈 때 선택된 날짜 초기화
+  }
+
+  const nextMonth = () => {
+    setCurrentMonth(currentMonth.clone().add(1, "month"))
+    setSelectedDate(null) // 다음 달로 넘어갈 때 선택된 날짜 초기화
+  }
 
   return (
     <div className="p-6">
@@ -228,16 +244,16 @@ const Calender: React.FC = () => {
         <div className="flex w-24 items-center justify-between text-3xl">
           <button
             onClick={prevMonth}
-            className="text-gray-600 hover:text-gray-800"
+            className="flex items-center justify-center text-gray-600 hover:text-gray-800"
           >
-            &lt;
+            <ArrowPrev sx={{ fontSize: 15, color: "#828282" }} />
           </button>
-          <h2 className="text-lg">{currentMonth.format("M월")}</h2>
+          <h2 className="mx-2 text-lg">{currentMonth.format("M월")}</h2>{" "}
           <button
             onClick={nextMonth}
-            className="text-gray-600 hover:text-gray-800"
+            className="flex items-center justify-center text-gray-600 hover:text-gray-800"
           >
-            &gt;
+            <ArrowNext sx={{ fontSize: 15, color: "#828282" }} />
           </button>
         </div>
       </div>

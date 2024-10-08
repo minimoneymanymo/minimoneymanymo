@@ -25,7 +25,7 @@ const ToggleList: React.FC<ToggleListProps> = ({ title, children }) => {
       </button>
 
       {/* 들여쓰기 및 배경색 추가 */}
-      {isOpen && <div className="bg-gray-100 p-3">{children}</div>}
+      {isOpen && <div>{children}</div>}
     </div>
   )
 }

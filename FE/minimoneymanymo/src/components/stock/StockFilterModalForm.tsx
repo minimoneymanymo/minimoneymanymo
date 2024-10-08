@@ -27,6 +27,7 @@ interface StockFilter {
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
   volumeMax: number | null // 최대 거래량
+  search: string | null
 }
 interface StockFilterFormProps {
   open: boolean
@@ -64,6 +65,7 @@ export function StockFilterModalForm({
       tradingValueMin: null,
       tradingValueMax: null,
       volumeMax: null,
+      search: null,
     })
     updateFilters({
       marketType: "ALL",
@@ -83,6 +85,7 @@ export function StockFilterModalForm({
       tradingValueMin: null,
       tradingValueMax: null,
       volumeMax: null,
+      search: null,
     })
     handleOpen() // 모달 닫기
   }
