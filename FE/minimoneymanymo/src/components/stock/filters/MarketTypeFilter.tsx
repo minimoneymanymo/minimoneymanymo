@@ -34,7 +34,7 @@ export function MarketTypeFilter({
           label="코스피 시장만 보기"
           checked={selectedMarketType === "KOSPI"}
           onChange={() => handleRadioChange("KOSPI")}
-          color="blue" // Optional: Change color as needed
+          color="green" // Optional: Change color as needed
         />
         <Radio
           id="KOSDAQ"
@@ -42,7 +42,7 @@ export function MarketTypeFilter({
           label="코스닥 시장만 보기"
           checked={selectedMarketType === "KOSDAQ"}
           onChange={() => handleRadioChange("KOSDAQ")}
-          color="blue" // Optional: Change color as needed
+          color="green" // Optional: Change color as needed
         />
       </div>
     </div>

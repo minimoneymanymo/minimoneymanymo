@@ -34,7 +34,7 @@ export function MarketCapSizeFilter({
           label="소형주"
           checked={selectedMarketCapSize === "SMALL"}
           onChange={() => handleRadioChange("SMALL")}
-          color="blue" // Optional: Change color as needed
+          color="green" // Optional: Change color as needed
         />
         <Radio
           id="MEDIUM"
@@ -42,7 +42,7 @@ export function MarketCapSizeFilter({
           label="중형주"
           checked={selectedMarketCapSize === "MEDIUM"}
           onChange={() => handleRadioChange("MEDIUM")}
-          color="blue" // Optional: Change color as needed
+          color="green" // Optional: Change color as needed
         />
         <Radio
           id="LARGE"
@@ -50,7 +50,7 @@ export function MarketCapSizeFilter({
           label="대형주"
           checked={selectedMarketCapSize === "LARGE"}
           onChange={() => handleRadioChange("LARGE")}
-          color="blue" // Optional: Change color as needed
+          color="green" // Optional: Change color as needed
         />
       </div>
     </div>

@@ -6,7 +6,7 @@ import { Typography, Button } from "@material-tailwind/react"
 import StockFilterMenu from "./StockFilterMenu"
 import { Tune } from "@mui/icons-material"
 import StockFilterTag from "./StockFilterTag"
-import { Search } from "@mui/icons-material"
+import { Search, RestartAlt } from "@mui/icons-material"
 
 // Label과 value의 매핑 객체 정의
 const marketCapSizeMapping: Record<string, string> = {
@@ -77,6 +77,29 @@ function MainDashboard() {
     search: null,
     interestStocks: false,
   })
+  const resetFilters = () => {
+    const resetState: StockFilter = {
+      marketType: "ALL",
+      marketCapSize: "ALL",
+      perMin: null,
+      perMax: null,
+      pbrMin: null,
+      pbrMax: null,
+      priceMin: null,
+      priceMax: null,
+      changeRateMin: null,
+      changeRateMax: null,
+      high52WeekMin: null,
+      high52WeekMax: null,
+      low52WeekMin: null,
+      low52WeekMax: null,
+      tradingValueMin: null,
+      tradingValueMax: null,
+      volumeMax: null,
+      search: null,
+    }
+    setFilters(resetState)
+  }
 
   // Elasticsearch 쿼리 생성 및 전송 함수
   const fetchStockData = useCallback(
@@ -402,6 +425,15 @@ function MainDashboard() {
           selected={filters.marketCapSize}
           onSelect={handleSelectMarketCapSize}
         />
+        <div>
+          <button
+            onClick={resetFilters}
+            className="flex items-center gap-1 py-2 text-gray-600"
+          >
+            <RestartAlt className="h-5 w-5 text-gray-600" />
+          </button>
+        </div>
+
         <div className="ml-auto flex items-center gap-2 rounded-full border-none bg-gray-100 px-4 py-2 text-gray-600 shadow-none hover:bg-gray-200">
           <Search className="text-gray-500" />{" "}
           <input

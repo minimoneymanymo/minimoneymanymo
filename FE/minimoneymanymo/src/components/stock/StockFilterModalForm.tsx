@@ -233,20 +233,13 @@ export function StockFilterModalForm({
           <div className="absolute bottom-4 right-4">
             <button
               onClick={handleSearch}
-              className="rounded-lg bg-primary-m1 px-4 py-2 text-white hover:bg-primary-600"
+              className="rounded-lg bg-secondary-m2 px-4 py-2 text-white hover:bg-secondary-700"
             >
               조회하기
             </button>
           </div>
         </div>
       </div>
-
-      {/* <button
-        onClick={handleOpen}
-        className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
-      >
-        ✕
-      </button> */}
     </Modal>
   )
 }
