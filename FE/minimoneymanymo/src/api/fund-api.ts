@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { axiosAuthInstance, axiosPublicInstance } from "@/api/httpcommons"
+import { alertBasic } from "@/utils/alert-util"
 import axios from "axios"
 
 // 부모-계좌 충전
@@ -45,6 +46,9 @@ const requestWithdrawApi = async (money: number) => {
     return response.data
   } catch (error) {
     handleApiError(error)
+    if (axios.isAxiosError(error) && error.response) {
+      alertBasic("cry.svg", error.response.data.message)
+    }
   }
 }
 

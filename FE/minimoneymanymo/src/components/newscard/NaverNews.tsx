@@ -58,16 +58,23 @@ const NaverNews: React.FC<Naver> = ({ companyName }) => {
   }, [companyName]) // companyName이 변경될 때마다 다시 요청
 
   if (loading) {
-    return <div>로딩 중...</div>
+    return (
+      <div className="z-10 h-full min-h-[500px] w-full overflow-y-auto rounded-md border bg-white scrollbar-hide">
+        로딩 중...
+      </div>
+    )
   }
 
   if (error) {
-    return <div>{error}</div>
+    return (
+      <div className="z-10 h-full min-h-[500px] w-full overflow-y-auto rounded-md border bg-white scrollbar-hide">
+        {error}
+      </div>
+    )
   }
 
   return (
-    <div className="max-h-[500px] w-full overflow-y-auto scrollbar-hide">
-      {" "}
+    <div className="z-10 h-full min-h-[500px] w-full overflow-y-auto rounded-md border bg-white scrollbar-hide">
       {/* 높이를 제한하고 스크롤 추가 */}
       {news.map((newsItem, index) => (
         <React.Fragment key={index}>

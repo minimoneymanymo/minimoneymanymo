@@ -67,7 +67,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
 
         if (matchedStock) {
           const averagePrice = matchedStock.averagePrice
-          console.log(averagePrice)
+          console.log(matchedStock)
           // 입력된 매도 주식 수를 숫자로 변환
           const sellSharesNumber = parseFloat(sellShares)
 
@@ -276,16 +276,16 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         <>
           <div className="relative flex h-full w-[340px] flex-col p-2">
             {/* 매수매도 버튼 */}
-            <div className="absolute mt-14 flex h-[80px] w-[310px] justify-end space-x-2">
-              <Button
-                className="z-10 h-16 bg-buy pb-6"
+            <div className="absolute mt-12 flex h-[80px] w-[310px] justify-end space-x-2">
+              <button
+                className={`h-16 w-[90px] rounded-md rounded-t-lg bg-buy text-sm font-bold text-white ${isBuyMode ? "pb-3" : "translate-y-3 pb-6"}`}
                 onClick={() => setIsBuyMode(true)}
                 style={{ paddingTop: "0.1px" }}
               >
-                매수
-              </Button>
-              <Button
-                className="z-10 h-16 bg-sell pb-6 pt-4"
+                <span>매수</span>
+              </button>
+              <button
+                className={`h-16 w-[90px] rounded-md rounded-t-lg bg-sell text-sm font-bold text-white ${!isBuyMode ? "pb-3" : "translate-y-3 pb-6"}`}
                 style={{ paddingTop: "0.1px" }}
                 onClick={() => {
                   setIsBuyMode(false) // 매도 모드로 변경
@@ -297,13 +297,13 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                   }
                 }}
               >
-                매도
-              </Button>
+                <span>매도</span>
+              </button>
             </div>
             {/* 매매 카드 */}
             {/* 매매 카드 */}
             {/* 매매 카드 */}
-            <div className="absolute">
+            <div className="">
               <Card className="shadow-blue-gray-900/5 z-20 mt-24 h-[520px] w-[330px] max-w-md border p-0 px-5 py-6">
                 {/* 매수 모드 카드 */}
                 {/* 매수 모드 카드 */}
@@ -454,16 +454,15 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                     />
                   </>
                 )}
-                <p className="warning mb-1 mb-2 mt-0.5 p-2 text-right text-xs text-red-500">
+                <p className="warning mb-2 mt-0.5 p-2 text-right text-xs text-red-500">
                   투자의 책임은 본인에게 있습니다.
                 </p>
-                <Button
-                  className={isBuyMode ? "bg-buy" : "bg-sell"}
-                  text-white="true"
+                <button
+                  className={`${isBuyMode ? "bg-buy" : "bg-sell"} rounded-md py-2 text-sm font-bold text-white`}
                   onClick={() => handleTrade()}
                 >
                   {isBuyMode ? "매수하겠습니다" : "매도하겠습니다"}
-                </Button>
+                </button>
               </Card>
             </div>
           </div>

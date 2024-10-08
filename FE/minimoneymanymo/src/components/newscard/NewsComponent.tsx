@@ -164,7 +164,7 @@ const NewsComponent: React.FC<NewsModalProps> = ({
   return (
     <>
       <Card className="mx-auto max-w-[800px] p-4">
-        <div color="blue-gray" className="mb-2 font-bold">
+        <div color="blue-gray" className="mb-3 text-3xl font-bold">
           {title}
         </div>
         <div color="gray" className="mb-4 ml-2 text-sm">
