@@ -153,7 +153,7 @@ function MainDashboard() {
             search: stockCodes, // 검색어에 stock_code들 전달
           }))
 
-          console.log(stockCodes)
+          // console.log(stockCodes)
 
           setSearchResults(results.slice(0, 10)) // 결과를 10개로 제한
         })
@@ -189,6 +189,11 @@ function MainDashboard() {
     if (debouncedInput) {
       fetchStockData(debouncedInput, setSearchResults) // 디바운스된 입력값으로 API 호출
     } else {
+      // 검색어 입력 값이 없어지면, 초기화
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        search: null,
+      }))
       // 입력값이 없을 때 검색 결과를 비웁니다.
       setSearchResults([])
     }
@@ -292,7 +297,7 @@ function MainDashboard() {
 
         {/* 필터 태그 표시 */}
         {renderFilterTags()}
-        {/* 검색창 추가 */}
+        {/* 검색창 */}
         <div className="ml-auto">
           <input
             id="searchInput"
