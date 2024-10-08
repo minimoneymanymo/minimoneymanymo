@@ -218,6 +218,7 @@ function MainDashboard() {
   const renderFilterTags = () => {
     const tags = []
 
+    // 시장 필터
     if (filters.marketType && filters.marketType !== "ALL") {
       const marketTypeLabel =
         marketTypeMapping[filters.marketType] || filters.marketType
@@ -226,6 +227,7 @@ function MainDashboard() {
       )
     }
 
+    // 시가총액 필터
     if (filters.marketCapSize && filters.marketCapSize !== "ALL") {
       const marketCapLabel =
         marketCapSizeMapping[filters.marketCapSize] || filters.marketCapSize
@@ -237,14 +239,74 @@ function MainDashboard() {
       )
     }
 
+    // PER 필터
     if (filters.perMin !== null || filters.perMax !== null) {
       const perRange = `${filters.perMin || 0}배 이상 ~ ${filters.perMax || "무제한"}배`
       tags.push(<StockFilterTag key="per" label={`PER · ${perRange}`} />)
     }
 
+    // PBR 필터
     if (filters.pbrMin !== null || filters.pbrMax !== null) {
       const pbrRange = `${filters.pbrMin || 0}배 이상 ~ ${filters.pbrMax || "무제한"}배`
       tags.push(<StockFilterTag key="pbr" label={`PBR · ${pbrRange}`} />)
+    }
+
+    // 주가 필터
+    if (filters.priceMin !== null || filters.priceMax !== null) {
+      const priceRange = `${filters.priceMin || 0}원 이상 ~ ${filters.priceMax || "무제한"}원`
+      tags.push(<StockFilterTag key="price" label={`주가 · ${priceRange}`} />)
+    }
+
+    // 등락률 필터
+    if (filters.changeRateMin !== null || filters.changeRateMax !== null) {
+      const changeRateRange = `${filters.changeRateMin || 0}% 이상 ~ ${filters.changeRateMax || "무제한"}%`
+      tags.push(
+        <StockFilterTag
+          key="changeRate"
+          label={`등락률 · ${changeRateRange}`}
+        />
+      )
+    }
+
+    // 52주 최고가 필터
+    if (filters.high52WeekMin !== null || filters.high52WeekMax !== null) {
+      const high52WeekRange = `${filters.high52WeekMin || 0}원 이상 ~ ${filters.high52WeekMax || "무제한"}원`
+      tags.push(
+        <StockFilterTag
+          key="high52Week"
+          label={`52주 최고가 · ${high52WeekRange}`}
+        />
+      )
+    }
+
+    // 52주 최저가 필터
+    if (filters.low52WeekMin !== null || filters.low52WeekMax !== null) {
+      const low52WeekRange = `${filters.low52WeekMin || 0}원 이상 ~ ${filters.low52WeekMax || "무제한"}원`
+      tags.push(
+        <StockFilterTag
+          key="low52Week"
+          label={`52주 최저가 · ${low52WeekRange}`}
+        />
+      )
+    }
+
+    // 거래대금 필터
+    if (filters.tradingValueMin !== null || filters.tradingValueMax !== null) {
+      const tradingValueRange = `${filters.tradingValueMin || 0}원 이상 ~ ${filters.tradingValueMax || "무제한"}원`
+      tags.push(
+        <StockFilterTag
+          key="tradingValue"
+          label={`거래대금 · ${tradingValueRange}`}
+        />
+      )
+    }
+
+    // 거래량 필터
+    if (filters.volumeMax !== null) {
+      const volumeRange = `최대 ${filters.volumeMax || "무제한"}주`
+      tags.push(
+        <StockFilterTag key="volume" label={`거래량 · ${volumeRange}`} />
+      )
     }
 
     return tags
@@ -252,10 +314,17 @@ function MainDashboard() {
 
   const handleTabSelect = (tab: string) => {
     setSelectedTab(tab)
+
     if (tab === "interest") {
-      updateFilters({ interestStocks: true }) // 관심 종목 필터 활성화
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        interestStocks: true, // 관심 종목 필터 활성화
+      }))
     } else {
-      updateFilters({ interestStocks: false }) // 관심 종목 필터 비활성화
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        interestStocks: false, // 관심 종목 필터 비활성화
+      }))
     }
   }
 

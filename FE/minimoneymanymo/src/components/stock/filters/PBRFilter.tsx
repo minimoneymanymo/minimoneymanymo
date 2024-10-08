@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Slider } from "@material-tailwind/react"
 
 interface PBRFilterProps {
@@ -25,22 +25,39 @@ export function PBRFilter({
     temporaryFilters.pbrMax || ""
   )
 
-  const handleMinChange = (value: string) => {
-    const numValue = value === "" ? "" : Number(value)
-    setMinValue(numValue)
-    if (numValue !== "") handlePBRRangeChange(numValue, maxValue || 0)
+  // temporaryFilters 값이 변경될 때마다 상태를 업데이트
+  useEffect(() => {
+    if (temporaryFilters.pbrMin === 0 && temporaryFilters.pbrMax === 1) {
+      setSelectedButton("0-1")
+      setShowSlider(false)
+    } else if (temporaryFilters.pbrMin === 1 && temporaryFilters.pbrMax === 3) {
+      setSelectedButton("1-3")
+      setShowSlider(false)
+    } else if (temporaryFilters.pbrMax === INF) {
+      setSelectedButton(`0-${INF}`)
+      setShowSlider(true)
+    } else {
+      setSelectedButton(null)
+      setShowSlider(false)
+    }
+    setMinValue(temporaryFilters.pbrMin || "")
+    setMaxValue(temporaryFilters.pbrMax || "")
+  }, [temporaryFilters])
+
+  const handleMinChange = (value: number) => {
+    setMinValue(value)
+    handlePBRRangeChange(value, maxValue || 0)
   }
 
-  const handleMaxChange = (value: string) => {
-    const numValue = value === "" ? "" : Number(value)
-    setMaxValue(numValue)
-    if (numValue !== "") handlePBRRangeChange(minValue || 0, numValue)
+  const handleMaxChange = (value: number) => {
+    setMaxValue(value)
+    handlePBRRangeChange(minValue || 0, value)
   }
 
   const handleButtonClick = (min: number, max: number | null) => {
-    handlePresetPBR(min, max) // Correctly trigger handlePresetPER here
+    handlePresetPBR(min, max)
     setSelectedButton(`${min}-${max}`)
-    setShowSlider(max === INF) // Toggle slider visibility only if max is null
+    setShowSlider(max === INF) // Toggle slider visibility only if max is INF
   }
 
   return (
@@ -55,7 +72,7 @@ export function PBRFilter({
       {/* 사전 설정된 범위 선택 */}
       <div className="mb-4 flex gap-2">
         <button
-          onClick={() => handleButtonClick(0, 1)} // Use handleButtonClick to properly manage state
+          onClick={() => handleButtonClick(0, 1)}
           className={`flex-1 rounded-lg px-4 py-5 ${
             selectedButton === "0-1" ? "bg-secondary-m3" : "bg-gray-200"
           } text-sm`}
@@ -71,7 +88,7 @@ export function PBRFilter({
           1배 이상 ~ 3배 미만
         </button>
         <button
-          onClick={() => handleButtonClick(0, INF)} // Correctly trigger showSlider
+          onClick={() => handleButtonClick(0, INF)}
           className={`flex-1 rounded-lg px-4 py-5 ${
             selectedButton === `0-${INF}` ? "bg-secondary-m3" : "bg-gray-200"
           } text-sm`}
@@ -85,20 +102,22 @@ export function PBRFilter({
         <div className="flex flex-col gap-4 rounded-lg bg-gray-50 p-4 shadow-md">
           <h3 className="text-xl font-semibold">PBR 설정</h3>
           <div className="flex items-center gap-2">
-            <input
-              type="number"
-              value={minValue}
-              onChange={(e) => handleMinChange(e.target.value)}
-              className="w-64 rounded-md border border-gray-300 p-2 text-right focus:border-gray-400 focus:outline-none focus:ring-0"
-              placeholder="이상"
+            <Slider
+              min={0}
+              max={50} // Adjust according to your needs
+              step={0.1}
+              value={minValue === "" ? 0 : (minValue as number)}
+              onChange={(value) => handleMinChange(value)}
+              label={`최소: ${minValue}`}
             />
             <span>~</span>
-            <input
-              type="number"
-              value={maxValue}
-              onChange={(e) => handleMaxChange(e.target.value)}
-              className="f w-64 rounded-md border border-gray-300 p-2 text-right focus:border-gray-400 focus:outline-none focus:ring-0"
-              placeholder="이하"
+            <Slider
+              min={0}
+              max={50} // Adjust according to your needs
+              step={0.1}
+              value={maxValue === "" ? 50 : (maxValue as number)}
+              onChange={(value) => handleMaxChange(value)}
+              label={`최대: ${maxValue}`}
             />
           </div>
         </div>
