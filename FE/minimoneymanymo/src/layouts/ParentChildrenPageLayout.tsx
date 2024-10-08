@@ -63,8 +63,8 @@ const ParentChildrenPage: React.FC = () => {
               <li key={item.id}>
                 <button
                   onClick={() => handleNavClick(item.to)}
-                  className={`flex items-center truncate rounded-xl px-2 py-1 text-lg ${
-                    currentPath === item.to ? "bg-gray-300 font-bold" : ""
+                  className={`flex items-center truncate rounded-xl px-6 py-2 text-lg ${
+                    currentPath === item.to ? "bg-gray-200 font-bold" : ""
                   }`}
                 >
                   <span className="text-center">{item.category}</span>

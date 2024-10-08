@@ -202,7 +202,7 @@ function StockDetailPage(): JSX.Element {
     )
   }
   return (
-    <div className="relative flex h-full w-[800px] flex-col">
+    <div className="relative flex h-full w-[800px] flex-col pb-16">
       <div className="flex h-fit w-full items-end justify-between">
         <StockInfo />
       </div>
@@ -210,7 +210,7 @@ function StockDetailPage(): JSX.Element {
         <button
           className={`h-16 w-24 rounded-t-lg pb-6 ${
             selectedTab === "news"
-              ? "bg-gray-100 font-bold p-3"
+              ? "bg-gray-100 p-3 font-bold"
               : "translate-y-3 bg-gray-100 text-gray-800"
           }`}
           onClick={() => setSelectedTab("news")}
@@ -220,7 +220,7 @@ function StockDetailPage(): JSX.Element {
         <button
           className={`h-16 w-24 rounded-t-lg pb-6 ${
             selectedTab === "chart"
-              ? "bg-gray-100 font-bold p-3"
+              ? "bg-gray-100 p-3 font-bold"
               : "translate-y-3 bg-gray-100 text-gray-800"
           }`}
           onClick={() => setSelectedTab("chart")}

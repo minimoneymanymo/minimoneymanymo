@@ -31,7 +31,7 @@ const MyChildFeedback: React.FC<MyChildFeedbackProps> = ({ analysisData }) => {
   const investmentType = analysisData.myStatistics.investmentType || "없음"
 
   return (
-    <div className="mt-4 rounded-lg bg-gray-100 p-8">
+    <div className="mt-4 rounded-lg bg-gray-50 p-8 shadow-md">
       <div className="flex items-center">
         <HelpOutlineIcon className="mr-2" />
         <p className="text-lg font-semibold">추가 피드백</p>

@@ -243,7 +243,7 @@ function StockList({ filters }: { filters: StockFilter }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="mb-64 mt-4 w-full min-w-max table-auto text-left">
+      <table className="mt-4 w-full min-w-max table-auto text-left">
         <thead>
           <tr>
             {TABLE_HEAD.map(({ width, label, key }) => (
