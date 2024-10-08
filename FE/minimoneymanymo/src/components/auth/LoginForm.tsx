@@ -47,14 +47,6 @@ export function LoginForm() {
         console.log("Parent state: ", parent)
         console.log("Child state: ", child)
         navigate("/")
-      } else if (response.stateCode == 401) {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: "아이디, 비밀번호가 일치하지 않습니다",
-          showConfirmButton: false,
-          timer: 1500,
-        })
       }
     } catch (error: unknown) {
       // error가 AxiosError 타입인지 확인
@@ -67,8 +59,8 @@ export function LoginForm() {
             showConfirmButton: false,
             timer: 1500,
             customClass: {
-              title: "text-xl", // Tailwind로 title에 작은 글씨 크기 적용
-              popup: "pb-12", // 전체 팝업에 패딩 추가 (선택 사항)
+              title: "text-xl",
+              popup: "pb-12",
             },
           })
         } else {
