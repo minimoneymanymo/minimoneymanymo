@@ -44,7 +44,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/members/join", "/members/login", "/members/checkid", "/members/mailauthCheck","/quiz/today","/quiz", "/members/password", "/quiz/search").permitAll()
+                        .requestMatchers("/members/join", "/members/login", "/members/checkid", "/members/mailauthCheck","/quiz/today","/quiz","/quiz/search","quiz/detail",  "/members/password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stocks/**").permitAll() // 주식 조회는 모두가 가능
                         .requestMatchers("/fin/**").permitAll() // /fin 경로 허용
                         .requestMatchers("/admin").hasRole("ADMIN")
