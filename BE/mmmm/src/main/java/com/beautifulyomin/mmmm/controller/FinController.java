@@ -48,6 +48,21 @@ public class FinController {
                 .bodyToMono(String.class);
     }
 
+    //사용자 계정조회
+    @PostMapping("/member/search")
+    public Mono<String> searchMember(@RequestParam("userId") String userId) {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        System.out.println("UUUUUUUUUU"+userId);
+        jsonObject.put("apiKey", apiKey);
+        jsonObject.put("userId", userId);
+
+        return webClient.post()
+                .uri("/member/search")
+                .bodyValue(jsonObject)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
     //계좌 조회
     @PostMapping("/inquireDemandDepositAccount")
     public Mono<String> inquireDemandDepositAccount(

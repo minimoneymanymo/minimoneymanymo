@@ -16,8 +16,13 @@ import com.beautifulyomin.mmmm.domain.member.repository.ParentRepositoryCustom;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
 import com.beautifulyomin.mmmm.exception.InvalidRequestException;
 import com.beautifulyomin.mmmm.exception.InvalidRoleException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +38,12 @@ public class FundServiceImpl implements FundService {
     private final ParentRepository parentRepository;
     private final ParentRepositoryCustom parentRepositoryCustom;
     private final ParentAndChildrenRepository parentAndChildrenRepository;
+    private final ObjectMapper objectMapper;
+
+    @Value("${api.ssafy.apikey}")
+    private String apiKey;
+    private final WebClient webClient;
+
 
     @Override
     public List<MoneyChangeDto> findAllMoneyRecordsById(String childrenId) {
@@ -125,6 +136,23 @@ public class FundServiceImpl implements FundService {
 
         return fundRepositoryCustom.updateAllowance(request.getAmount(),parentId,childrenId);
     }
+
+
+    //멤버추가
+    @Override
+    public Mono<String> registerMember(String memberId) {
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put("apiKey", apiKey);
+        jsonObject.put("userId", memberId);
+
+        return webClient.post()
+                .uri("/member")
+                .bodyValue(jsonObject)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+
 
     //매달 출금가능금액 초기화
     @Override
