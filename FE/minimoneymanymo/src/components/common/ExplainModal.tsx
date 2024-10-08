@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import CloseIcon from "@mui/icons-material/CloseOutlined"
-import InfoIcon from "@mui/icons-material/InfoOutlined"
-import FaqToggle from "./FAQToggle"
+import FaqToggle from "./FaqToggle"
 
 interface ModalProps {
   isOpen: boolean
