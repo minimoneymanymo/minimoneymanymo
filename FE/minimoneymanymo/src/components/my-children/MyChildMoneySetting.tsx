@@ -13,6 +13,7 @@ import { selectParent } from "@/store/slice/parent"
 import { setMemberInfo } from "@/utils/user-utils"
 import InfoIcon from "@mui/icons-material/Info"
 import { Alert } from "@mui/material"
+import Swal from "sweetalert2"
 
 function MyChildMoneySetting(): JSX.Element {
   const { child, fetchChild } = useChild()
@@ -30,7 +31,7 @@ function MyChildMoneySetting(): JSX.Element {
   const dispatch = useAppDispatch()
 
   const getMyChildsetting = () => {
-    setAllowance(child?.settingMoney || null)
+    setAllowance(parent?.balance || null)
     setWithdrawableMoney(child?.settingWithdrawableMoney || null)
     setQuizBonusMoney(child?.settingQuizBonusMoney || null)
     setMaxAllowance(parent.balance)
@@ -56,8 +57,14 @@ function MyChildMoneySetting(): JSX.Element {
       await fetchChild()
       console.log("용돈이 성공적으로 지급되었습니다:", res)
     } else if (res.status === 403) {
-      alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
-      navigate("/login")
+      //alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
+      Swal.fire({
+        title: "로그인이필요합니다.",
+        icon: "warning",
+        confirmButtonText: "로그인",
+      }).then(() => {
+        navigate("/login")
+      })
     } else {
       console.log("용돈 업데이트 실패:", res)
     }
@@ -74,8 +81,14 @@ function MyChildMoneySetting(): JSX.Element {
 
       console.log("settingwithdrawableMoney  업데이트 되었습니다:", res)
     } else if (res.status === 403) {
-      alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
-      navigate("/login")
+      //alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
+      Swal.fire({
+        title: "로그인이필요합니다.",
+        icon: "warning",
+        confirmButtonText: "로그인",
+      }).then(() => {
+        navigate("/login")
+      })
     } else {
       console.log("용돈 업데이트 실패:", res)
     }
@@ -91,8 +104,14 @@ function MyChildMoneySetting(): JSX.Element {
 
       console.log("settingwithdrawableMoney  업데이트 되었습니다:", res)
     } else if (res.status === 403) {
-      alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
-      navigate("/login")
+      //alert("로그인이필요합니다.") // 로그인 페이지로 리다이렉트
+      Swal.fire({
+        title: "로그인이필요합니다.",
+        icon: "warning",
+        confirmButtonText: "로그인",
+      }).then(() => {
+        navigate("/login")
+      })
     } else {
       console.log("용돈 업데이트 실패:", res)
     }
@@ -105,8 +124,14 @@ function MyChildMoneySetting(): JSX.Element {
       console.log("quizBonusMoney 성공적으로 업데이트 되었습니다:", res)
       setInputValue("")
     } else if (res.status === 403) {
-      alert("로그인이필요합니다.")
-      navigate("/login")
+      //alert("로그인이필요합니다.")
+      Swal.fire({
+        title: "로그인이필요합니다.",
+        icon: "warning",
+        confirmButtonText: "로그인",
+      }).then(() => {
+        navigate("/login")
+      })
     } else {
       console.log("용돈 업데이트 실패:", res)
     }

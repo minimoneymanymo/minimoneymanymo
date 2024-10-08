@@ -10,11 +10,12 @@ export const getPriceChangeColorAndSign = (value: number) => {
 
 // 시가총액 형식 변환 함수
 export const formatMarketCapitalization = (value: number): string => {
-  if (value >= 10000) {
-    return `${(value / 10000).toFixed(2)} 조원`
-  } else {
-    return `${value.toFixed(2)} 억원`
+  if (value >= 100000000) {
+    return `${(value / 100000000).toFixed(2)} 조`
+  } else if (value >= 10000) {
+    return `${(value / 10000).toFixed(2)} 억`
   }
+  return `${value.toLocaleString()} 만`
 }
 
 //큰 숫자 포맷팅

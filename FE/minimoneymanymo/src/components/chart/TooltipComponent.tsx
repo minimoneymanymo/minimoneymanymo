@@ -25,7 +25,7 @@ const TooltipComponent: React.FC<{
       PopperProps={{
         sx: {
           "& .MuiTooltip-tooltip": {
-            backgroundColor: "rgba(255, 255, 255, 0.9)", // 배경색을 설정
+            backgroundColor: "rgba(255, 255, 255, 0.7)", // 배경색을 설정
             color: "black", // 텍스트 색상 변경
             borderRadius: "0.25rem", // 테두리 둥글게
             padding: "0.5rem", // 패딩 조정

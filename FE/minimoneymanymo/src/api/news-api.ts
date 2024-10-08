@@ -43,3 +43,15 @@ export const getNewsQuizzes = async (page: number, size: number = 6) => {
     throw e
   }
 }
+
+export const searchCompany = async (company: string) => {
+  try {
+    console.log(company)
+    const res = await axiosPublicInstance.get(`/quiz/search?company=${company}`)
+    console.log(res.data)
+    return res.data
+  } catch (e: any) {
+    console.log(e.message)
+    throw e
+  }
+}

@@ -3,7 +3,7 @@ import { MyChildDiary } from "@/components/my-children/types"
 import { putReasonBonusMoney } from "@/api/stock-api" // 수정된 API 호출 함수 가져오기
 import { useChild } from "../context/ChildContext"
 import { useNavigate } from "react-router-dom" // react-router-dom을 사용하여 navigate 기능 추가
-
+import Swal from "sweetalert2"
 // diary prop 타입 정의
 interface MyChildDiaryGiveMoneyProps {
   diary: MyChildDiary
@@ -51,7 +51,11 @@ const MyChildDiaryGiveMoney: React.FC<MyChildDiaryGiveMoneyProps> = ({
 
     // 보너스 머니가 입력되지 않은 경우 경고 창 표시
     if (bonusMoney.trim() === "") {
-      alert("보너스 머니를 지급하세요.")
+      //alert("보너스 머니를 지급하세요.")
+      Swal.fire({
+        title: "보너스 머니를 지급하세요.",
+        icon: "warning",
+      })
       return
     }
 

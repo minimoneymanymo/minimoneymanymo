@@ -10,7 +10,7 @@ import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { selectTooltip, tooltipActions } from "@/store/slice/tooltip"
 import { Switch } from "@material-tailwind/react"
-
+import Swal from "sweetalert2"
 const NavItemList = (): JSX.Element => {
   let itemId = 0
   const navItems = [
@@ -77,7 +77,6 @@ const NavAction = (): JSX.Element => {
   }, [parent, child.profileImgUrl, isLogin])
 
   const handleLogOut = () => {
-    alert("로그아웃")
     logOutUser()
     setIsLogin(false)
     navigate("/")

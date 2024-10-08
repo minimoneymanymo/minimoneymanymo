@@ -13,6 +13,8 @@ import { setMemberInfo } from "@/utils/user-utils"
 
 import { getAccessTokenFromSession } from "@/utils/user-utils"
 
+import Swal from "sweetalert2"
+
 // closingPrice를 props로 받기 위해 인터페이스 정의
 interface TradeFormProps {
   closingPrice: number | null // closingPrice가 null일 수도 있으므로 타입 지정
@@ -106,7 +108,12 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         console.error("Failed to load money:", error)
         // 타입 단언 사용
         const customError = error as CustomError
-        alert(customError.data?.message || "알 수 없는 오류가 발생했습니다.")
+        //alert(customError.data?.message || "알 수 없는 오류가 발생했습니다.")
+        Swal.fire({
+          title: "오류가 발생했습니다. 다시 시도해주세요.",
+          text: `${error}`,
+          icon: "error",
+        })
       } else {
         console.error("Trade failed:", error)
       }
@@ -154,19 +161,31 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
     // 유효성 검사 추가
     if (isBuyMode) {
       if (inputMoney <= 0 || tradeShares <= 0) {
-        alert("0 이상의 매수 금액과 주 수를 입력하세요.")
+        //alert("0 이상의 매수 금액과 주 수를 입력하세요.")
+        Swal.fire({
+          title: "0 이상의 매수 금액과 주 수를 입력하세요..",
+          icon: "warning",
+        })
         return
       }
     } else {
       if (sellShares === "" || Number(sellShares) <= 0) {
-        alert("0 이상의 매도 주 수를 입력하세요.")
+        //alert("0 이상의 매도 주 수를 입력하세요.")
+        Swal.fire({
+          title: "0 이상의 매도 주 수를 입력하세요.",
+          icon: "warning",
+        })
         return
       }
     }
 
     // reason 유효성 검사 추가
     if (reason.trim() === "") {
-      alert("거래 이유를 입력해 주세요.")
+      //alert("거래 이유를 입력해 주세요.")
+      Swal.fire({
+        title: "거래 이유를 입력해 주세요.",
+        icon: "warning",
+      })
       return
     }
 
@@ -193,17 +212,31 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         setSellShares("") // 매도 주수 입력창 초기화
       }
 
-      alert("거래가 성공적으로 완료되었습니다!")
+      //alert("거래가 성공적으로 완료되었습니다!")
+      Swal.fire({
+        title: "거래가 성공적으로 완료되었습니다!",
+        icon: "success",
+      })
       await loadMoney()
       await setMemberInfo(dispatch, 1)
       console.log("🎅🤶👼🧔👲")
     } catch (error) {
       if (error instanceof Error) {
         console.error("Trade failed:", error.message) // 오류 메시지 출력
-        alert("거래에 실패했습니다: " + error.message) // 사용자에게 오류 메시지 표시
+        //alert("거래에 실패했습니다: " + error.message) // 사용자에게 오류 메시지 표시
+        Swal.fire({
+          title: "오류가 발생했습니다. 다시 시도해주세요.",
+          text: `${error.message}`,
+          icon: "error",
+        })
       } else {
         console.error("Trade failed: 알 수 없는 오류 발생", error) // 알 수 없는 오류 처리
-        alert("거래에 실패했습니다: 알 수 없는 오류 발생") // 사용자에게 알 수 없는 오류 메시지 표시
+        //alert("거래에 실패했습니다: 알 수 없는 오류 발생") // 사용자에게 알 수 없는 오류 메시지 표시
+        Swal.fire({
+          title: "오류가 발생했습니다. 다시 시도해주세요.",
+          text: `${error}`,
+          icon: "error",
+        })
       }
     }
   }
@@ -243,7 +276,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         <>
           <div className="relative flex h-full w-[340px] flex-col p-2">
             {/* 매수매도 버튼 */}
-            <div className="absolute mt-14 flex h-[80px] w-[310px] justify-end space-x-4">
+            <div className="absolute mt-14 flex h-[80px] w-[310px] justify-end space-x-2">
               <Button
                 className="z-10 h-16 bg-buy pb-6"
                 onClick={() => setIsBuyMode(true)}
@@ -302,7 +335,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                     <div className="flex items-center">
                       <input
                         type="tel"
-                        className="w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                        className="my-2 h-[35px] w-full appearance-none overflow-hidden rounded-xl border border-gray-300 px-3 py-5 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                         value={
                           inputMoney === 0
                             ? ""
@@ -323,11 +356,6 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                           }
                         }}
                         placeholder="매수할 머니"
-                        style={{
-                          height: "36px",
-                          maxHeight: "35px",
-                          overflow: "hidden",
-                        }} // 높이 35px로 설정
                       />
                     </div>
                     <div className="flex w-full items-end justify-end text-right">
@@ -336,7 +364,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                       </p>
                       <p className="ml-1 mt-1">주</p>
                     </div>
-                    <div className="mb-2 flex w-full items-end justify-between">
+                    <div className="mb-2 flex w-full items-end justify-between pt-2">
                       <p className="text-left text-base">매수 후 잔액</p>
                       {/* 이 부분 */}
                       <p className="text-right text-base">
@@ -347,13 +375,12 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                       </p>
                     </div>
 
-                    <input
-                      type="tel"
-                      className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
+                    <textarea
+                      className="h-[200px] w-full rounded-xl bg-gray-100 p-4 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                       value={reason}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setReason(e.target.value)
-                      }
+                      onChange={(
+                        e: React.ChangeEvent<HTMLTextAreaElement> // 타입을 HTMLTextAreaElement로 변경
+                      ) => setReason(e.target.value)}
                       placeholder="매수를 생각하게 된 이유를 적어주세요!"
                     />
                   </>
@@ -382,7 +409,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                     <div className="flex items-center">
                       <input
                         type="tel"
-                        className="sellSharesInputBox w-full appearance-none rounded bg-gray-300 px-2 py-1 text-black placeholder-white"
+                        className="my-2 h-[35px] w-full appearance-none overflow-hidden rounded-xl border border-gray-300 px-3 py-5 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                         value={sellShares} // 기존의 sellShares 값 사용
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const value = e.target.value
@@ -398,11 +425,6 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                           }
                         }}
                         placeholder="매도할 주 수"
-                        style={{
-                          height: "36px",
-                          maxHeight: "35px",
-                          overflow: "hidden",
-                        }} // 높이 35px로 설정
                       />
                     </div>
                     <div className="flex w-full items-end justify-end">
@@ -411,7 +433,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                       </p>
                       <p className="ml-1 mt-1">머니</p>
                     </div>
-                    <div className="mb-2 flex w-full items-end justify-between">
+                    <div className="mb-2 flex w-full items-end justify-between pt-2">
                       <p className="text-left text-base">예상손익머니</p>
                       <p
                         className={`text-right text-base ${Number(profitLoss) >= 0 ? "buy" : "sell"}`}
@@ -422,11 +444,10 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
                       </p>
                     </div>
 
-                    <input
-                      type="tel"
-                      className="h-[200px] w-full rounded bg-gray-300 p-4 text-black placeholder-white"
+                    <textarea
+                      className="h-[200px] w-full rounded-xl bg-gray-100 p-4 text-black placeholder-gray-400 focus:border-gray-500 focus:outline-none"
                       value={reason}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         setReason(e.target.value)
                       }
                       placeholder="매도를 생각하게 된 이유를 적어주세요!"

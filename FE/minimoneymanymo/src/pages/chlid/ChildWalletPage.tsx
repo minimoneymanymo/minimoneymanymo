@@ -22,6 +22,7 @@ import { accountActions, selectAccount } from "@/store/slice/account"
 import { selectChild } from "@/store/slice/child"
 import LineChart from "./component/LineChart"
 import { setMemberInfo } from "@/utils/user-utils"
+import Swal from "sweetalert2"
 
 function ChildWalletPage(): JSX.Element {
   const child = useAppSelector(selectChild) // parent state 가져옴
@@ -89,9 +90,19 @@ function ChildWalletPage(): JSX.Element {
         } else {
           console.error("머니내역 오류: ", res1)
           if (res1.message) {
-            alert(res1.message)
+            //alert(res1.message)
+            Swal.fire({
+              title: "error",
+              text: `${res1.message}`,
+              icon: "error",
+            })
           } else {
-            alert("에러가 발생했습니다. 다시 시도해주세요")
+            //alert("에러가 발생했습니다. 다시 시도해주세요")
+            Swal.fire({
+              title: "error",
+              text: `에러가 발생했습니다. 다시 시도해주세요`,
+              icon: "error",
+            })
           }
         }
         if (res2.stateCode == 200) {
@@ -100,9 +111,19 @@ function ChildWalletPage(): JSX.Element {
         } else {
           console.error("출금요청내역 오류: ", res2)
           if (res2.message) {
-            alert(res2.message)
+            //alert(res2.message)
+            Swal.fire({
+              title: "error",
+              text: `${res1.message}`,
+              icon: "error",
+            })
           } else {
-            alert("에러가 발생했습니다. 다시 시도해주세요")
+            //alert("에러가 발생했습니다. 다시 시도해주세요")
+            Swal.fire({
+              title: "error",
+              text: `에러가 발생했습니다. 다시 시도해주세요`,
+              icon: "error",
+            })
           }
         }
       } catch (error) {
@@ -164,7 +185,15 @@ function ChildWalletPage(): JSX.Element {
           <div className="m-2 bg-white">
             <LineChart data={getRecent7Days(recordList)} />
           </div>
-          <RecordForm data={recordList} isMoneyList={true} />
+          <div
+            className={`${
+              recordList.length >= 5
+                ? "hidden-scrollbar max-h-[400px] overflow-y-auto"
+                : ""
+            }`}
+          >
+            <RecordForm data={recordList} isMoneyList={true} />
+          </div>
         </div>
       )}
     </>
@@ -219,7 +248,11 @@ const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
 
   const requestWithdraw = async () => {
     if (Number(withdrawMoney) == 0) {
-      alert("1원 이상 입력해주세요.")
+      //alert("1원 이상 입력해주세요.")
+      Swal.fire({
+        title: "1원 이상 입력해주세요.",
+        icon: "warning",
+      })
       return
     }
     const res = await requestWithdrawApi(Number(withdrawMoney))

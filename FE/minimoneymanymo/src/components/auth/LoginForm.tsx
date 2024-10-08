@@ -2,7 +2,6 @@ import { useState } from "react"
 import {
   Card,
   Button,
-  Typography,
   List,
   ListItem,
   ListItemPrefix,
@@ -16,6 +15,10 @@ import { setMemberInfo } from "@/utils/user-utils"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectChild } from "@/store/slice/child"
 import { selectParent } from "@/store/slice/parent"
+import Swal from "sweetalert2"
+import { ContourValueResolverDescription } from "igniteui-react-core"
+import axios from "axios"
+import { alertBasic } from "@/utils/alert-util"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -40,15 +43,37 @@ export function LoginForm() {
       const response = await userLogin(formData)
       console.log(response)
       if (response.stateCode == 200) {
-        alert("로그인 성공")
         await setMemberInfo(dispatch, role)
-        // 선택한 상태 확인
         console.log("Parent state: ", parent)
         console.log("Child state: ", child)
         navigate("/")
       }
-    } catch (error) {
-      console.error("Login failed:", error)
+    } catch (error: unknown) {
+      // error가 AxiosError 타입인지 확인
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "아이디, 비밀번호가 일치하지 않습니다",
+            showConfirmButton: false,
+            timer: 1500,
+            customClass: {
+              title: "text-xl",
+              popup: "pb-12",
+            },
+          })
+        } else {
+          // 기타 서버 오류 처리
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "로그인 중 오류가 발생했습니다",
+            showConfirmButton: false,
+            timer: 1500,
+          })
+        }
+      }
     }
   }
 
@@ -56,8 +81,8 @@ export function LoginForm() {
     setId(event.target.value)
   }
 
-  const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRole(Number(event.target.value)) // Update role based on selected radio button
+  const handleRoleChange = (event: number) => {
+    setRole(event) // Update role based on selected radio button
   }
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,18 +102,36 @@ export function LoginForm() {
       className="rounded-lg border border-gray-300 p-6"
     >
       <Card color="transparent" shadow={false}>
-        <Typography variant="h5" color="blue-gray">
-          환영해요 !
-        </Typography>
-        <Typography className="mt-1 text-3xl font-bold text-tertiary-m4">
+        <div className="text-blue-gray-700 text-xl -mb-1 font-semibold tracking-wider">
+          환영해요!
+        </div>
+        <div className="tracking-wide text-secondary-m2 mt-1 text-3xl font-bold">
           minimoneymanymo
-        </Typography>
+        </div>
+        <div className="mt-6 flex">
+          <button
+            className={`${role === 0 ? "border-secondary-m2 bg-secondary-m3" : ""} flex-1 border py-0.5`}
+            onClick={() => {
+              handleRoleChange(0)
+            }}
+          >
+            부모
+          </button>
+          <button
+            className={`${role === 1 ? "border-secondary-m2 bg-secondary-m3" : ""} flex-1 border py-0.5`}
+            onClick={() => {
+              handleRoleChange(1)
+            }}
+          >
+            자녀
+          </button>
+        </div>
 
-        <form className="mb-2 mt-8 w-80 max-w-screen-lg sm:w-96">
+        <form className="mb-2 mt-4 w-80 max-w-screen-lg sm:w-96">
           <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="h6" color="blue-gray" className="-mb-3">
+            <div className="text-blue-gray-700 -mb-3 text-lg font-bold">
               아이디
-            </Typography>
+            </div>
             <TextField
               fullWidth
               variant="outlined"
@@ -98,9 +141,9 @@ export function LoginForm() {
               onChange={handleIdChange}
             />
 
-            <Typography variant="h6" color="blue-gray" className="-mb-3">
+            <div className="text-blue-gray-700 -mb-3 text-lg font-bold">
               비밀번호
-            </Typography>
+            </div>
             <TextField
               type={hoverPassword ? "text" : showPassword ? "text" : "password"}
               fullWidth
@@ -132,69 +175,17 @@ export function LoginForm() {
             />
           </div>
 
-          <Card className="w-full max-w-[24rem] shadow-none">
-            <List className="flex-row">
-              <ListItem className="p-0">
-                <label
-                  htmlFor="horizontal-list-react"
-                  className="flex w-full cursor-pointer items-center px-3 py-2"
-                >
-                  <ListItemPrefix className="mr-3">
-                    <Radio
-                      name="horizontal-list"
-                      id="horizontal-list-react"
-                      value="0" // Set value for role 0
-                      checked={role === 0}
-                      onChange={handleRoleChange}
-                      ripple={false}
-                      className="hover:before:opacity-0"
-                      containerProps={{ className: "p-0" }}
-                    />
-                  </ListItemPrefix>
-                  <Typography
-                    color="blue-gray"
-                    className="text-blue-gray-400 font-medium"
-                  >
-                    부모
-                  </Typography>
-                </label>
-              </ListItem>
-              <ListItem className="p-0">
-                <label
-                  htmlFor="horizontal-list-vue"
-                  className="flex w-full cursor-pointer items-center px-3 py-2"
-                >
-                  <ListItemPrefix className="mr-3">
-                    <Radio
-                      name="horizontal-list"
-                      id="horizontal-list-vue"
-                      value="1" // Set value for role 1
-                      checked={role === 1}
-                      onChange={handleRoleChange}
-                      ripple={false}
-                      className="hover:before:opacity-0"
-                      containerProps={{ className: "p-0" }}
-                    />
-                  </ListItemPrefix>
-                  <Typography
-                    color="blue-gray"
-                    className="text-blue-gray-400 font-medium"
-                  >
-                    자녀
-                  </Typography>
-                </label>
-              </ListItem>
-            </List>
-          </Card>
-          <Button className="mt-6 bg-tertiary-m4" fullWidth onClick={goLogin}>
+          <div
+            className="mt-6 flex justify-center rounded-lg bg-secondary-m2 p-2 text-base text-lg text-white"
+            onClick={goLogin}
+          >
             로그인
-          </Button>
-          <Typography color="gray" className="mt-4 text-center font-normal">
-            계정이 없으신가요?{" "}
-            <a href="#" className="font-medium text-gray-900">
-              회원가입
+          </div>
+          <div className="mt-4 text-center text-gray-500">
+            <a href="sign-up" className="font-medium text-gray-900">
+              회원가입 하러가기
             </a>
-          </Typography>
+          </div>
         </form>
       </Card>
     </Card>
