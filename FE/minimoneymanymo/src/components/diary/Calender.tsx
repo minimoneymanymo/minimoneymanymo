@@ -166,7 +166,7 @@ const Calender: React.FC = () => {
         weekDays.push(
           <div
             key={currentDay.format("YYYY-MM-DD")}
-            className={`relative border text-center ${selectedDate === currentDay.format("YYYY-MM-DD") ? "bg-gray-200" : ""} ${dayEvents.length > 0 ? "cursor-pointer" : "cursor-default opacity-50"}`}
+            className={`relative border text-center ${selectedDate === currentDay.format("YYYY-MM-DD") ? "bg-gray-100" : ""} ${dayEvents.length > 0 ? "cursor-pointer" : "cursor-default opacity-50"}`}
             onClick={() =>
               dayEvents.length > 0 &&
               handleDayClick(currentDay.format("YYYY-MM-DD"))

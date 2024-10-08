@@ -246,7 +246,7 @@ function MainDashboard() {
   }
 
   return (
-    <div className="mt-10 w-full">
+    <div className="w-full">
       <div className="text-2xl font-bold" color="blue-gray">
         주식
       </div>

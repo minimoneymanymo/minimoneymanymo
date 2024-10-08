@@ -12,7 +12,6 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
 }) => {
   // 날짜 포맷 변환: YYYY-MM-DD 형식에서 "MM월 DD일" 형식으로 변환
   const formatDate = (dateString: string): string => {
-    console.log(dateString)
     const date = new Date(dateString)
     const month = String(date.getMonth() + 1).padStart(2, "0") // 월 가져오기 (01~12)
     const day = String(date.getDate()).padStart(2, "0") // 일 가져오기 (01~31)
@@ -20,7 +19,6 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
   }
 
   const formatCreatedAt = (dateString: string): string => {
-    console.log(dateString)
     const dateParts = dateString.split("-")
     const year = dateParts[0] // 년
     const month = dateParts[1] // 월
@@ -34,7 +32,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
     <div className="flex flex-col">
       <h2 className="mb-1 text-center text-3xl font-bold">
         {formattedDate}{" "}
-        <span className="text-xl font-bold" style={{ fontSize: "0.8rem" }}>
+        <span className="text-lg font-bold">
           {" "}
           {/* "월", "일"의 글자 크기 조정 */}의
         </span>{" "}
@@ -42,7 +40,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
       </h2>{" "}
       <br />
       {/* 날짜와 나의 투자 문구를 한 줄에 출력 */}
-      <div className="flex justify-between">
+      <div className="flex justify-between p-3">
         <div className="col-span-1 w-1/2 pr-4">
           <div className="flex justify-between text-sm">
             <h3 className="pb-2 text-base font-bold">머니 변동 내역</h3>
@@ -69,7 +67,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
               </p>
             </div>
           </div>
-          <ul className="hidden-scrollbar h-[320px] overflow-y-auto bg-gray-50 p-1 px-0.5">
+          <ul className="hidden-scrollbar h-[320px] overflow-y-auto p-1 px-0.5">
             {filteredEvents.length > 0 ? (
               filteredEvents.map((event, index) => {
                 console.log(event) // event 값 출력
@@ -121,7 +119,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
             이 종목을 선택한 이유가 무엇인지 기억나나요?
             <br />그 때의 생각을 다시 떠올려봐요
           </h1>
-          <ul className="custom-scrollbar h-[280px] overflow-y-auto bg-gray-100 py-1">
+          <ul className="custom-scrollbar h-[260px] overflow-y-auto py-1">
             {filteredEvents.length > 0 ? (
               filteredEvents.map((event, index) => {
                 console.log(event) // event 값 출력
@@ -160,7 +158,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                       </strong>
                     </div>
                     <div className="flex justify-between">
-                      <div className="ml-2 mr-2 flex flex-1 justify-between text-sm">
+                      <div className="ml-2 mr-2 flex flex-1 justify-between">
                         <p>거래 머니</p>
                         <p className="text-right">
                           {event.amount
@@ -169,7 +167,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                           머니
                         </p>
                       </div>
-                      <div className="ml-2 mr-2 flex flex-1 justify-between text-sm">
+                      <div className="ml-2 mr-2 flex flex-1 justify-between">
                         <p className="text-black">손익 머니</p>
                         <p
                           className={`text-right ${
@@ -193,7 +191,7 @@ const MyInvestment: React.FC<MyInvestmentProps> = ({
                         </p>
                       </div>
                     </div>
-                    <div className="h-min-[80px] m-2 rounded-lg bg-primary-50 p-3 text-start text-base">
+                    <div className="h-min-[80px] m-2 rounded-lg bg-gray-50 p-3 text-start text-base">
                       {event.reason}
                     </div>
                   </li>
