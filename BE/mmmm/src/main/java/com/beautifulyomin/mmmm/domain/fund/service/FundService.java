@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.domain.fund.service;
 
 import com.beautifulyomin.mmmm.domain.fund.dto.*;
 import com.beautifulyomin.mmmm.domain.stock.dto.TradeDto;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -33,4 +34,7 @@ public interface FundService {
     List<AllowancePaymentDto> findAllUnpaid(String userId);
 
     long updateAllowance(String userId, AllowancePaymentDto request);
+
+
+    Mono<String> registerMember(String memberId);
 }
