@@ -17,6 +17,7 @@ import NaverNews from "@/components/newscard/NaverNews"
 
 import { useAppSelector } from "@/store/hooks"
 import { selectChild } from "@/store/slice/child"
+import { alertWarning } from "@/utils/alert-util"
 
 function StockDetailPage(): JSX.Element {
   const [dailyStockChart, setDailyStockChart] = useState<StockData[]>([])
@@ -97,7 +98,7 @@ function StockDetailPage(): JSX.Element {
     const child = useAppSelector(selectChild) // 자식 상태 선택
     const toggleLike = async () => {
       if (child.userId === null || child.userId === "") {
-        alert("관심종목 기능은 자녀로 로그인시에만 사용할 수 있습니다.")
+        alertWarning("관심종목 기능은 자녀로 로그인시에만 사용할 수 있습니다.")
         return
       }
       setIsLike((prev) => !prev)
@@ -201,7 +202,7 @@ function StockDetailPage(): JSX.Element {
     )
   }
   return (
-    <div className="relative flex h-full w-[800px] flex-col">
+    <div className="relative flex h-full w-[800px] flex-col pb-16">
       <div className="flex h-fit w-full items-end justify-between">
         <StockInfo />
       </div>
@@ -209,7 +210,7 @@ function StockDetailPage(): JSX.Element {
         <button
           className={`h-16 w-24 rounded-t-lg pb-6 ${
             selectedTab === "news"
-              ? "bg-gray-100 font-bold"
+              ? "bg-gray-100 p-3 font-bold"
               : "translate-y-3 bg-gray-100 text-gray-800"
           }`}
           onClick={() => setSelectedTab("news")}
@@ -219,7 +220,7 @@ function StockDetailPage(): JSX.Element {
         <button
           className={`h-16 w-24 rounded-t-lg pb-6 ${
             selectedTab === "chart"
-              ? "bg-gray-100 font-bold"
+              ? "bg-gray-100 p-3 font-bold"
               : "translate-y-3 bg-gray-100 text-gray-800"
           }`}
           onClick={() => setSelectedTab("chart")}

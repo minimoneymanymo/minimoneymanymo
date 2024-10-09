@@ -11,7 +11,6 @@ const InvestmentStyle: React.FC<InvestmentStyleProps> = (props) => {
 
   return (
     <div className="h-fit w-full">
-      <Heading title="투자성향"></Heading>
       <RadarChart data={analysisData!} />
     </div>
   )

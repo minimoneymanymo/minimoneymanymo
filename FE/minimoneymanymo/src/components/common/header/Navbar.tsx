@@ -83,6 +83,7 @@ const NavAction = (): JSX.Element => {
     // Redux 상태 초기화
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
+    dispatch(accountActions.clearAccount())
     console.log(getAccessTokenFromSession())
   }
 
@@ -143,6 +144,7 @@ const NavAction = (): JSX.Element => {
   )
 }
 import TipsAndUpdatesOutlinedIcon from "@mui/icons-material/TipsAndUpdatesOutlined"
+import { accountActions } from "@/store/slice/account"
 function Navbar(): JSX.Element {
   const navigator = useNavigate()
   const dispatch = useAppDispatch()
@@ -154,7 +156,7 @@ function Navbar(): JSX.Element {
     console.log("After toggle:", !isTooltipEnabled) // 상태를 반대로 출력
   }
   return (
-    <nav className="flex h-20 flex-col items-center justify-center border-b border-gray-200 pl-10">
+    <nav className="flex h-20 flex-col items-center justify-center border-b border-gray-200 bg-white pl-10">
       <div className="container mx-auto flex items-center justify-between">
         <button
           onClick={() => {
@@ -175,17 +177,17 @@ function Navbar(): JSX.Element {
             <br />
             manymo
           </div> */}
-          <img src="/images/logo00.png" alt="로고" className="h-[55px]" />
+          <img src="/logo-mmm.svg" alt="로고" className="h-[73px]" />
         </button>
         {/* <NavItemList /> */}
         <div className="flex gap-4">
           <NavAction />
           <Switch
             label={
-              <>
+              <div className="flex space-x-4">
                 <TipsAndUpdatesOutlinedIcon />
                 설명
-              </>
+              </div>
             }
             ripple={true}
             checked={isTooltipEnabled} // 툴팁 상태에 따라 스위치 상태 제어

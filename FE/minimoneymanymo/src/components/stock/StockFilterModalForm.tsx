@@ -3,6 +3,13 @@ import { StockModalSidebar } from "./StockModalSidebar"
 import { useState } from "react"
 import { PERFilter } from "./filters/PERFilter"
 import { PBRFilter } from "./filters/PBRFilter"
+import { PriceFilter } from "./filters/PriceFilter"
+import { ChangeRateFilter } from "./filters/ChangeRateFilter"
+import { High52WeekFilter } from "./filters/High52WeekFilter"
+import { Low52WeekFilter } from "./filters/Low52WeekFilter"
+import { TradingValueFilter } from "./filters/TradingValueFilter"
+import { TradingVolumeFilter } from "./filters/TradingVolumeFilter"
+
 import { MarketTypeFilter } from "./filters/MarketTypeFilter" // Import the new component
 import { MarketCapSizeFilter } from "./filters/marketCapSizeFilter"
 import { RestartAlt } from "@mui/icons-material"
@@ -26,8 +33,10 @@ interface StockFilter {
   low52WeekMax: number | null // 52주 최저가 최대값
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
+  volumeMin: number | null //
   volumeMax: number | null // 최대 거래량
   search: string | null
+  interestStocks: boolean
 }
 interface StockFilterFormProps {
   open: boolean
@@ -46,8 +55,7 @@ export function StockFilterModalForm({
   const [temporaryFilters, setTemporaryFilters] = useState<StockFilter>(filters) // 임시 필터 상태 추가
 
   const resetFilters = () => {
-    //여기서 temp필터만 변경하는게 아니고 대시보드 전체의 필터를 초기화
-    setTemporaryFilters({
+    const resetState: StockFilter = {
       marketType: "ALL",
       marketCapSize: "ALL",
       perMin: null,
@@ -65,59 +73,26 @@ export function StockFilterModalForm({
       tradingValueMin: null,
       tradingValueMax: null,
       volumeMax: null,
+      volumeMin: null,
       search: null,
-    })
-    updateFilters({
-      marketType: "ALL",
-      marketCapSize: "ALL",
-      perMin: null,
-      perMax: null,
-      pbrMin: null,
-      pbrMax: null,
-      priceMin: null,
-      priceMax: null,
-      changeRateMin: null,
-      changeRateMax: null,
-      high52WeekMin: null,
-      high52WeekMax: null,
-      low52WeekMin: null,
-      low52WeekMax: null,
-      tradingValueMin: null,
-      tradingValueMax: null,
-      volumeMax: null,
-      search: null,
-    })
-    handleOpen() // 모달 닫기
-  }
-
-  const INF: number = 100000000000
-  const handleMarketTypeChange = (marketType: string) => {
-    setTemporaryFilters({ ...temporaryFilters, marketType })
+      interestStocks: false,
+    }
+    setTemporaryFilters(resetState)
+    updateFilters(resetState)
+    // handleOpen()
   }
 
   const handleSearch = () => {
     updateFilters(temporaryFilters)
-    handleOpen() // 모달 닫기
+    handleOpen()
   }
 
-  const handleMarketCapSizeChange = (marketCapSize: string) => {
-    setTemporaryFilters({ ...temporaryFilters, marketCapSize })
-  }
-
-  const handlePERRangeChange = (min: number, max: number) => {
-    setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
-  }
-
-  const handlePresetPER = (min: number, max: number | null) => {
-    setTemporaryFilters({ ...temporaryFilters, perMin: min, perMax: max })
-  }
-
-  const handlePBRRangeChange = (min: number, max: number) => {
-    setTemporaryFilters({ ...temporaryFilters, pbrMin: min, pbrMax: max })
-  }
-
-  const handlePresetPBR = (min: number, max: number | null) => {
-    setTemporaryFilters({ ...temporaryFilters, pbrMin: min, pbrMax: max })
+  const handleRangeChange = (key: string, min: number, max: number | null) => {
+    setTemporaryFilters((prevFilters) => ({
+      ...prevFilters,
+      [key + "Min"]: min,
+      [key + "Max"]: max,
+    }))
   }
 
   return (
@@ -140,80 +115,114 @@ export function StockFilterModalForm({
           {selectedCategory === "시장" && (
             <MarketTypeFilter
               marketType={temporaryFilters.marketType}
-              handleMarketTypeChange={handleMarketTypeChange}
+              handleMarketTypeChange={(marketType) =>
+                setTemporaryFilters({ ...temporaryFilters, marketType })
+              }
             />
           )}
           {/* 시가총액 */}
           {selectedCategory === "시가총액" && (
             <MarketCapSizeFilter
               marketCapSize={temporaryFilters.marketCapSize}
-              handleMarketCapSizeChange={handleMarketCapSizeChange}
+              handleMarketCapSizeChange={(marketCapSize) =>
+                setTemporaryFilters({ ...temporaryFilters, marketCapSize })
+              }
             />
           )}
           {/* PER */}
           {selectedCategory === "PER" && (
             <PERFilter
               temporaryFilters={temporaryFilters}
-              handlePERRangeChange={handlePERRangeChange}
-              handlePresetPER={handlePresetPER}
+              handlePERRangeChange={(min, max) =>
+                handleRangeChange("per", min, max)
+              }
+              handlePresetPER={(min, max) => handleRangeChange("per", min, max)}
             />
           )}
           {/* PBR */}
           {selectedCategory === "PBR" && (
             <PBRFilter
               temporaryFilters={temporaryFilters}
-              handlePBRRangeChange={handlePBRRangeChange}
-              handlePresetPBR={handlePresetPBR}
+              handlePBRRangeChange={(min, max) =>
+                handleRangeChange("pbr", min, max)
+              }
+              handlePresetPBR={(min, max) => handleRangeChange("pbr", min, max)}
             />
           )}
           {/* 주가 */}
           {selectedCategory === "주가" && (
-            <div>
-              <h3 className="text-xl font-semibold">주가</h3>
-              <p className="mb-4 text-gray-600">주가를 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <PriceFilter
+              temporaryFilters={temporaryFilters}
+              handlePriceRangeChange={(min, max) =>
+                handleRangeChange("price", min, max)
+              }
+              handlePresetPrice={(min, max) =>
+                handleRangeChange("price", min, max)
+              }
+            />
           )}
           {/* 주가 등락률 */}
           {selectedCategory === "주가 등락률" && (
-            <div>
-              <h3 className="text-xl font-semibold">주가 등락률</h3>
-              <p className="mb-4 text-gray-600">주가 등락률을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <ChangeRateFilter
+              temporaryFilters={temporaryFilters}
+              handleChangeRateRangeChange={(min, max) =>
+                handleRangeChange("changeRate", min, max)
+              }
+              handlePresetChangeRate={(min, max) =>
+                handleRangeChange("changeRate", min, max)
+              }
+            />
           )}
           {/* 52주 최고가 */}
           {selectedCategory === "52주 최고가" && (
-            <div>
-              <h3 className="text-xl font-semibold">52주 최고가</h3>
-              <p className="mb-4 text-gray-600">52주 최고가을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <High52WeekFilter
+              temporaryFilters={temporaryFilters}
+              handleHigh52WeekRangeChange={(min, max) =>
+                handleRangeChange("high52Week", min, max)
+              }
+              handlePresetHigh52Week={(min, max) =>
+                handleRangeChange("high52Week", min, max)
+              }
+            />
           )}
           {/* 52주 최저가 */}
           {selectedCategory === "52주 최저가" && (
-            <div>
-              <h3 className="text-xl font-semibold">52주 최저가</h3>
-              <p className="mb-4 text-gray-600">52주 최저가을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <Low52WeekFilter
+              temporaryFilters={temporaryFilters}
+              handleLow52WeekRangeChange={(min, max) =>
+                handleRangeChange("low52Week", min, max)
+              }
+              handlePresetLow52Week={(min, max) =>
+                handleRangeChange("low52Week", min, max)
+              }
+            />
           )}
           {/* 거래량 */}
           {selectedCategory === "거래량" && (
-            <div>
-              <h3 className="text-xl font-semibold">거래량</h3>
-              <p className="mb-4 text-gray-600">거래량을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <TradingVolumeFilter
+              temporaryFilters={temporaryFilters}
+              handleVolumeRangeChange={(min, max) =>
+                handleRangeChange("volume", min, max)
+              }
+              handlePresetVolume={(min, max) =>
+                handleRangeChange("volume", min, max)
+              }
+            />
           )}
+
           {/* 거래대금 */}
           {selectedCategory === "거래대금" && (
-            <div>
-              <h3 className="text-xl font-semibold">거래대금</h3>
-              <p className="mb-4 text-gray-600">거래대금을 선택하세요.</p>
-              {/* PER 관련 콘텐츠 추가 */}
-            </div>
+            <TradingValueFilter
+              temporaryFilters={temporaryFilters}
+              handleTradingValueRangeChange={(min, max) =>
+                handleRangeChange("tradingValue", min, max)
+              }
+              handlePresetTradingValue={(min, max) =>
+                handleRangeChange("tradingValue", min, max)
+              }
+            />
           )}
+
           {/* 하단의 초기화 버튼 */}
           <div className="absolute bottom-4 right-32">
             <button
@@ -228,20 +237,13 @@ export function StockFilterModalForm({
           <div className="absolute bottom-4 right-4">
             <button
               onClick={handleSearch}
-              className="rounded-lg bg-primary-m1 px-4 py-2 text-white hover:bg-primary-600"
+              className="rounded-lg bg-secondary-m2 px-4 py-2 text-white hover:bg-secondary-700"
             >
               조회하기
             </button>
           </div>
         </div>
       </div>
-
-      {/* <button
-        onClick={handleOpen}
-        className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
-      >
-        ✕
-      </button> */}
     </Modal>
   )
 }

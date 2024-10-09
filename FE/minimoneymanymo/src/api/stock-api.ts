@@ -20,7 +20,7 @@ export const getStockList = async (condition: string) => {
 
 export const getStockDetail = async (stockCode: string) => {
   try {
-    const res = await axiosPublicInstance.get(`/stocks/${stockCode}`)
+    const res = await axiosAuthInstance.get(`/stocks/${stockCode}`)
     console.log(res.data)
     return res.data
   } catch (e) {

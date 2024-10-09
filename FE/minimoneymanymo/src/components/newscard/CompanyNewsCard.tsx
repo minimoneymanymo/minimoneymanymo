@@ -33,22 +33,21 @@ const CompanyNewsCard: React.FC<CompanyNewsCardProps> = ({ news }) => {
       rel="noopener noreferrer"
       className="w-full"
     >
-      <Card className="mx-auto my-4 w-full cursor-pointer rounded-lg shadow-none">
+      <Card className="mx-auto my-3 w-full cursor-pointer rounded-lg shadow-none">
         {" "}
         {/* 테두리 및 그림자 제거 */}
         <CardBody>
-          <Typography
-            variant="h5"
-            className="font-semibold"
+          <div
+            className="mb-2 text-lg font-semibold"
             dangerouslySetInnerHTML={{ __html: news.title }}
           />
-          <Typography
+          <div
             className="mb-2 leading-tight text-gray-700"
             dangerouslySetInnerHTML={{ __html: news.description }}
           />
-          <Typography className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500">
             {formatDate(news.pubDate)}
-          </Typography>
+          </div>
         </CardBody>
       </Card>
     </a>
