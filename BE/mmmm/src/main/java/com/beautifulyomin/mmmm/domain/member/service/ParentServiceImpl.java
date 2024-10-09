@@ -55,7 +55,8 @@ public class ParentServiceImpl implements ParentService {
                 joinDto.getName(),
                 encodedPass,
                 joinDto.getPhoneNumber(),
-                joinDto.getUserKey()
+                joinDto.getUserKey(),
+                500000
         );
         Parent sParent = parentRepository.save(nParent);
         return sParent.getName();

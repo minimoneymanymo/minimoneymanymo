@@ -59,6 +59,15 @@ public class Parent {
         this.userKey = userKey;
     }
 
+    public Parent(String userId, String name, String password, String phoneNumber, String userKey, Integer balance) {
+        this.userId = userId;
+        this.phoneNumber = phoneNumber;
+        this.name = name;
+        this.password = password;
+        this.userKey = userKey;
+        this.balance = balance;
+    }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
