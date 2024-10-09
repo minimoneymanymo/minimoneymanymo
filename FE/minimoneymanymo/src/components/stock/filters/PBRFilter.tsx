@@ -44,14 +44,16 @@ export function PBRFilter({
     setMaxValue(temporaryFilters.pbrMax || "")
   }, [temporaryFilters])
 
-  const handleMinChange = (value: number) => {
-    setMinValue(value)
-    handlePBRRangeChange(value, maxValue || 0)
+  const handleMinChange = (value: string) => {
+    const numValue = value === "" ? "" : Number(value)
+    setMinValue(numValue)
+    if (numValue !== "") handlePBRRangeChange(numValue, maxValue || 0)
   }
 
-  const handleMaxChange = (value: number) => {
-    setMaxValue(value)
-    handlePBRRangeChange(minValue || 0, value)
+  const handleMaxChange = (value: string) => {
+    const numValue = value === "" ? "" : Number(value)
+    setMaxValue(numValue)
+    if (numValue !== "") handlePBRRangeChange(minValue || 0, numValue)
   }
 
   const handleButtonClick = (min: number, max: number | null) => {
@@ -100,24 +102,22 @@ export function PBRFilter({
       {/* 슬라이더를 사용한 사용자 정의 설정 */}
       {showSlider && (
         <div className="flex flex-col gap-4 rounded-lg bg-gray-50 p-4 shadow-md">
-          <h3 className="text-xl font-semibold">PBR 설정</h3>
+          <h3 className="text-xl font-semibold">PER 설정</h3>
           <div className="flex items-center gap-2">
-            <Slider
-              min={0}
-              max={50} // Adjust according to your needs
-              step={0.1}
-              value={minValue === "" ? 0 : (minValue as number)}
-              onChange={(value) => handleMinChange(value)}
-              label={`최소: ${minValue}`}
+            <input
+              type="number"
+              value={minValue}
+              onChange={(e) => handleMinChange(e.target.value)}
+              className="w-64 rounded-md border border-gray-300 p-2 text-right focus:border-gray-400 focus:outline-none focus:ring-0"
+              placeholder="이상"
             />
             <span>~</span>
-            <Slider
-              min={0}
-              max={50} // Adjust according to your needs
-              step={0.1}
-              value={maxValue === "" ? 50 : (maxValue as number)}
-              onChange={(value) => handleMaxChange(value)}
-              label={`최대: ${maxValue}`}
+            <input
+              type="number"
+              value={maxValue}
+              onChange={(e) => handleMaxChange(e.target.value)}
+              className="f w-64 rounded-md border border-gray-300 p-2 text-right focus:border-gray-400 focus:outline-none focus:ring-0"
+              placeholder="이하"
             />
           </div>
         </div>
