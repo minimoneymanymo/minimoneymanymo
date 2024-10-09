@@ -11,6 +11,7 @@ const NewsListPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false) // 로딩 상태
   const [page, setPage] = useState<number>(0) // 현재 페이지 번호
   const [hasMore, setHasMore] = useState<boolean>(true) // 더 많은 뉴스가 있는지 여부
+  const [isFirst, setIsFirst] = useState<boolean>(true)
   const navigate = useNavigate()
 
   interface NewsItem {
@@ -26,9 +27,8 @@ const NewsListPage: React.FC = () => {
 
     setLoading(true)
     try {
-      const response = await getNewsQuizzes(page) // 페이지에 해당하는 뉴스 퀴즈 가져오기
-      console.log(response)
-      if (response.length == 0 || response == null) {
+      const response = await getNewsQuizzes(page, 10) // 페이지에 해당하는 뉴스 퀴즈 가져오기
+      if (!response || response.length === 0) {
         setHasMore(false)
       } else {
         const formattedNews = response.map((item: any) => ({
@@ -40,7 +40,7 @@ const NewsListPage: React.FC = () => {
         }))
 
         setNewsItems((prev) => [...prev, ...formattedNews]) // 이전 뉴스 아이템에 추가
-        setHasMore(response.data.length > 0) // 더 많은 뉴스가 있는지 확인
+        setHasMore(response.length > 0) // 데이터가 더 있는지 여부 설정
       }
     } catch (error) {
       console.error("뉴스 데이터를 가져오는 데 실패했습니다.", error)
@@ -49,34 +49,47 @@ const NewsListPage: React.FC = () => {
     }
   }
 
+  // 페이지가 변경될 때마다 fetchNews 호출
   useEffect(() => {
-    fetchNews() // 컴포넌트가 처음 마운트될 때 뉴스 데이터를 가져옴
-  }, [page]) // 페이지가 변경될 때마다 데이터 재요청
+    if (page === 0 && newsItems.length === 0 && isFirst) {
+      console.log("위에거 !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      fetchNews()
+      setIsFirst(false)
+      console.log(isFirst)
+    } else if (page > 0 && !isFirst) {
+      console.log("아래거 !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      fetchNews() // 페이지가 0보다 클 때 호출
+    }
+  }, [page]) // 페이지 변경 시 호출
 
+  // 스크롤 이벤트 핸들러
   useEffect(() => {
     const handleScroll = () => {
-      // 페이지 스크롤 이벤트 핸들러
+      const scrollTop = document.documentElement.scrollTop
+      const scrollHeight = document.documentElement.scrollHeight
+      const clientHeight = window.innerHeight
+
       if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 200
+        scrollHeight - scrollTop <= clientHeight + 200 &&
+        !loading &&
+        hasMore
       ) {
         setPage((prev) => prev + 1) // 페이지 증가
       }
     }
 
     window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll) // 컴포넌트 언마운트 시 이벤트 핸들러 제거
-  }, [])
+    return () => window.removeEventListener("scroll", handleScroll) // 컴포넌트 언마운트 시 이벤트 제거
+  }, [loading, hasMore]) // loading과 hasMore에 의존하여 이벤트 핸들러 설정
 
   const handleSelectNews = (newsItem: NewsItem) => {
     navigate(`/news/${newsItem.id}`) // 뉴스의 id를 경로로 설정하여 이동
   }
-
   return (
     <div className="w-full">
       <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: 2 }}>
         <div className="mb-2 text-2xl font-bold" color="blue-gray">
-          뉴스 퀴즈 목록
+          뉴스 퀴즈
         </div>
         <div className="mb-8">
           최신 뉴스 정보를 얻고, 퀴즈에 도전하여 보상 머니를 획득하세요! <br />
