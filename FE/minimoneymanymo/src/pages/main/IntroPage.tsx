@@ -293,6 +293,7 @@ const Page6Content = () => {
           <button
             className="mt-6 border border-black px-4 py-1 text-xl"
             onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" }) // 스크롤을 맨 위로 부드럽게 이동
               navigator("/main")
             }}
           >
@@ -355,7 +356,7 @@ const Intro: React.FC = () => {
     AOS.init()
   }, [])
   return (
-    <div className="hidden-scrollbar w-screen">
+    <div className="hidden-scrollbar w-screen -mb-16">
       {pages.map((page, index) => (
         <div
           key={index}
