@@ -33,8 +33,10 @@ interface StockFilter {
   low52WeekMax: number | null // 52주 최저가 최대값
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
+  volumeMin: number | null //
   volumeMax: number | null // 최대 거래량
   search: string | null
+  interestStocks: boolean
 }
 interface StockFilterFormProps {
   open: boolean
@@ -71,7 +73,9 @@ export function StockFilterModalForm({
       tradingValueMin: null,
       tradingValueMax: null,
       volumeMax: null,
+      volumeMin: null,
       search: null,
+      interestStocks: false,
     }
     setTemporaryFilters(resetState)
     updateFilters(resetState)

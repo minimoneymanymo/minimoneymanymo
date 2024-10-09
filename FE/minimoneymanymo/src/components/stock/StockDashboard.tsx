@@ -40,8 +40,10 @@ interface StockFilter {
   low52WeekMax: number | null // 52주 최저가 최대값
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
+  volumeMin: number | null
   volumeMax: number | null // 최대 거래량
   search: string | null // elasticsearch 검색어
+  interestStocks: boolean
 }
 
 interface StockResult {
@@ -74,6 +76,7 @@ function MainDashboard() {
     tradingValueMin: null,
     tradingValueMax: null,
     volumeMax: null,
+    volumeMin: null,
     search: null,
     interestStocks: false,
   })
@@ -96,7 +99,9 @@ function MainDashboard() {
       tradingValueMin: null,
       tradingValueMax: null,
       volumeMax: null,
+      volumeMin: null,
       search: null,
+      interestStocks: false,
     }
     setFilters(resetState)
   }

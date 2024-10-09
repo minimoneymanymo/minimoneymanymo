@@ -40,9 +40,10 @@ interface StockFilter {
   low52WeekMax: number | null // 52주 최저가 최대값
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
+  volumeMin: number | null
   volumeMax: number | null // 최대 거래량
   search: string | null
-  interestStocks: false
+  interestStocks: boolean
 }
 
 function StockList({ filters }: { filters: StockFilter }) {
@@ -122,6 +123,10 @@ function StockList({ filters }: { filters: StockFilter }) {
           filters.tradingValueMin !== undefined &&
           filters.tradingValueMin !== null
             ? filters.tradingValueMin.toString()
+            : "",
+        volumeMin:
+          filters.volumeMin !== undefined && filters.volumeMin !== null
+            ? filters.volumeMin.toString()
             : "",
         volumeMax:
           filters.volumeMax !== undefined && filters.volumeMax !== null
