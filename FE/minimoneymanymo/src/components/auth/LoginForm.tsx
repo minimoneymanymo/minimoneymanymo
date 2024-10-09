@@ -46,7 +46,7 @@ export function LoginForm() {
         await setMemberInfo(dispatch, role)
         console.log("Parent state: ", parent)
         console.log("Child state: ", child)
-        navigate("/")
+        navigate("/main")
       } else if (response.stateCode == 401) {
         Swal.fire({
           icon: "warning",

@@ -117,13 +117,13 @@
 }
 
 /* index.css */
-html,
+/* html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: auto; /* Scrollbar를 적용하기 위해 추가 */
-}
+  overflow: auto;
+} */
 
 body {
   @apply custom-scrollbar;

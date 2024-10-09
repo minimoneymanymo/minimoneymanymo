@@ -158,7 +158,7 @@ function Navbar(): JSX.Element {
       <div className="container mx-auto flex items-center justify-between">
         <button
           onClick={() => {
-            navigator("/")
+            navigator("/main")
           }}
           className="flex items-center gap-3 text-xl text-primary-600"
         >

@@ -88,22 +88,27 @@ function ParallaxText({ children, baseVelocity = 10 }: ParallaxProps) {
 // 페이지 내용 컴포넌트들
 const Page1Content = () => {
   const navigator = useNavigate()
-
-return(
-  
-  <div className="relative flex h-screen w-screen items-center flex-col justify-center bg-primary-m1 text-white">
-    <motion.h1
-      initial={{ opacity: 0, y: "50px" }}
-      animate={{ opacity: 1, y: "0px", transition: { duration: 1 } }}
-      className="text-center text-6xl font-bold leading-normal tracking-wide"
+  return (
+    <div className="relative flex h-screen w-screen flex-col items-center justify-center bg-primary-m1 text-white">
+      <motion.h1
+        initial={{ opacity: 0, y: "50px" }}
+        animate={{ opacity: 1, y: "0px", transition: { duration: 1 } }}
+        className="text-center text-6xl font-bold leading-normal tracking-wide"
       >
-      청소년 경제 교육의 모든 것 <br />
-      미니머니마니모 에서 <br />
-      유용하고 편리하게
-    </motion.h1>
+        청소년 경제 교육의 모든 것 <br />
+        미니머니마니모 에서 <br />
+        유용하고 편리하게
+      </motion.h1>
       {/* 중앙 하단에 화살표 추가 */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transform">
-      <button className=" m-9 text-gray-50" onClick={()=>{navigator("/")} }>홈으로 가기</button>
+        <button
+          className="m-9 text-gray-50"
+          onClick={() => {
+            navigator("/main")
+          }}
+        >
+          홈으로 가기
+        </button>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -113,14 +118,13 @@ return(
             repeatType: "reverse",
           }}
           className="flex items-center justify-center"
-          >
+        >
           {/* 화살표 CSS */}
           <div className="h-0 w-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white" />
         </motion.div>
+      </div>
     </div>
-  </div>
-)
-
+  )
 }
 const Page2Content = () => (
   <div className="flex h-[800px] w-screen items-center justify-center">
@@ -289,7 +293,7 @@ const Page6Content = () => {
           <button
             className="mt-6 border border-black px-4 py-1 text-xl"
             onClick={() => {
-              navigator("/")
+              navigator("/main")
             }}
           >
             이용하러 가기
@@ -342,7 +346,7 @@ const pages = [
   { id: "page7", component: <Page7Content /> },
 ]
 
-const App: React.FC = () => {
+const Intro: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       console.log(window.scrollY)
@@ -365,4 +369,4 @@ const App: React.FC = () => {
   )
 }
 
-export default App
+export default Intro
