@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
 import AOS from "aos"
 import "aos/dist/aos.css"
-
 import { useRef } from "react"
 import {
   motion,
@@ -13,6 +12,8 @@ import {
   useAnimationFrame,
 } from "framer-motion"
 import { wrap } from "@motionone/utils"
+import { useNavigate } from "react-router-dom"
+import Navbar from "@/components/common/header/Navbar"
 
 interface ParallaxProps {
   children: string
@@ -85,19 +86,42 @@ function ParallaxText({ children, baseVelocity = 10 }: ParallaxProps) {
 }
 
 // 페이지 내용 컴포넌트들
-const Page1Content = () => (
-  <div className="flex h-screen w-screen items-center justify-center bg-primary-m1 text-white">
+const Page1Content = () => {
+  const navigator = useNavigate()
+
+return(
+  
+  <div className="relative flex h-screen w-screen items-center flex-col justify-center bg-primary-m1 text-white">
     <motion.h1
       initial={{ opacity: 0, y: "50px" }}
       animate={{ opacity: 1, y: "0px", transition: { duration: 1 } }}
       className="text-center text-6xl font-bold leading-normal tracking-wide"
-    >
+      >
       청소년 경제 교육의 모든 것 <br />
       미니머니마니모 에서 <br />
       유용하고 편리하게
     </motion.h1>
+      {/* 중앙 하단에 화살표 추가 */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transform">
+      <button className=" m-9 text-gray-50" onClick={()=>{navigator("/")} }>홈으로 가기</button>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className="flex items-center justify-center"
+          >
+          {/* 화살표 CSS */}
+          <div className="h-0 w-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white" />
+        </motion.div>
+    </div>
   </div>
 )
+
+}
 const Page2Content = () => (
   <div className="flex h-[800px] w-screen items-center justify-center">
     <h1 className="text-center text-4xl font-bold leading-normal tracking-wide">
@@ -131,7 +155,7 @@ const Page3Content = () => {
 
   return (
     <div className="relative flex h-[4100px] w-full justify-center gap-8 bg-white">
-      <div className="absolute z-10 ml-[80px] flex w-full flex-col items-start gap-[400px] ps-24 pt-[250px]">
+      <div className="absolute z-10 flex w-full flex-col items-start gap-[400px] ps-24 pt-[250px]">
         <h1 className="ml-[40px] mt-[70px] w-[600px] text-5xl font-bold leading-snug tracking-wide">
           어렵게만 느껴졌던 주식투자
           <br />
@@ -178,9 +202,8 @@ const Page3Content = () => {
         }}
       /> */}
         {/* <div className=" absolute w-full bg-gradient-to-b from-primary-m1 to-white"></div> */}
-        <div className="absolute inset-0 z-10 bg-gradient-to-l from-black/0 via-transparent to-white/100"></div>
+        <div className="absolute inset-0 z-10 w-full bg-gradient-to-l from-black/0 via-transparent to-white/100"></div>
 
-        <div className="absolute top-0 z-10 w-full bg-black"></div>
         <img className="w-full" src={imageSrc} alt="아이 호버 이미지" />
       </div>
     </div>
@@ -240,7 +263,7 @@ const Page5Content = () => (
         확인해 보세요.
         <br />
       </h1>
-      <h1 className="text-4xl leading-snug text-white">
+      <h1 className="text-3xl leading-snug text-white">
         뉴스를 보며 경제시사상식을 쌓고
         <br />
         {/* (뉴스를 보며 경제시사상식을 쌓아 시장을 보는 눈을 넓혀요.) */}
@@ -250,28 +273,37 @@ const Page5Content = () => (
     </div>
   </div>
 )
-const Page6Content = () => (
-  <div className="flex h-screen w-screen flex-col items-center justify-between gap-16">
-  <div className="flex flex-col items-center h-full justify-center gap-16">
-    <div
-      className="flex flex-col items-center gap-16 pt-[200px]"
-      data-aos="zoom-out"
-    >
-      <h1 className="text-6xl font-bold">꼭 필요했던 서비스</h1>
-      <h1 className="text-6xl font-bold">미니머니마니모</h1>
+const Page6Content = () => {
+  const navigator = useNavigate()
 
-      <button className="mt-6 border border-black px-4 py-1 text-xl">
-        {" "}
-        이용하러 가기{" "}
-      </button>
-    </div>
-  </div>
-    <span className="">
-      B105 아름다완 요민이 팀원: 김세민 목요빈 이다영 이창현 조아름 개발기간 :
-      2024.09.04 ~ 2024.10.11
-    </span>
+  return (
+    <div className="flex h-screen w-screen flex-col items-center justify-between gap-16">
+      <div className="flex h-full flex-col items-center justify-center gap-16">
+        <div
+          className="flex flex-col items-center gap-16 pt-[250px]"
+          data-aos="zoom-out"
+        >
+          <h1 className="text-6xl font-bold">꼭 필요했던 서비스</h1>
+          <h1 className="text-6xl font-bold">미니머니마니모</h1>
+
+          <button
+            className="mt-6 border border-black px-4 py-1 text-xl"
+            onClick={() => {
+              navigator("/")
+            }}
+          >
+            이용하러 가기
+          </button>
+        </div>
       </div>
-)
+      <span className="">
+        B105 아름다완 요민이 팀원: 김세민 목요빈 이다영 이창현 조아름 개발기간 :
+        2024.09.04 ~ 2024.10.11
+      </span>
+    </div>
+  )
+}
+
 const Page7Content = () => (
   <div className="flex h-[100px] w-screen flex-col items-center justify-center overflow-hidden bg-black text-white">
     <ParallaxText baseVelocity={-10}>청소년 투자 교육 서비스</ParallaxText>
@@ -319,7 +351,7 @@ const App: React.FC = () => {
     AOS.init()
   }, [])
   return (
-    <div>
+    <div className="hidden-scrollbar w-screen">
       {pages.map((page, index) => (
         <div
           key={index}
