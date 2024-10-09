@@ -33,9 +33,12 @@ export const solveQuiz = async (option: string, id: string) => {
   }
 }
 
-export const getNewsQuizzes = async (page: number, size: number = 6) => {
+export const getNewsQuizzes = async (page: number, size: number) => {
   try {
+    console.log("페이지 요청")
+    console.log(`page : ${page} , size = ${size}`)
     const res = await axiosAuthInstance.get(`/quiz?page=${page}&number=${size}`)
+    console.log("응답이에요 %%%%%%%%%%%%%%%%%%%%%%%%")
     console.log(res.data)
     return res.data.data
   } catch (e: any) {
