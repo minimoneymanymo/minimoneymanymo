@@ -115,3 +115,16 @@
   display: block;
   margin-right: 30px;
 }
+
+/* index.css */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto; /* Scrollbar를 적용하기 위해 추가 */
+}
+
+body {
+  @apply custom-scrollbar;
+}

@@ -22,7 +22,7 @@ const ChildInvestStylePage = () => {
   }, [])
 
   return (
-    <div className="mb-24 flex w-full flex-col space-y-4">
+    <div className="flex w-full flex-col space-y-4">
       <Heading title="투자성향" />
       <div className="mt-4">
         <div className="rounded-2xl bg-white p-6">

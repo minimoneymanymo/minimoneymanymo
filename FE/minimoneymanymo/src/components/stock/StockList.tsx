@@ -40,8 +40,10 @@ interface StockFilter {
   low52WeekMax: number | null // 52주 최저가 최대값
   tradingValueMin: number | null // 최소 거래대금
   tradingValueMax: number | null // 최대 거래대금
+  volumeMin: number | null
   volumeMax: number | null // 최대 거래량
   search: string | null
+  interestStocks: boolean
 }
 
 function StockList({ filters }: { filters: StockFilter }) {
@@ -122,6 +124,10 @@ function StockList({ filters }: { filters: StockFilter }) {
           filters.tradingValueMin !== null
             ? filters.tradingValueMin.toString()
             : "",
+        volumeMin:
+          filters.volumeMin !== undefined && filters.volumeMin !== null
+            ? filters.volumeMin.toString()
+            : "",
         volumeMax:
           filters.volumeMax !== undefined && filters.volumeMax !== null
             ? filters.volumeMax.toString()
@@ -135,17 +141,24 @@ function StockList({ filters }: { filters: StockFilter }) {
           filters.search !== undefined && filters.search !== null
             ? filters.search.toString()
             : "",
+        interestStocks: filters.interestStocks ? "true" : "", // 관심 종목 필터 적용
         sort: `${sortKey},${sortOrder}`,
         page: page.toString(),
       }).toString()
 
       const res = await getStockList(queryParams)
+      let stockData = res.data.content
+
+      //관심 종목이 선택되었을 때는 favorite이 true인 것만 들고있기
+      if (filters.interestStocks) {
+        stockData = stockData.filter((stock: StockData) => stock.favorite)
+      }
       if (reset) {
         // 필터가 변경되었을 때 초기화 후 데이터 로드
-        setStockRows(res.data.content)
+        setStockRows(stockData)
       } else {
         // 무한스크롤 또는 정렬 시 기존 데이터에 붙이기
-        setStockRows((prevRows) => [...prevRows, ...res.data.content])
+        setStockRows((prevRows) => [...prevRows, ...stockData])
       }
       setHasMore(!res.data.last)
       setLoading(false)
