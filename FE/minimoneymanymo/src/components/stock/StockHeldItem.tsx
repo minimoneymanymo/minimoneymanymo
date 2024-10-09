@@ -27,11 +27,11 @@ const StockHeldItem: React.FC<StockHeld> = (props) => {
 
   const formatWithSign = (value: number) => {
     if (value > 0) {
-      return `+ ${Math.round(value * 100) / 100}`
+      return `+ ${(Math.round(value * 100) / 100).toLocaleString()}`
     } else if (value < 0) {
-      return `- ${Math.abs(Math.round(value * 100) / 100)}`
+      return `- ${Math.abs(Math.round(value * 100) / 100).toLocaleString()}`
     } else {
-      return `${Math.round(value * 100) / 100}`
+      return `${(Math.round(value * 100) / 100).toLocaleString()}`
     }
   }
 

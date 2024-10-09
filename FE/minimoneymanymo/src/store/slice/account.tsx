@@ -17,6 +17,9 @@ export const accountSlice = createSlice({
     setAccount: (state, action: PayloadAction<object>) => {
       return { ...state, ...action.payload }
     },
+    clearAccount(state) {
+      return initialState // 상태를 초기 상태로 리셋
+    },
   },
 })
 

@@ -1,16 +1,15 @@
-import { useState, useRef } from "react"
-import React from "react"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import confetti from "canvas-confetti"
 import Modal from "react-modal"
 import { solveQuiz } from "@/api/news-api"
-import { Button, Card } from "@material-tailwind/react"
+import { Card } from "@material-tailwind/react"
 import Swal from "sweetalert2"
 import { setMemberInfo } from "@/utils/user-utils"
 import { useDispatch } from "react-redux"
-import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { parentActions, selectParent } from "@/store/slice/parent"
-import { childActions, selectChild } from "@/store/slice/child"
+import { useAppSelector } from "@/store/hooks"
+import { selectParent } from "@/store/slice/parent"
+import { selectChild } from "@/store/slice/child"
 interface NewsModalProps {
   id: string
   title: string
@@ -191,7 +190,7 @@ const NewsComponent: React.FC<NewsModalProps> = ({
       <Modal
         isOpen={open}
         onRequestClose={handleOpen}
-        contentLabel="퀴즈! 경제한입"
+        contentLabel="퀴즈! 경제 한입"
         style={{
           overlay: {
             position: "fixed",
@@ -221,8 +220,8 @@ const NewsComponent: React.FC<NewsModalProps> = ({
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
       >
         <div className="p-6">
-          <div className="mb-6 text-2xl font-bold">🔎 퀴즈! 경제한입</div>
-          <div className="m-2 mb-4 font-bold" color="blue-gray">
+          <div className="mb-6 text-2xl font-bold">🔎 퀴즈! 경제 한입</div>
+          <div className="m-2 mb-4 text-xl font-bold" color="blue-gray">
             {question}
           </div>
 
@@ -248,9 +247,12 @@ const NewsComponent: React.FC<NewsModalProps> = ({
           </div>
 
           <div className="mt-4 flex justify-end">
-            <Button color="green" onClick={handleSubmit}>
+            <button
+              onClick={handleSubmit}
+              className="ml-4 rounded-xl bg-secondary-m2 px-4 py-2 text-white"
+            >
               제출하기
-            </Button>
+            </button>
           </div>
         </div>
       </Modal>
