@@ -166,7 +166,7 @@ export function SimpleRegistrationForm() {
         if (result.stateCode === 201) {
           console.log("회원가입 성공")
           dispatch(parentActions.setUserKey(userKey))
-          navigate("/") // main으로 navigate
+          navigate("/main") // main으로 navigate
         } else if (result.stateCode === 400) {
           Swal.fire({
             title: `번호가 일치하는 부모가 없습니다`,
