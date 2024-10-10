@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ParentService {
     String registerParent(JoinRequestDto joinDto);
-    String uploadProfileImage(MultipartFile file) throws IOException;
+    String uploadProfileImage(MultipartFile file, String userId) throws IOException;
     boolean isExistByUserId(String userId);
     boolean isExistByPhoneNumber(String phoneNumber);
     List<MyChildrenDto> getMyChildren(String userId);

@@ -2,7 +2,9 @@ package com.beautifulyomin.mmmm.domain.stock.service;
 
 import com.beautifulyomin.mmmm.domain.fund.entity.StocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
+import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.fund.repository.StocksHeldRepository;
+import com.beautifulyomin.mmmm.domain.fund.repository.TransactionRepository;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
@@ -44,6 +46,7 @@ public class TradeServiceImpl implements TradeService {
     private final ParentRepository parentRepository;
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final ParentService parentService;
+    private final TransactionRepository transactionRepository;
 
     @Override
     public void createTradeByDate(TradeDto tradeDto, Integer childrenId, LocalDate date) {
@@ -280,10 +283,11 @@ public class TradeServiceImpl implements TradeService {
 
 
         //거래내역을 찾을 수 없는 경우
-        Optional<TradeDto> trade =  tradeRecordsRepository.findTradeByCreateAt(requestDto.getCreatedAt());
+        Optional<TradeDto> trade =  tradeRecordsRepository.findTradeByCreateAt(requestDto.getCreatedAt(), requestDto.getChildrenUserId());
         if(trade.isEmpty()){
             throw new TradeNotFoundException(requestDto.getCreatedAt());
         }
+
        //해당 자식의 거래내역이 아닌경우
         if(!trade.get().getChildrenId().equals(child.getChildrenId())) {
             throw new AccessDeniedException("해당 거래는 요청한 사용자의 것이 아닙니다.");
@@ -294,7 +298,14 @@ public class TradeServiceImpl implements TradeService {
         }
         long result = tradeRecordsRepository.updateReasonBonusMoneyByCreateAt(parentUserId,child.getChildrenId(),requestDto.getReasonBonusMoney() ,requestDto.getCreatedAt());
         //성공적으로 반환한경우 result = 1
-
+        if(result == 1 ){
+            TransactionRecord transactionRecord = new TransactionRecord();
+            transactionRecord.setChildren(child);
+            transactionRecord.setAmount(requestDto.getReasonBonusMoney());
+            transactionRecord.setRemainAmount(child.getMoney() + requestDto.getReasonBonusMoney());
+            transactionRecord.setTradeType("3");
+            transactionRepository.save(transactionRecord);
+        }
 
         return (int) result;
     }

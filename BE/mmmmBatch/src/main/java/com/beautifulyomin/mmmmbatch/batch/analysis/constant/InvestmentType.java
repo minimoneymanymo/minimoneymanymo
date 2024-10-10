@@ -7,9 +7,10 @@ import java.util.Arrays;
 @Getter
 public enum InvestmentType {
     TURTLE("느긋한 거북이", 1),
-    PHONEIX("화끈한 불사조", 2),
-    LION("모험심 가득한 사자", 3),
-    SPROUT("성장하는 새싹", 4),
+    SPROUT ("성장하는 새싹", 2),
+    WALRUS ("신중한 바다 코끼리", 3),
+    CHEETAH ("빠른 치타", 4),
+    PHOENIX  ("화끈한 불사조", 5),
     NONE("없음", 0);
 
     private final String label;

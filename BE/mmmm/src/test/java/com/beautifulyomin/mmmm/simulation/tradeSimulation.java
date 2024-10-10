@@ -8,6 +8,7 @@ import com.beautifulyomin.mmmm.domain.stock.service.TradeServiceImpl;
 import com.beautifulyomin.mmmm.simulation.data.SimulationInvestor;
 import com.beautifulyomin.mmmm.simulation.data.MarketStocks;
 import com.beautifulyomin.mmmm.simulation.data.SimulationStock;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.IntStream;
 
+@Slf4j
 @TestPropertySource(locations = "classpath:application-test.properties")
 @SpringBootTest
 @Import({QueryDslConfig.class})
@@ -28,8 +30,8 @@ public class tradeSimulation {
     private static final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
     private static final LocalDate END_DATE = LocalDate.of(2024, 9, 30);
     private static final int INITIAL_MONEY = 100000;
-    private static final int INVESTOR_START_IDX = 11398;
-    private static final int INVESTOR_COUNT = 2000;
+    private static final int INVESTOR_START_IDX = 58;
+    private static final int INVESTOR_COUNT = 1000;
 
     // 기본 수익 임계값: 이 비율 이상의 수익 시 매도를 고려
     private static final double BASE_PROFIT_THRESHOLD = 0.05;  // 5%
@@ -47,11 +49,15 @@ public class tradeSimulation {
     private static final int MAX_HOLDING_PERIOD = 30;
 
     // 최대 포트폴리오 크기: 보유 가능한 최대 주식 종류 수
-    private static final int MAX_PORTFOLIO_SIZE = 5;
+    private static final int MAX_PORTFOLIO_SIZE = 3;
 
     // 시장 변화 기준점: 이 값을 기준으로 시장 상승/하락 판단
     // 0.0은 변화 없음을 의미, 양수는 상승, 음수는 하락을 나타냄
     private static final double MARKET_CHANGE_THRESHOLD = 0.0;
+
+    //투자 마지노선 기준
+    private static final double MINIMUM_INVESTMENT_AMOUNT = 10000;
+    private static final int MAX_DAILY_TRADE_CNT = 5;
 
     private final TradeServiceImpl tradeService;
     private final DailyStockChartRepository dailyStockChartRepository;
@@ -71,8 +77,11 @@ public class tradeSimulation {
         investors = initializeInvestors();
         loadDailyChangeRates();
         for (LocalDate date = START_DATE; !date.isAfter(END_DATE); date = date.plusDays(1)) { //날짜마다 매수 매도를 진행한다.
+            log.info("🚩🚩🚩🚩🚩🚩date={}", date);
             for (SimulationInvestor investor : investors) {
-                makeTradingDecisions(investor, date);
+                if (!makeTradingDecisions(investor, date)) {
+                    break; //공휴일이면 바로 다음날로 넘어가기
+                }
             }
         }
 
@@ -110,23 +119,37 @@ public class tradeSimulation {
     }
 
     //가중치에 대한 확률을 지정해 중간 가중치가 나올 확률을 높인다.
+//    private double generateWeightedRandomValue(Random random) {
+//        double[] weights = {0.05, 0.1, 0.15, 0.2, 0.3, 0.3, 0.2, 0.15, 0.1, 0.05};
+//        double value = random.nextDouble();
+//        for (int i = 0; i < weights.length; i++) {
+//            if (value < weights[i]) {
+//                return (i + 1) / 10.0; // 0.1 to 1.0
+//            }
+//            value -= weights[i];
+//        }
+//        return 1.0; // fallback
+//    }
+
     private double generateWeightedRandomValue(Random random) {
-        double[] weights = {0.05, 0.1, 0.15, 0.2, 0.3, 0.3, 0.2, 0.15, 0.1, 0.05};
-        double value = random.nextDouble();
-        for (int i = 0; i < weights.length; i++) {
-            if (value < weights[i]) {
-                return (i + 1) / 10.0; // 0.1 to 1.0
-            }
-            value -= weights[i];
-        }
-        return 1.0; // fallback
+        // 평균 0.5, 표준편차 0.2로 설정한 정규분포 사용
+        double mean = 0.5;
+        double stdDev = 0.2;
+        double value = mean + stdDev * random.nextGaussian();
+
+        // 0.1에서 1.0 사이로 값을 제한 (정규 분포 값이 음수거나 1을 초과하지 않게)
+        return Math.max(0.1, Math.min(1.0, value));
     }
 
 
-    private void makeTradingDecisions(SimulationInvestor investor, LocalDate date) {
+    //하루에 최대 3개 이상 거래하지 않게
+    private boolean makeTradingDecisions(SimulationInvestor investor, LocalDate date) {
+
         if (!isValidTradingDay(date)) {
-            return;
+            return false;
         }
+
+        int tradeCount = 0;
 
         // 매도 결정
         for (Map.Entry<String, Integer> holding : new HashMap<>(investor.getStockHoldings()).entrySet()) {
@@ -134,6 +157,10 @@ public class tradeSimulation {
             SimulationStock stock = getStockByCode(stockCode);
             if (shouldSell(investor, stock, date)) {
                 executeTrade(investor, stock, false, date);
+                tradeCount++;
+            }
+            if (tradeCount >= MAX_DAILY_TRADE_CNT) {
+                break;
             }
         }
 
@@ -141,45 +168,74 @@ public class tradeSimulation {
         for (SimulationStock stock : simulationStocks) {
             if (shouldBuy(investor, stock, date)) {
                 executeTrade(investor, stock, true, date);
+                tradeCount++;
+            }
+            if (tradeCount >= MAX_DAILY_TRADE_CNT) {
+                break;
             }
         }
+
+        return true;
     }
 
     private boolean shouldSell(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
-        Map<String, Double> characteristics = investor.getCharacteristics();
         double profitRate = calculateProfitRate(investor, stock, date);
         int holdingPeriod = calculateHoldingPeriod(investor, stock, date);
 
-        // 위험 회피 성향과 시장 타이밍 감도 계산
-        double riskAversion = 1 - characteristics.get("marketTimingPreference");
-        double marketTimingSensitivity = characteristics.get("marketTimingPreference");
+        // 투자자 성향을 더 강하게 반영: 손실을 크게 싫어하는 투자자는 일정 손실만으로도 매도하도록
+        double riskAversion = 1 - investor.getCharacteristics().get("marketTimingPreference");
 
-        // 기본 수익/손실 기준 설정
-        double profitThreshold = BASE_PROFIT_THRESHOLD * (2 - riskAversion);
-        double lossThreshold = BASE_LOSS_THRESHOLD * riskAversion;
-
-        // 시장 타이밍 감도가 높은 경우 시장 동향 반영
-        if (marketTimingSensitivity > MARKET_TIMING_THRESHOLD) {
-            double marketTrend = analyzeMarketTrend(stock.getMarket(), date);
-            double marketImpact = MARKET_IMPACT_FACTOR * marketTimingSensitivity;
-            profitThreshold += marketTrend * marketImpact;
-            lossThreshold += marketTrend * marketImpact;
+        // 손익 기준이 명확하지 않으면 매도하지 않도록
+        if (profitRate > BASE_PROFIT_THRESHOLD || profitRate < BASE_LOSS_THRESHOLD) {
+            if (Math.random() < riskAversion) {
+                return true;
+            }
         }
 
-        // 수익률에 따른 매도 결정
-        if ((profitRate > profitThreshold && Math.random() < riskAversion) ||
-                (profitRate < lossThreshold && Math.random() < (2 - riskAversion))) {
-            return true;
-        }
-
-        // 보유 기간에 따른 매도 결정
-        double holdingPeriodPreference = characteristics.get("holdingPeriod");
-        if (holdingPeriod > MAX_HOLDING_PERIOD && Math.random() > holdingPeriodPreference) {
+        // 보유 기간에 따른 매도 결정 강화
+        if (holdingPeriod > MAX_HOLDING_PERIOD) {
             return true;
         }
 
         return false;
     }
+
+
+//    private boolean shouldSell(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
+//        Map<String, Double> characteristics = investor.getCharacteristics();
+//        double profitRate = calculateProfitRate(investor, stock, date);
+//        int holdingPeriod = calculateHoldingPeriod(investor, stock, date);
+//
+//        // 위험 회피 성향과 시장 타이밍 감도 계산
+//        double riskAversion = 1 - characteristics.get("marketTimingPreference");
+//        double marketTimingSensitivity = characteristics.get("marketTimingPreference");
+//
+//        // 기본 수익/손실 기준 설정
+//        double profitThreshold = BASE_PROFIT_THRESHOLD * (2 - riskAversion);
+//        double lossThreshold = BASE_LOSS_THRESHOLD * riskAversion;
+//
+//        // 시장 타이밍 감도가 높은 경우 시장 동향 반영
+//        if (marketTimingSensitivity > MARKET_TIMING_THRESHOLD) {
+//            double marketTrend = analyzeMarketTrend(stock.getMarket(), date);
+//            double marketImpact = MARKET_IMPACT_FACTOR * marketTimingSensitivity;
+//            profitThreshold += marketTrend * marketImpact;
+//            lossThreshold += marketTrend * marketImpact;
+//        }
+//
+//        // 수익률에 따른 매도 결정
+//        if ((profitRate > profitThreshold && Math.random() < riskAversion) ||
+//                (profitRate < lossThreshold && Math.random() < (2 - riskAversion))) {
+//            return true;
+//        }
+//
+//        // 보유 기간에 따른 매도 결정
+//        double holdingPeriodPreference = characteristics.get("holdingPeriod");
+//        if (holdingPeriod > MAX_HOLDING_PERIOD && Math.random() > holdingPeriodPreference) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     private int calculateHoldingPeriod(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
         return investor.calculateHoldingPeriod(stock.getStockCode(), date);
@@ -235,9 +291,13 @@ public class tradeSimulation {
     private boolean shouldBuy(SimulationInvestor investor, SimulationStock stock, LocalDate date) {
         Map<String, Double> characteristics = investor.getCharacteristics();
 
-        // 거래 빈도
-        double tradeChance = characteristics.get("tradingFrequency");
-        if (Math.random() > tradeChance) {
+        // 현재 자금이 충분하지 않으면 매수를 고려하지 않음
+        if (investor.getMoney() < MINIMUM_INVESTMENT_AMOUNT) {
+            return false;
+        }
+
+        // 거래 빈도에 따라 매수 여부 결정
+        if (Math.random() > investor.getCharacteristics().get("tradingFrequency")) {
             return false;
         }
 
@@ -363,6 +423,7 @@ public class tradeSimulation {
         for (SimulationStock simulationStock : simulationStocks) {
             List<DailyStockChart> dailyChartData = dailyStockChartRepository
                     .findByStockCodeAndDateBetweenOrderByDateAsc(simulationStock.getStockCode(), START_DATE, END_DATE);
+            log.info("Loaded data for {}: {}", simulationStock.getStockCode(), dailyChartData.size());
             calculateAndStoreDailyData(simulationStock, dailyChartData);
         }
     }

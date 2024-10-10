@@ -98,13 +98,13 @@ public class MembersController {
     public ResponseEntity<CommonResponseDto> registerUser(@RequestBody @NotNull JoinRequestDto joinDto) {
 
         String savedUsername = null;
-        try{
+        try {
             if (joinDto.getRole().equals("0")) {
                 savedUsername = parentService.registerParent(joinDto);
             } else if (joinDto.getRole().equals("1")) {
                 savedUsername = childrenService.registerChildren(joinDto);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(201)
                     .body(CommonResponseDto.builder()
                             .stateCode(400)
@@ -483,7 +483,7 @@ public class MembersController {
         jsonObject.put("transactionBalance", balance);
 
         try {
-            String response  = webClient.post()
+            String response = webClient.post()
                     .uri("/edu/demandDeposit/updateDemandDepositAccountWithdrawal") // URI에서 기본 URL 제외
                     .bodyValue(jsonObject)
                     .retrieve()
@@ -574,10 +574,20 @@ public class MembersController {
 
     @PostMapping("/image")
     public ResponseEntity<CommonResponseDto> profileImageUpload(
+            @RequestHeader("Authorization") String token,
             @RequestPart("file") MultipartFile file) throws IOException {
-        String imageUrl = parentService.uploadProfileImage(file);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new CommonResponseDto(201, "파일 업로드 성공", imageUrl));
+        String userId = jwtUtil.getUsername(token);
+        if (parentService.isExistByUserId(userId)) { // 부모
+            String imageUrl = parentService.uploadProfileImage(file, userId);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new CommonResponseDto(201, "파일 업로드 성공", imageUrl));
+        } else if (childrenService.isExistByUserId(userId)) { // 자녀
+            String imageUrl = childrenService.uploadProfileImage(file, userId);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new CommonResponseDto(201, "파일 업로드 성공", imageUrl));
+        }
+        throw new InvalidRequestException("아이디와 일치하는 사용자가 없습니다");
     }
 }
