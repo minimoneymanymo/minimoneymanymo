@@ -41,7 +41,7 @@ public class TradeRecordsRepositoryCustomImpl implements TradeRecordsRepositoryC
     }
 
     @Override
-    public Optional<TradeDto> findTradeByCreateAt(String createAt) {
+    public Optional<TradeDto> findTradeByCreateAt(String createAt, String  childrenUserId) {
         QTradeRecord tradeRecord = QTradeRecord.tradeRecord;
 
         return Optional.ofNullable(jpaQueryFactory
@@ -54,7 +54,7 @@ public class TradeRecordsRepositoryCustomImpl implements TradeRecordsRepositoryC
                         tradeRecord.remainAmount
                 ))
                 .from(tradeRecord)
-                .where(tradeRecord.createdAt.eq(createAt))
+                .where(tradeRecord.createdAt.eq(createAt).and(tradeRecord.children.userId.eq(childrenUserId)))
                 .fetchOne());
     }
 
