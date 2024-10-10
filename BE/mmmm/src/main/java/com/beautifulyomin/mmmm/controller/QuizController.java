@@ -50,7 +50,7 @@ public class QuizController {
 
     @GetMapping("/today")
     public ResponseEntity<CommonResponseDto> getTodayQuizList(@RequestHeader(value = "Authorization", required = false) String token) {
-        Integer childrenId = (token != null && !token.isEmpty())
+        Integer childrenId = (token != null && !token.isEmpty() && jwtUtil.getRole(token).equals("1"))
                 ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId() : -1;
 
         List<NewsQuiz> newsQuizList = quizService.findAllByPublishedDateTodayNewsQuizzes();
@@ -68,7 +68,7 @@ public class QuizController {
             @RequestHeader(value = "Authorization", required = false) String token,
             @RequestParam String number) {
         NewsQuiz newsQuiz = quizService.getNewsQuiz(Long.parseLong(number));
-        Integer childrenId = (token != null && !token.isEmpty())
+        Integer childrenId = (token != null && !token.isEmpty() && jwtUtil.getRole(token).equals("1"))
                 ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId() : -1;
         return ResponseEntity.ok(
                 CommonResponseDto.builder()
@@ -106,7 +106,7 @@ public class QuizController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        Integer childrenId = (token != null && !token.isEmpty())
+        Integer childrenId = (token != null && !token.isEmpty() && jwtUtil.getRole(token).equals("1"))
                 ? childrenService.findByUserId(jwtUtil.getUsername(token)).getChildrenId() : -1;
         Page<NewsQuiz> newsQuizzesPage = quizService.getPaginatedNewsQuizzes(page, size);
         List<NewsQuiz> newsQuizList = newsQuizzesPage.getContent();

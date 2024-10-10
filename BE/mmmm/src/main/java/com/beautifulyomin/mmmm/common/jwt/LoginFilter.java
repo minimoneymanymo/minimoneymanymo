@@ -88,7 +88,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     //로그인 실패시 실행하는 메소드
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        response.setStatus(401);
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException{
+        CommonResponseDto responseDto = CommonResponseDto.builder()
+                .stateCode(401)
+                .message("로그인 실패 아이디와 비밀번호를 확인해주세요")
+                .build();
+
+        // ObjectMapper를 사용해 CommonResponseDto 객체를 JSON으로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(responseDto);
+
+        // 응답 헤더 설정
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        // 응답 바디에 JSON 데이터 작성
+        response.getWriter().write(jsonResponse);
+
     }
 }

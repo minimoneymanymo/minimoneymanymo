@@ -22,10 +22,10 @@ import java.util.stream.IntStream;
 @Import({QueryDslConfig.class})
 class userMakeSimulation {
 
-    private static final int INVESTOR_START_IDX = 1700;
-    private static final int MAKE_COUNT = 2000;
+    private static final int INVESTOR_START_IDX = 50;
+    private static final int MAKE_COUNT = 1000;
     private static final int MONEY = 100000;
-    private final Integer PARENT_ID = 7;
+    private final Integer PARENT_ID = 1;
     private final EntityManager entityManager;
     private final ChildrenRepository childrenRepository;
     private final ParentRepository parentRepository;
@@ -42,7 +42,7 @@ class userMakeSimulation {
     @Test
     public void createChildrenAndParentBatch() {
         // 1. 부모 생성 (ID는 5로 통일)
-        Parent parent = parentRepository.findById(8).orElseGet(() -> {
+        Parent parent = parentRepository.findById(1).orElseGet(() -> {
             Parent newParent = new Parent("김부모", "김부모", "1234", "010-1234-5678", "77777");
             return parentRepository.save(newParent);
         });
@@ -87,7 +87,7 @@ class userMakeSimulation {
     public void updateChildrenMoney() {
 
         List<Children> childrenList = childrenRepository.findAllById(
-                IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX + MAKE_COUNT)
+                IntStream.rangeClosed(58, 58 + MAKE_COUNT)
                         .boxed()
                         .toList()
         );

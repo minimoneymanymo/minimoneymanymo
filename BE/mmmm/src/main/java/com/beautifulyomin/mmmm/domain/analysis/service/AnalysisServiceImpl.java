@@ -35,18 +35,20 @@ public class AnalysisServiceImpl implements AnalysisService {
                 .findByChildrenIdAndDate(children.getChildrenId(), latestDate);
 
         return Map.of(
-                "myStatistics", mapToInvestmentReportDto(investmentReport),
+                "myStatistics", mapToInvestmentReportDto(investmentReport, children.getName()),
                 "overallStatistics", getOverallStatistics(latestDate)
         );
     }
 
-    private InvestmentReportDto mapToInvestmentReportDto(InvestmentReport investmentReport) {
+    private InvestmentReportDto mapToInvestmentReportDto(InvestmentReport investmentReport, String childName) {
         return InvestmentReportDto.builder()
+                .name(childName)
                 .cashRatio(investmentReport.getCashRatio().doubleValue())
                 .stability(investmentReport.getStability())
                 .winLossRatio(investmentReport.getWinLossRatio().doubleValue())
                 .diversification(investmentReport.getDiversification())
                 .tradingFrequency(investmentReport.getTradingFrequency())
+                .investmentType(investmentReport.getInvestmentType())
                 .build();
     }
 
