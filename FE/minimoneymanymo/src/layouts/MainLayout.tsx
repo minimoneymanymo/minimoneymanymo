@@ -22,7 +22,7 @@ const MainPageLayout: React.FC = () => {
       </main>
       <button
         onClick={handleChatbotClick}
-        className="fixed bottom-4 right-4 rounded-full p-3 shadow-[0px_3px_10px_rgba(0,0,0,0.3)] transition duration-300"
+        className="fixed bottom-4 right-4 rounded-full bg-white p-3 shadow-[0px_3px_10px_rgba(0,0,0,0.3)] transition duration-300"
       >
         <img src="/images/question.png" alt="Help" className="h-8 w-8" />
       </button>

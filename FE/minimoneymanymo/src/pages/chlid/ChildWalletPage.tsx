@@ -349,7 +349,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
 
           <span className="text-right">
             <b className="mr-1">
-              <span className="mr-4 text-primary-600">₩ </span>
+              <span className="mr-4 text-secondary-m2">₩ </span>
               <span className="text-2xl">
                 {Number(accountBalance).toLocaleString()}
               </span>
