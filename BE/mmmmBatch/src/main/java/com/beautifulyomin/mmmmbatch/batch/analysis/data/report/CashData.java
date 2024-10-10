@@ -10,6 +10,9 @@ public class CashData {
     private int totalHoldingMarketAmount; //평가금 총합
 
     public double calculateCashRatio() {
+        if (this.myMoney < 0 || this.totalHoldingMarketAmount < 0) {
+            throw new IllegalArgumentException("myMoney와 totalHoldingMarketAmount는 음수일 수 없습니다.");
+        }
         if (this.myMoney == 0 && this.totalHoldingMarketAmount == 0) {
             return 0.0; //처음부터 투자할 돈이 없었던 자녀 -> 분석 대상 x -> 0
         }

@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class QuizJobRunner  { //
+public class QuizJobRunner { //  implements  CommandLineRunner
     private final JobLauncher jobLauncher;
     private final Job newsQuizJob;
 
@@ -22,7 +22,7 @@ public class QuizJobRunner  { //
 
     }
 
-    @Scheduled(cron = "0 0 5,13 * * ?")
+    @Scheduled(cron = "0 0 4,12 * * ?")
     public void run() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis()) // JobParameters에 현재 시간 추가

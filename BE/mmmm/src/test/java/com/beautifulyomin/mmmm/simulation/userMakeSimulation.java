@@ -87,7 +87,7 @@ class userMakeSimulation {
     public void updateChildrenMoney() {
 
         List<Children> childrenList = childrenRepository.findAllById(
-                IntStream.rangeClosed(INVESTOR_START_IDX, INVESTOR_START_IDX + MAKE_COUNT)
+                IntStream.rangeClosed(58, 58 + MAKE_COUNT)
                         .boxed()
                         .toList()
         );
