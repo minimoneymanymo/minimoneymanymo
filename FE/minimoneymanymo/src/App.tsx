@@ -31,7 +31,10 @@ import IntroPage from "./pages/main/IntroPage"
 
 function App() {
   const location = useLocation()
-  const shouldApplyMargin = !location.pathname.includes("/stock/")
+  const shouldApplyMargin =
+    !location.pathname.includes("/stock/") &&
+    !location.pathname.includes("/main")
+
   return (
     <div className={shouldApplyMargin ? "mb-16" : ""}>
       <Routes>
