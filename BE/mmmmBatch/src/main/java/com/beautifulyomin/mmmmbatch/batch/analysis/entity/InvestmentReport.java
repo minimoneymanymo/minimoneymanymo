@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 @IdClass(InvestmentReportId.class)
 @Table(name = "investment_reports")
 public class InvestmentReport {
