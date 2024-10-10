@@ -149,12 +149,12 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
 
         if(rows > 0){ // 업데이트가 발생하면
             // 자식의 출가금 잔액, 머니 잔액 변경
-            jpaQueryFactory
-                .update(children)
-                .set(children.money, children.money.subtract(amount))
-                .set(children.withdrawableMoney, children.withdrawableMoney.subtract(amount))
-                .where(children.childrenId.eq(childrenId))
-                .execute();
+//            jpaQueryFactory
+//                .update(children)
+//                .set(children.money, children.money.subtract(amount))
+//                .set(children.withdrawableMoney, children.withdrawableMoney.subtract(amount))
+//                .where(children.childrenId.eq(childrenId))
+//                .execute();
 
             // 부모의 마니모 계좌 충전금액 변경
             jpaQueryFactory
@@ -244,6 +244,8 @@ public class FundRepositoryCustomImpl implements FundRepositoryCustom{
                             .and(dailyStockData.date.eq(latestDate)))
                     .where(stock.stockCode.eq(stockCode))  // 여기서 stockCode로 필터링
                     .fetchFirst();
+
+//            if(extra == null) continue;
 
             BigDecimal totalAmount = BigDecimal.valueOf(dto.getTotalAmount());
             BigDecimal remainSharesCount = dto.getRemainSharesCount();
