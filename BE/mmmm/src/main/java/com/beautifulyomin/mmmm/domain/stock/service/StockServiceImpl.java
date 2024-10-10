@@ -79,6 +79,7 @@ public class StockServiceImpl implements StockService {
         log.info("getFilteredStocks 진입");
         log.info("filterRequestDto: {}", filterRequestDto);
         log.info("searchList: {}", filterRequestDto.getSearchList());
+        log.info("searchList: {}", filterRequestDto);
 
         Page<StockResponse> stocks = stockRepositoryCustom.findFilteredStocks(filterRequestDto, pageable);
         if (userId == null) //사용자가 없으면 기본만 반환
