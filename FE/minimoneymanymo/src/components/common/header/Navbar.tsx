@@ -93,7 +93,7 @@ const NavAction = (): JSX.Element => {
         <div className="flex items-center space-x-5">
           {parent.userId ? (
             <>
-              <li className="flex items-center">
+              <li className="border-1 flex items-center rounded-3xl bg-secondary-50 py-1 pl-1 pr-3">
                 <img
                   src={profileImgUrl || "/images/profile.jpg"}
                   alt="프로필사진"
@@ -102,7 +102,7 @@ const NavAction = (): JSX.Element => {
                   }}
                   className="mx-2 size-8 rounded-full"
                 />
-                {name} 님{" "}
+                <span className="mr-1 font-bold">{name} </span> 님
               </li>
               <li className="mx-2.5 flex h-full cursor-pointer items-center">
                 <Link to="/parent/my-wallet">마이페이지</Link>
@@ -110,7 +110,7 @@ const NavAction = (): JSX.Element => {
             </>
           ) : (
             <>
-              <li className="flex items-center">
+              <li className="border-1 flex items-center rounded-3xl bg-tertiary-50 py-1 pl-1 pr-3">
                 <img
                   src={profileImgUrl || "/images/profile.jpg"}
                   alt="프로필사진"
@@ -119,7 +119,7 @@ const NavAction = (): JSX.Element => {
                   }}
                   className="mx-2 size-8 rounded-full"
                 />
-                {name} 님{" "}
+                <span className="mr-1 font-bold">{name} </span> 님
               </li>
               <li className="mx-2.5 flex h-full cursor-pointer items-center">
                 <Link to="/my-info/wallet">마이페이지</Link>

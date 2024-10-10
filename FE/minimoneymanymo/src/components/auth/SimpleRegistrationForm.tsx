@@ -1,13 +1,5 @@
-import { useEffect, useState } from "react"
-import {
-  Card,
-  Button,
-  Typography,
-  List,
-  ListItem,
-  ListItemPrefix,
-  Radio,
-} from "@material-tailwind/react"
+import { useState } from "react"
+import { Card, Button, Typography } from "@material-tailwind/react"
 import { Visibility, VisibilityOff, Check } from "@mui/icons-material"
 import { IconButton, InputAdornment, TextField } from "@mui/material"
 import { getIsDuplicatedId, signUp, checkAuthCode } from "@/api/user-api"
@@ -29,7 +21,7 @@ export function SimpleRegistrationForm() {
   const [authNum, setAuthNum] = useState("") // 상태 추가
   const [isIdValid, setIsIdValid] = useState<boolean | null>(null) // null means no validation yet
   const [isAuthValid, setIsAuthValid] = useState<boolean | null>(null) // null means no validation yet
-  const [role, setRole] = useState<string>("") // Initialize with null or default value
+  const [role, setRole] = useState(0) // Initialize with null or default value
   const [isDuple, setIsDuple] = useState<boolean | null>(null) // null means no validation yet
   const [userName, setUserName] = useState("") // userName 상태 변수 선언
   const [birthDay, setBirthDay] = useState("") // 생일 상태 변수
@@ -44,8 +36,8 @@ export function SimpleRegistrationForm() {
     setIsIdValid(false)
   }
 
-  const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRole(event.target.value) // Update role based on selected radio button
+  const handleRoleChange = (event: number) => {
+    setRole(event) // Update role based on selected radio button
   }
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,14 +123,14 @@ export function SimpleRegistrationForm() {
       })
       return
     }
-    if (role === "1" && birthDay.length != 6) {
+    if (role === 1 && birthDay.length != 6) {
       Swal.fire({
         title: "생일 형식이 맞지 않습니다.",
         icon: "warning",
       })
       return
     }
-    if (role == "1" && parentsNumber && !validatePhoneNumber(parentsNumber)) {
+    if (role === 1 && parentsNumber && !validatePhoneNumber(parentsNumber)) {
       Swal.fire({
         title: "부모 전화번호 형식이 맞지 않습니다.",
         icon: "warning",
@@ -146,7 +138,7 @@ export function SimpleRegistrationForm() {
       return
     }
 
-    var userKey = await registerMemberApi(id) //금융 api
+    let userKey = await registerMemberApi(id) //금융 api
     if (userKey == null) {
       userKey = await searchMemberApi(id)
     }
@@ -156,7 +148,7 @@ export function SimpleRegistrationForm() {
           id,
           password,
           userName,
-          role,
+          role.toString(),
           userKey,
           phoneNumber,
           birthDay,
@@ -207,23 +199,40 @@ export function SimpleRegistrationForm() {
       shadow={false}
       className="rounded-lg border border-gray-300 p-6"
     >
-      <Typography variant="h5" color="blue-gray">
-        환영해요 !
-      </Typography>
-      <Typography className="mt-1 text-3xl font-bold text-primary-m1">
+      <div className="text-blue-gray-700 -mb-1 text-xl font-semibold tracking-wider">
+        환영해요!
+      </div>
+      <div className="mt-1 text-3xl font-bold tracking-wide text-secondary-m2">
         minimoneymanymo
-      </Typography>
-      <Typography variant="h6" color="blue-gray">
-        에 회원가입을 해보아요
-      </Typography>
+      </div>
+
+      <div className="mt-6 flex">
+        <button
+          className={`${role === 0 ? "border-secondary-m2 bg-secondary-m3" : ""} flex-1 border py-0.5`}
+          onClick={() => {
+            handleRoleChange(0)
+          }}
+        >
+          부모
+        </button>
+        <button
+          className={`${role === 1 ? "border-secondary-m2 bg-secondary-m3" : ""} flex-1 border py-0.5`}
+          onClick={() => {
+            handleRoleChange(1)
+          }}
+        >
+          자녀
+        </button>
+      </div>
       <form className="mb-2 mt-8 w-80 max-w-screen-lg sm:w-96">
         <div className="mb-1 flex flex-col gap-6">
-          <Typography variant="h6" color="blue-gray" className="-mb-3">
+          <div className="text-blue-gray-700 -mb-3 text-lg font-bold">
             아이디{" "}
             {isAuthValid && (
               <Check style={{ color: "green", marginLeft: "8px" }} />
             )}
-          </Typography>
+          </div>
+
           <div style={{ display: "flex", flexDirection: "column" }}>
             <TextField
               fullWidth
@@ -241,14 +250,14 @@ export function SimpleRegistrationForm() {
                   >
                     <Button
                       onClick={handleCheckId}
-                      className="rounded-lg bg-primary-m1 text-white"
+                      className="rounded-lg bg-secondary-m2 text-white"
                       style={{
                         minWidth: "auto",
                         padding: "0 8px",
                         height: "32px",
                       }}
                     >
-                      인증메일보내기
+                      메일 인증
                     </Button>
                   </InputAdornment>
                 ),
@@ -263,17 +272,18 @@ export function SimpleRegistrationForm() {
             >
               {isIdValid && (
                 <>
-                  <Typography
+                  <div
                     style={{
                       color: "green",
-                      marginBottom: "8px",
+                      marginBottom: "5px",
                       width: "340px",
+                      marginTop: "3px",
                     }}
                   >
                     메일이 발송되었습니다.
                     <br />
                     인증코드를 입력하세요.
-                  </Typography>
+                  </div>
                   <div style={{ display: "flex", flexDirection: "column" }}>
                     <TextField
                       fullWidth
@@ -290,7 +300,7 @@ export function SimpleRegistrationForm() {
                           >
                             <Button
                               onClick={handleCheckAuthCode}
-                              className="rounded-lg bg-primary-m1 text-white"
+                              className="rounded-lg bg-secondary-m2 text-white"
                               style={{
                                 minWidth: "auto",
                                 padding: "0 8px",
@@ -316,9 +326,7 @@ export function SimpleRegistrationForm() {
             </div>
           </div>
 
-          <Typography variant="h6" color="blue-gray" className="-mb-3">
-            이름
-          </Typography>
+          <div className="text-blue-gray-700 -mb-3 text-lg font-bold">이름</div>
 
           <TextField
             fullWidth
@@ -329,9 +337,10 @@ export function SimpleRegistrationForm() {
             value={userName} // 상태 변수로 현재 값 설정
             onChange={(e) => setUserName(e.target.value)} // 입력값 변경 시 핸들러 호출
           />
-          <Typography variant="h6" color="blue-gray" className="-mb-3">
+          <div className="text-blue-gray-700 -mb-3 text-lg font-bold">
             전화번호
-          </Typography>
+          </div>
+
           <TextField
             fullWidth
             variant="outlined"
@@ -341,9 +350,10 @@ export function SimpleRegistrationForm() {
             value={phoneNumber} // phoneNumber 상태 변수로 설정
             onChange={(e) => setPhoneNumber(e.target.value)} // 전화번호 입력 시 상태 업데이트
           />
-          <Typography variant="h6" color="blue-gray" className="-mb-3">
+          <div className="text-blue-gray-700 -mb-3 text-lg font-bold">
             비밀번호
-          </Typography>
+          </div>
+
           <TextField
             type={hoverPassword ? "text" : showPassword ? "text" : "password"}
             fullWidth
@@ -375,9 +385,9 @@ export function SimpleRegistrationForm() {
             }}
           />
 
-          <Typography variant="h6" color="blue-gray" className="-mb-3">
+          <div className="text-blue-gray-700 -mb-3 text-lg font-bold">
             비밀번호 확인
-          </Typography>
+          </div>
           <TextField
             type={
               hoverConfirmPassword
@@ -419,68 +429,15 @@ export function SimpleRegistrationForm() {
               {passwordError}
             </Typography>
           )}
-          <></>
 
-          <Card className="w-full max-w-[24rem] shadow-none">
-            <List className="flex-row">
-              <ListItem className="p-0">
-                <label
-                  htmlFor="horizontal-list-react"
-                  className="flex w-full cursor-pointer items-center px-3 py-2"
-                >
-                  <ListItemPrefix className="mr-3">
-                    <Radio
-                      name="horizontal-list"
-                      id="horizontal-list-react"
-                      value="0" // Set value for role 0
-                      checked={role === "0"}
-                      onChange={handleRoleChange}
-                      ripple={false}
-                      className="hover:before:opacity-0"
-                      containerProps={{ className: "p-0" }}
-                    />
-                  </ListItemPrefix>
-                  <Typography
-                    color="blue-gray"
-                    className="text-blue-gray-400 font-medium"
-                  >
-                    부모
-                  </Typography>
-                </label>
-              </ListItem>
-              <ListItem className="p-0">
-                <label
-                  htmlFor="horizontal-list-vue"
-                  className="flex w-full cursor-pointer items-center px-3 py-2"
-                >
-                  <ListItemPrefix className="mr-3">
-                    <Radio
-                      name="horizontal-list"
-                      id="horizontal-list-vue"
-                      value="1" // Set value for role 1
-                      checked={role === "1"}
-                      onChange={handleRoleChange}
-                      ripple={false}
-                      className="hover:before:opacity-0"
-                      containerProps={{ className: "p-0" }}
-                    />
-                  </ListItemPrefix>
-                  <Typography
-                    color="blue-gray"
-                    className="text-blue-gray-400 font-medium"
-                  >
-                    자녀
-                  </Typography>
-                </label>
-              </ListItem>
-            </List>
-          </Card>
-
-          {role === "1" && (
+          {role === 1 && (
             <>
-              <Typography variant="h6" color="blue-gray" className="-mb-3">
-                부모님 번호를 입력해 주세요
-              </Typography>
+              <div className="text-blue-gray-700 -mb-7 text-lg font-bold">
+                부모님 번호
+              </div>
+              <div className="-mb-3">
+                부모 확인용으로 사용됩니다. 올바른 번호를 입력해주세요.
+              </div>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -490,9 +447,10 @@ export function SimpleRegistrationForm() {
                 value={parentsNumber} // parentsNumber 상태 변수로 설정
                 onChange={(e) => setParentsNumber(e.target.value)} // 부모 번호 입력 시 상태 업데이트
               />
-              <Typography variant="h6" color="blue-gray" className="-mb-3">
-                생일을 입력해 주세요
-              </Typography>
+              <div className="text-blue-gray-700 -mb-3 text-lg font-bold">
+                생일
+              </div>
+
               <TextField
                 fullWidth
                 variant="outlined"
@@ -505,20 +463,25 @@ export function SimpleRegistrationForm() {
             </>
           )}
         </div>
-        <Button
-          className="mt-6 bg-primary-m1"
-          fullWidth
+        <button
+          className={`mt-6 flex w-full justify-center rounded-lg p-2 text-lg text-white ${
+            !isAuthValid ||
+            passwordError !== "" ||
+            password.trim() === "" ||
+            userName.length === 0
+              ? "cursor-not-allowed bg-secondary-200" // 비활성화 시 스타일
+              : "cursor-pointer bg-secondary-m2" // 활성화 시 스타일
+          }`}
+          onClick={handleSignUp}
           disabled={
             !isAuthValid ||
             passwordError !== "" ||
             password.trim() === "" ||
-            role.length === 0 || // role의 길이가 0일 경우 버튼 비활성화
             userName.length === 0
           }
-          onClick={handleSignUp}
         >
-          미니마니모를 향한 여정을 시작해보아요!
-        </Button>
+          회원가입
+        </button>
       </form>
     </Card>
   )
