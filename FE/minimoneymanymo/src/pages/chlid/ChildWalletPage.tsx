@@ -23,6 +23,7 @@ import { selectChild } from "@/store/slice/child"
 import LineChart from "./component/LineChart"
 import { setMemberInfo } from "@/utils/user-utils"
 import Swal from "sweetalert2"
+import { alertBasic } from "@/utils/alert-util"
 
 function ChildWalletPage(): JSX.Element {
   const child = useAppSelector(selectChild) // parent state 가져옴
@@ -39,7 +40,7 @@ function ChildWalletPage(): JSX.Element {
       try {
         await setMemberInfo(dispatch, 1)
       } catch (error) {
-        console.error("API 호출 중 오류 발생:", error)
+        // console.error("API 호출 중 오류 발생:", error)
       }
     }
     const fetchAccountInfo = async () => {
@@ -51,7 +52,7 @@ function ChildWalletPage(): JSX.Element {
               child.accountNumber,
               child.userKey
             )
-            console.log(res)
+            // console.log(res)
             if (res != null) {
               const { bankName, accountNo, accountName, accountBalance } =
                 res.REC
@@ -85,17 +86,17 @@ function ChildWalletPage(): JSX.Element {
         const res1 = await getAllMoneyRecordsApi()
         const res2 = await getWithdrawListApi()
         if (res1.stateCode == 200) {
-          console.log(res1)
+          // console.log(res1)
           setRecordList(res1.data)
         } else {
           console.error("머니내역 오류: ", res1)
           if (res1.message) {
             //alert(res1.message)
-            Swal.fire({
-              title: "error",
-              text: `${res1.message}`,
-              icon: "error",
-            })
+            // Swal.fire({
+            //   title: "error",
+            //   text: `${res1.message}`,
+            //   icon: "error",
+            // })
           } else {
             //alert("에러가 발생했습니다. 다시 시도해주세요")
             Swal.fire({
@@ -106,17 +107,17 @@ function ChildWalletPage(): JSX.Element {
           }
         }
         if (res2.stateCode == 200) {
-          console.log(res2)
+          // console.log(res2)
           setWithdrawList(res2.data)
         } else {
-          console.error("출금요청내역 오류: ", res2)
+          // console.error("출금요청내역 오류: ", res2)
           if (res2.message) {
             //alert(res2.message)
-            Swal.fire({
-              title: "error",
-              text: `${res1.message}`,
-              icon: "error",
-            })
+            // Swal.fire({
+            //   title: "error",
+            //   text: `${res1.message}`,
+            //   icon: "error",
+            // })
           } else {
             //alert("에러가 발생했습니다. 다시 시도해주세요")
             Swal.fire({
@@ -227,27 +228,33 @@ const groupByDate = (data: RecordItemProps[]) => {
   }, {})
 }
 
-// 최근 7일 데이터를 필터링하는 함수
 const getRecent7Days = (data: RecordItemProps[]) => {
   const groupedData = groupByDate(data)
-  const today = new Date()
-  const past7Days = new Date()
-  past7Days.setDate(today.getDate() - 7)
-  console.log(groupedData)
-  return Object.keys(groupedData)
-    .filter((dateKey) => {
-      const year = parseInt(dateKey.slice(0, 4), 10)
-      const month = parseInt(dateKey.slice(4, 6), 10) - 1 // month는 0부터 시작
-      const day = parseInt(dateKey.slice(6, 8), 10)
-      const date = new Date(year, month, day)
 
-      // 최근 7일 내의 날짜인지 확인
-      return date >= past7Days && date <= today
+  const sortedData = Object.keys(groupedData)
+    .sort((a, b) => {
+      const yearA = parseInt(a.slice(0, 4), 10)
+      const monthA = parseInt(a.slice(4, 6), 10) - 1
+      const dayA = parseInt(a.slice(6, 8), 10)
+      const dateA = new Date(yearA, monthA, dayA)
+
+      const yearB = parseInt(b.slice(0, 4), 10)
+      const monthB = parseInt(b.slice(4, 6), 10) - 1
+      const dayB = parseInt(b.slice(6, 8), 10)
+      const dateB = new Date(yearB, monthB, dayB)
+
+      return dateB.getTime() - dateA.getTime() // 최신순으로 정렬
     })
-    .reduce((acc: Record<string, RecordItemProps[]>, dateKey) => {
+    .slice(0, 7) // 상위 7개의 날짜만 가져오기
+
+  const result = sortedData.reduce(
+    (acc: Record<string, RecordItemProps[]>, dateKey) => {
       acc[dateKey] = groupedData[dateKey]
       return acc
-    }, {})
+    },
+    {}
+  )
+  return result
 }
 
 const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
@@ -261,17 +268,19 @@ const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
   const requestWithdraw = async () => {
     if (Number(withdrawMoney) == 0) {
       //alert("1원 이상 입력해주세요.")
-      Swal.fire({
-        title: "1원 이상 입력해주세요.",
-        icon: "warning",
-      })
+      alertBasic("cry.svg", "1원 이상 입력해주세요.")
+
       return
     }
     const res = await requestWithdrawApi(Number(withdrawMoney))
     if (res.stateCode === 201) {
-      console.log(res)
+      // console.log(res)
       window.location.reload()
     } else {
+      // Swal.fire({
+      //   title: res.data.message,
+      //   icon: "warning",
+      // })
       console.error("API 호출 중 에러가 발생했습니다")
     }
   }
@@ -343,7 +352,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
 
           <span className="text-right">
             <b className="mr-1">
-              <span className="mr-4 text-primary-600">₩ </span>
+              <span className="mr-4 text-secondary-m2">₩ </span>
               <span className="text-2xl">
                 {Number(accountBalance).toLocaleString()}
               </span>

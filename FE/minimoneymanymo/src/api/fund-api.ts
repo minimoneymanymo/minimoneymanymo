@@ -45,10 +45,10 @@ const requestWithdrawApi = async (money: number) => {
     })
     return response.data
   } catch (error) {
-    handleApiError(error)
     if (axios.isAxiosError(error) && error.response) {
       alertBasic("cry.svg", error.response.data.message)
     }
+    handleApiError(error)
   }
 }
 
@@ -83,6 +83,7 @@ const approveRequestApi = async (param: object) => {
     )
     return response.data
   } catch (error) {
+    alertBasic("cry.svg", "승인에 실패하였습니다.")
     handleApiError(error)
   }
 }
@@ -161,8 +162,6 @@ const getChildTradelistApi = async (
   month: number
 ) => {
   try {
-    console.log("API 호출 시 연도:", year) // 연도 확인
-    console.log("API 호출 시 월:", month) // 월 확인
     const res = await axiosAuthInstance.get("/funds/child-trade-list", {
       params: {
         childrenId: childrenId,
@@ -182,24 +181,17 @@ const giveAllowanceApi = async (
   inputValue: number | ""
 ) => {
   try {
-    const res = await axiosAuthInstance.put(
-      `/funds/giveMoney`,
-
-      {
-        childrenId,
-        amount: inputValue,
-      }
-    )
-    console.log(res.data)
+    const res = await axiosAuthInstance.put(`/funds/giveMoney`, {
+      childrenId,
+      amount: inputValue,
+    })
     return res.data
   } catch (e) {
     if (axios.isAxiosError(e) && e.response) {
       // Axios 에러 객체인 경우
-      console.error("updateAllowance에서 오류 발생:", e.response)
       return e.response // e.response는 { data, status, headers, config }를 포함함
     } else {
       // Axios 에러가 아닌 경우
-      console.error("updateAllowance에서 오류 발생:", e)
       return { status: 500, message: "서버 오류" } // 기본적인 에러 메시지
     }
   }

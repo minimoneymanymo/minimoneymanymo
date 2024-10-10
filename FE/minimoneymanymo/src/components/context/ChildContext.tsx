@@ -25,14 +25,12 @@ export const ChildProvider: React.FC<{ children: ReactNode }> = ({
 
   const fetchChildById = async (childId: number) => {
     const res = await getMyChild(Number(childId))
-    console.log("child context" + res.data)
     if (res) {
       setChild(res.data)
     }
   }
   const fetchChild = async () => {
     const res = await getMyChild(child!.childrenId)
-    console.log("child context" + res.data)
     if (res) {
       setChild(res.data)
     }

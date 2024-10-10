@@ -29,7 +29,6 @@ function MyChildDiaryCheckPage(): JSX.Element {
     if (year !== selectedDate.year || month !== selectedDate.month) {
       setSelectedDate({ year, month })
     }
-    console.log("변경 후 selectedDate는 :", { year, month }) // 새로운 상태
   }
 
   const { child } = useChild() // child 가져오기

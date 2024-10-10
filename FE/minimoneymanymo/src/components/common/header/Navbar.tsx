@@ -70,10 +70,6 @@ const NavAction = (): JSX.Element => {
     } else {
       setIsLogin(false)
     }
-
-    console.log("logintoken", getAccessTokenFromSession())
-    console.log(parent)
-    console.log(child)
   }, [parent, child.profileImgUrl, isLogin])
 
   const handleLogOut = () => {
@@ -84,7 +80,6 @@ const NavAction = (): JSX.Element => {
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
     dispatch(accountActions.clearAccount())
-    console.log(getAccessTokenFromSession())
   }
 
   return (
@@ -93,7 +88,7 @@ const NavAction = (): JSX.Element => {
         <div className="flex items-center space-x-5">
           {parent.userId ? (
             <>
-              <li className="flex items-center">
+              <li className="border-1 flex items-center rounded-3xl bg-secondary-50 py-1 pl-1 pr-3">
                 <img
                   src={profileImgUrl || "/images/profile.jpg"}
                   alt="프로필사진"
@@ -102,7 +97,7 @@ const NavAction = (): JSX.Element => {
                   }}
                   className="mx-2 size-8 rounded-full"
                 />
-                {name} 님{" "}
+                <span className="mr-1 font-bold">{name} </span> 님
               </li>
               <li className="mx-2.5 flex h-full cursor-pointer items-center">
                 <Link to="/parent/my-wallet">마이페이지</Link>
@@ -110,7 +105,7 @@ const NavAction = (): JSX.Element => {
             </>
           ) : (
             <>
-              <li className="flex items-center">
+              <li className="border-1 flex items-center rounded-3xl bg-tertiary-50 py-1 pl-1 pr-3">
                 <img
                   src={profileImgUrl || "/images/profile.jpg"}
                   alt="프로필사진"
@@ -119,7 +114,7 @@ const NavAction = (): JSX.Element => {
                   }}
                   className="mx-2 size-8 rounded-full"
                 />
-                {name} 님{" "}
+                <span className="mr-1 font-bold">{name} </span> 님
               </li>
               <li className="mx-2.5 flex h-full cursor-pointer items-center">
                 <Link to="/my-info/wallet">마이페이지</Link>
@@ -151,9 +146,7 @@ function Navbar(): JSX.Element {
   const isTooltipEnabled = useAppSelector(selectTooltip)
 
   const handleTooltipToggle = () => {
-    console.log("Before toggle:", isTooltipEnabled)
     dispatch(tooltipActions.toggleTooltip()) // 상태 토글 액션 실행
-    console.log("After toggle:", !isTooltipEnabled) // 상태를 반대로 출력
   }
   return (
     <nav className="flex h-20 flex-col items-center justify-center border-b border-gray-200 bg-white pl-10">

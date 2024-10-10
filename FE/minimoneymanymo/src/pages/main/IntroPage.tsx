@@ -13,7 +13,6 @@ import {
 } from "framer-motion"
 import { wrap } from "@motionone/utils"
 import { useNavigate } from "react-router-dom"
-import Navbar from "@/components/common/header/Navbar"
 
 interface ParallaxProps {
   children: string
@@ -89,7 +88,7 @@ function ParallaxText({ children, baseVelocity = 10 }: ParallaxProps) {
 const Page1Content = () => {
   const navigator = useNavigate()
   return (
-    <div className="relative flex h-screen w-screen flex-col items-center justify-center bg-primary-m1 text-white">
+    <div className="relative flex h-screen w-screen flex-col items-center justify-center bg-secondary-400 text-white">
       <motion.h1
         initial={{ opacity: 0, y: "50px" }}
         animate={{ opacity: 1, y: "0px", transition: { duration: 1 } }}
@@ -127,7 +126,7 @@ const Page1Content = () => {
   )
 }
 const Page2Content = () => (
-  <div className="flex h-[800px] w-screen items-center justify-center">
+  <div className="bg-bg2 flex h-[600px] w-screen items-center justify-center">
     <h1 className="text-center text-4xl font-bold leading-normal tracking-wide">
       용돈으로 주식을 투자하며 돈의 가치를 배워보세요. <br /> 다양한 콘텐츠로
       경제를 이해하고 실력을 키우는 서비스, <br />
@@ -166,14 +165,14 @@ const Page3Content = () => {
           매수부터 매도까지 <br />
           간단하게
         </h1>
-        <h1 className="mt-[20px] flex flex-col text-3xl font-bold leading-snug tracking-wider">
+        <h1 className="ml-[40px] mt-[20px] flex flex-col text-3xl font-bold leading-snug tracking-wider">
           <span className="leading-snugs mb-[30px] mt-[70px] w-[600px] text-5xl tracking-wide">
             소수점 매매
           </span>
           높은 금액대의 주식도 소수점 매매로 <br />
           원하는 만큼 매수해요.
         </h1>
-        <h1 className="mt-[120px] flex flex-col text-3xl font-bold leading-snug tracking-wider">
+        <h1 className="ml-[40px] mt-[120px] flex flex-col text-3xl font-bold leading-snug tracking-wider">
           <span className="leading-snugs mb-[30px] mt-[70px] w-[600px] text-5xl tracking-wide">
             투자 피드백
           </span>
@@ -181,14 +180,14 @@ const Page3Content = () => {
           충동적인 결정을 방지하고 <br />
           선택에 명확한 근거를 남겨요.
         </h1>
-        <h1 className="mt-[120px] flex flex-col text-3xl font-bold leading-snug tracking-wider">
+        <h1 className="ml-[40px] mt-[120px] flex flex-col text-3xl font-bold leading-snug tracking-wider">
           <span className="leading-snugs mb-[30px] mt-[70px] w-[600px] text-5xl tracking-wide">
             투자 일기
           </span>
           마이페이지에서 투자 기록을 확인하고 <br />
           부모님과 자녀가 피드백을 주고 받아요.
         </h1>
-        <h1 className="mt-[120px] flex flex-col text-3xl font-bold leading-snug tracking-wider">
+        <h1 className="ml-[40px] mt-[120px] flex flex-col text-3xl font-bold leading-snug tracking-wider">
           <span className="leading-snugs mb-[30px] mt-[70px] w-[600px] text-5xl tracking-wide">
             유용한 투자정보
           </span>
@@ -196,7 +195,7 @@ const Page3Content = () => {
           투자에 도움을 주는 뉴스기사까지
         </h1>
       </div>
-      <div className="sticky right-0 top-[10%] ml-auto mt-[750px] h-screen w-[50%]">
+      <div className="sticky right-0 top-[10%] ml-auto mr-[100px] mt-[750px] h-screen w-[50%]">
         {/* <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
@@ -222,7 +221,7 @@ const Page4Content = () => (
       어떤지 궁금하신가요?
     </h1>
     <div
-      className="mt-[200px] flex w-[90%] flex-nowrap items-center space-x-24"
+      className="mt-[150px] flex w-[80%] flex-nowrap items-center space-x-24"
       data-aos="fade-up"
     >
       <img
@@ -230,44 +229,47 @@ const Page4Content = () => (
         className="w-[600px] rounded-3xl shadow-md"
         alt="투자분석"
       />
-      <h1 className="text-3xl font-bold leading-normal tracking-wide">
-        투자결과를 바탕으로 한 <span className="text-4xl">투자 분석</span>
-        이 제공돼요.
-        <br />
-        <span className="text-2xl">
-          다른 사용자와 비교하며 나의 위치를 알 수 있어요.
+      <h1 className="mr-[40px] w-[800px] text-right text-3xl font-bold leading-relaxed tracking-wider">
+        <span className="leading-snugs mt-[70px] text-4xl tracking-wide">
+          투자 결과를 바탕으로
+          <br /> 투자 성향 분석을 제공해요
+          <br />
+          <br />
+          <span className="text-left">
+            다른 사용자와 비교하며 <br /> 나의 위치를 알 수 있어요.
+          </span>
         </span>
       </h1>
     </div>
     <div
-      className="mt-[120px] flex w-[90%] flex-nowrap items-center space-x-24"
+      className="mt-[120px] flex w-[80%] flex-nowrap items-center space-x-24"
       data-aos="fade-up"
     >
-      <h1 className="ml-[20px] text-3xl font-bold leading-snug tracking-wide">
-        <span className="text-4xl">투자 성향</span>
-        을 통해 부모님은 <br />
-        자녀 투자 교육 방향에 조언을 얻어요.
+      <h1 className="w-full text-4xl font-bold leading-snug tracking-wide">
+        투자 성향을 보고 <br />
+        자녀 투자 교육 방향에 <br />
+        조언을 얻어요.
       </h1>
       <img
         src="/투자성향.JPG"
-        className="w-[600px] rounded-3xl shadow-md"
+        className="mr-[100px] w-[600px] rounded-3xl shadow-md"
         alt="투자성향"
       />
     </div>
   </div>
 )
 const Page5Content = () => (
-  <div className="flex h-screen w-screen items-start justify-center gap-16 bg-secondary-m2 pt-[120px]">
-    <img className="w-[50%]" src="/퀴즈.gif" alt="아이 호버 이미지" />
-    <div className="flex w-[40%] flex-col space-y-10">
-      <h1 className="text-6xl font-bold text-white">경제 교육</h1>
-      <h1 className="text-2xl text-white">
-        매일 업데이트되는 <br />
-        경제 뉴스를 <br />
-        확인해 보세요.
-        <br />
+  <div className="flex h-screen w-screen items-center justify-center bg-secondary-m2 pt-[120px]">
+    <img className="w-[40%]" src="/퀴즈.gif" alt="아이 호버 이미지" />
+    <div className="flex w-[40%] flex-col space-y-10 text-right">
+      <h1 className="text-5xl font-bold leading-relaxed text-white">
+        경제 교육
       </h1>
-      <h1 className="text-3xl leading-snug text-white">
+      <h1 className="text-4xl leading-snug text-white">
+        매일 업데이트 되는 <br />
+        경제 뉴스를 확인해 보세요.
+      </h1>
+      <h1 className="text-4xl leading-snug text-white">
         뉴스를 보며 경제시사상식을 쌓고
         <br />
         {/* (뉴스를 보며 경제시사상식을 쌓아 시장을 보는 눈을 넓혀요.) */}
@@ -277,21 +279,19 @@ const Page5Content = () => (
     </div>
   </div>
 )
+
 const Page6Content = () => {
   const navigator = useNavigate()
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-between gap-16">
-      <div className="flex h-full flex-col items-center justify-center gap-16">
-        <div
-          className="flex flex-col items-center gap-16 pt-[250px]"
-          data-aos="zoom-out"
-        >
+    <div className="flex h-screen w-screen flex-col items-center justify-between">
+      <div className="mt-[300px] flex h-[350px] flex-col items-center justify-center">
+        <div className="flex flex-col items-center gap-16" data-aos="zoom-out">
           <h1 className="text-6xl font-bold">꼭 필요했던 서비스</h1>
-          <h1 className="text-6xl font-bold">미니머니마니모</h1>
+          <h1 className="mb-[50px] text-6xl font-bold">미니머니마니모</h1>
 
           <button
-            className="mt-6 border border-black px-4 py-1 text-xl"
+            className="mb-[150px] mt-[30px] border border-black p-[250px] px-10 py-4 text-xl"
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" }) // 스크롤을 맨 위로 부드럽게 이동
               navigator("/main")
@@ -300,24 +300,25 @@ const Page6Content = () => {
             이용하러 가기
           </button>
         </div>
+        <div className="mb-[200px] flex flex-col items-center justify-center">
+          <div className="text-sm text-gray-500">
+            모든 권리는 본 웹사이트에 있습니다.
+            <br />
+          </div>
+          &copy; 2024 아름다완 요민이, MINIMONEYMANYMO
+        </div>
       </div>
-      <span className="">
-        B105 아름다완 요민이 팀원: 김세민 목요빈 이다영 이창현 조아름 개발기간 :
-        2024.09.04 ~ 2024.10.11
-      </span>
     </div>
   )
 }
 
-const Page7Content = () => (
-  <div className="flex h-[100px] w-screen flex-col items-center justify-center overflow-hidden bg-black text-white">
-    <ParallaxText baseVelocity={-10}>청소년 투자 교육 서비스</ParallaxText>
-
-    <ParallaxText baseVelocity={10}>
-      미니머니마니모 MINIMONEYMANYMO
-    </ParallaxText>
-  </div>
-)
+// const Page8Content = () => (
+//   <div className="flex h-[100px] w-screen flex-col items-center justify-center overflow-hidden bg-gray-500 text-white">
+//     {/* <ParallaxText baseVelocity={-5}>청소년 투자 교육 서비스</ParallaxText> */}
+//     <br />
+//     <ParallaxText baseVelocity={-3}>미니머니마니모 미니머니마니모</ParallaxText>
+//   </div>
+// )
 
 const Gra = () => (
   <div className="h-64 w-full bg-gradient-to-b from-white to-primary-50"></div>
@@ -344,19 +345,21 @@ const pages = [
   { id: "page5", component: <Page5Content /> },
   { id: "gra2", component: <Gra4 /> },
   { id: "page6", component: <Page6Content /> },
-  { id: "page7", component: <Page7Content /> },
+  // { id: "page7", component: <Page7Content /> },
+  // { id: "page8", component: <Page8Content /> },
 ]
 
 const Intro: React.FC = () => {
+  // 로그 제거
   useEffect(() => {
-    const handleScroll = () => {
-      console.log(window.scrollY)
-    }
-    window.addEventListener("scroll", handleScroll)
+  //   const handleScroll = () => {
+  //     console.log(window.scrollY)
+  //   }
+  //   window.addEventListener("scroll", handleScroll)
     AOS.init()
   }, [])
   return (
-    <div className="hidden-scrollbar w-screen -mb-16">
+    <div className="hidden-scrollbar -mb-16 w-screen">
       {pages.map((page, index) => (
         <div
           key={index}

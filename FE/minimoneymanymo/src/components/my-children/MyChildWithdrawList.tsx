@@ -12,7 +12,6 @@ function MyChildWithdrawList(): JSX.Element {
   const getChildWithdrawList = async () => {
     if (child?.userId) {
       const res = await getChildWithdrawListApi(child?.userId)
-      console.log(res)
       if (res.stateCode === 200) {
         setRequestList(res.data)
       } else {

@@ -20,10 +20,10 @@ function MyChildItem({ child }: MyChildProps): JSX.Element {
   return (
     <div className="m-5 flex h-44 items-center rounded-lg bg-white shadow-md">
       <img
-        src={child.profileimgUrl || "/images/ping.JPG"}
+        src={child.profileimgUrl || "/images/profile.jpg"}
         alt="프로필사진"
         onError={(e) => {
-          e.currentTarget.src = "/images/ping.JPG" // 이미지 로드 실패 시 기본 이미지로 대체
+          e.currentTarget.src = "/images/profile.jpg" // 이미지 로드 실패 시 기본 이미지로 대체
         }}
         className="m-8 h-32 w-36 rounded-md border object-cover"
         // className="size-16"
