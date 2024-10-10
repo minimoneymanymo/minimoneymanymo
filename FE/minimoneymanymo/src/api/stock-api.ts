@@ -61,7 +61,6 @@ export const putReasonBonusMoney = async (
   reasonBonusMoneyRequest: ReasonBonusMoneyRequest
 ) => {
   try {
-    console.log(reasonBonusMoneyRequest)
     const res = await axiosAuthInstance.put(
       `/stocks/child-reason-bonus-money`,
       reasonBonusMoneyRequest // 요청 본문에 reasonBonusMoneyRequest 추가

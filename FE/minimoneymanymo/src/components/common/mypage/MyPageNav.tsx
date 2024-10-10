@@ -49,8 +49,6 @@ function MypageNav({ menuItems, role }: MypageNavProps): JSX.Element {
       setName(childMyInfo.name)
       setProfileImgUrl(childMyInfo.profileImgUrl)
     }
-    console.log(parentMyInfo.profileImgUrl)
-    console.log(childMyInfo)
   }, [])
 
   // 메뉴 항목 클릭 시 경로를 업데이트하고 네비게이트

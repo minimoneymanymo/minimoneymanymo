@@ -89,7 +89,7 @@ const NewsComponent: React.FC<NewsModalProps> = ({
 
   const handleOpen = () => {
     if (child.userId) {
-      console.log(child.userId)
+      // console.log(child.userId)
       setOpen(!open)
     } else {
       if (parent.userId) {
@@ -117,7 +117,7 @@ const NewsComponent: React.FC<NewsModalProps> = ({
       try {
         const response = await solveQuiz(selectedOption.toString(), id)
         handleOpen()
-        console.log(response.data.result)
+        // console.log(response.data.result)
         if (response.data.result) {
           firework()
 
