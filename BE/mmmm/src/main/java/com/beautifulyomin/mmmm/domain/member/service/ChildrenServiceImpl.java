@@ -4,7 +4,9 @@ import com.beautifulyomin.mmmm.common.dto.ImageDto;
 import com.beautifulyomin.mmmm.common.service.FileService;
 
 import com.beautifulyomin.mmmm.domain.fund.entity.StocksHeld;
+import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.fund.repository.StocksHeldRepository;
+import com.beautifulyomin.mmmm.domain.fund.repository.TransactionRepository;
 import com.beautifulyomin.mmmm.domain.member.dto.ChildInfoDto;
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
 import com.beautifulyomin.mmmm.domain.member.dto.PasswordDto;
@@ -34,8 +36,9 @@ public class ChildrenServiceImpl implements ChildrenService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final StocksHeldRepository stocksHeldRepository;
     private final FileService fileService;
+    private final TransactionRepository transactionRepository;
 
-    public ChildrenServiceImpl(ChildrenRepository childrenRepository, ParentRepositoryCustom parentRepositoryCustom, ParentRepository parentRepository, ParentAndChildrenRepository parentAndChildrenRepository, BCryptPasswordEncoder bCryptPasswordEncoder, StocksHeldRepository stocksHeldRepository, FileService fileService) {
+    public ChildrenServiceImpl(ChildrenRepository childrenRepository, ParentRepositoryCustom parentRepositoryCustom, ParentRepository parentRepository, ParentAndChildrenRepository parentAndChildrenRepository, BCryptPasswordEncoder bCryptPasswordEncoder, StocksHeldRepository stocksHeldRepository, FileService fileService, TransactionRepository transactionRepository) {
         this.childrenRepository = childrenRepository;
         this.parentRepositoryCustom = parentRepositoryCustom;
         this.parentRepository = parentRepository;
@@ -43,6 +46,7 @@ public class ChildrenServiceImpl implements ChildrenService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.stocksHeldRepository = stocksHeldRepository;
         this.fileService = fileService;
+        this.transactionRepository = transactionRepository;
     }
 
 
@@ -118,6 +122,16 @@ public class ChildrenServiceImpl implements ChildrenService {
     public int solveQuiz(Children children) {
         int bonusMoney = children.getSettingQuizBonusMoney();
         int resultMoney = children.getMoney() + bonusMoney;
+        if(bonusMoney > 0 ){
+            TransactionRecord transactionRecord = new TransactionRecord();
+            transactionRecord.setChildren(children);
+            transactionRecord.setAmount(bonusMoney);
+            //퀴즈보상은 2
+            transactionRecord.setTradeType("2");
+            transactionRecord.setRemainAmount(resultMoney);
+
+            transactionRepository.save(transactionRecord);
+        }
         children.setMoney(resultMoney);
         childrenRepository.save(children);
         return bonusMoney;

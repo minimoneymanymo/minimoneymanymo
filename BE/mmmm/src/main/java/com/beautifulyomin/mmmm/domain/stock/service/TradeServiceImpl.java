@@ -2,7 +2,9 @@ package com.beautifulyomin.mmmm.domain.stock.service;
 
 import com.beautifulyomin.mmmm.domain.fund.entity.StocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.entity.TradeRecord;
+import com.beautifulyomin.mmmm.domain.fund.entity.TransactionRecord;
 import com.beautifulyomin.mmmm.domain.fund.repository.StocksHeldRepository;
+import com.beautifulyomin.mmmm.domain.fund.repository.TransactionRepository;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
 import com.beautifulyomin.mmmm.domain.member.entity.ParentAndChildren;
@@ -44,6 +46,7 @@ public class TradeServiceImpl implements TradeService {
     private final ParentRepository parentRepository;
     private final ParentAndChildrenRepository parentAndChildrenRepository;
     private final ParentService parentService;
+    private final TransactionRepository transactionRepository;
 
     @Override
     public void createTradeByDate(TradeDto tradeDto, Integer childrenId, LocalDate date) {
@@ -295,7 +298,14 @@ public class TradeServiceImpl implements TradeService {
         }
         long result = tradeRecordsRepository.updateReasonBonusMoneyByCreateAt(parentUserId,child.getChildrenId(),requestDto.getReasonBonusMoney() ,requestDto.getCreatedAt());
         //성공적으로 반환한경우 result = 1
-
+        if(result == 1 ){
+            TransactionRecord transactionRecord = new TransactionRecord();
+            transactionRecord.setChildren(child);
+            transactionRecord.setAmount(requestDto.getReasonBonusMoney());
+            transactionRecord.setRemainAmount(child.getMoney() + requestDto.getReasonBonusMoney());
+            transactionRecord.setTradeType("3");
+            transactionRepository.save(transactionRecord);
+        }
 
         return (int) result;
     }
