@@ -62,10 +62,10 @@ export const tooltipInfo: { [key: string]: React.ReactNode } = {
   PER: (
     <>
       <b>PER은 주가수익비율로,</b> 주가를 주당순이익(EPS)으로 나눈 수치예요.
-      <p className="mt-4">
+      <p className="mt-4 flex items-center">
         <span className="inline-block text-center align-middle">
-          <span className="block border-b border-white">주가</span>
-          <span className="block">주당순이익</span>
+          <span className="block border-b border-black">주가</span>
+          <span className="block">주당순이익(EPS)</span>
         </span>
       </p>
       이 숫자는 주식이 얼마나 비싼지를 판단하는 데 도움을 줘요.
@@ -75,7 +75,13 @@ export const tooltipInfo: { [key: string]: React.ReactNode } = {
   ),
   PBR: (
     <>
-      <b>PBR은 주가순자산비율로,</b> 주가를 주당순자산(BPS)으로 나눈 비율이에요.
+      PBR은 <b>주가순자산비율</b>로, 주가를 주당순자산(BPS)으로 나눈 비율이에요.
+      <p className="mt-4 flex items-center">
+        <span className="inline-block text-center align-middle">
+          <span className="block border-b border-black">주가</span>
+          <span className="block">주당순자산(BPS)</span>
+        </span>
+      </p>
       <br />
       이 수치는 기업의 자산 가치를 바탕으로 주식의 가치를 평가하는 데 도움을
       줘요.
@@ -86,8 +92,14 @@ export const tooltipInfo: { [key: string]: React.ReactNode } = {
   ),
   EPS: (
     <>
-      <b>EPS는 주당순이익으로,</b> 기업이 벌어들인 순이익을 발행된 주식 수로
+      EPS는 <b> 주당순이익</b>으로, 기업이 벌어들인 순이익을 발행된 주식 수로
       나눈 값이에요.
+      <p className="mt-4 flex items-center">
+        <span className="inline-block text-center align-middle">
+          <span className="block border-b border-black">순이익</span>
+          <span className="block">발행된 주식 수</span>
+        </span>
+      </p>
       <br />
       이 숫자는 주식 한 주당 얼마나 이익을 내고 있는지를 보여줘요.
       <br />
@@ -96,9 +108,14 @@ export const tooltipInfo: { [key: string]: React.ReactNode } = {
   ),
   BPS: (
     <>
-      <b>BPS는 주당순자산으로,</b> 기업의 총 자산에서 총 부채를 뺀 값을 발행된
+      BPS는 <b>주당순자산</b> 으로,기업의 총 자산에서 총 부채를 뺀 값을 발행된
       주식 수로 나눈 값이에요.
       <br />
+      <p className="mt-4 flex items-center">
+        <span className="inline-block text-center align-middle">
+          총 자산 - 총 부채
+        </span>
+      </p>
       이 수치는 주식 한 주당 기업이 실제로 가진 자산의 가치를 나타내요.
       <br />
       BPS가 높으면 기업의 재정상태가 안정적이라는 뜻일 수 있어요.

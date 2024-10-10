@@ -23,9 +23,12 @@ const MainPageLayout: React.FC = () => {
       </main>
       <button
         onClick={handleChatbotClick}
-        className="fixed bottom-4 right-4 rounded-full bg-white p-3 shadow-lg transition duration-300 hover:shadow-xl"
+        className="fixed bottom-4 right-4 rounded-full bg-white shadow-lg transition duration-300 hover:shadow-xl"
       >
-        <HelpOutlineIcon className="text-secondary-m2" />
+        <HelpOutlineIcon
+          style={{ fontSize: "30px" }}
+          className="m-4 text-secondary-m2"
+        />
       </button>
       <Modal isOpen={isModalOpen} onClose={closeModal} /> {/* 모달 렌더링 */}
     </div>

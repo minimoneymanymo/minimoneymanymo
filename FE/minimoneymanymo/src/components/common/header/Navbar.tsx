@@ -83,6 +83,7 @@ const NavAction = (): JSX.Element => {
     // Redux 상태 초기화
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
+    dispatch(accountActions.clearAccount())
     console.log(getAccessTokenFromSession())
   }
 
@@ -143,6 +144,7 @@ const NavAction = (): JSX.Element => {
   )
 }
 import TipsAndUpdatesOutlinedIcon from "@mui/icons-material/TipsAndUpdatesOutlined"
+import { accountActions } from "@/store/slice/account"
 function Navbar(): JSX.Element {
   const navigator = useNavigate()
   const dispatch = useAppDispatch()
@@ -158,7 +160,7 @@ function Navbar(): JSX.Element {
       <div className="container mx-auto flex items-center justify-between">
         <button
           onClick={() => {
-            navigator("/")
+            navigator("/main")
           }}
           className="flex items-center gap-3 text-xl text-primary-600"
         >

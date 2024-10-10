@@ -244,6 +244,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
   // isBuyMode가 변경될 때마다 값 출력
   useEffect(() => {
     console.log(`Buy mode activated: ${isBuyMode}`)
+    setReason("")
   }, [isBuyMode])
 
   return (
