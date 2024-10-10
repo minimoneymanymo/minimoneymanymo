@@ -73,7 +73,7 @@ function ChildStockPage(): JSX.Element {
           조회 결과가 없습니다.
         </div>
       ) : (
-        <div className="h-[530px] overflow-y-auto">
+        <div className="custom-scrollbar h-[530px] overflow-y-auto">
           <div className="grid grid-cols-2 gap-5 pb-6 pt-3">
             {stockList.map((stock) => (
               <StockHeldItem key={stock.stockCode} {...stock} />
