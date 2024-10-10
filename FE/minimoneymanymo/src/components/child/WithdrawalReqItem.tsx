@@ -74,7 +74,7 @@ const WithdrawablReqItem: React.FC<WithdrawablReqItemProps> = (props) => {
           )
         ) : approvedAt ? (
           <div>
-            <span className="text-primary-m1">
+            <span className="text-secondary-m2">
               {formatDate(approvedAt, false)} 승인
             </span>
           </div>

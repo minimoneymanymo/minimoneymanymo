@@ -228,27 +228,33 @@ const groupByDate = (data: RecordItemProps[]) => {
   }, {})
 }
 
-// 최근 7일 데이터를 필터링하는 함수
 const getRecent7Days = (data: RecordItemProps[]) => {
   const groupedData = groupByDate(data)
-  const today = new Date()
-  const past7Days = new Date()
-  past7Days.setDate(today.getDate() - 7)
-  // console.log(groupedData)
-  return Object.keys(groupedData)
-    .filter((dateKey) => {
-      const year = parseInt(dateKey.slice(0, 4), 10)
-      const month = parseInt(dateKey.slice(4, 6), 10) - 1 // month는 0부터 시작
-      const day = parseInt(dateKey.slice(6, 8), 10)
-      const date = new Date(year, month, day)
 
-      // 최근 7일 내의 날짜인지 확인
-      return date >= past7Days && date <= today
+  const sortedData = Object.keys(groupedData)
+    .sort((a, b) => {
+      const yearA = parseInt(a.slice(0, 4), 10)
+      const monthA = parseInt(a.slice(4, 6), 10) - 1
+      const dayA = parseInt(a.slice(6, 8), 10)
+      const dateA = new Date(yearA, monthA, dayA)
+
+      const yearB = parseInt(b.slice(0, 4), 10)
+      const monthB = parseInt(b.slice(4, 6), 10) - 1
+      const dayB = parseInt(b.slice(6, 8), 10)
+      const dateB = new Date(yearB, monthB, dayB)
+
+      return dateB.getTime() - dateA.getTime() // 최신순으로 정렬
     })
-    .reduce((acc: Record<string, RecordItemProps[]>, dateKey) => {
+    .slice(0, 7) // 상위 7개의 날짜만 가져오기
+
+  const result = sortedData.reduce(
+    (acc: Record<string, RecordItemProps[]>, dateKey) => {
       acc[dateKey] = groupedData[dateKey]
       return acc
-    }, {})
+    },
+    {}
+  )
+  return result
 }
 
 const MoneyInfo: React.FC<MoneyInfoProps> = ({ money, withdrawableMoney }) => {
@@ -346,7 +352,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
 
           <span className="text-right">
             <b className="mr-1">
-              <span className="mr-4 text-primary-600">₩ </span>
+              <span className="mr-4 text-secondary-m2">₩ </span>
               <span className="text-2xl">
                 {Number(accountBalance).toLocaleString()}
               </span>
