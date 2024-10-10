@@ -2,6 +2,7 @@ package com.beautifulyomin.mmmm.domain.stock.dto.request;
 
 import lombok.Data;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -27,6 +28,11 @@ public class StockFilterRequestDto {
         this.search = search;
         // search가 변경될 때 searchList도 업데이트
         this.searchList = parseSearchToList(search);
+    }
+
+    @Override
+    public String toString() {
+        return "StockFilterRequestDto{"+"searchList="+searchList+"}";
     }
 
     //시장
