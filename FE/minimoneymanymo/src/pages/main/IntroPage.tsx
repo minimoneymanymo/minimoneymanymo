@@ -351,13 +351,13 @@ const pages = [
 
 const Intro: React.FC = () => {
   // 로그 제거
-  // useEffect(() => {
+  useEffect(() => {
   //   const handleScroll = () => {
   //     console.log(window.scrollY)
   //   }
   //   window.addEventListener("scroll", handleScroll)
-  //   AOS.init()
-  // }, [])
+    AOS.init()
+  }, [])
   return (
     <div className="hidden-scrollbar -mb-16 w-screen">
       {pages.map((page, index) => (

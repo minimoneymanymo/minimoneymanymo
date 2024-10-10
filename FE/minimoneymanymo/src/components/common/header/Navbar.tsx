@@ -70,10 +70,6 @@ const NavAction = (): JSX.Element => {
     } else {
       setIsLogin(false)
     }
-
-    console.log("logintoken", getAccessTokenFromSession())
-    console.log(parent)
-    console.log(child)
   }, [parent, child.profileImgUrl, isLogin])
 
   const handleLogOut = () => {
@@ -84,7 +80,6 @@ const NavAction = (): JSX.Element => {
     dispatch(parentActions.clearParent())
     dispatch(childActions.clearChild())
     dispatch(accountActions.clearAccount())
-    console.log(getAccessTokenFromSession())
   }
 
   return (
@@ -151,9 +146,7 @@ function Navbar(): JSX.Element {
   const isTooltipEnabled = useAppSelector(selectTooltip)
 
   const handleTooltipToggle = () => {
-    console.log("Before toggle:", isTooltipEnabled)
     dispatch(tooltipActions.toggleTooltip()) // 상태 토글 액션 실행
-    console.log("After toggle:", !isTooltipEnabled) // 상태를 반대로 출력
   }
   return (
     <nav className="flex h-20 flex-col items-center justify-center border-b border-gray-200 bg-white pl-10">

@@ -36,7 +36,7 @@ const checkAccessTokenExpiration = async (
   accessToken: string
 ): Promise<boolean> => {
   let isAccessTokenValid = true
-  console.log("accessToken", accessToken)
+  //console.log("accessToken", accessToken)
   try {
     const res = await axios.get(`BASE_API_URL/members/authorization`)
     if (res.data) {
@@ -44,7 +44,7 @@ const checkAccessTokenExpiration = async (
     }
     return true
   } catch (error) {
-    console.log(error)
+    //console.log(error)
     isAccessTokenValid = false
   }
 
@@ -56,8 +56,8 @@ const checkAccessTokenExpiration = async (
 axiosAuthInstance.interceptors.request.use(
   async (config) => {
     // 요청 인터셉터 동작 확인
-    // console.groupCollapsed("request interceptors")
-    // console.log("요청 인터셉터 동작")
+    // //console.groupCollapsed("request interceptors")
+    // //console.log("요청 인터셉터 동작")
     // 액세스 토큰을 상태에서 가져옴
     let isAccessTokenValid = false
 
@@ -78,7 +78,7 @@ axiosAuthInstance.interceptors.request.use(
     return config
   },
   (error) => {
-    console.log("axios-instance.js > 요청 인터셉터", error)
+    //console.log("axios-instance.js > 요청 인터셉터", error)
     return Promise.reject(error)
   }
 )
@@ -87,7 +87,7 @@ axiosAuthInstance.interceptors.request.use(
 // 모든 axiosInstance 응답에 대해 headers를 확인해서 액세스 토큰을 상태에, 리프레시 토큰을 로컬스토리지에 저장함
 axiosAuthInstance.interceptors.response.use(
   (res) => {
-    // console.log("axios-instances.js > 응답 인터셉터 res: ", res)
+    // //console.log("axios-instances.js > 응답 인터셉터 res: ", res)
 
     // 응답의 headers를 언패킹
     const { headers } = res
@@ -95,12 +95,12 @@ axiosAuthInstance.interceptors.response.use(
     // headers에서 액세스 토큰 따로
     const accessToken = headers["authorization"]
 
-    // console.groupCollapsed("JWT fetched")
-    // console.log(
+    // //console.groupCollapsed("JWT fetched")
+    // //console.log(
     //   "axios-instance.js > 응답 인터셉터에서 받은 액세스 토큰 :",
     //   accessToken
     // )
-    // console.groupEnd()
+    // //console.groupEnd()
 
     // 액세스 토큰이 존재하는 경우 dispatch를 사용해서 액세스 토큰을 sessionStorage에 저장
     if (accessToken) {
@@ -127,7 +127,7 @@ axiosAuthInstance.interceptors.response.use(
       })
     }
 
-    console.log("인터셉터 에러", error)
+    //console.log("인터셉터 에러", error)
     // reject를 반환해서, 요청한 api에서 올바르게 오류 처리를 할 수 있도록 함
     return Promise.reject(error)
   }
@@ -167,7 +167,6 @@ axiosPublicInstance.interceptors.response.use(
       })
     }
 
-    console.log("인터셉터 에러", error)
     // reject를 반환해서, 요청한 api에서 올바르게 오류 처리를 할 수 있도록 함
     return Promise.reject(error)
   }

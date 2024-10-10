@@ -16,9 +16,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { selectChild } from "@/store/slice/child"
 import { selectParent } from "@/store/slice/parent"
 import Swal from "sweetalert2"
-import { ContourValueResolverDescription } from "igniteui-react-core"
 import axios from "axios"
-import { alertBasic } from "@/utils/alert-util"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)

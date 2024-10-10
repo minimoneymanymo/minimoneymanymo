@@ -69,7 +69,7 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         //   )
         // )
       } catch (error) {
-        console.error("Error fetching stock data:", error)
+        // console.error("Error fetching stock data:", error)
         setProfitLoss("데이터를 불러오는 중 오류가 발생했습니다.")
       }
     }
@@ -85,7 +85,6 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
 
     try {
       const data = await getChildMoney(stockCode)
-      console.log("loadMoneyt", data)
       setMoney(data.data.money)
       setRemainSharesCount(data.data.remainSharesCount)
     } catch (error) {
@@ -93,7 +92,8 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         console.error("Failed to load money:", error)
         // 타입 단언 사용
         Swal.fire({
-          title: "오류가 발생했습니다. 다시 시도해주세요.",
+          title:
+            "자녀 정보를 가져오던중 오류가 발생했습니다. 다시 시도해주세요.",
           icon: "error",
         })
       } else {
@@ -269,14 +269,8 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
         popup: "", // 전체 팝업에 패딩 추가 (선택 사항)
       },
     }).then(async (result) => {
-      // 여기에서 then의 콜백을 async로 변경
       if (result.isConfirmed) {
-        // 확인 버튼 클릭 시 수행할 작업
         await handleTrade() // handleTrade 함수 호출
-        console.log("확인 버튼이 클릭되었습니다.")
-      } else if (result.isDismissed) {
-        // 취소 버튼 클릭 시 수행할 작업
-        console.log("취소 버튼이 클릭되었습니다.")
       }
     })
   }
@@ -346,7 +340,6 @@ function TradeForm({ closingPrice }: TradeFormProps): JSX.Element {
 
       await loadMoney()
       await setMemberInfo(dispatch, 1)
-      console.log("🎅🤶👼🧔👲")
     } catch (error) {
       if (error instanceof Error) {
         // console.error("Trade failed:", error.message) // 오류 메시지 출력
