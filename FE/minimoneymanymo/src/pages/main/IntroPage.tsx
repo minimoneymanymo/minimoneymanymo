@@ -230,22 +230,21 @@ const Page4Content = () => (
         className="w-[600px] rounded-3xl shadow-md"
         alt="투자분석"
       />
-      <h1 className="w-full text-right text-3xl font-bold leading-normal tracking-wide">
-        투자결과를 바탕으로 <br />
-        <span className="text-4xl">투자 분석</span>
-        이 제공돼요.
-        <br />
-        <br />
-        <span className="text-2xl">
-          다른 사용자와 비교하며 <br /> 나의 위치를 알 수 있어요.
+      <h1 className="w-full text-right text-3xl font-bold leading-snug tracking-wider">
+        <span className="leading-snugs mt-[70px] text-5xl tracking-wide">
+          투자 결과를 바탕으로
+          <br /> 투자 분석 제공
         </span>
+        <br />
+        <br />
+        다른 사용자와 비교하며 <br /> 나의 위치를 알 수 있어요.
       </h1>
     </div>
     <div
       className="mt-[120px] flex w-[80%] flex-nowrap items-center space-x-24"
       data-aos="fade-up"
     >
-      <h1 className=" w-full text-3xl font-bold leading-snug tracking-wide">
+      <h1 className="w-full text-3xl font-bold leading-snug tracking-wide">
         <span className="text-4xl">투자 성향</span>
         을 보고 <br />
         자녀 투자 교육 방향에 <br />
@@ -263,8 +262,8 @@ const Page5Content = () => (
   <div className="flex h-screen w-screen items-center justify-center bg-secondary-m2 pt-[120px]">
     <img className="w-[40%]" src="/퀴즈.gif" alt="아이 호버 이미지" />
     <div className="flex w-[40%] flex-col space-y-10 text-right">
-      <h1 className="text-6xl font-bold text-white">경제 교육</h1>
-      <h1 className="text-2xl text-white">
+      <h1 className="text-5xl font-bold text-white">경제 교육</h1>
+      <h1 className="text-3xl text-white">
         매일 업데이트되는 <br />
         경제 뉴스를 <br />
         확인해 보세요.
@@ -302,7 +301,7 @@ const Page6Content = () => {
           </button>
         </div>
       </div>
-      <span className="mt-[200px] p-[50px] text-center text-sm">
+      <span className="mt-[200px] p-[30px] text-center text-sm">
         B105 아름다완 요민이
         <br /> 팀원: 김세민 목요빈 이다영 이창현 조아름 <br />
         개발기간 : 2024.09.04 - 2024.10.10
@@ -315,11 +314,9 @@ const Page6Content = () => {
 
 const Page8Content = () => (
   <div className="flex h-[100px] w-screen flex-col items-center justify-center overflow-hidden bg-black text-white">
-    <ParallaxText baseVelocity={-10}>청소년 투자 교육 서비스</ParallaxText>
-
-    <ParallaxText baseVelocity={10}>
-      미니머니마니모 MINIMONEYMANYMO
-    </ParallaxText>
+    <ParallaxText baseVelocity={-5}>청소년 투자 교육 서비스</ParallaxText>
+    <br />
+    <ParallaxText baseVelocity={-3}>미니머니마니모 미니머니마니모</ParallaxText>
   </div>
 )
 
