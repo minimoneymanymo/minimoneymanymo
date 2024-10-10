@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public interface ChildrenService {
     String registerChildren(JoinRequestDto joinDto);
-    String uploadProfileImage(MultipartFile file) throws IOException;
+    String uploadProfileImage(MultipartFile file, String userId) throws IOException;
     boolean isExistByUserId(String userId);
     ChildInfoDto childInfoByUserId(String userId, String stockCode );
     long updateAccount(String childUserId, String accountNumber, String bankCode);

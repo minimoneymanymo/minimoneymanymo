@@ -1,13 +1,12 @@
 package com.beautifulyomin.mmmm.domain.member.service;
 
+import com.beautifulyomin.mmmm.common.dto.ImageDto;
 import com.beautifulyomin.mmmm.common.service.FileService;
 
-import com.beautifulyomin.mmmm.domain.fund.dto.StockHeldDto;
 import com.beautifulyomin.mmmm.domain.fund.entity.StocksHeld;
 import com.beautifulyomin.mmmm.domain.fund.repository.StocksHeldRepository;
 import com.beautifulyomin.mmmm.domain.member.dto.ChildInfoDto;
 import com.beautifulyomin.mmmm.domain.member.dto.JoinRequestDto;
-import com.beautifulyomin.mmmm.domain.member.dto.MyChildDto;
 import com.beautifulyomin.mmmm.domain.member.dto.PasswordDto;
 import com.beautifulyomin.mmmm.domain.member.entity.Children;
 import com.beautifulyomin.mmmm.domain.member.entity.Parent;
@@ -73,8 +72,12 @@ public class ChildrenServiceImpl implements ChildrenService {
     }
 
     @Override
-    public String uploadProfileImage(MultipartFile file) throws IOException {
-        return "";
+    public String uploadProfileImage(MultipartFile file, String userId) throws IOException {
+        ImageDto profileImage = fileService.uploadImage(file);
+        Children children = childrenRepository.findByUserId(userId).orElseThrow();
+        children.setProfileImgUrl(profileImage.getStoredImagePath());
+        childrenRepository.save(children);
+        return profileImage.getStoredImagePath();
     }
 
     @Override
