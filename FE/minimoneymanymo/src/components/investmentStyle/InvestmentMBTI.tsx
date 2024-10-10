@@ -13,8 +13,10 @@ const getLastMonthEnd = () => {
 type InvestmentTypeKeys =
   | "느긋한 거북이"
   | "화끈한 불사조"
-  | "모험심 가득한 사자"
+  // | "모험심 가득한 사자"
   | "성장하는 새싹"
+  | "신중한 바다 코끼리"
+  | "빠른 치타"
   | "없음"
 
 const investmentTypeDetails: Record<
@@ -25,25 +27,37 @@ const investmentTypeDetails: Record<
     image: "/images/report/turtle.png",
     title: "느긋한 거북이",
     description: (name) =>
-      `${name}은 안정적 보수 투자자!<br /> 느긋하게, 하지만 안전하게 자산을 불리는 걸 좋아하는 ${name}은 리스크를 크게 감수하지 않고, 손실도 적어요.<br /> 주식보다는 현금을 조금 더 많이 가지고 있어요.<br /> 천천히 가지만 확실한 방법으로 자산을 지켜내는 ${name}은 바로 거북이!`,
+      `${name}은 느긋하고 소극적인 투자자!<br /> 리스크를 최소화하고 안전하게 자산을 유지하려고 해요.<br /> 손실도 적고, 수익도 적으며, 현금을 많이 보유해요.<br /> ${name}은 천천히 자산을 보호하는 거북이!`,
   },
   "화끈한 불사조": {
     image: "/images/report/phoenix.png",
     title: "화끈한 불사조",
     description: (name) =>
-      `${name}은 고위험 고수익형 투자자!<br /> 큰 수익을 추구하며 공격적으로 투자하는 ${name}은 주식에 적극적으로 투자하고, 현금보다는 주식에 집중해요.<br /> 때로는 큰 손실을 보기도 하지만, 도전을 멈추지 않는 ${name}은 바로 불사조!`,
+      `${name}은 고위험 고수익형 투자자!<br /> 큰 수익을 추구하며 공격적으로 투자하는 ${name}은 주식에 집중적으로 투자해요.<br /> 큰 손실을 감수하면서도 도전을 멈추지 않는 ${name}은 바로 불사조!`,
   },
-  "모험심 가득한 사자": {
-    image: "/images/report/lion.png",
-    title: "모험심 가득한 사자",
-    description: (name) =>
-      `${name}은 모험심 가득한 투자자!<br /> 리스크를 감수하고 도전하지만, 아직 큰 수익을 내지는 못하는 ${name}.<br /> 그래도 계속해서 도전하고 있죠! 주식에 많이 투자하고, 현금은 적게 보유하는 ${name}은 모험을 즐기는 사자!`,
-  },
+  // "모험심 가득한 사자": {
+  //   image: "/images/report/lion.png",
+  //   title: "모험심 가득한 사자",
+  //   description: (name) =>
+  //     `${name}은 모험심 가득한 투자자!<br /> 리스크를 감수하고 도전하지만, 아직 큰 수익을 내지는 못하는 ${name}.<br /> 그래도 계속해서 도전하고 있죠! 주식에 많이 투자하고, 현금은 적게 보유하는 ${name}은 모험을 즐기는 사자!`,
+  // },
   "성장하는 새싹": {
     image: "/images/report/sprout.png",
     title: "성장하는 새싹",
     description: (name) =>
-      `${name}은 적극적 성장형 투자자!<br /> 현재는 큰 수익을 내지 못하고 있지만, 주식에 꾸준히 투자하며 미래를 준비하고 있어요.<br /> 손실을 적게 보고 리스크 관리를 잘하는 ${name}은 앞으로 크게 성장할 새싹이에요!`,
+      `${name}은 조심스럽게 성장하는 투자자!<br /> 아직 큰 수익은 내지 못하고 있지만, 꾸준히 주식에 투자해 미래를 준비하는 ${name}은 앞으로 크게 성장할 가능성이 있어요!`,
+  },
+  "신중한 바다 코끼리": {
+    image: "/images/report/walrus.png",
+    title: "신중한 바다코끼리",
+    description: (name) =>
+      `${name}은 신중하고 보수적인 투자자!<br /> 손실은 많지만, 현금을 많이 보유해 리스크를 최소화하고 있어요.<br /> 안전하게 자산을 유지하며 위험을 관리하는 ${name}은 바다코끼리처럼 신중한 투자자!`,
+  },
+  "빠른 치타": {
+    image: "/images/report/cheetah2.png",
+    title: "빠른 치타",
+    description: (name) =>
+      `${name}은 빠르고 효율적인 투자자!<br /> 손실을 최소화하고, 빠르게 수익을 내는 ${name}은 기회를 빠르게 포착하는 투자 성향을 가지고 있어요.<br /> 목표를 정확히 달성하는 ${name}은 바로 치타!`,
   },
   없음: {
     image: "/images/report/none.png",
