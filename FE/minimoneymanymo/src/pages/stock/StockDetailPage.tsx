@@ -164,7 +164,7 @@ function StockDetailPage(): JSX.Element {
                   <span
                     className={`ms-4 ${stockData.priceChange > 0 ? "text-buy" : stockData.priceChange < 0 ? "text-sell" : "text-black"}`}
                   >
-                    {stockData.priceChange ?? 0} 머니(
+                    {stockData.priceChange.toLocaleString() ?? 0} 머니(
                     {stockData?.priceChangeRate ?? "N/A"}%)
                   </span>
                 </span>
