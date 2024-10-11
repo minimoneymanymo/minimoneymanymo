@@ -1,4 +1,4 @@
-# Happy: Re Porting Manual
+# minimoneymanyno Porting Manual
 이 매뉴얼은 linux 환경에서 미니머니마니모를 clone하여 빌드 및 배포하는 방법에 대한 가이드입니다.
 # 0. 요구사항
 - Ubuntu 20.04.6 LTS
