@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StockJobRunner implements CommandLineRunner {
+public class StockJobRunner {  //implements CommandLineRunner
 
     private final JobLauncher jobLauncher;
     private final Job mainJob;
@@ -22,13 +22,13 @@ public class StockJobRunner implements CommandLineRunner {
         this.mainJob = mainJob;
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        JobParameters params = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters();
-        jobLauncher.run(mainJob, params);
-    }
+//    @Override
+//    public void run(String... args) throws Exception {
+//        JobParameters params = new JobParametersBuilder()
+//                .addLong("time", System.currentTimeMillis())
+//                .toJobParameters();
+//        jobLauncher.run(mainJob, params);
+//    }
 
     @Scheduled(cron = "0 30 15 ? * MON-FRI")
     public void run() throws Exception {
