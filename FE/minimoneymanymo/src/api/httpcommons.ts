@@ -1,6 +1,6 @@
 import axios from "axios"
 const {
-  VITE_SSAFY_API_URL = process.env.VITE_SSAFY_API_URL,
+  VITE_SSAFY_API_URL = z.env.VITE_SSAFY_API_URL,
   VITE_API_ENDPOINT: endpoint = process.env.VITE_API_ENDPOINT,
   VITE_API_CONTEXT_PATH: contextPath = process.env.VITE_API_CONTEXT_PATH,
   VITE_API_VERSION: version = process.env.VITE_API_VERSION,
