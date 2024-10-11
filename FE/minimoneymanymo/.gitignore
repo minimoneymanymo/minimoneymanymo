@@ -43,3 +43,13 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+
+# typecript
+# Compiled JavaScript files
+*.js
+*.jsx
+
+# TypeScript build info files
+*.tsbuildinfo
+
