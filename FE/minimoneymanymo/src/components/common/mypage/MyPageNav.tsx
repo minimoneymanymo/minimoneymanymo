@@ -59,19 +59,7 @@ function MypageNav({ menuItems, role }: MypageNavProps): JSX.Element {
 
   return (
     <div className="h-[calc(100vh-2rem)] w-fit space-y-5 pt-5">
-      <button
-        className="w-full cursor-pointer border-none bg-transparent p-0"
-        onClick={() => {
-          setSelectedPath("/parent/my-wallet")
-          navigate("/parent/my-wallet")
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            navigate("/parent/my-wallet")
-            setSelectedPath("/parent/my-wallet")
-          }
-        }}
-      >
+      <div>
         <div className="flex h-16 w-fit items-center space-x-2 py-5">
           <img
             src={profileImgUrl || "/images/profile.jpg"}
@@ -83,7 +71,7 @@ function MypageNav({ menuItems, role }: MypageNavProps): JSX.Element {
           />
           <div className="text-2xl">{name} </div>
         </div>
-      </button>
+      </div>
       <Card className="shadow-blue-gray-900/5 w-fit p-0 px-1 py-4">
         <List className="w-fit min-w-[160px] p-0">
           {menuItems.map((item: MenuItem) => (
