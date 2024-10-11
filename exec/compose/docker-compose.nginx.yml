@@ -1,0 +1,30 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /home/ubuntu/data/nginx:/etc/nginx/conf.d
+      - /home/ubuntu/data/certbot/conf:/etc/letsencrypt
+      - /home/ubuntu/data/certbot/www:/var/www/certbot
+    depends_on:
+      - certbot
+    environment:
+      TZ: 'Asia/Seoul'  # 시간대 설정 추가
+    networks:
+      - main-net  # main-net에 연결
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - /home/ubuntu/data/certbot/conf:/etc/letsencrypt
+      - /home/ubuntu/data/certbot/www:/var/www/certbot
+    networks:
+      - main-net  # main-net에 연결
+
+networks:
+  main-net:
+    external: true  # 기존 main-net 사용
+
