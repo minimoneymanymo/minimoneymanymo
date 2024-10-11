@@ -1,0 +1,19 @@
+services:
+  mmmm-react-blue:
+    image: mmmm-react-image:latest
+    container_name: mmmm-react-blue
+    ports:
+      - "3000:80"
+    environment:
+      TZ: 'Asia/Seoul'
+      VITE_API_ENDPOINT: 'https://i11b105.p.ssafy.io'
+      VITE_API_CONTEXT_PATH: 'mmmm'
+      VITE_API_VERSION: 'v1'
+      VITE_SSAFY_API_KEY: ''
+      VITE_SSAFY_USER_KEY: ''
+      VITE_SSAFY_API_URL: 'https://finopenapi.ssafy.io/ssafy/api/v1/edu/'
+    networks:
+      - main-net
+networks:
+        main-net:
+                external: true

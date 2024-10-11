@@ -39,8 +39,7 @@ const WithdrawablReqItem: React.FC<WithdrawablReqItemProps> = (props) => {
       //alert(res.message || "오류가 발생했습니다. 다시 시도해주세요.")
       Swal.fire({
         icon: "error",
-        title: `오류가 발생했습니다. 다시 시도해주세요 : ${res.message}`,
-        text: "Something went wrong!",
+        title: `오류가 발생했습니다.`,
       })
     }
   }
@@ -75,7 +74,7 @@ const WithdrawablReqItem: React.FC<WithdrawablReqItemProps> = (props) => {
           )
         ) : approvedAt ? (
           <div>
-            <span className="text-primary-m1">
+            <span className="text-secondary-m2">
               {formatDate(approvedAt, false)} 승인
             </span>
           </div>

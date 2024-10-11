@@ -1,0 +1,29 @@
+version: "3.1"
+services: 
+  # 서비스 명
+  postgresql:
+    # 사용할 이미지
+    image: postgres
+    # 컨테이너 실행 시 재시작
+    restart: always
+    # 컨테이너명 설정
+    container_name: postgres
+    # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+    ports:
+      - "5555:5432"
+    # 환경 변수 설정
+    environment: 
+      # PostgreSQL 계정 및 패스워드 설정 옵션
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: minimoneymanymo
+      TZ: 'Asia/Seoul'
+    # 볼륨 설정
+    volumes:
+      - /home/ubuntu/data/postgres/:/var/lib/postgresql/data
+    networks:
+            - main-net
+                    
+networks:
+        main-net:
+                external: true

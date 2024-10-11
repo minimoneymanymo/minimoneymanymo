@@ -5,10 +5,7 @@ import MainPage from "@/pages/main/MainPage"
 import ParentPage from "@/pages/parent/ParentPage"
 import SignUpPage from "@/pages/main/SignUpPage"
 import NewsPage from "@/pages/main/NewsPage"
-import Temp from "@/components/common/Temp"
-import ParentPageLayout from "@/layouts/ParentPageLayout"
 import ParentChildrenPageLayout from "@/layouts/ParentChildrenPageLayout"
-import ChildPageLayout from "@/layouts/ChildPageLayout"
 import MainPageLayout from "@/layouts/MainLayout"
 import MyChildrenPage from "./pages/parentchildren/MyChildrenPage"
 import MyChildFinancePage from "./pages/parentchildren/MyChildFinancePage"
@@ -38,9 +35,9 @@ function App() {
   return (
     <div className={shouldApplyMargin ? "mb-16" : ""}>
       <Routes>
-        <Route path="/intro" element={<IntroPage />} />
+        <Route path="/" element={<IntroPage />} />
         <Route path="/" element={<MainPageLayout />}>
-          <Route index element={<MainPage />} />
+          <Route path="main" element={<MainPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="sign-up" element={<SignUpPage />} />
           <Route path="/news" element={<NewsPage />} />

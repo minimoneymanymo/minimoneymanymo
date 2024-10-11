@@ -218,6 +218,10 @@ const ParentAccountPage = () => {
     return <div>로딩 중...</div> // 로딩 상태를 표시
   }
 
+  const deleteAccount = () => {
+    dispatch(accountActions.clearAccount())
+  }
+
   return (
     <div className="flex w-full flex-col space-y-4">
       <Heading title="연결 계좌 정보" />
@@ -236,7 +240,15 @@ const ParentAccountPage = () => {
       <Heading title="계좌 관리" />
       {parent.accountNumber ? (
         <ToggleList title="계좌 연동 해지">
-          <div>계좌 연결을 해지하시겠습니까?</div>
+          <div className="flex flex-row items-center justify-between p-4">
+            <span>계좌 연결을 해지하시겠습니까?</span>
+            <button
+              onClick={deleteAccount}
+              className="ml-4 rounded-xl bg-secondary-m2 px-4 py-2 text-white"
+            >
+              계좌 해지
+            </button>
+          </div>
         </ToggleList>
       ) : (
         <ToggleList title="계좌 연동하기">
@@ -274,7 +286,7 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
   return (
     <div
       className={`flex h-[176px] w-full rounded-3xl p-6 shadow-md ${
-        hasAccountInfo ? "bg-primary-50" : "bg-gray-100"
+        hasAccountInfo ? "bg-gray-100" : "bg-gray-100"
       }`}
     >
       {hasAccountInfo ? (
@@ -287,14 +299,14 @@ const AccountInfo: React.FC<AccountInfoProps> = (props) => {
           <span className="flex w-full flex-col items-end">
             <span className="text-right">
               <b className="mr-1">
-                <span className="mr-5 text-primary-600">₩ </span>
+                <span className="mr-5 text-secondary-m2">₩ </span>
                 {Number(accountBalance).toLocaleString()}
               </b>
               원
             </span>
             <button
               onClick={modalOnClick}
-              className="mt-2 rounded-xl bg-primary-m1 px-4 py-2 text-white"
+              className="mt-2 rounded-xl bg-secondary-m2 px-4 py-2 text-white"
             >
               충전 ₩
             </button>

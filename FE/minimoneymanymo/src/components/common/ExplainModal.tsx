@@ -21,11 +21,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50" // 배경 딤 효과는 bg-black bg-opacity-30
-      onClick={handleOverlayClick} // 배경 클릭 시 모달 닫기
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      onClick={handleOverlayClick}
     >
-      {/* 반투명 배경 */}
-      <div className="fixed bottom-16 right-4 h-[80vh] w-[420px] max-w-full rounded-2xl bg-white p-4 shadow-2xl">
+      {/* 모달 본체 */}
+      <div className="fixed bottom-20 right-4 flex h-[80vh] w-[420px] max-w-full flex-col rounded-2xl bg-white p-4 shadow-2xl">
         <button
           className="absolute right-2 top-2 text-gray-600 hover:text-gray-900"
           onClick={onClose}
@@ -33,7 +33,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           <CloseIcon />
         </button>
         <h2 className="text-lg font-semibold tracking-wider">사용법</h2>
-        하단의 탭을 클릭하여 사용 방법을 확인하세요!
+        <p>하단의 탭을 클릭하여 사용 방법을 확인하세요!</p>
+
         {/* 탭 버튼들 */}
         <div className="mt-4 flex border-b">
           <button
@@ -67,9 +68,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             FAQ
           </button>
         </div>
+
         {/* 탭에 따른 컨텐츠 렌더링 */}
-        <div className="hidden-scrollbar mt-4 h-[420px] overflow-auto">
-          {/* 높이를 지정하고 스크롤 추가 */}
+        <div className="hidden-scrollbar mt-4 flex-1 overflow-y-auto">
+          {/* 탭에 따른 콘텐츠 */}
           {activeTab === "p" && <ParentContent />}
           {activeTab === "c" && <ChildContent />}
           {activeTab === "f" && <FAQContent />}
@@ -136,8 +138,12 @@ const FAQContent: React.FC = () => {
           <FaqToggle title="투자 성향 분석은 어떤 방식인가요?">
             <div className="p-2 text-gray-600">
               투자 성향은 투자 거래 내역을 바탕으로 분석됩니다. <br />
-              투자 성향은 총 4가지로, 성장하는 새싹, 화끈한 불사조, 느긋한
-              거북이, 모험심 가득한 사자가 있습니다.
+              투자 성향은 총 4가지로
+              <span className="font-bold">
+                성장하는 새싹, 느긋한 거북이, 신중한 바다코끼리, 빠른 치타,
+                화끈한 불사조
+              </span>
+              가 있습니다.
               <br />
               <div className="mt-1">투자를 통해 자신의 성향을 알아보세요!</div>
             </div>
@@ -159,8 +165,8 @@ const FAQContent: React.FC = () => {
           <FaqToggle title="실시간 거래가 아닌 이유가 있나요?">
             <div className="p-2 text-gray-600">
               저희 서비스는 청소년 투자 교육을 목표로 하고 있습니다. <br />
-              따라서 국내 주식 장이 열리는 시간(8:30 ~ 15:30)에는 수업에 집중할
-              수 있도록 실시간 데이터는 제공하지 않고 있습니다.
+              따라서 국내 주식 장이 열리는 시간(8:30~15:30)에는 수업에 집중할 수
+              있도록 실시간 데이터는 제공하지 않아요.
             </div>
           </FaqToggle>
           <hr className="w-full border-t border-gray-200" />

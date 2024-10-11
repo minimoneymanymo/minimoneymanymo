@@ -1,0 +1,19 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:latest
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /home/ubuntu/jenkins-data:/var/jenkins_home
+      - /home/ubuntu/compose:/var/jenkins_home/compose
+    networks:
+      - main-net
+   
+
+networks:
+  main-net:
+    external: true

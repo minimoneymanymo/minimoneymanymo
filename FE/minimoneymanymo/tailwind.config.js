@@ -34,6 +34,7 @@ export default {
         background: "#FCFCFC",
         buy: "#F04452",
         sell: "#3182F6",
+        bg2: "#F9FAFB",
       },
     },
   },
