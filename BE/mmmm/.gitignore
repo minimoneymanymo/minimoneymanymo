@@ -44,3 +44,6 @@ out/
 Dockerfile
 .env
 /src/main/generated/
+
+*.hprof
+
