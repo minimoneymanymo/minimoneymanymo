@@ -156,7 +156,7 @@
 
 <img src="exec/image/캐싱검색엔진.png" width="40%;" alt="gif">
 
-자동 검색어 기능을 위헤 Elasticsearch를 도입했으며, 복잡한 쿼리에 대한 캐싱을 위해 Redis를 사용했습니다.
+자동 검색어 기능을 위해 Elasticsearch를 도입했으며, 복잡한 쿼리에 대한 캐싱을 위해 Redis를 사용했습니다.
 
 <br>
 
