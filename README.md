@@ -164,6 +164,10 @@
 
 ## BE
 
+| 제목                                   | 작성자  |
+|----------------------------------------|---------|
+| [Elasticsearch 개발일지](https://melon-erica-d9e.notion.site/Elasticsearch-114b2a97058180e49b27c26ae51c076c?pvs=4) | 조아름  |
+
 ## FE
 
 ## Infra
@@ -174,11 +178,6 @@
 |----------------------------------------|---------|
 | [데이터분석 일지](https://discreet-antler-e8e.notion.site/1119d3ab9d468058921ddb5cd1945a19?pvs=74) | 김세민  |
 
-## Elasticsearch
-
-| 제목                                   | 작성자  |
-|----------------------------------------|---------|
-| [Elasticsearch 개발일지](https://melon-erica-d9e.notion.site/Elasticsearch-114b2a97058180e49b27c26ae51c076c?pvs=4) | 조아름  |
 
 
 <br>
