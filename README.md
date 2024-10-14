@@ -169,7 +169,9 @@
 | [Elasticsearch 개발일지](https://melon-erica-d9e.notion.site/Elasticsearch-114b2a97058180e49b27c26ae51c076c?pvs=4) | 조아름  |
 
 ## FE
-
+| 제목                                   | 작성자  |
+|----------------------------------------|---------|
+| [FrontEnd 개발일지](https://melon-erica-d9e.notion.site/FE-cf9034f20f3f4302a107556cb637da59?pvs=4) | 이다영 |
 ## Infra
 
 ## 데이터분석 및 AI
