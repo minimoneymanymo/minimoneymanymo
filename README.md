@@ -33,7 +33,7 @@
 <br>
 
 # **시연 영상**
-[![image](https://github.com/user-attachments/assets/8e20f0cf-2a52-4696-832e-f854d4043490)](https://youtu.be/07YI1xpQmAI)
+[![image](https://github.com/user-attachments/assets/1d6338d0-971d-46cf-ab77-bdfcec2ece9d)](https://youtu.be/07YI1xpQmAI)
 (https://youtu.be/07YI1xpQmAI)
 <br>
 
