@@ -33,7 +33,8 @@
 <br>
 
 # **시연 영상**
-
+[![image](https://github.com/user-attachments/assets/8e20f0cf-2a52-4696-832e-f854d4043490)](https://youtu.be/07YI1xpQmAI)
+(https://youtu.be/07YI1xpQmAI)
 <br>
 
 # 기술 스택
