@@ -2,9 +2,7 @@
 
 ![alt text](exec/image/logo.png)
 
-**minimoneymanymo**는 청소년 경제 교육 플랫폼으로, 서비스 내에서 받은 용돈을 통해 주식투자를 하며 경제 관념을 쌓습니다.
-
-부모님이 서비스 내에서 용돈을 지급하면, 자녀는 용돈으로 실제 국내 주식의 장을 따라가는 시스템에 투자하여 자산을 관리합니다. 수익금에 대해 가상머니를 현금으로 출금할 수 있습니다.
+부모가 자녀에게 지급한 용돈을 통해 자녀가 투자를 하고, 경제 습관을 개선할 수 있도록 기획된 서비스입니다.
 
 서비스 내에서는 쉬운 경제 용어 설명, 투자 성향 분석, 뉴스, 퀴즈 등을 통해 자녀들이 자연스럽게 경제와 투자 개념을 습득할 수 있도록 돕습니다. 또한, 부모는 자녀의 투자 성향을 바탕으로 맞춤형 교육 방향을 설정할 수 있습니다.
 
@@ -28,7 +26,7 @@
 
 | **기능 명세서**                                                                                                        | **API 명세서**                                                              | **ERD 다이어그램**                                                |
 | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [📑 기능 명세서](https://docs.google.com/spreadsheets/d/1q-ugIvySBtwIpHrxqvXC6WgJG4h4FHFSlV-lz-28Lk8/edit?usp=sharing) | [🔌 API 명세서](https://documenter.getpostman.com/view/22680555/2sAXjNXWXQ) | [⚡ ERD 다이어그램](https://www.erdcloud.com/d/9wybv5mf6N8RpyrQB) |
+| [📑 기능 명세서](https://docs.google.com/spreadsheets/d/1bFfb2UwhHP3mgqRF6DVyxgvb3P6sxLDnPDs0b0TvQ_s/edit?gid=1201711336#gid=1201711336) | [🔌 API 명세서](https://documenter.getpostman.com/view/22680555/2sAXjNXWXQ) | [⚡ ERD 다이어그램](https://www.erdcloud.com/d/3RSWf3Yw4pkMg24kZ) |
 
 <br>
 
