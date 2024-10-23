@@ -166,6 +166,7 @@
 | 제목                                   | 작성자  |
 |----------------------------------------|---------|
 | [Elasticsearch 개발일지](https://melon-erica-d9e.notion.site/Elasticsearch-114b2a97058180e49b27c26ae51c076c?pvs=4) | 조아름  |
+|[주/월별 차트 데이터 쿼리](https://melon-erica-d9e.notion.site/4cef3facbcca44d69a7cf8a9828ae5a1?pvs=4) | 김세민 |
 
 ## FE
 | 제목                                   | 작성자  |
